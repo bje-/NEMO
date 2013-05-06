@@ -1,0 +1,114 @@
+import heapq
+import numpy as np
+
+import nem
+
+def supply_switch (label):
+  "Return a callback function to set up a given scenario."
+  if label == 're100':
+      return re100
+  elif label == 'ccgt':
+      return ccgt
+  elif label == 'ccgt-ccs':
+      return ccgt_ccs
+  elif label == 'coal-ccs':
+      return coal_ccs
+  elif label == 're100+batteries':
+      return re100_batteries
+  else:
+      raise ValueError ('unknown supply scenario %s' % label)
+    
+def _hydro ():
+    "Return a list of existing hydroelectric generators"
+    total_stor = 12 * nem.twh
+    total_cap = float (2740 + 1160 + 960)
+    hydro1 = nem.generators.Hydro (nem.regions.tas, 2740, 2740/total_cap * total_stor, label=nem.regions.tas.id + ' hydro')
+    hydro2 = nem.generators.Hydro (nem.regions.nsw, 1160, 1160/total_cap * total_stor, label=nem.regions.nsw.id + ' hydro')
+    hydro3 = nem.generators.Hydro (nem.regions.vic,  960,  960/total_cap * total_stor, label=nem.regions.vic.id + ' hydro')
+    psh1 = nem.generators.PumpedHydro (nem.regions.qld, 500, 5000, label='QLD1 pumped-hydro')
+    psh2 = nem.generators.PumpedHydro (nem.regions.nsw, 1740, 15000, label='NSW1 pumped-hydro')
+    return [hydro1, hydro2, hydro3, psh1, psh2]
+
+def ccgt (context):
+    "All gas scenario"
+    ccgt = nem.generators.CCGT (nem.regions.nsw, 0)
+    ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
+    context.generators = [ccgt] + _hydro () + [ocgt]
+
+def ccgt_ccs (context):
+    "Gas CCS scenario"
+    ccgt = nem.generators.CCGT_CCS (nem.regions.nsw, 0)
+    ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
+    context.generators = [ccgt] + _hydro () + [ocgt]
+
+def coal_ccs (context):
+    "Coal CCS scenario"
+    coal = nem.generators.Coal_CCS (nem.regions.nsw, 0)
+    ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
+    context.generators = [coal] + _hydro () + [ocgt]
+
+def re100 (context):
+    "100% renewable electricity (no change)"
+    pass
+
+def re100_batteries (context):
+    "Lots of renewables plus battery storage"
+    nsw_battery = nem.generators.Battery (nem.regions.nsw, 0, 0)
+    g = context.generators
+    context.generators = g[0:9] + [nsw_battery] + g[9:]
+
+### Demand scenarios
+
+def demand_switch (label):
+  "Return a callback function to modify the demand."
+  if label == 'unchanged':
+    return unchanged
+  elif label.startswith ('scale:'):
+    try:
+      _, factor = label.split (':')
+      factor = 1 + int (factor) / 100.
+    except ValueError:
+      raise ValueError ('invalid scenario: %s' % label)
+    return lambda context: scale_demand (context, factor)
+  elif label.startswith ('peaks:'):
+    try:
+      # label form: "peaks:N:X" adjust demand peaks over N megawatts by X%.
+      _, power, factor = label.split (':')
+      power = int (power)
+      factor = 1 + int (factor) / 100.
+    except ValueError:
+      raise ValueError ('invalid scenario: %s' % label)
+    return lambda context: scale_peaks (context, power, factor)
+  elif label.startswith ('npeaks:'):
+    try:
+      # label form: "npeaks:N:X" adjust top N demand peaks by X%.
+      _, topn, factor = label.split (':')
+      topn = int (topn)
+      factor = 1 + int (factor) / 100.
+    except ValueError:
+      raise ValueError ('invalid scenario: %s' % label)
+    return lambda context: scale_npeaks (context, topn, factor)
+  else:
+    raise ValueError ('unknown demand scenario %s' % label)
+
+def unchanged (context):
+  pass
+
+def scale_demand (context, factor):
+  context.demand = nem.aggregate_demand (context.regions)
+  context.demand *= factor
+
+def scale_peaks (context, power, factor):
+  context.demand = nem.aggregate_demand (context.regions)
+  where = np.where (context.demand > power)
+  context.demand[where] *= factor
+
+def scale_npeaks (context, topn, factor):
+  context.demand = nem.aggregate_demand (context.regions)
+  # Now, reduce the topN peak demands by factor.
+  top_demands = heapq.nlargest (topn, context.demand)
+  # A trick from:
+  # http://docs.scipy.org/doc/numpy/reference/generated/numpy.where.html#numpy.where
+  ix = np.in1d (context.demand.ravel(), top_demands).reshape (context.demand.shape)
+  where = np.where (ix)
+  context.demand[where] *= factor
