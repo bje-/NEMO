@@ -215,25 +215,8 @@ class Fuelled(Generator):
 
 class Hydro(Fuelled):
     patch=Patch (facecolor='lightskyblue')
-    def __init__ (self, region, capacity, maxstorage, label='hydro'):
+    def __init__ (self, region, capacity, label='hydro'):
         Fuelled.__init__ (self, region, capacity, label)
-        self.maxstorage = maxstorage
-        self.stored = maxstorage
-
-    def step (self, hr, demand):
-        power = min (self.stored, min (self.capacity, demand))
-        self.hourly_power[hr] = power
-        self.stored -= power
-        if power > 0:
-            self.runhours += 1
-        return power, 0
-
-    def reset (self):
-        Fuelled.reset (self)
-        self.stored = self.maxstorage
-
-    def summary (self, costs):
-        return Fuelled.summary (self, costs) + ', in storage %.1f TWh' % (self.stored / 1000000.)
 
 class PumpedHydro(Hydro):
     patch=Patch (facecolor='powderblue')

@@ -20,11 +20,9 @@ def supply_switch (label):
     
 def _hydro ():
     "Return a list of existing hydroelectric generators"
-    total_stor = 12 * nem.twh
-    total_cap = float (2740 + 1160 + 960)
-    hydro1 = nem.generators.Hydro (nem.regions.tas, 2740, 2740/total_cap * total_stor, label=nem.regions.tas.id + ' hydro')
-    hydro2 = nem.generators.Hydro (nem.regions.nsw, 1160, 1160/total_cap * total_stor, label=nem.regions.nsw.id + ' hydro')
-    hydro3 = nem.generators.Hydro (nem.regions.vic,  960,  960/total_cap * total_stor, label=nem.regions.vic.id + ' hydro')
+    hydro1 = nem.generators.Hydro (nem.regions.tas, 2740, label=nem.regions.tas.id + ' hydro')
+    hydro2 = nem.generators.Hydro (nem.regions.nsw, 1160, label=nem.regions.nsw.id + ' hydro')
+    hydro3 = nem.generators.Hydro (nem.regions.vic,  960, label=nem.regions.vic.id + ' hydro')
     psh1 = nem.generators.PumpedHydro (nem.regions.qld, 500, 5000, label='QLD1 pumped-hydro')
     psh2 = nem.generators.PumpedHydro (nem.regions.nsw, 1740, 15000, label='NSW1 pumped-hydro')
     return [hydro1, hydro2, hydro3, psh1, psh2]
