@@ -44,7 +44,6 @@ class AETA2030:
         table[tech.CST] = 20 * escalation
         table[tech.PV] = 0
         table[tech.Biofuel] = 10 * escalation + 80 # (fuel)
-        table[tech.Nuclear] = 14.7 * escalation
         table[tech.CCGT] = 4 * escalation
         table[tech.OCGT] = 10 * escalation
         table[tech.CCGT_CCS] = 9 * escalation
@@ -58,7 +57,6 @@ class AETA2030:
         table[tech.CST] = 65 * escalation
         table[tech.PV] = 25 * escalation
         table[tech.Biofuel] = 4 * escalation
-        table[tech.Nuclear] = 34.4 * escalation
         table[tech.CCGT] = 10 * escalation
         table[tech.OCGT] = 4 * escalation
         table[tech.CCGT_CCS] = 17 * escalation
@@ -75,7 +73,6 @@ class AETA2030Low (AETA2030):
         table[tech.CST] = 4563 / af + fom[tech.CST]
         table[tech.PV] = 1482 / af + fom[tech.PV]
         table[tech.Biofuel] = 694 / af + fom[tech.Biofuel]
-        table[tech.Nuclear] = 3589 / af + fom[tech.Nuclear]
         table[tech.CCGT] = 1015 / af + fom[tech.CCGT]
         table[tech.OCGT] = 694 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2095 / af + fom[tech.CCGT_CCS]
@@ -92,7 +89,6 @@ class AETA2030High (AETA2030):
         table[tech.CST] = 5659 / af + fom[tech.CST]
         table[tech.PV] = 1871 / af + fom[tech.PV]
         table[tech.Biofuel] = 809 / af + fom[tech.Biofuel]
-        table[tech.Nuclear] = 3867 / af + fom[tech.Nuclear]
         table[tech.CCGT] = 1221 / af + fom[tech.CCGT]
         table[tech.OCGT] = 809 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2405 / af + fom[tech.CCGT_CCS]
