@@ -341,7 +341,8 @@ class Coal_CCS(CCS):
 
     def opcost (self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
-        fuel_cost = costs.coal_price_per_gj * 8.57
+        # thermal efficiency 31.4% (AETA 2012)
+        fuel_cost = costs.coal_price_per_gj / (3.6 / 0.314)
 	# t CO2/MWh
 	emissions_rate = 0.103
 	total_opcost = vom + fuel_cost + \
@@ -355,7 +356,8 @@ class CCGT_CCS(CCS):
 
     def opcost (self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
-        fuel_cost = costs.gas_price_per_gj * 6.92
+        # thermal efficiency 43.1% (AETA 2012)
+        fuel_cost = costs.gas_price_per_gj * (3.6 / 0.431)
 	total_opcost = vom + fuel_cost + \
             (self.intensity * (1-self.capture) * costs.carbon) + \
             (self.intensity * self.capture * costs.ccs_storage_per_t)
