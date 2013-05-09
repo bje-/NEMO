@@ -83,6 +83,15 @@ def cost (context, transmission_p):
   biofuel_exceedance = max (0, biofuel_energy - 20*nem.twh)
   score += pow (biofuel_exceedance, 3)
 
+  ### Penalty: limit hydro use
+  hydro_energy = 0
+  for g in context.generators:
+    if g.__class__ is nem.generators.Hydro or \
+          g.__class__ is nem.generators.PumpedHydro:
+      biofuel_energy += g.hourly_power.sum ()
+  biofuel_exceedance = max (0, biofuel_energy - 20*nem.twh)
+  score += pow (biofuel_exceedance, 3)
+
   if transmission_p:
     maxexchanges = context.exchanges.max (axis=0)
     for i in range (5):
