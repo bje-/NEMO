@@ -88,7 +88,7 @@ def cost (context, transmission_p):
   for g in context.generators:
     if g.__class__ is nem.generators.Hydro or g.__class__ is nem.generators.PumpedHydro:
       hydro_energy += g.hourly_power.sum ()
-  hydro_exceedance = max (0, hydro_energy - 12*twh)
+  hydro_exceedance = max (0, hydro_energy - 12*nem.twh)
   score += pow (hydro_exceedance, 3)
 
   if transmission_p:
