@@ -25,7 +25,10 @@ def _hydro ():
     hydro3 = nem.generators.Hydro (nem.regions.vic,  960, label=nem.regions.vic.id + ' hydro')
     psh1 = nem.generators.PumpedHydro (nem.regions.qld, 500, 5000, label='QLD1 pumped-hydro')
     psh2 = nem.generators.PumpedHydro (nem.regions.nsw, 1740, 15000, label='NSW1 pumped-hydro')
-    return [hydro1, hydro2, hydro3, psh1, psh2]
+    hydros = [hydro1, hydro2, hydro3, psh1, psh2]
+    for h in hydros:
+      h.setters = [] 
+    return hydros
 
 def ccgt (context):
     "All gas scenario"
