@@ -286,6 +286,17 @@ class Fossil(Fuelled):
         return Fuelled.summary (self, costs) + ', %.1f Mt CO2' \
             % (self.hourly_power.sum () * self.intensity / 1000000.)
 
+class Black_Coal(Fossil):
+    patch=Patch (facecolor='black')
+    def __init__ (self, region, capacity, intensity=0.773, label='coal'):
+        Fossil.__init__ (self, region, capacity, intensity, label)
+
+    def opcost (self, costs):
+        vom = costs.opcost_per_mwh[self.__class__]
+        fuel_cost = costs.gas_price_per_gj * 8.57
+	total_opcost = vom + fuel_cost + self.intensity * costs.carbon
+        return self.hourly_power.sum () * total_opcost
+
 class OCGT(Fossil):
     patch=Patch (facecolor='brown')
     def __init__ (self, region, capacity, intensity=0.7, label='OCGT'):

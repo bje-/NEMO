@@ -48,6 +48,7 @@ class AETA2030:
         table[tech.OCGT] = 10 * escalation
         table[tech.CCGT_CCS] = 9 * escalation
         table[tech.Coal_CCS] = 15 * escalation
+        table[tech.Black_Coal] = 7 * escalation
 
         # Fixed O&M (FOM) costs
         table = self.fixed_om_costs
@@ -61,6 +62,7 @@ class AETA2030:
         table[tech.OCGT] = 4 * escalation
         table[tech.CCGT_CCS] = 17 * escalation
         table[tech.Coal_CCS] = 73.2 * escalation
+        table[tech.Black_Coal] = 50.5 * escalation
 
 class AETA2030Low (AETA2030):
     def __init__ (self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -77,6 +79,7 @@ class AETA2030Low (AETA2030):
         table[tech.OCGT] = 694 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2095 / af + fom[tech.CCGT_CCS]
         table[tech.Coal_CCS] = 4453 / af + fom[tech.Coal_CCS]
+        table[tech.Black_Coal] = 2947 / af + fom[tech.Black_Coal]
 
 class AETA2030High (AETA2030):
     def __init__ (self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -93,3 +96,4 @@ class AETA2030High (AETA2030):
         table[tech.OCGT] = 809 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2405 / af + fom[tech.CCGT_CCS]
         table[tech.Coal_CCS] = 4727 / af + fom[tech.Coal_CCS]
+        table[tech.Black_Coal] = 3128 / af + fom[tech.Black_Coal]
