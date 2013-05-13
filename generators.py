@@ -293,7 +293,7 @@ class Black_Coal(Fossil):
 
     def opcost (self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
-        fuel_cost = costs.gas_price_per_gj * 8.57
+        fuel_cost = costs.coal_price_per_gj * 8.57
 	total_opcost = vom + fuel_cost + self.intensity * costs.carbon
         return self.hourly_power.sum () * total_opcost
 
