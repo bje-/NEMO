@@ -336,7 +336,7 @@ class Coal_CCS(CCS):
     def opcost (self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         # thermal efficiency 31.4% (AETA 2012)
-        fuel_cost = costs.coal_price_per_gj / (3.6 / 0.314)
+        fuel_cost = costs.coal_price_per_gj * (3.6 / 0.314)
 	# t CO2/MWh
 	emissions_rate = 0.103
 	total_opcost = vom + fuel_cost + \
