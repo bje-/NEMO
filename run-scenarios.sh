@@ -26,7 +26,7 @@ for scenario in coal-ccs ccgt-ccs ; do
 done
 
 # Sensitivity to gas price and CO2 price
-for scenario in ccgt ccgt-ccs coal-ccs ; do
+for scenario in ccgt ccgt-ccs coal-ccs replacement ; do
     for gasprice in 6 9 12 15 ; do
 	for co2price in 0 23 50 70 90 125 ; do
 	    $PYTHON $EVOLVE $EVOPTS -s $scenario --gas-price=$gasprice -c $co2price

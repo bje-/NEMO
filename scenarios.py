@@ -15,6 +15,8 @@ def supply_switch (label):
       return coal_ccs
   elif label == 're100+batteries':
       return re100_batteries
+  elif label == 'replacement':
+      return replacement
   else:
       raise ValueError ('unknown supply scenario %s' % label)
     
@@ -29,6 +31,12 @@ def _hydro ():
     for h in hydros:
       h.setters = [] 
     return hydros
+
+def replacement (context):
+    "The current NEM fleet, more or less."
+    coal = nem.generators.Black_Coal (nem.regions.nsw, 0)
+    ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
+    context.generators = [coal] + _hydro () + [ocgt]
 
 def ccgt (context):
     "All gas scenario"
