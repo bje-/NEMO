@@ -104,17 +104,14 @@ def unchanged (context):
   pass
 
 def scale_demand (context, factor):
-  context.demand = nem.aggregate_demand (context.regions)
   context.demand *= factor
 
 def scale_peaks (context, power, factor):
-  context.demand = nem.aggregate_demand (context.regions)
   where = np.where (context.demand > power)
   context.demand[where] *= factor
 
 def scale_npeaks (context, topn, factor):
-  context.demand = nem.aggregate_demand (context.regions)
-  # Now, reduce the topN peak demands by factor.
+  # Reduce the topN peak demands by factor.
   top_demands = heapq.nlargest (topn, context.demand)
   # A trick from:
   # http://docs.scipy.org/doc/numpy/reference/generated/numpy.where.html#numpy.where
