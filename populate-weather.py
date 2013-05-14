@@ -1,5 +1,5 @@
 #!/usr/bin/env python26
-# Load BoM AWS demand data for a year into the nem.h5 database.
+# Load BoM AWS data for a year into the nem.h5 database.
 #
 # -*- Python -*-
 # Copyright (C) 2011 Ben Elliston
