@@ -1,5 +1,5 @@
 #!/usr/bin/env python26
-# Load AEMO demand data for a year into the nem.h5 database.
+# Load AEMO non-scheduled generation data for a year into the nem.h5 database.
 #
 # -*- Python -*-
 # Copyright (C) 2011 Ben Elliston
