@@ -42,7 +42,7 @@ assert demand.shape == (5, 2*hours)
 # For hourly, average half-hours n and n+1.
 demand = (demand[::,::2] + demand[::,1::2]) / 2
 # Total demand.
-totaldemand = demand.sum (axis=0)
+aggregate_demand = demand.sum (axis=0)
 
 # Read BoM station data.
 def _import_bom_stations (filename):
@@ -66,7 +66,7 @@ def default_generation_mix ():
     for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
         if capfactor[g] != None:
             capacity = \
-                (totaldemand.sum() * energy_fraction[g]) / (capfactor[g] * hours)
+                (aggregate_demand.sum() * energy_fraction[g]) / (capfactor[g] * hours)
         if g == PumpedHydro:
             # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
             result.append (PumpedHydro (regions.qld, 500, 5000, label='QLD1 pumped-hydro'))
@@ -168,7 +168,7 @@ class Context:
 def _aggregate_demand (rgns):
     "Return the aggregate demand for the selected set of regions."
     if rgns == regions.all:
-        dem = totaldemand
+        dem = aggregate_demand
     else:
         dem = np.zeros (hours)
         for r in rgns:

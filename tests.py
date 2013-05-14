@@ -73,14 +73,14 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_006 (self):
         'Generation to meet minimum load leads to no spills'
-        minload = math.floor (nem.totaldemand.min ())
+        minload = math.floor (nem.aggregate_demand.min ())
         self.context.generators = [SuperGenerator (minload)]
         nem.run (self.context)
         self.assertEqual (self.context.spilled_energy, 0)
 
     def test_007 (self):
         'Generation to meet minimum load + 1GW produces some spills'
-        minload = math.floor (nem.totaldemand.min ())
+        minload = math.floor (nem.aggregate_demand.min ())
         self.context.generators = [SuperGenerator (minload + 1000)]
         nem.run (self.context)
         self.assertTrue (self.context.spilled_energy > 0)
