@@ -137,7 +137,7 @@ class Context:
         if self.SHUT < 0 or self.SHUT > 24: _alert("Shutdown time must be between 0 and 24!")
         if self.SHUT < self.ISTART: _alert("Shutdown time must be greater than Start time")
 
-    def nexthour (self, demand):
+    def nexthour (self, load):
         D = self.HR / 24
         T = self.HR % 24
 
@@ -146,7 +146,7 @@ class Context:
             self.ZS = 0
             self.SU = 0
 
-        rQL = self.returnQL (demand)
+        rQL = self.returnQL (load)
         self.collectorOutput ()
         self.startupEnergy ()
         self.storageLoss ()
