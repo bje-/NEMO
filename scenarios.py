@@ -70,51 +70,74 @@ def re100_batteries (context):
 
 def demand_switch (label):
   "Return a callback function to modify the demand."
-  if label == 'unchanged':
-    return unchanged
-  elif label.startswith ('scale:'):
-    try:
+  try:
+    if label == 'unchanged':
+      return unchanged
+
+    elif label.startswith ('scale:'):
+      # label form: "scale:X" scales the load by X%
       _, factor = label.split (':')
       factor = 1 + int (factor) / 100.
-    except ValueError:
-      raise ValueError ('invalid scenario: %s' % label)
-    return lambda context: scale_demand (context, factor)
-  elif label.startswith ('peaks:'):
-    try:
-      # label form: "peaks:N:X" adjust demand peaks over N megawatts by X%.
+      return lambda context: scale_demand (context, factor)
+    
+    elif label.startswith ('shift:'):
+      # label form: "shift:N:H1:H2" load shifts N MW every day
+      _, demand, h1, h2 = label.split (':')
+      demand = int (demand)
+      fromHour = int (h1)
+      toHour = int (h2)
+      if fromHour < 0 or fromHour >= 24 or toHour < 0 or toHour >= 24:
+        raise ValueError
+      return lambda context: shift_demand (context, demand, fromHour, toHour)
+    
+    elif label.startswith ('peaks:'):
+      # label form: "peaks:N:X" adjust demand peaks over N megawatts
+      # by X%
       _, power, factor = label.split (':')
       power = int (power)
       factor = 1 + int (factor) / 100.
-    except ValueError:
-      raise ValueError ('invalid scenario: %s' % label)
-    return lambda context: scale_peaks (context, power, factor)
-  elif label.startswith ('npeaks:'):
-    try:
-      # label form: "npeaks:N:X" adjust top N demand peaks by X%.
+      return lambda context: scale_peaks (context, power, factor)
+
+    elif label.startswith ('npeaks:'):
+      # label form: "npeaks:N:X" adjust top N demand peaks by X%
       _, topn, factor = label.split (':')
       topn = int (topn)
       factor = 1 + int (factor) / 100.
-    except ValueError:
+      return lambda context: scale_npeaks (context, topn, factor)
+    else:
+      raise ValueError
+
+  except ValueError:
       raise ValueError ('invalid scenario: %s' % label)
-    return lambda context: scale_npeaks (context, topn, factor)
-  else:
-    raise ValueError ('unknown demand scenario %s' % label)
 
 def unchanged (context):
   pass
 
 def scale_demand (context, factor):
+  "Scale demand by factor%"
   context.demand *= factor
 
+def shift_demand (context, demand, fromHour, toHour):
+  "Move N MW of demand from fromHour to toHour"
+  # Shed equally in each region for simplicity
+  demand /= 5
+  context.demand[::,fromHour::24] -= demand
+  context.demand[::,toHour::24] += demand
+  # Ensure load never goes negative
+  context.demand = np.where (context.demand < 0, 0, context.demand)
+
 def scale_peaks (context, power, factor):
-  where = np.where (context.demand > power)
-  context.demand[where] *= factor
+  "Adjust demand peaks over N megawatts by X%"
+  agg_demand = context.demand.sum (axis = 0)
+  where = np.where (agg_demand > power)
+  context.demand[::,where] *= factor
 
 def scale_npeaks (context, topn, factor):
-  # Reduce the topN peak demands by factor.
-  top_demands = heapq.nlargest (topn, context.demand)
+  "Adjust top N demand peaks by X%"
+  agg_demand = context.demand.sum (axis = 0)
+  top_demands = heapq.nlargest (topn, agg_demand)
   # A trick from:
   # http://docs.scipy.org/doc/numpy/reference/generated/numpy.where.html#numpy.where
-  ix = np.in1d (context.demand.ravel(), top_demands).reshape (context.demand.shape)
+  ix = np.in1d (agg_demand.ravel(), top_demands).reshape (agg_demand.shape)
   where = np.where (ix)
-  context.demand[where] *= factor
+  context.demand[::,where] *= factor
