@@ -149,7 +149,7 @@ class Context:
         s += 'Spilled energy: %.1f TWh\n' % (self.spilled_energy / twh)
 
         if self.unserved_energy == 0:
-            s += 'No unserved energy!'
+            s += 'No unserved energy'
         elif self.unserved_energy > 0:
             s += 'Unserved energy: %.3f%%' % self.unserved_percent + '\n'
             if self.unserved_percent > self.relstd:
