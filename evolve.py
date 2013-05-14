@@ -27,6 +27,7 @@ parser.add_option("-d", "--demand-scenario", type='string', default='unchanged',
 parser.add_option("-f", "--frequency", type='int', default=10, help='frequency of stats output [default: 10]')
 parser.add_option("-g", "--generations", type='int', default=100, help='generations [default: 100]')
 parser.add_option("-p", "--population", type='int', default=100, help='population size [default: 100]')
+parser.add_option("-q", "--quiet", action="store_true", default=False, help='be quiet')
 parser.add_option("-r", "--discount-rate", type='float', default=0.05, help='discount rate [default: 0.05]')
 parser.add_option("-s", "--supply-scenario", type='string', default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_option("-t", "--transmission", action="store_true", default=False, help="include transmission [default: False]")
@@ -61,7 +62,8 @@ if opts.coal_ccs_costs:
 # Set up the scenario.
 scenarios.supply_switch (opts.supply_scenario) (context)
 scenarios.demand_switch (opts.demand_scenario) (context)
-print context.generators
+if not opts.quiet:
+  print context.generators
 
 def cost (context, transmission_p):
   "sum up the costs"
@@ -147,15 +149,16 @@ def run ():
   ga.setMinimax (Consts.minimaxType["minimize"])
   ga.evolve (freq_stats=opts.frequency)
 
-  best = ga.bestIndividual ()
-  print best
+  if not opts.quiet:
+    best = ga.bestIndividual ()
+    print best
 
-  set_generators (best.getInternalList ())
-  nem.run (context)
-  context.verbose = True
-  print context
-  if opts.transmission:
-	    print context.exchanges.max (axis=0)
+    set_generators (best.getInternalList ())
+    nem.run (context)
+    context.verbose = True
+    print context
+    if opts.transmission:
+      print context.exchanges.max (axis=0)
 
   if opts.x:
     nem.plot (context, spills=opts.spills)
