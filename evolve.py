@@ -71,7 +71,7 @@ def cost (context, transmission_p):
     score += g.capcost (context.costs) + g.opcost (context.costs)
 
   ### Penalty: unserved energy
-  minuse = context.demand_energy * (context.relstd / 100)
+  minuse = context.demand.sum() * (context.relstd / 100)
   use = max (0, context.unserved_energy - minuse)
   score += pow (use, 3)
 

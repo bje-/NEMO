@@ -46,13 +46,13 @@ class TestSequenceFunctions(unittest.TestCase):
         'Demand equals approx. 204 TWh'
         self.context.generators = []
         nem.run (self.context)
-        self.assertEqual (math.trunc (self.context.demand_energy / pow (10,6)), 204)
+        self.assertEqual (math.trunc (self.context.demand.sum() / pow (10,6)), 204)
 
     def test_003 (self):
         'Power system with no generators meets none of the demand'
         self.context.generators = []
         nem.run (self.context)
-        self.assertEqual (self.context.unserved_energy, self.context.demand_energy)
+        self.assertEqual (self.context.unserved_energy, self.context.demand.sum())
 
     def test_004 (self):
         '100 MW fossil plant generates exactly 8760*100 MWh'
