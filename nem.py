@@ -152,7 +152,7 @@ class Context:
 
         if self.unserved_energy == 0:
             s += 'No unserved energy!'
-        elif self.demand_energy > 0:
+        elif self.unserved_energy > 0:
             s += 'Unserved energy: %.3f%%' % self.unserved_percent + '\n'
             if self.unserved_percent > self.relstd:
                 s += 'WARNING: NEM reliability standard exceeded\n'
