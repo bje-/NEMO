@@ -40,9 +40,8 @@ demand = h5file.root.aux.aemo2010.demand[::]
 # Demand is in 30 minute intervals. 
 assert demand.shape == (5, 2*hours)
 # For hourly, average half-hours n and n+1.
-demand = (demand[::,::2] + demand[::,1::2]) / 2
-# Total demand.
-aggregate_demand = demand.sum (axis=0)
+regional_demand = (demand[::,::2] + demand[::,1::2]) / 2
+del demand
 
 # Read BoM station data.
 def _import_bom_stations (filename):
@@ -66,7 +65,7 @@ def default_generation_mix ():
     for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
         if capfactor[g] != None:
             capacity = \
-                (aggregate_demand.sum() * energy_fraction[g]) / (capfactor[g] * hours)
+                (regional_demand.sum() * energy_fraction[g]) / (capfactor[g] * hours)
         if g == PumpedHydro:
             # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
             result.append (PumpedHydro (regions.qld, 500, 5000, label='QLD1 pumped-hydro'))
@@ -129,8 +128,7 @@ class Context:
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
         self.generators = default_generation_mix ()
-        self.demand = None
-        self.demand_energy = 0
+        self.demand = regional_demand.copy ()
         self.spilled_energy = 0
         self.unserved = []
         self.unserved_energy = 0
@@ -147,7 +145,7 @@ class Context:
                     s += '\n\t   ' + g.summary (self.costs) + '\n'
                 else:
                     s += '\n'
-        s += 'Demand energy: %.1f TWh\n' % (self.demand_energy / twh)
+        s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / twh)
         s += 'Spilled energy: %.1f TWh\n' % (self.spilled_energy / twh)
 
         if self.unserved_energy == 0:
@@ -164,16 +162,6 @@ class Context:
                 s += '\n' + 'spilled hours = ' + str ((self.spill.sum (axis=0) > 0).sum ())
             except AttributeError: pass
         return s
-
-def _aggregate_demand (rgns):
-    "Return the aggregate demand for the selected set of regions."
-    if rgns == regions.all:
-        dem = aggregate_demand
-    else:
-        dem = np.zeros (hours)
-        for r in rgns:
-            dem += demand[r,::]
-    return dem
 
 def _path_in_regions_p (path, context):
     print 'path_in_regions_p:', path
@@ -200,16 +188,12 @@ def _sim (context, starthour, endhour):
                 connections[r].append (path)
         connections[r].sort ()
         connections[r].sort (key=lambda s: len (s))
-            
-    if context.demand is None:
-        context.demand = _aggregate_demand (context.regions)
-
-    context.demand_energy = context.demand.sum ()
+    
+    assert context.demand.shape == (5, hours)
     context.generation = np.zeros ((len (context.generators), hours))
     context.spill = np.zeros ((len (context.generators), hours))
-    residual_demand = context.demand.copy ()
     context.exchanges = np.zeros ((hours, regions.numregions, regions.numregions))
-    demand_copy = demand.copy ()
+    demand_copy = context.demand.copy ()
 
     # Zero out regions we don't care about.
     for r in [r for r in regions.all if r not in context.regions]:
@@ -219,30 +203,28 @@ def _sim (context, starthour, endhour):
     gens = [g for g in context.generators if g.region in context.regions]
 
     for hr in xrange (starthour, endhour):
-        hourly_demand = demand_copy[::,hr]
-        residual_demand = hourly_demand.sum ()
+        hour_demand = demand_copy[::,hr]
+        residual_hour_demand = hour_demand.sum ()
 
         if context.verbose:
-            print 'hour', hr, 'demand:', hourly_demand
+            print 'hour', hr, 'demand:', hour_demand
 
         # Dispatch power from each generator in merit order
         for g in gens:
             gidx = genlookup[g]
-            gen, context.spill[gidx, hr] = g.step (hr, residual_demand)
+            gen, context.spill[gidx, hr] = g.step (hr, residual_hour_demand)
             context.generation[gidx, hr] = gen
             if not gen:
                 continue
 
-            residual_demand -= gen
-	    if residual_demand < 0:
-		if residual_demand > -0.1:
-                    residual_demand = 0
-		else:
-                    print 'WARNING: negative demand remaining'
+            residual_hour_demand -= gen
+            # residual can go below zero due to rounding
+            assert residual_hour_demand > -0.1
+            residual_hour_demand = max (0, residual_hour_demand)
 
             if context.verbose:
                 print 'GENERATOR:', g, 'generation =', context.generation[gidx,hr], 'spill =', \
-                    context.spill[gidx,hr], 'residual demand =', residual_demand
+                    context.spill[gidx,hr], 'residual demand =', residual_hour_demand
 
             # distribute the generation across the regions (local region first)
 
@@ -256,7 +238,7 @@ def _sim (context, starthour, endhour):
 
                 rgn = g.region if len (path) is 0 else path[-1][-1]
                 rgnidx = rgn._num
-                transfer = gen if gen < hourly_demand[rgnidx] else hourly_demand[rgnidx]
+                transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
 
                 if transfer:
                     if context.verbose:
@@ -270,7 +252,7 @@ def _sim (context, starthour, endhour):
                             if context.verbose:
                                 print src, '->', dest, '(%d)' % transfer
                                 assert regions.direct_p (src, dest)
-                    hourly_demand[rgnidx] -= transfer
+                    hour_demand[rgnidx] -= transfer
                     gen -= transfer
 
                 if context.spill[gidx, hr]:
@@ -285,15 +267,16 @@ def _sim (context, starthour, endhour):
                         assert context.spill[gidx, hr] >= 0
 
         if context.verbose:
-            if (hourly_demand > 0).any ():
-                print 'hour', hr, 'residual:', hourly_demand
+            if (hour_demand > 0).any ():
+                print 'hour', hr, 'residual:', hour_demand
     return context
 
 def plot (context, spills=False, filename=None, xlimit=None):
     "Produce a pretty plot of supply and demand."
     gen = context.generation
     spill = context.spill
-    demand = context.demand
+    # aggregate demand
+    demand = context.demand.sum (axis = 0)
 
     genlookup = {}
     for i, g in enumerate (context.generators):
@@ -362,23 +345,25 @@ def run (context, starthour=0, endhour=8760):
     "Run the simulation without a plot."
 
     if type (context.regions) != types.ListType:
-        raise ValueError ('regions field is not a list')
+        raise ValueError ('regions is not a list')
     _sim (context, starthour, endhour)
 
     # Calculate some summary statistics.
+    agg_demand = context.demand.sum (axis = 0)
     context.spilled_energy = context.spill.sum ()
     context.accum = context.generation.sum (axis=0)
-    context.unserved_energy = (context.demand - context.accum).sum ()
+    context.unserved_energy = (agg_demand - context.accum).sum ()
     context.unserved_energy = max (0, round (context.unserved_energy, 0))
-    context.unserved = (context.demand - context.accum) > 0.1
+    context.unserved = (agg_demand - context.accum) > 0.1
     context.unserved_hours = context.unserved.sum ()
-    context.unserved_percent = (float (context.unserved_energy / context.demand_energy) * 100)
+    context.unserved_percent = float (context.unserved_energy / agg_demand.sum()) * 100
 
-    shortfall = \
-        [context.demand[hr] - context.accum[hr] for hr in \
-             np.argwhere (context.unserved)]
-    context.shortfalls = (None, None) if shortfall == [] \
-        else (round (min(shortfall)), round (max (shortfall)))
+    shortfall = [agg_demand [hr] - context.accum[hr] \
+                     for hr in np.argwhere (context.unserved)]
+    if len (shortfall) == 0:
+        context.shortfalls = (None, None)
+    else:
+        context.shortfalls = (round (min(shortfall)), round (max (shortfall)))
     return context
 
 def _format_date (x, pos=None):
