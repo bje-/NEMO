@@ -66,7 +66,7 @@ def re100_batteries (context):
     g = context.generators
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
-### Demand scenarios
+### Demand modifiers
 
 def demand_switch (label):
   "Return a callback function to modify the demand."

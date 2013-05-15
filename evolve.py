@@ -22,8 +22,15 @@ import scenarios
 import costs
 import transmission
 
+# Note: argparse would be a better choice here for its "append"
+# action, but we can't yet assume widespread use of Python 2.7.
+
+opt_d_args = []
+def opt_d_callback (option, opt, value, parser):
+  opt_d_args.append (value)
+
 parser = optparse.OptionParser (version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
-parser.add_option("-d", "--demand-scenario", type='string', default='unchanged', help='demand modification scenario [default: no change]')
+parser.add_option("-d", "--demand-modifier", type='string', action="callback", callback=opt_d_callback, help='demand modifier [default: unchanged]')
 parser.add_option("-f", "--frequency", type='int', default=10, help='frequency of stats output [default: 10]')
 parser.add_option("-g", "--generations", type='int', default=100, help='generations [default: 100]')
 parser.add_option("-p", "--population", type='int', default=100, help='population size [default: 100]')
@@ -61,7 +68,10 @@ if opts.coal_ccs_costs:
 
 # Set up the scenario.
 scenarios.supply_switch (opts.supply_scenario) (context)
-scenarios.demand_switch (opts.demand_scenario) (context)
+# Apply each demand modifier in the order given on the command line.
+for arg in opt_d_args:
+  scenarios.demand_switch (arg) (context)
+
 if not opts.quiet:
   print context.generators
 
