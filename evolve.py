@@ -43,6 +43,7 @@ parser.add_option("-x", action="store_true", default=False, help='Plot best indi
 parser.add_option("--coal-price", type='float', default=1.3, help='black coal price ($/GJ) [default: 1.30]')
 parser.add_option("--gas-price", type='float', default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_option("--ccs-storage-costs", type='float', default=42, help='CCS storage costs ($/t) [default: 42]')
+parser.add_option("--fossil-fraction", type='float', default=None, help='Fraction of energy from fossil fuel [default: 0]')
 parser.add_option("--coal-ccs-costs", type='float', default=None, help='override capital cost of coal CCS ($/kW)')
 parser.add_option("--tx-costs", type='int', default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_option("--high-cost", action="store_false", dest="low_cost", help='Use low cost scenario [default: low]')
@@ -86,6 +87,16 @@ def cost (context, transmission_p):
   minuse = context.demand.sum() * (context.relstd / 100)
   use = max (0, context.unserved_energy - minuse)
   score += pow (use, 3)
+
+  ### Penalty: limit fossil to fraction of annual demand
+  if fossil_fraction is not None:
+    fossil_energy = 0
+    for g in context.generators:
+      if g.__class__ is nem.generators.CCGT or \
+            g.__class__ is nem.generators.OCGT:
+        fossil_energy += g.hourly_power.sum ()
+    fossil_exceedance = max (0, fossil_energy - context.demand.sum() * opts.fossil_fraction)
+    score += pow (fossil_exceedance, 3)
 
   ### Penalty: limit biofuel use
   biofuel_energy = 0
