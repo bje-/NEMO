@@ -89,7 +89,7 @@ def cost (context, transmission_p):
   score += pow (use, 3)
 
   ### Penalty: limit fossil to fraction of annual demand
-  if fossil_fraction is not None:
+  if opts.fossil_fraction is not None:
     fossil_energy = 0
     for g in context.generators:
       if g.__class__ is nem.generators.CCGT or \
