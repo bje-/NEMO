@@ -75,6 +75,9 @@ for arg in opt_d_args:
   scenarios.demand_switch (arg) (context)
 
 if not opts.quiet:
+  docstring = scenarios.supply_switch (opts.supply_scenario).__doc__
+  assert docstring is not None
+  print "supply scenario: %s (%s)" % (opts.supply_scenario, docstring)
   print context.generators
 
 def cost (context, transmission_p):
