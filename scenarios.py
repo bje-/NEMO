@@ -19,6 +19,8 @@ def supply_switch (label):
       return replacement
   elif label == 're+fossil':
       return re_plus_fossil
+  elif label == 'theworks':
+      return theworks
   else:
       raise ValueError ('unknown supply scenario %s' % label)
     
@@ -59,7 +61,7 @@ def coal_ccs (context):
     context.generators = [coal] + _hydro () + [ocgt]
 
 def re100 (context):
-    "100% renewable electricity (no change)"
+    "100% renewable electricity"
     pass
 
 def re100_batteries (context):
@@ -74,6 +76,16 @@ def re_plus_fossil (context):
     ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
     g = context.generators
     context.generators = [ccgt] + g[:-5] + [ocgt]
+
+def theworks (context):
+    "All technologies"
+    coal = nem.generators.Black_Coal (nem.regions.nsw, 0)
+    coal_ccs = nem.generators.Coal_CCS (nem.regions.nsw, 0)
+    ccgt = nem.generators.CCGT (nem.regions.nsw, 0)
+    ccgt_ccs = nem.generators.CCGT_CCS (nem.regions.nsw, 0)
+    ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
+    g = context.generators
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g + [ocgt]
 
 ### Demand modifiers
 
