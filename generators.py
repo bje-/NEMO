@@ -167,7 +167,7 @@ class CST(Generator):
 
         # Put back in annualised terms
         anncost = cost / af + fom
-        return anncost
+        return anncost * self.capacity * 1000
 
     def summary (self, costs):
 	return Generator.summary (self, costs) + ', stored %d MWh' % self.hourly_stored.sum () + \
