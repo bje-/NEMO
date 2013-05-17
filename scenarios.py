@@ -17,7 +17,7 @@ def supply_switch (label):
       return re100_batteries
   elif label == 'replacement':
       return replacement
-  elif label == 're+fossil'
+  elif label == 're+fossil':
       return re_plus_fossil
   else:
       raise ValueError ('unknown supply scenario %s' % label)
