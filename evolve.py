@@ -94,7 +94,7 @@ def cost (context, transmission_p):
   score += pow (use, 3)
 
   ### Penalty: total emissions
-  if emissions_limit is not None:
+  if opts.emissions_limit is not None:
     emissions = 0
     for g in context.generators:
       try:
@@ -102,7 +102,8 @@ def cost (context, transmission_p):
       except AttributeError:
         # not all generators have an intensity attribute
         pass
-    emissions_exceedance = max (0, emissions/pow (10,6) - opts.emissions_limit) # (Mt)
+    # exceedance in tonnes CO2-e
+    emissions_exceedance = max (0, emissions - opts.emissions_limit * pow(10,6))
     score += pow (emissions_exceedance, 3)
 
   ### Penalty: limit fossil to fraction of annual demand
