@@ -85,7 +85,7 @@ def theworks (context):
     ccgt_ccs = nem.generators.CCGT_CCS (nem.regions.nsw, 0)
     ocgt = nem.generators.OCGT (nem.regions.nsw, 0)
     g = context.generators
-    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g + [ocgt]
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
 
 ### Demand modifiers
 
