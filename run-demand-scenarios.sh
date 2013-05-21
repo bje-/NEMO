@@ -1,15 +1,37 @@
-#!/bin/sh
+#! /bin/bash
 
 PYTHON=python26
 EVOLVE=~/code/evolve.py
-EVOPTS="-g 10 -q"
+EVOPTS="-m 0.2 -p 10 -g 500"
 
-# scale: scenario
-for s in `seq -10 -10 -90`; do
-    $PYTHON $EVOLVE $EVOPTS -d scale:$s
-done
+# mmm, bash associative arrays
+# scale up demand
+scenario[1]="-d scale:+10"
+scenario[2]="-d scale:+20"
+scenario[3]="-d scale:+30"
+scenario[4]="-d scale:+40"
+scenario[5]="-d scale:+50"
 
-# shift: scenario
-for s in `seq 100 100 1000`; do
-    $PYTHON $EVOLVE $EVOPTS -d shift:$n:18:12
+# scale down demand
+scenario[6]="-d scale:-2"
+scenario[7]="-d scale:-4"
+scenario[8]="-d scale:-6"
+scenario[9]="-d scale:-8"
+scenario[10]="-d scale:-10"
+
+# move 2GW of morning and evening peaks to noon
+scenario[11]="-d shift:2000:8:12 -d shift:2000:18:12"
+
+# scenario 11, plus 5% shaved off top 10 peaks
+scenario[12]="${scenario[11]} -d npeaks:10:-5"
+
+# scenario 11, plus 10% shaved off top 10 peaks
+scenario[13]="${scenario[11]} -d npeaks:10:-10"
+
+# scenario 11, plus a 5% demand reduction
+scenario[14]="${scenario[11]} -d scale:-5"
+
+for n in `seq 14` ; do
+    echo "demand scenario $n"
+    $PYTHON $EVOLVE $EVOPTS -s re100 ${scenario[$n]}
 done
