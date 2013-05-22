@@ -5,6 +5,10 @@ EVOLVE=~/code/evolve.py
 EVOPTS="-m 0.2 -p 10 -g 500"
 
 # mmm, bash associative arrays
+
+# no change to demand (baseline)
+scenario[0]=""
+
 # scale up demand
 scenario[1]="-d scale:+10"
 scenario[2]="-d scale:+20"
@@ -31,7 +35,7 @@ scenario[13]="${scenario[11]} -d npeaks:10:-10"
 # scenario 11, plus a 5% demand reduction
 scenario[14]="${scenario[11]} -d scale:-5"
 
-for n in `seq 14` ; do
+for n in `seq 0 14` ; do
     echo "demand scenario $n"
     $PYTHON $EVOLVE $EVOPTS -s re100 ${scenario[$n]}
 done
