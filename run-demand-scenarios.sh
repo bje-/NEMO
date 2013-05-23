@@ -32,10 +32,22 @@ scenario[12]="${scenario[11]} -d npeaks:10:-5"
 # scenario 11, plus 10% shaved off top 10 peaks
 scenario[13]="${scenario[11]} -d npeaks:10:-10"
 
-# scenario 11, plus a 5% demand reduction
-scenario[14]="${scenario[11]} -d scale:-5"
+# scenario 11, plus 15% shaved off top 10 peaks
+scenario[14]="${scenario[11]} -d npeaks:10:-15"
 
-for n in `seq 0 14` ; do
+# scenario 11, plus 20% shaved off top 10 peaks
+scenario[15]="${scenario[11]} -d npeaks:10:-20"
+
+# scenario 11, plus 5% shaved off top 50 peaks
+scenario[16]="${scenario[11]} -d npeaks:50:-5"
+
+# scenario 11, plus 5% shaved off top 100 peaks
+scenario[17]="${scenario[11]} -d npeaks:100:-5"
+
+# scenario 11, plus a 5% demand reduction
+scenario[18]="${scenario[11]} -d scale:-5"
+
+for n in `seq 0 18` ; do
     echo "demand scenario $n"
     $PYTHON $EVOLVE $EVOPTS -s re100 ${scenario[$n]}
 done
