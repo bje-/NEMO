@@ -44,11 +44,11 @@ scenario[16]="${scenario[11]} -d npeaks:50:-5"
 # scenario 11, plus 5% shaved off top 100 peaks
 scenario[17]="${scenario[11]} -d npeaks:100:-5"
 
-# scenario 11, plus a 5% demand reduction
-scenario[18]="${scenario[11]} -d scale:-5"
-
 # move morning and evening peaks around noon (3GW in each hour)
-scenario[19]="-d shift:3000:7:10 shift:3000:8:12 shift:3000:9:11 shift:3000:17:12 shift:3000:18:13 shift:3000:19:14" 
+scenario[18]="-d shift:3000:7:10 shift:3000:8:12 shift:3000:9:11 shift:3000:17:12 shift:3000:18:13 shift:3000:19:14" 
+
+# scenario 11, plus a 5% demand reduction
+scenario[19]="${scenario[11]} -d scale:-5"
 
 for n in `seq 0 19` ; do
     echo "demand scenario $n"
