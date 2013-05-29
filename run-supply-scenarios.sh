@@ -19,7 +19,7 @@ done
 # Sensitivity to CCS transport costs
 for scenario in coal-ccs ccgt-ccs ; do
     for ccs in 20 40 60 80 100 ; do
-        for co2price in 23 50 70 90 125 ; do
+        for co2price in 20 40 60 80 100 ; do
             $PYTHON $EVOLVE $EVOPTS -s $scenario --ccs-storage-costs=$ccs -c $co2price
         done
     done
@@ -27,8 +27,8 @@ done
 
 # Sensitivity to gas price and CO2 price
 for scenario in ccgt ccgt-ccs coal-ccs replacement ; do
-    for gasprice in 6 9 12 15 ; do
-	for co2price in 0 23 50 70 90 125 ; do
+    for gasprice in 3 6 9 12 15 ; do
+	for co2price in 0 20 40 60 80 100 ; do
 	    $PYTHON $EVOLVE $EVOPTS -s $scenario --gas-price=$gasprice -c $co2price
         done
     done
