@@ -35,6 +35,7 @@ class AETA2030:
         table = self.capcost_per_kw_per_yr
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
+        table[tech.DemandResponse] = 0
 
         # Variable O&M (VOM) costs
         table = self.opcost_per_mwh
@@ -52,6 +53,7 @@ class AETA2030:
 
         # Fixed O&M (FOM) costs
         table = self.fixed_om_costs
+        table[tech.DemandResponse] = 0
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 40 * escalation
