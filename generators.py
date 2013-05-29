@@ -415,3 +415,31 @@ class Battery(Generator):
             ', ran %s hours' % locale.format ('%d', self.runhours, grouping=True) + \
             ', charged %s hours' % locale.format ('%d', self.chargehours, grouping=True) + \
             ', %.2f GWh storage' % (self.maxstorage / 1000.)
+
+class DemandResponse (Generator):
+    patch=Patch (facecolor='white')
+    def __init__ (self, region, capacity, cost_per_mwh, label='demand-response'):
+        "Load shedding generator"
+	Generator.__init__ (self, region, capacity, label)
+        self.setters = []
+        self.runhours = 0
+	self.cost_per_mwh = 0
+
+    def step (self, hr, demand):
+	power = min (self.capacity, demand)
+        self.hourly_power[hr] = power
+        self.hourly_spilled[hr] = 0
+        if power > 0:
+            self.runhours += 1
+	return power, 0
+
+    def reset (self):
+        Generator.reset (self)
+        self.runhours = 0
+
+    def opcost (self, costs):
+	return self.cost_per_mwh
+
+    def summary (self, costs):
+        return Generator.summary (self, costs) + ', ran %s hours' \
+            % locale.format ('%d', self.runhours, grouping=True)
