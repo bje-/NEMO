@@ -19,6 +19,8 @@ def supply_switch (label):
       return replacement
   elif label == 're+fossil':
       return re_plus_fossil
+  elif label == 're+dsp':
+      return re_plus_dsp
   elif label == 'theworks':
       return theworks
   else:
@@ -77,6 +79,14 @@ def re_plus_fossil (context):
     g = context.generators
     context.generators = [ccgt] + g[:-5] + [ocgt]
 
+def re_plus_dsp (context):
+    "Mostly renewables with demand side participation"
+    dr1 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 3000)
+    dr2 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 1000)
+    dr3 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 300)
+    g = context.generators
+    context.generators = g + [dr1, dr2, dr3]
+
 def theworks (context):
     "All technologies"
     coal = nem.generators.Black_Coal (nem.regions.nsw, 0)
@@ -94,6 +104,12 @@ def demand_switch (label):
   try:
     if label == 'unchanged':
       return unchanged
+
+    elif label.startswith ('roll:'):
+      # label form: "roll:X" rolls the load by X hours
+      _, posns = label.split (':')
+      posns = int (posns)
+      return lambda context: roll_demand (context, posns)
 
     elif label.startswith ('scale:'):
       # label form: "scale:X" scales the load by X%
@@ -133,6 +149,10 @@ def demand_switch (label):
 
 def unchanged (context):
   pass
+
+def roll_demand (context, posns):
+  "Roll demand by posns hours"
+  np.roll (context.demand, posns)
 
 def scale_demand (context, factor):
   "Scale demand by factor%"
