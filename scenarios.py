@@ -17,10 +17,10 @@ def supply_switch (label):
       return re100_batteries
   elif label == 'replacement':
       return replacement
+  elif label == 're100+dsp':
+      return re100_dsp
   elif label == 're+fossil':
       return re_plus_fossil
-  elif label == 're+dsp':
-      return re_plus_dsp
   elif label == 'theworks':
       return theworks
   else:
@@ -79,11 +79,11 @@ def re_plus_fossil (context):
     g = context.generators
     context.generators = [ccgt] + g[:-5] + [ocgt]
 
-def re_plus_dsp (context):
+def re100_dsp (context):
     "Mostly renewables with demand side participation"
-    dr1 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 3000)
+    dr1 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 300)
     dr2 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 1000)
-    dr3 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 300)
+    dr3 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 3000)
     g = context.generators
     context.generators = g + [dr1, dr2, dr3]
 
