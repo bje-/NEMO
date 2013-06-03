@@ -47,7 +47,6 @@ for i, soln in enumerate (runs):
   results[i] = eval_func (soln[1:])
   # print results[i]
 
-# What is this?
 print '--- RESULTS for res.data ---'
 r = ['NSW1', 'QLD1', 'SA1', 'TAS1', 'VIC1']
 for i in range (5):
