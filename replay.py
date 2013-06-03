@@ -8,56 +8,57 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-import numpy as np
-import evolve
+import optparse
+import costs
 import nem
 import sys
+import re
 
-if len (sys.argv) != 2:
-  print 'Usage: %s FILE' % (sys.argv[0])
+parser = optparse.OptionParser (version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser.add_option("-f", type='string', default=None, help='replay file')
+parser.add_option("-v", action="store_true", default=False, help='verbose mode [default: False]')
+parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
+parser.add_option("-s", "--spills", action="store_true", default=False, help='Plot spills [default: False]')
+opts,args = parser.parse_args ()
+
+if opts.f is None:
+  parser.print_help ()
   sys.exit (1)
 
-np.set_printoptions (precision=0)
+def set_generators (chromosome):
+  "Set the generator list from the GA chromosome"
+  i = 0
+  for gen in context.generators:
+    for setter, scale in gen.setters:
+      setter (chromosome[i] * scale)
+      i += 1
+  # Check every parameter has been set.
+  assert i == len (chromosome)
 
-def eval_func (chromosome):
+def run_one (chromosome):
   "annual cost of the system (in billion $)"
-
-  context = nem.Context ()
-  for i, capacity in enumerate (chromosome[:-5]):
-    context.generators[i].set_capacity (capacity * 1000)
-  # the last five genes go into the last five generator slots
-  # skip all the hydro stuff
-  for i, capacity in enumerate (chromosome[-5:]):
-    context.generators[-5+i].set_capacity (capacity * 1000)
-
+  assert len (chromosome) == 20
+  context.costs = costs.AETA2030Low (0.05, 1.3, 11, 42)
+  set_generators (chromosome)
   nem.run (context)
-  newscore = evolve.cost (context, False)
-  if newscore > 100:
-    print 'WARNING: high score:', newscore
+  context.verbose = opts.v
+  print context
 
-  m = context.exchanges.max (axis=0)
-  for i in range (5):
-    m[i,i] = 0
-  return m
+# Load a file like so:
+#   Melbourne PV (VIC1), 0.0 GW
+#     supplied 0.0 TWh
+#   [...]
 
-# Load the top 24 into a list of lists.
-runs = np.genfromtxt (sys.argv[1])
-results = np.zeros ((runs.shape[0],5,5))
-for i, soln in enumerate (runs):
-  results[i] = eval_func (soln[1:])
-  # print results[i]
+context = nem.Context ()
+capacities = []
+replayfile = open (opts.f)
+for line in replayfile:
+  if re.search ('GW$', line) and not re.search ('hydro', line):
+    fields = line.split (' ')
+    capacities.append (float (fields[-2]))
+run_one (capacities)
 
-print '--- RESULTS for res.data ---'
-r = ['NSW1', 'QLD1', 'SA1', 'TAS1', 'VIC1']
-for i in range (5):
-  for j in range (5):
-    # iterate over each region pair
-    print j, results[i,j].mean (0), results[i,j].min (0), results[i,j].max (0), r[j]
-  print; print
-
-print '--- RESULTS for .data ---'
-evolve.scoreTx=True
-for i, soln in enumerate (runs):
-  # use the original evaluation function (cost)
-  newscore = evolve.eval_func (soln[1:])
-  print soln[0], newscore
+if opts.x:
+  print 'Press Enter to start graphical browser ',
+  sys.stdin.readline ()
+  nem.plot (context, spills=opts.spills)
