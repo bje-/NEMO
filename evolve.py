@@ -17,6 +17,7 @@ from pyevolve import Crossovers
 
 import numpy as np
 import optparse
+import sys
 import nem
 import scenarios
 import costs
@@ -200,6 +201,8 @@ def run ():
       print context.exchanges.max (axis=0)
 
   if opts.x:
+    print 'Press Enter to start graphical browser ',
+    sys.stdin.readline ()
     nem.plot (context, spills=opts.spills)
 
 if __name__ == '__main__':
