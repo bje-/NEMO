@@ -1,5 +1,5 @@
 # -*- Python -*-
-# Copyright (C) 2012 Ben Elliston
+# Copyright (C) 2012, 2013 Ben Elliston
 #
 # replay.py -- replay NEM runs from a text file of generators
 #
