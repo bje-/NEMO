@@ -19,6 +19,8 @@ def supply_switch (label):
       return replacement
   elif label == 're100+dsp':
       return re100_dsp
+  elif label == 're100+geoth':
+      return re100_geothermal
   elif label == 're+fossil':
       return re_plus_fossil
   elif label == 'theworks':
@@ -86,6 +88,12 @@ def re100_dsp (context):
     dr3 = nem.generators.DemandResponse (nem.regions.nsw, 2000, 3000)
     g = context.generators
     context.generators = g + [dr1, dr2, dr3]
+
+def re100_geothermal (context):
+    "100% reneables plus geothermal"
+    geo = nem.generators.Geothermal (nem.regions.sa, 0)
+    g = context.generators
+    context.generators = [geo] + g[:-4]
 
 def theworks (context):
     "All technologies"

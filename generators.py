@@ -416,6 +416,18 @@ class Battery(Generator):
             ', charged %s hours' % locale.format ('%d', self.chargehours, grouping=True) + \
             ', %.2f GWh storage' % (self.maxstorage / 1000.)
 
+class Geothermal (Generator):
+    patch=Patch (facecolor='brown')
+    def __init__ (self, region, capacity, label='geothermal'):
+        "Hot rock geothermal"
+	Generator.__init__ (self, region, capacity, label)
+
+    def step (self, hr, demand):
+	power = min (self.capacity, demand)
+        self.hourly_power[hr] = power
+        self.hourly_spilled[hr] = 0
+	return power, 0
+
 class DemandResponse (Generator):
     patch=Patch (facecolor='white')
     def __init__ (self, region, capacity, cost_per_mwh, label='demand-response'):
