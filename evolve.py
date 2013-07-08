@@ -40,7 +40,7 @@ parser.add_option("-q", "--quiet", action="store_true", default=False, help='be 
 parser.add_option("-r", "--discount-rate", type='float', default=0.05, help='discount rate [default: 0.05]')
 parser.add_option("-s", "--supply-scenario", type='string', default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_option("-t", "--transmission", action="store_true", default=False, help="include transmission [default: False]")
-parser.add_option("-c", "--carbon-price", type='int', default=23, help='carbon price ($/t) [default: 23]')
+parser.add_option("-c", "--carbon-price", type='int', default=25, help='carbon price ($/t) [default: 25]')
 parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
 parser.add_option("--coal-price", type='float', default=1.3, help='black coal price ($/GJ) [default: 1.30]')
 parser.add_option("--gas-price", type='float', default=11.0, help='gas price ($/GJ) [default: 11]')
