@@ -7,7 +7,7 @@ EVOLVE=~/code/evolve.py
 EVOPTS="-g 10"
 
 # Sensitivity to coal CCS capital costs
-for ccscost in `seq 4000 500 6000`; do
+for ccscost in `seq 3000 500 5000`; do
     for storcost in 20 40 60 80 100 ; do
 	for lowhigh in --low-cost --high-cost ; do
             $PYTHON $EVOLVE $EVOPTS -s coal-ccs $lowhigh --coal-ccs-costs=$ccscost \
