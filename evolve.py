@@ -44,7 +44,7 @@ parser.add_option("-c", "--carbon-price", type='int', default=25, help='carbon p
 parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
 parser.add_option("--coal-price", type='float', default=1.3, help='black coal price ($/GJ) [default: 1.30]')
 parser.add_option("--gas-price", type='float', default=11.0, help='gas price ($/GJ) [default: 11]')
-parser.add_option("--ccs-storage-costs", type='float', default=42, help='CCS storage costs ($/t) [default: 42]')
+parser.add_option("--ccs-storage-costs", type='float', default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_option("--emissions-limit", type='float', default=None, help='CO2 emissions limit (Mt) [default: None]')
 parser.add_option("--fossil-limit", type='float', default=None, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_option("--coal-ccs-costs", type='float', default=None, help='override capital cost of coal CCS ($/kW)')
