@@ -49,8 +49,8 @@ parser.add_option("--emissions-limit", type='float', default=None, help='CO2 emi
 parser.add_option("--fossil-limit", type='float', default=None, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_option("--coal-ccs-costs", type='float', default=None, help='override capital cost of coal CCS ($/kW)')
 parser.add_option("--tx-costs", type='int', default=800, help='transmission costs ($/MW.km) [default: 800]')
-parser.add_option("--high-cost", action="store_false", dest="low_cost", help='Use low cost scenario [default: low]')
-parser.add_option("--low-cost", action="store_true", default=True, help='Use high cost scenario')
+parser.add_option("--low-cost", action="store_true", default=True, help='Use low technology costs [default]')
+parser.add_option("--high-cost", action="store_false", dest="low_cost", help='Use high technology costs')
 parser.add_option("--spills", action="store_true", default=False, help='Plot spills [default: False]')
 
 opts,args = parser.parse_args ()
