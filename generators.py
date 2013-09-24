@@ -265,8 +265,6 @@ class Biofuel(Fuelled):
     def step (self, hr, demand):
         power = min (self.capacity, demand)
         self.hourly_power[hr] = power
-        # calculate delta power
-        delta = abs (self.prev - power)
         self.prev = power
         if power > 0:
             self.runhours += 1
