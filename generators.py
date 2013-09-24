@@ -260,12 +260,10 @@ class Biofuel(Fuelled):
     patch=Patch (facecolor='wheat')
     def __init__ (self, region, capacity, label='biofuel'):
         Fuelled.__init__ (self, region, capacity, label)
-        self.prev = 0
 
     def step (self, hr, demand):
         power = min (self.capacity, demand)
         self.hourly_power[hr] = power
-        self.prev = power
         if power > 0:
             self.runhours += 1
         return power, 0
