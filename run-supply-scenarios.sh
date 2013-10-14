@@ -4,7 +4,7 @@
 
 PYTHON=python26
 EVOLVE=~/code/evolve.py
-EVOPTS="-g 10"
+EVOPTS="-g 10 -c 56"
 
 # Sensitivity to coal CCS capital costs
 for ccscost in `seq 3000 500 5000`; do
