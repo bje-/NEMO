@@ -42,7 +42,7 @@ parser.add_option("-s", "--supply-scenario", type='string', default='re100', hel
 parser.add_option("-t", "--transmission", action="store_true", default=False, help="include transmission [default: False]")
 parser.add_option("-c", "--carbon-price", type='int', default=25, help='carbon price ($/t) [default: 25]')
 parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
-parser.add_option("--coal-price", type='float', default=1.3, help='black coal price ($/GJ) [default: 1.30]')
+parser.add_option("--coal-price", type='float', default=1.86, help='black coal price ($/GJ) [default: 1.86]')
 parser.add_option("--gas-price", type='float', default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_option("--ccs-storage-costs", type='float', default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_option("--emissions-limit", type='float', default=None, help='CO2 emissions limit (Mt) [default: None]')
