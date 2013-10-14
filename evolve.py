@@ -112,7 +112,10 @@ def cost (context, transmission_p):
     fossil_energy = 0
     for g in context.generators:
       if g.__class__ is nem.generators.CCGT or \
-            g.__class__ is nem.generators.OCGT:
+            g.__class__ is nem.generators.OCGT or \
+	    g.__class__ is nem.generators.Coal_CCS or \
+	    g.__class__ is nem.generators.CCGT_CCS or \
+	    g.__class__ is nem.generators.Black_Coal:
         fossil_energy += g.hourly_power.sum ()
     fossil_exceedance = max (0, fossil_energy - context.demand.sum() * opts.fossil_limit)
     score += pow (fossil_exceedance, 3)
