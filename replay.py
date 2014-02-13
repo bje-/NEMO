@@ -53,8 +53,10 @@ context = nem.Context ()
 capacities = []
 replayfile = open (opts.f)
 for line in replayfile:
+  if re.search ('^\s*$', line):
+    continue
   if re.search ('^\s*#', line):
-    print line
+    print line,
     continue
   if not re.search ('^\s*List:\s*\[.*\].?$', line) and opts.v:
     print 'skipping malformed input:', line
@@ -63,6 +65,7 @@ for line in replayfile:
   capacities = m.group(1).split (',')
   capacities = map (float, capacities)  # str -> float
   run_one (capacities)
+  print
 
   if opts.x:
     print 'Press Enter to start graphical browser ',
