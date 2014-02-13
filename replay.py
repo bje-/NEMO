@@ -44,11 +44,6 @@ def run_one (chromosome):
   context.verbose = opts.v
   print context
 
-# Load a file like so:
-#   Melbourne PV (VIC1), 0.0 GW
-#     supplied 0.0 TWh
-#   [...]
-
 context = nem.Context ()
 capacities = []
 replayfile = open (opts.f)
