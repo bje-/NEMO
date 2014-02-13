@@ -53,12 +53,18 @@ context = nem.Context ()
 capacities = []
 replayfile = open (opts.f)
 for line in replayfile:
-  if re.search ('GW$', line) and not re.search ('hydro', line):
-    fields = line.split (' ')
-    capacities.append (float (fields[-2]))
-run_one (capacities)
+  if re.search ('^\s*#', line):
+    print line
+    continue
+  if not re.search ('^\s*List:\s*\[.*\].?$', line) and opts.v:
+    print 'skipping malformed input:', line
+    continue
+  m = re.match (r"^\s*List:\s*\[(.*)\].?$", line)
+  capacities = m.group(1).split (',')
+  capacities = map (float, capacities)  # str -> float
+  run_one (capacities)
 
-if opts.x:
-  print 'Press Enter to start graphical browser ',
-  sys.stdin.readline ()
-  nem.plot (context, spills=opts.spills)
+  if opts.x:
+    print 'Press Enter to start graphical browser ',
+    sys.stdin.readline ()
+    nem.plot (context, spills=opts.spills)
