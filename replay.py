@@ -17,8 +17,8 @@ import re
 parser = optparse.OptionParser (version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
 parser.add_option("-f", type='string', default=None, help='replay file')
 parser.add_option("-v", action="store_true", default=False, help='verbose mode [default: False]')
-parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
-parser.add_option("-s", "--spills", action="store_true", default=False, help='Plot spills [default: False]')
+parser.add_option("-x", action="store_true", default=False, help='producing a balancing plot [default: False]')
+parser.add_option("-s", "--spills", action="store_true", default=False, help='plot spills [default: False]')
 opts,args = parser.parse_args ()
 
 if opts.f is None:
@@ -43,6 +43,9 @@ def run_one (chromosome):
   nem.run (context)
   context.verbose = opts.v
   print context
+
+  for i in range (8760):
+    print int (context.spill[::,i].sum ())
 
 context = nem.Context ()
 capacities = []
