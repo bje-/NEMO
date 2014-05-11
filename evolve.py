@@ -60,14 +60,14 @@ np.set_printoptions (precision=5)
 context = nem.Context ()
 
 if opts.low_cost:
-  context.costs = costs.AETA2030Low (opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
+  context.costs = costs.AETA2012_2030Low (opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
 else:
-  context.costs = costs.AETA2030High (opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
+  context.costs = costs.AETA2012_2030High (opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
 context.costs.carbon = opts.carbon_price
 context.costs.transmission = transmission.Transmission (opts.tx_costs, opts.discount_rate)
 if opts.coal_ccs_costs is not None:
   fom = context.costs.fixed_om_costs[nem.generators.Coal_CCS]
-  af = costs.annuity_factor (costs.AETA2030.lifetime, opts.discount_rate)
+  af = costs.annuity_factor (costs.AETA2012_2030.lifetime, opts.discount_rate)
   context.costs.capcost_per_kw_per_yr[nem.generators.Coal_CCS] = opts.coal_ccs_costs / af + fom
 
 # Set up the scenario.

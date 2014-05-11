@@ -16,7 +16,7 @@ def annuity_factor (t, r):
 # Data source: BREE AETA report (2012)
 ####
 
-class AETA2030:
+class AETA2012_2030:
     lifetime = 30
 
     def __init__ (self, discount, coal_price, gas_price, ccs_price):
@@ -27,7 +27,7 @@ class AETA2030:
         self.capcost_per_kw_per_yr = {}
         self.opcost_per_mwh = {}
         self.fixed_om_costs = {}
-        self.annuityf = annuity_factor (AETA2030.lifetime, discount)
+        self.annuityf = annuity_factor (AETA2012_2030.lifetime, discount)
         
         escalation = 1.171
 
@@ -68,9 +68,9 @@ class AETA2030:
         table[tech.Black_Coal] = 50.5 * escalation
 	table[tech.Geothermal] = 200 * escalation
 
-class AETA2030Low (AETA2030):
+class AETA2012_2030Low (AETA2012_2030):
     def __init__ (self, discount, coal_price, gas_price, ccs_storage_costs):
-        AETA2030.__init__ (self, discount, coal_price, gas_price, ccs_storage_costs)
+        AETA2012_2030.__init__ (self, discount, coal_price, gas_price, ccs_storage_costs)
         af = self.annuityf
         # capital costs in $/kW
         table = self.capcost_per_kw_per_yr
@@ -86,9 +86,9 @@ class AETA2030Low (AETA2030):
         table[tech.Black_Coal] = 2947 / af + fom[tech.Black_Coal]
 	table[tech.Geothermal] = 6645 / af + fom[tech.Geothermal]
 
-class AETA2030High (AETA2030):
+class AETA2012_2030High (AETA2012_2030):
     def __init__ (self, discount, coal_price, gas_price, ccs_storage_costs):
-        AETA2030.__init__ (self, discount, coal_price, gas_price, ccs_storage_costs)
+        AETA2012_2030.__init__ (self, discount, coal_price, gas_price, ccs_storage_costs)
         af = self.annuityf
         # capital costs in $/kW
         table = self.capcost_per_kw_per_yr
