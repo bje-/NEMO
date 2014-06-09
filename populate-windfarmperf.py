@@ -1,4 +1,4 @@
-#!/usr/bin/env python26
+#!/usr/bin/env python
 # Load wind generation data from http://windfarmperformance.info for a
 # year into the database.
 #

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-PYTHON=python26
+PYTHON=python
 EVOLVE=~/code/evolve.py
 EVOPTS="-m 0.2 -p 10 -g 500"
 

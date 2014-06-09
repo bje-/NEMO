@@ -2,7 +2,7 @@
 #
 # Run all of the scenarios for the final journal paper.
 
-PYTHON=python26
+PYTHON=python
 EVOLVE=~/code/evolve.py
 EVOPTS="-g 10 -c 56"
 

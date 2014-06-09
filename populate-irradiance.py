@@ -1,4 +1,4 @@
-#!/usr/bin/python26
+#!/usr/bin/python
 #
 # A utility to populate a new HDF5 file. -*- Python -*-
 

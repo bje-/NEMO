@@ -1,4 +1,4 @@
-#!/usr/bin/env python26
+#!/usr/bin/env python
 # Load AEMO non-scheduled generation data for a year into the nem.h5 database.
 #
 # -*- Python -*-

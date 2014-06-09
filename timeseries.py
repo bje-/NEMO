@@ -1,4 +1,4 @@
-#!/usr/bin/env python26
+#!/usr/bin/env python
 #
 # -*- Python -*-
 # Copyright (C) 2011  Marton Hidas
