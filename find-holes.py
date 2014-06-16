@@ -7,8 +7,8 @@ import datetime
 import numpy as np
 import hashlib
 
-maxcols=839
-maxrows=679
+maxcols = 839
+maxrows = 679
 np.set_printoptions(threshold=np.nan)
 
 def nodata_p (x): return int (x == '-999')
