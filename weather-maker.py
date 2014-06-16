@@ -42,31 +42,36 @@ import ephem
 ### Sample row from the BoM weather data:
 ### hm, 48027,2009,01,01,00,00, 22.3,N, 13.1,N,  3.4,N, 29,N,   7.8,N,  26.9,N,  1.5,N,220,N,  2.1,N,1005.6,N, 975.6,N, 1,#
 
-def verbose (s):
+
+def verbose(s):
     if opts.verbose:
         print >>sys.stderr, s
 
-def warn (s):
+
+def warn(s):
     if opts.verbose:
         print >>sys.stderr, 'warning:',
         print >>sys.stderr, s
 
-def verify (items):
+
+def verify(items):
     # Verify that the line is valid.
     if items[0] != 'hm':
-        warn ('non-hm record')
+        warn('non-hm record')
 
-    st = items[1].strip().lstrip ('0')
+    st = items[1].strip().lstrip('0')
     if st != stnumber:
         print '%s is a foreign station number' % st
 
-def tmy3_preamble (f):
+
+def tmy3_preamble(f):
     # eg. 722287,"ANNISTON METROPOLITAN AP",AL,-6.0,33.583,-85.850,186
     print >>f, '%s in %s,\"%s\",%s,%.1f,%.3f,%.3f,%d' % \
         (stnumber, stname, opts.year, ststate[0:2], opts.tz, locn._lat, locn._lon, elevation)
     print >>f, 'Date (MM/DD/YYYY),Time (HH:MM),ETR (W/m^2),ETRN (W/m^2),GHI (W/m^2),GHI source,GHI uncert (%),DNI (W/m^2),DNI source,DNI uncert (%),DHI (W/m^2),DHI source,DHI uncert (%),GH illum (lx),GH illum source,Global illum uncert (%),DN illum (lx),DN illum source,DN illum uncert (%),DH illum (lx),DH illum source,DH illum uncert (%),Zenith lum (cd/m^2),Zenith lum source,Zenith lum uncert (%),TotCld (tenths),TotCld source,TotCld uncert (code),OpqCld (tenths),OpqCld source,OpqCld uncert (code),Dry-bulb (C),Dry-bulb source,Dry-bulb uncert (code),Dew-point (C),Dew-point source,Dew-point uncert (code),RHum (%),RHum source,RHum uncert (code),Pressure (mbar),Pressure source,Pressure uncert (code),Wdir (degrees),Wdir source,Wdir uncert (code),Wspd (m/s),Wspd source,Wspd uncert (code),Hvis (m),Hvis source,Hvis uncert (code),CeilHgt (m),CeilHgt source,CeilHgt uncert (code),Pwat (cm),Pwat source,Pwat uncert (code),AOD (unitless),AOD source,AOD uncert (code),Alb (unitless),Alb source,Alb uncert (code),Lprecip depth (mm),Lprecip quantity (hr),Lprecip source,Lprecip uncert (code)'
 
-def epw_preamble (f):
+
+def epw_preamble(f):
     print >>f, 'LOCATION,%s (%s) in %s,%s,AUS,BoM,%s,%.2f,%.2f,%.1f,%.1f' % \
         (stname, stnumber, opts.year, ststate, stnumber, locn._lat, locn._lon, opts.tz, elevation)
 
@@ -78,65 +83,68 @@ def epw_preamble (f):
     print >>f, 'COMMENTS 2,Please report bugs in weather-maker.py to b.elliston@student.unsw.edu.au'
     print >>f, 'DATA PERIODS,1,1,Data,Sunday,1/ 1,12/31'
 
-def tmy3_record (f, record):
-    t = datetime.datetime (opts.year,1,1)
-    t += datetime.timedelta (hours=record['hour'])
+
+def tmy3_record(f, record):
+    t = datetime.datetime(opts.year, 1, 1)
+    t += datetime.timedelta(hours=record['hour'])
 
     line = '%02d/%02d/%d,%02d:50,-9900,-9900,%d,1,5,%d,1,5,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,?,9,-9900,?,9,%.1f,A,7,%.1f,A,7,%.1f,A,7,%d,A,7,%d,A,7,%.1f,A,7,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,-9900,?,9' \
-        % (t.month, t.day, t.year, t.hour + 1, record['ghi'], record['dni'], \
-               record['dry-bulb'], record['dew-point'], record['rel-humidity'], \
-               record['atm-pressure'] / 100, record['wind-direction'], record['wind-speed'])
+        % (t.month, t.day, t.year, t.hour + 1, record['ghi'], record['dni'],
+           record['dry-bulb'], record['dew-point'], record['rel-humidity'],
+           record['atm-pressure'] / 100, record['wind-direction'], record['wind-speed'])
     print >>f, line
 
-def epw_record (f, record):
-    t = datetime.datetime (opts.year,1,1)
-    t += datetime.timedelta (hours=record['hour'])
+
+def epw_record(f, record):
+    t = datetime.datetime(opts.year, 1, 1)
+    t += datetime.timedelta(hours=record['hour'])
 
     line = '%d,%d,%d,%d,50,_______________________________________,%.1f,%.1f,%d,%d,9999,9999,9999,%d,%d,%d,999999,999999,999999,999999,%d,%.1f,99,99,9999,99999,9,999999999,99999,0.999,999,99,999,0,99' \
-        % (t.year, t.month, t.day, t.hour + 1, record['dry-bulb'], record['dew-point'], \
-               record['rel-humidity'], record['atm-pressure'], record['ghi'], record['dni'], record['dhi'], \
-               record['wind-direction'], record['wind-speed'])
+        % (t.year, t.month, t.day, t.hour + 1, record['dry-bulb'], record['dew-point'],
+           record['rel-humidity'], record['atm-pressure'], record['ghi'], record['dni'], record['dhi'],
+           record['wind-direction'], record['wind-speed'])
     print >>f, line
 
+
 # Return the GHI and DNI for a given location and time.
-def irradiances (locn, hour):
-    x, y = locn.xy ()
+def irradiances(locn, hour):
+    x, y = locn.xy()
     # Compute a solar data filename from the hour
     # Use 2010 as the reference year, as it was not a leap year.
-    hours = datetime.timedelta (hours=hour)
-    tzoffset = datetime.timedelta (hours=opts.tz)
-    hr = datetime.datetime (opts.year, 1, 1) + hours - tzoffset
+    hours = datetime.timedelta(hours=hour)
+    tzoffset = datetime.timedelta(hours=opts.tz)
+    hr = datetime.datetime(opts.year, 1, 1) + hours - tzoffset
     if hr.month == 2 and hr.day == 29:
         # skip Feb 29 on leap years
-        hr += datetime.timedelta (days=1)
-    filename = hr.strftime (opts.grids + '/HOURLY_GHI/%d/' % opts.year + hr.strftime ('solar_ghi_%Y%m%d_%HUT.txt'))
+        hr += datetime.timedelta(days=1)
+    filename = hr.strftime(opts.grids + '/HOURLY_GHI/%d/' % opts.year + hr.strftime('solar_ghi_%Y%m%d_%HUT.txt'))
     try:
-        f = bz2.BZ2File (filename + '.bz2', 'r')
-        line = f.readlines ()[x + 6]
-        f.close ()
-        ghr = int (line.split()[y])
+        f = bz2.BZ2File(filename + '.bz2', 'r')
+        line = f.readlines()[x + 6]
+        f.close()
+        ghr = int(line.split()[y])
     except IOError:
         try:
-            f = open (filename, 'r')
-            line = f.readlines ()[x + 6]
-            f.close ()
-            ghr = int (line.split()[y])
+            f = open(filename, 'r')
+            line = f.readlines()[x + 6]
+            f.close()
+            ghr = int(line.split()[y])
         except IOError:
             # print 'missing', filename
             ghr = 0
 
-    filename = hr.strftime (opts.grids + '/HOURLY_DNI/%d/' % opts.year + hr.strftime ('solar_dni_%Y%m%d_%HUT.txt'))
+    filename = hr.strftime(opts.grids + '/HOURLY_DNI/%d/' % opts.year + hr.strftime('solar_dni_%Y%m%d_%HUT.txt'))
     try:
-        f = bz2.BZ2File (filename + '.bz2', 'r')
-        line = f.readlines ()[x + 6]
-        f.close ()
-        dnr = int (line.split()[y])
+        f = bz2.BZ2File(filename + '.bz2', 'r')
+        line = f.readlines()[x + 6]
+        f.close()
+        dnr = int(line.split()[y])
     except IOError:
         try:
-            f = open (filename, 'r')
-            line = f.readlines ()[x + 6]
-            f.close ()
-            dnr = int (line.split()[y])
+            f = open(filename, 'r')
+            line = f.readlines()[x + 6]
+            f.close()
+            dnr = int(line.split()[y])
         except IOError:
             # print 'missing', filename
             dnr = 0
@@ -148,44 +156,44 @@ def irradiances (locn, hour):
 
     # Compute direct horizontal irradiance:
     # DHI = GHI - DNI cos (zenith)
-    observer.date = hr + datetime.timedelta (minutes=50)
-    sun.compute (observer)
+    observer.date = hr + datetime.timedelta(minutes=50)
+    sun.compute(observer)
     zenith = (math.pi / 2.) - sun.alt
-    dhr = ghr - dnr * math.cos (zenith)
+    dhr = ghr - dnr * math.cos(zenith)
     if dhr < -10:
         # Don't worry about diffuse levels below 10 W/m2.
-        warn ('negative diffuse horizontal irradiance: %d' % dhr)
+        warn('negative diffuse horizontal irradiance: %d' % dhr)
         dhr = 0
     return ghr, dnr, dhr
-    
-# Read station details file.
 
-def station_details ():
+
+# Read station details file.
+def station_details():
     global stnumber
     global stname
     global ststate
 
-    line = [line for line in open (opts.hm_details, 'r') if 'st,' + opts.st in line] [0]
+    line = [line for line in open(opts.hm_details, 'r') if 'st,' + opts.st in line][0]
     st = line[0:2]
-    stnumber = line[3:9].strip ().lstrip ('0')
-    stname = line[15:55].strip ()
+    stnumber = line[3:9].strip().lstrip('0')
+    stname = line[15:55].strip()
     ststate = line[107:110]
-    verbose ('Processing station number %s (%s)' % (stnumber, stname))
+    verbose('Processing station number %s (%s)' % (stnumber, stname))
 
-    latitude = float (line[72:80])
-    longitude = float (line[81:90])
-    locn = LatLong ((latitude, longitude))
-    altitude = int (float (line[111:117]))
+    latitude = float(line[72:80])
+    longitude = float(line[81:90])
+    locn = LatLong((latitude, longitude))
+    altitude = int(float(line[111:117]))
     wflags = line[153:156]
     sflags = line[157:160]
     iflags = line[161:164]
-    if int (wflags) or int (sflags) or int (iflags):
-        warn ('%% wrong = %s, %% suspect = %s, %% inconsistent = %s' \
-                  % (wflags, sflags, iflags))
+    if int(wflags) or int(sflags) or int(iflags):
+        warn('%% wrong = %s, %% suspect = %s, %% inconsistent = %s'
+             % (wflags, sflags, iflags))
 
-    return (locn, altitude)
+    return(locn, altitude)
 
-parser = optparse.OptionParser (version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser = optparse.OptionParser(version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
 parser.add_option("--grids", type='string', help='top of gridded data tree')
 parser.add_option("-y", "--year", type='int', help='year to generate')
 parser.add_option("--st", type='string', help='BoM station code (required)')
@@ -195,97 +203,97 @@ parser.add_option("--tz", type='float', default=10.0, help='Time zone [default +
 parser.add_option("-o", "--out", type='string', help='output filename')
 parser.add_option("--format", "--format", default="epw", help="output format: EPW [default], TMY3", metavar="FORMAT")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose run")
-opts,args = parser.parse_args ()
+opts, args = parser.parse_args()
 
 if not opts.grids or not opts.hm_data or \
         not opts.hm_details or \
         not opts.out or not opts.year or not opts.st:
-    parser.print_help ()
+    parser.print_help()
     print
-    sys.exit (1)
+    sys.exit(1)
 
 # Check that the opts.grid directory exists
-if not os.path.isdir (opts.grids):
+if not os.path.isdir(opts.grids):
     print >>sys.stderr, 'error: %s is not a directory' % opts.grids
-    sys.exit (1)
+    sys.exit(1)
 
-infile = open (opts.hm_data, 'r')
-outfile = open (opts.out, 'wb')
+infile = open(opts.hm_data, 'r')
+outfile = open(opts.out, 'wb')
 
-locn, elevation = station_details ()
-sun = ephem.Sun ()
-observer = ephem.Observer ()
+locn, elevation = station_details()
+sun = ephem.Sun()
+observer = ephem.Observer()
 observer.elevation = elevation
-observer.lat = str (locn._lat)
-observer.long = str (locn._lon)
+observer.lat = str(locn._lat)
+observer.long = str(locn._lon)
 
-if opts.format.lower () == 'tmy3':
-    verbose ('Generating a TMY3 file')
-    tmy3_preamble (outfile)
-elif opts.format.lower () == 'epw':
-    verbose ('Generating an EPW file')
-    epw_preamble (outfile)
+if opts.format.lower() == 'tmy3':
+    verbose('Generating a TMY3 file')
+    tmy3_preamble(outfile)
+elif opts.format.lower() == 'epw':
+    verbose('Generating an EPW file')
+    epw_preamble(outfile)
 else:
-    raise ValueError ("unknown format %s" % opts.format)
+    raise ValueError("unknown format %s" % opts.format)
 
 i = 0
 for line in infile:
-    if len (line) == 1:
+    if len(line) == 1:
         # Skip weird ^Z lines.
         continue
-    data = line.split (',')
+    data = line.split(',')
     if data[1] == 'Station Number':
         # Skip this line; it is the header.
         continue
-    if data[2] != str (opts.year):
+    if data[2] != str(opts.year):
         # Skip years that are not of interest.
         continue
     if data[3] == '02' and data[4] == '29':
-        warn ('skipping Feb 29')
+        warn('skipping Feb 29')
         i += 1
         continue
 
     # Generate pedantic warnings.
-    verify (data)
+    verify(data)
 
     record = {}
     record['hour'] = i
     try:
-        record['dry-bulb'] = float (data[7])
+        record['dry-bulb'] = float(data[7])
     except ValueError:
         record['dry-bulb'] = 99.9
     try:
-        record['wet-bulb'] = float (data[8])
+        record['wet-bulb'] = float(data[8])
     except ValueError:
         record['wet-bulb'] = 99.9
     try:
-        record['dew-point'] = float (data[9])
+        record['dew-point'] = float(data[9])
     except ValueError:
         record['dew-point'] = 99.9
     try:
-        record['rel-humidity'] = float (data[10])
+        record['rel-humidity'] = float(data[10])
     except ValueError:
         record['rel-humidity'] = 999.
     try:
-        record['wind-speed'] = float (data[11])
+        record['wind-speed'] = float(data[11])
     except ValueError:
         record['wind-speed'] = 999.
     try:
-        record['wind-direction'] = int (data[12])
+        record['wind-direction'] = int(data[12])
     except ValueError:
         record['wind-direction'] = 999
     try:
-        record['atm-pressure'] = int (float (data[15]) * 100)
+        record['atm-pressure'] = int(float(data[15]) * 100)
     except ValueError:
         record['atm-pressure'] = 999999.
 
-    record['ghi'], record['dni'], record['dhi'] = irradiances (locn, i)
+    record['ghi'], record['dni'], record['dhi'] = irradiances(locn, i)
     i += 1
 
-    if opts.format.lower () == 'tmy3':
-        tmy3_record (outfile, record)
-    elif opts.format.lower () == 'epw':
-        epw_record (outfile, record)
+    if opts.format.lower() == 'tmy3':
+        tmy3_record(outfile, record)
+    elif opts.format.lower() == 'epw':
+        epw_record(outfile, record)
 
-infile.close ()
-outfile.close ()
+infile.close()
+outfile.close()
