@@ -59,7 +59,7 @@ def list(type=''):
     print form % ('DUID', 'Station name', 'Region', 'Type', 'Cap(MW)')
     for k, v in sorted(nonsched.items()):
         if not type or v[2] == type:
-            print form % ((k,)+v)
+            print form % ((k,) + v)
             totcap += v[3]
     print form % ('--------', 'TOTAL CAPACITY', '', '', totcap)
 
