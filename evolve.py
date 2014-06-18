@@ -208,5 +208,8 @@ def run ():
     sys.stdin.readline ()
     nem.plot (context, spills=opts.spills)
 
+  # Force database closure to avoid pytables output.
+  nem.h5file.close()
+
 if __name__ == '__main__':
   run ()
