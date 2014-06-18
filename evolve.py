@@ -8,10 +8,17 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+import pyevolve
+import logging
+
+if __name__ == '__main__':
+  pyevolve.logEnable ('/home/ubuntu/pyevolve.log')
+
 from pyevolve import Consts
 from pyevolve import G1DList
 from pyevolve import GSimpleGA
 from pyevolve import Initializators
+from pyevolve import Migration
 from pyevolve import Mutators
 from pyevolve import Crossovers
 
@@ -184,6 +191,7 @@ def run ():
     genome.crossover.set (Crossovers.G1DListCrossoverUniform)
 
   ga = GSimpleGA.GSimpleGA (genome)
+  ga.setMigrationAdapter (Migration.MPIMigration())
   ga.setPopulationSize (opts.population)
   ga.setElitism (True)
   ga.setGenerations (opts.generations)
