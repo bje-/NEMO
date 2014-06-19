@@ -49,10 +49,10 @@ for g in c.generators:
   if g.__class__ == Wind:
     total_wind_energy += g.hourly_power.sum ()
     total_wind_capacity += g.capacity
-avg_cap_factor = (total_wind_energy / 8760.) / total_wind_capacity
+avg_cap_factor = (total_wind_energy / float(nem.hours)) / total_wind_capacity
 
 # Calculate a reduction in capacity to reduce energy by 5 TWh.
-cap = 5*twh / (avg_cap_factor * 8760)
+cap = 5*twh / (avg_cap_factor * nem.hours)
 
 f = open ('/data/windfarm.info.csv')
 sites = []
@@ -70,31 +70,31 @@ for line in f:
     c.generators = [wf]
     nem.run (c)
     # compute capacity factor
-    wf.cf = (wf.hourly_power.sum() / 8760.) / wf.capacity
+    wf.cf = (wf.hourly_power.sum() / float(nem.hours)) / wf.capacity
     sites.append (wf)
 f.close ()
 
 kennedy  = SAMWind (regions.qld, 1, '/data/kennedy.data.csv', 57.6, label='Kennedy wind')
 c.generators = [kennedy]
 nem.run (c)
-kennedy.cf = (kennedy.hourly_power.sum() / 8760.) / kennedy.capacity
+kennedy.cf = (kennedy.hourly_power.sum() / float(nem.hours)) / kennedy.capacity
 
 cooranga = SAMWind (regions.qld, 1, '/data/cooranga.data.csv', 57.6, label='Cooranga wind')
 c.generators = [cooranga]
 nem.run (c)
-cooranga.cf = (cooranga.hourly_power.sum() / 8760.) / cooranga.capacity
+cooranga.cf = (cooranga.hourly_power.sum() / float(nem.hours)) / cooranga.capacity
 
 capital = SingleWindFarm (regions.nsw, 1, 'CAPTL_WF', 140, label='Capital')
 c.generators = [capital]
 nem.run (c)
-capital.cf = (capital.hourly_power.sum() / 8760.) / capital.capacity
+capital.cf = (capital.hourly_power.sum() / float(nem.hours)) / capital.capacity
 
 sites = [kennedy, cooranga, capital]
 for windfarm in sites:
     for quantum in range (25):
-        oldcap = quantum*twh / (avg_cap_factor * 8760)
+        oldcap = quantum*twh / (avg_cap_factor * nem.hours)
         capacity = total_wind_capacity - oldcap
-        newcap = quantum*twh / (windfarm.cf * 8760)
+        newcap = quantum*twh / (windfarm.cf * nem.hours)
         windfarm.set_capacity (newcap)
         newWind = [windfarm, Wind (regions.sa, capacity, nem.h5file, label='existing wind')]
         c = nem.Context ()

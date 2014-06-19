@@ -55,11 +55,11 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual (self.context.unserved_energy, self.context.demand.sum())
 
     def test_004 (self):
-        '100 MW fossil plant generates exactly 8760*100 MWh'
+        '100 MW fossil plant generates exactly 876,000 MWh'
         fossil = generators.Fossil (regions.nsw, 100)
         self.context.generators = [fossil]
         nem.run (self.context)
-        self.assertEqual (fossil.hourly_power.sum (), 8760*100)
+        self.assertEqual (fossil.hourly_power.sum (), nem.hours*100)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0
@@ -69,7 +69,7 @@ class TestSequenceFunctions(unittest.TestCase):
         gen = SuperGenerator (None)
         self.context.generators = [gen]
         nem.run (self.context)
-        self.assertEqual (gen.runhours, 8760)
+        self.assertEqual (gen.runhours, nem.hours)
 
     def test_006 (self):
         'Generation to meet minimum load leads to no spills'
@@ -93,7 +93,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = [gen]
             nem.run (self.context)
             if rgn == regions.nsw:
-                self.assertEqual (gen.runhours, 8760)
+                self.assertEqual (gen.runhours, nem.hours)
             else:
                 self.assertEqual (gen.runhours, 0)
 
@@ -106,7 +106,7 @@ class TestSequenceFunctions(unittest.TestCase):
             gen = SuperGenerator (None)
             self.context.generators = [gen]
             nem.run (self.context)
-            self.assertEqual (gen.runhours, 8760)
+            self.assertEqual (gen.runhours, nem.hours)
 
     def test_010 (self):
         'Running in one region only produces no interstate exchanges'

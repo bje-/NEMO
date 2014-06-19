@@ -345,7 +345,7 @@ def plot (context, spills=False, filename=None, xlimit=None):
     else:
         plt.savefig (filename)
 
-def run (context, starthour=0, endhour=8760):
+def run (context, starthour=0, endhour=hours):
     "Run the simulation without a plot."
 
     if type (context.regions) != types.ListType:
