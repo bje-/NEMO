@@ -12,6 +12,8 @@ import simplesys
 
 from matplotlib.patches import Patch
 
+timesteps = 8760
+
 # Needed for currency formatting.
 locale.setlocale  (locale.LC_ALL, '')
 
@@ -25,8 +27,8 @@ class Generator:
         self.region = region
 
         # Time series of dispatched power and spills
-        self.hourly_power = np.zeros (8760)
-        self.hourly_spilled = np.zeros (8760)
+        self.hourly_power = np.zeros (timesteps)
+        self.hourly_spilled = np.zeros (timesteps)
 
     def capcost (self, costs):
         "Returns annual capital cost"
@@ -103,9 +105,9 @@ class CST(Generator):
         # Then we can scale it here to anything we like.
         self.s.COLLECTOR = self.collectorseries * self.capacity * self.solarmult
 
-        self.hourly_dumped = np.zeros (8760)
-        self.hourly_stored = np.zeros (8760)
-        self.hourly_storage_level = np.zeros (8760)
+        self.hourly_dumped = np.zeros (timesteps)
+        self.hourly_stored = np.zeros (timesteps)
+        self.hourly_storage_level = np.zeros (timesteps)
         self.storage_p = True
 
     def step (self, hr, demand):
