@@ -13,42 +13,42 @@ np.set_printoptions(threshold=np.nan)
 
 
 def nodata_p(x):
-  return int(x == '-999')
+    return int(x == '-999')
 
 
 def zero_p(x):
-  return int(x == '0')
+    return int(x == '0')
 
 
 def nonzero_p(x):
-  return int(x != '0' and x != '-999')
+    return int(x != '0' and x != '-999')
 
 
 def readfile(filename):
-  file = open(filename, 'r')
+    file = open(filename, 'r')
 
-  h = hashlib.sha1()
-  h.update(file.read())
-  hash = h.hexdigest()
-  if hash == 'fc542b04d4fb3993d39324af074c3642ba70b34e' \
-     or hash == 'b7bd75f88b8ec8fd4c7ded7cc167d3158b1e5c8b':
+    h = hashlib.sha1()
+    h.update(file.read())
+    hash = h.hexdigest()
+    if hash == 'fc542b04d4fb3993d39324af074c3642ba70b34e' \
+       or hash == 'b7bd75f88b8ec8fd4c7ded7cc167d3158b1e5c8b':
+        file.close()
+        return
+
+    file.seek(0)
+    contents = file.readlines()
     file.close()
-    return
 
-  file.seek(0)
-  contents = file.readlines()
-  file.close()
+    for row in range(maxrows):
+        values = contents[row + 6].split()
 
-  for row in range(maxrows):
-    values = contents[row + 6].split()
+        t1 = map(nodata_p, values)
+        t2 = map(zero_p, values)
+        t3 = map(nonzero_p, values)
 
-    t1 = map(nodata_p, values)
-    t2 = map(zero_p, values)
-    t3 = map(nonzero_p, values)
-
-    nodata[row] = nodata[row] + t1
-    zero[row] = zero[row] + t2
-    nonzero[row] = nonzero[row] + t3
+        nodata[row] = nodata[row] + t1
+        zero[row] = zero[row] + t2
+        nonzero[row] = nonzero[row] + t3
 
 date = datetime.date(1998, 1, 1)
 lastDate = datetime.date(2010, 3, 31)
@@ -62,32 +62,32 @@ count = 0
 print date
 
 while True:
-  for hour in range(0, 23):
+    for hour in range(0, 23):
 
-    # Skip these -- they are known to never exist.
-    if hour > 11 and hour < 18:
-      continue
+        # Skip these -- they are known to never exist.
+        if hour > 11 and hour < 18:
+            continue
 
-    # Sample filename: solar_dni_20091230_21UT.txt
-    filename = str(date.year) + '/solar_' + sys.argv[1] + '_' + date.strftime("%Y%m%d") \
-        + '_%02d' % hour + 'UT.txt'
+        # Sample filename: solar_dni_20091230_21UT.txt
+        filename = str(date.year) + '/solar_' + sys.argv[1] + '_' + \
+            date.strftime("%Y%m%d") + '_%02d' % hour + 'UT.txt'
 
-    try:
-      data = readfile(filename)
-    except IOError:
-      continue
+        try:
+            data = readfile(filename)
+        except IOError:
+            continue
 
-  if date == lastDate:
-    break
+    if date == lastDate:
+        break
 
-  # Skip the dates between GMS5 and GOES-9 service.
-  if date == lastGMS5:
-    date = datetime.date(2003, 7, 1)
-  else:
-    date = date + datetime.timedelta(days=1)
-  print date
+    # Skip the dates between GMS5 and GOES-9 service.
+    if date == lastGMS5:
+        date = datetime.date(2003, 7, 1)
+    else:
+        date = date + datetime.timedelta(days=1)
+    print date
 
-  type = sys.argv[1]
-  np.savetxt('/home/bje/%s-nodata.txt' % type, nodata, fmt='%d', delimiter=',')
-  np.savetxt('/home/bje/%s-zero.txt' % type, zero, fmt='%d', delimiter=',')
-  np.savetxt('/home/bje/%s-nonzero.txt' % type, nonzero, fmt='%d', delimiter=',')
+    type = sys.argv[1]
+    np.savetxt('/home/bje/%s-nodata.txt' % type, nodata, fmt='%d', delimiter=',')
+    np.savetxt('/home/bje/%s-zero.txt' % type, zero, fmt='%d', delimiter=',')
+    np.savetxt('/home/bje/%s-nonzero.txt' % type, nonzero, fmt='%d', delimiter=',')

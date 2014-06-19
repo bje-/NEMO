@@ -25,17 +25,17 @@ class SingleWindFarm(Wind):
 
 
 def print_stats(c):
-  bioenergy = 0
-  runhours = 0
-  wind_energy = 0
-  for g in c.generators:
-      if g.__class__ == generators.Biofuel:
-          bioenergy += g.hourly_power.sum()
-          runhours += g.runhours
-      elif g.__class__ == Wind or g.__class__ == SAMWind or g.__class__ == SingleWindFarm:
-          wind_energy += g.hourly_power.sum()
+    bioenergy = 0
+    runhours = 0
+    wind_energy = 0
+    for g in c.generators:
+        if g.__class__ == generators.Biofuel:
+            bioenergy += g.hourly_power.sum()
+            runhours += g.runhours
+        elif g.__class__ == Wind or g.__class__ == SAMWind or g.__class__ == SingleWindFarm:
+            wind_energy += g.hourly_power.sum()
 
-  print '%.2f, %.2f, %d, %.1f, %.3f, %d' % \
+    print '%.2f, %.2f, %d, %.1f, %.3f, %d' % \
         (wind_energy / twh, bioenergy / twh, runhours, c.spilled_energy / twh,
          c.unserved_percent, c.unserved_hours)
 
@@ -49,9 +49,9 @@ for g in c.generators[0:4]:
 total_wind_energy = 0
 total_wind_capacity = 0
 for g in c.generators:
-  if g.__class__ == Wind:
-    total_wind_energy += g.hourly_power.sum()
-    total_wind_capacity += g.capacity
+    if g.__class__ == Wind:
+        total_wind_energy += g.hourly_power.sum()
+        total_wind_capacity += g.capacity
 avg_cap_factor = (total_wind_energy / float(nem.hours)) / total_wind_capacity
 
 # Calculate a reduction in capacity to reduce energy by 5 TWh.

@@ -31,9 +31,9 @@ if not opts.year:
 h5file = tables.openFile(opts.db, mode="r+")
 print h5file
 try:
-  h5file.createGroup(h5file.root.aux, 'aemo%s' % opts.year)
+    h5file.createGroup(h5file.root.aux, 'aemo%s' % opts.year)
 except tables.exceptions.NodeError:
-  pass
+    pass
 
 states = ['NSW', 'QLD', 'SA', 'TAS', 'VIC']
 demand = np.zeros((len(states), 365 * 24 * 2))
@@ -42,18 +42,18 @@ rrp = np.zeros((len(states), 365 * 24 * 2))
 f = open('%s.csv' % opts.year, 'r')
 periods = [0, 0, 0, 0, 0]
 for line in f:
-  # eg. NSW1,2009/01/01 00:30:00,7535,18.38
-  x = line.split(',')
-  state = x[0].rstrip('1')
-  try:
-    stcode = states.index(state)
-  except ValueError:
-    print 'Warning: %s not a valide state; skipping' % state
-    continue
-  period = periods[stcode]
-  demand[stcode, period] = x[2]
-  rrp[stcode, period] = x[3]
-  periods[stcode] = periods[stcode] + 1
+    # eg. NSW1,2009/01/01 00:30:00,7535,18.38
+    x = line.split(',')
+    state = x[0].rstrip('1')
+    try:
+        stcode = states.index(state)
+    except ValueError:
+        print 'Warning: %s not a valide state; skipping' % state
+        continue
+    period = periods[stcode]
+    demand[stcode, period] = x[2]
+    rrp[stcode, period] = x[3]
+    periods[stcode] = periods[stcode] + 1
 
 f = tables.Filters(complevel=opts.complevel, complib=opts.compressor)
 h5file.createArray('/aux/aemo%s' % opts.year, 'demand', demand, "NEM %s demand" % opts.year)

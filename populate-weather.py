@@ -66,43 +66,43 @@ obs = table.row
 
 f = open('all.txt', 'r')
 for count, line in enumerate(f):
-  # hm, 48237,2010,01,01,00,00, 20.6, 19.3, 18.5, 88,  4.6, 50,  6.2,1012.1, 987.1, 1,#
-  # Basic sanity check.
-  if line[0:3] != 'hm,':
-      print 'Skipping suspicious line %d: %s' % (count, line)
-      continue
+    # hm, 48237,2010,01,01,00,00, 20.6, 19.3, 18.5, 88,  4.6, 50,  6.2,1012.1, 987.1, 1,#
+    # Basic sanity check.
+    if line[0:3] != 'hm,':
+        print 'Skipping suspicious line %d: %s' % (count, line)
+        continue
 
-  if count % 10000 == 0:
-      print '%d done' % count
+    if count % 10000 == 0:
+        print '%d done' % count
 
-  fields = line.split(',')
-  obs['stationid'] = int(fields[1])
-  obs['year'] = int(fields[2])
-  obs['month'] = int(fields[3])
-  obs['day'] = int(fields[4])
-  obs['hour'] = int(fields[5])
-  obs['minute'] = int(fields[6])
-  if fields[7].strip():
-      obs['drybulb'] = float(fields[7])
-  if fields[8].strip():
-      obs['wetbulb'] = float(fields[8])
-  if fields[9].strip():
-      obs['dewpoint'] = float(fields[9])
-  if fields[10].strip():
-      obs['relhumidity'] = float(fields[10])
-  if fields[11].strip():
-      obs['windspd'] = float(fields[11])
-  if fields[12].strip():
-      obs['winddir'] = int(fields[12])
-  if fields[13].strip():
-      obs['windgust'] = float(fields[13])
-  if fields[14].strip():
-      obs['mslp'] = float(fields[14])
-  if fields[15].strip():
-      obs['slp'] = float(fields[15])
-  if fields[16].strip():
-      obs['flag'] = float(fields[16])
-  obs.append()
+    fields = line.split(',')
+    obs['stationid'] = int(fields[1])
+    obs['year'] = int(fields[2])
+    obs['month'] = int(fields[3])
+    obs['day'] = int(fields[4])
+    obs['hour'] = int(fields[5])
+    obs['minute'] = int(fields[6])
+    if fields[7].strip():
+        obs['drybulb'] = float(fields[7])
+    if fields[8].strip():
+        obs['wetbulb'] = float(fields[8])
+    if fields[9].strip():
+        obs['dewpoint'] = float(fields[9])
+    if fields[10].strip():
+        obs['relhumidity'] = float(fields[10])
+    if fields[11].strip():
+        obs['windspd'] = float(fields[11])
+    if fields[12].strip():
+        obs['winddir'] = int(fields[12])
+    if fields[13].strip():
+        obs['windgust'] = float(fields[13])
+    if fields[14].strip():
+        obs['mslp'] = float(fields[14])
+    if fields[15].strip():
+        obs['slp'] = float(fields[15])
+    if fields[16].strip():
+        obs['flag'] = float(fields[16])
+    obs.append()
 f.close()
 table.flush()
 
@@ -116,23 +116,23 @@ stn = table.row
 print 'populating weather stations'
 f = open('stations.txt', 'r')
 for count, line in enumerate(f):
-  # st,046012,46  ,WILCANNIA AERODROME AWS                 ,01/2000,       ,-31.5194, 143.3850,GPS            ,NSW, ...
-  # Basic sanity check.
-  if line[0:3] != 'st,':
-      print 'Skipping suspicious line %d: %s' % (count, line)
-      continue
+    # st,046012,46  ,WILCANNIA AERODROME AWS                 ,01/2000,       ,-31.5194, 143.3850,GPS            ,NSW, ...
+    # Basic sanity check.
+    if line[0:3] != 'st,':
+        print 'Skipping suspicious line %d: %s' % (count, line)
+        continue
 
-  if count % 100 == 0:
-      print '%d done' % count
+    if count % 100 == 0:
+        print '%d done' % count
 
-  fields = line.split(',')
-  stn['stationid'] = int(fields[1])
-  stn['raincode'] = fields[2].strip()
-  stn['name'] = fields[3].strip()
-  stn['latitude'] = float(fields[6])
-  stn['longitude'] = float(fields[7])
-  stn['state'] = fields[9].strip()
-  stn.append()
+    fields = line.split(',')
+    stn['stationid'] = int(fields[1])
+    stn['raincode'] = fields[2].strip()
+    stn['name'] = fields[3].strip()
+    stn['latitude'] = float(fields[6])
+    stn['longitude'] = float(fields[7])
+    stn['state'] = fields[9].strip()
+    stn.append()
 f.close()
 
 h5file.flush()

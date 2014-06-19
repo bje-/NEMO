@@ -32,15 +32,15 @@ if not opts.year:
 h5file = tables.openFile(opts.db, mode="r+")
 print h5file
 try:
-  h5file.createGroup(h5file.root, 'aux')
+    h5file.createGroup(h5file.root, 'aux')
 except tables.exceptions.NodeError:
-  pass
+    pass
 
 try:
-  h5file.createGroup(h5file.root.aux, 'aemo%s' % opts.year)
+    h5file.createGroup(h5file.root.aux, 'aemo%s' % opts.year)
 except tables.exceptions.NodeError:
-  print 'group aemo%s already exists' % opts.year
-  pass
+    print 'group aemo%s already exists' % opts.year
+    pass
 
 
 class DispatchInterval(tables.IsDescription):
@@ -55,26 +55,26 @@ dispatch = table.row
 
 f = open('%s.csv' % opts.year, 'r')
 for count, line in enumerate(f):
-  # eg. D,METER_DATA,GEN_DUID,1,"2008/12/31 04:05:00",CATHROCK,7.645,"2008/12/31 04:05:00"
+    # eg. D,METER_DATA,GEN_DUID,1,"2008/12/31 04:05:00",CATHROCK,7.645,"2008/12/31 04:05:00"
 
-  # Basic sanity check.
-  if line[0:24] != 'D,METER_DATA,GEN_DUID,1,':
-      print 'Warning: suspicious line %d: %s', count, line
+    # Basic sanity check.
+    if line[0:24] != 'D,METER_DATA,GEN_DUID,1,':
+        print 'Warning: suspicious line %d: %s', count, line
 
-  fields = line.split(',')
-  timestamp = fields[4].strip('"')
-  if timestamp[0:4] != opts.year:
-    print 'skipping line out of date range: ', timestamp, fields[5]
-    continue
+    fields = line.split(',')
+    timestamp = fields[4].strip('"')
+    if timestamp[0:4] != opts.year:
+        print 'skipping line out of date range: ', timestamp, fields[5]
+        continue
 
-  t = time.mktime(time.strptime(timestamp, "%Y/%m/%d %H:%M:%S"))
-  # All NEM times are UTC+10.
-  t -= 60 * 60 * 10
+    t = time.mktime(time.strptime(timestamp, "%Y/%m/%d %H:%M:%S"))
+    # All NEM times are UTC+10.
+    t -= 60 * 60 * 10
 
-  dispatch['time'] = t
-  dispatch['duid'] = fields[5]
-  dispatch['power'] = float(fields[6])
-  dispatch.append()
+    dispatch['time'] = t
+    dispatch['duid'] = fields[5]
+    dispatch['power'] = float(fields[6])
+    dispatch.append()
 
 h5file.flush()
 f.close()

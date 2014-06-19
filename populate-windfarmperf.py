@@ -34,15 +34,15 @@ if not opts.year:
 h5file = tables.openFile(opts.db, mode='r+')
 print h5file
 try:
-  h5file.createGroup(h5file.root, 'aux')
+    h5file.createGroup(h5file.root, 'aux')
 except tables.exceptions.NodeError:
-  pass
+    pass
 
 try:
-  h5file.createGroup(h5file.root.aux, 'windfarmperf%s' % opts.year)
+    h5file.createGroup(h5file.root.aux, 'windfarmperf%s' % opts.year)
 except tables.exceptions.NodeError:
-  print 'group windfarmperf%s already exists' % opts.year
-  pass
+    print 'group windfarmperf%s already exists' % opts.year
+    pass
 
 
 class DispatchInterval(tables.IsDescription):
