@@ -46,7 +46,7 @@ def run_one(chromosome):
   context.verbose = opts.v
   print context
 
-  for i in range(8760):
+  for i in range(nem.hours):
     print int(context.spill[::, i].sum())
 
 context = nem.Context()
