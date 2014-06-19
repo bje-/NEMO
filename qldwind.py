@@ -75,7 +75,7 @@ for line in f:
     # compute capacity factor
     wf.cf = (wf.hourly_power.sum() / float(nem.hours)) / wf.capacity
     sites.append(wf)
-f.close ()
+f.close()
 
 kennedy = SAMWind(regions.qld, 1, '/data/kennedy.data.csv', 57.6, label='Kennedy wind')
 c.generators = [kennedy]
