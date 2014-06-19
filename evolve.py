@@ -30,6 +30,10 @@ import scenarios
 import costs
 import transmission
 
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
 # Note: argparse would be a better choice here for its "append"
 # action, but we can't yet assume widespread use of Python 2.7.
 
@@ -61,7 +65,8 @@ parser.add_option("--high-cost", action="store_false", dest="low_cost", help='Us
 parser.add_option("--spills", action="store_true", default=False, help='Plot spills [default: False]')
 
 opts,args = parser.parse_args ()
-print opts
+if rank == 0:
+    print opts
 
 np.set_printoptions (precision=5)
 context = nem.Context ()
@@ -83,7 +88,7 @@ scenarios.supply_switch (opts.supply_scenario) (context)
 for arg in opt_d_args:
   scenarios.demand_switch (arg) (context)
 
-if not opts.quiet:
+if not opts.quiet and rank == 0:
   docstring = scenarios.supply_switch (opts.supply_scenario).__doc__
   assert docstring is not None
   print "supply scenario: %s (%s)" % (opts.supply_scenario, docstring)
@@ -178,7 +183,8 @@ def eval_func (chromosome):
   return score
 
 def run ():
-  print "objective: minimise", eval_func.__doc__
+  if rank == 0:
+      print "objective: minimise", eval_func.__doc__
 
   numparams = sum ([len (g.setters) for g in context.generators])
   genome = G1DList.G1DList (numparams)
@@ -200,7 +206,7 @@ def run ():
   ga.setMinimax (Consts.minimaxType["minimize"])
   ga.evolve (freq_stats=opts.frequency)
 
-  if not opts.quiet:
+  if not opts.quiet and rank == 0:
     best = ga.bestIndividual ()
     print best
 
@@ -211,7 +217,7 @@ def run ():
     if opts.transmission:
       print context.exchanges.max (axis=0)
 
-  if opts.x:
+  if opts.x and rank == 0:
     print 'Press Enter to start graphical browser ',
     sys.stdin.readline ()
     nem.plot (context, spills=opts.spills)
