@@ -25,10 +25,10 @@ import sys
 from pylab import *
 import config
 
-parser = optparse.OptionParser ('browse.py')
+parser = optparse.OptionParser('browse.py')
 parser.add_option("--db", type='string', default='nem.h5', help='filename')
-opts,args = parser.parse_args ()
-h5file = tables.openFile(opts.db, mode = 'r')
+opts, args = parser.parse_args()
+h5file = tables.openFile(opts.db, mode='r')
 print h5file
 config.ghi = h5file.root.ghi
 config.dni = h5file.root.dni
@@ -40,94 +40,89 @@ config.maxcols = dni.shape[2]
 config.dims = (config.maxrows, config.maxcols)
 config.demand = h5file.root.aux.aemo2009.demand
 
-def grid (arr, dt):
-  h = Hour (dt)
 
-  # if arr == config.ghi:
-  #   missing = config.missing_ghi
-  # else:
-  #   missing = config.missing_dni
+def grid(arr, dt):
+    h = Hour(dt)
 
-  # Block out these two anomalous grids as nodata:
-  # solar_ghi_20021231_20UT.txt
-  # solar_ghi_20021231_22UT.txt
-  if arr == config.ghi and \
-        (h == Hour (date (2002,12,31,20)) or \
-           h == Hour (date (2002,12,31,22))):
-    t = np.empty (config.dims, dtype='int16')
-    t.fill (nodata)
-    return ma.masked_equal (t, nodata)
+    # if arr == config.ghi:
+    #   missing = config.missing_ghi
+    # else:
+    #   missing = config.missing_dni
 
-  # Interpolate, if possible.
-  # if h > 0 and h < maxentries - 1 and h in missing:
-  #   r0 = ma.masked_equal (arr[h-1], nodata)
-  #   r1 = ma.masked_equal (arr[h+1], nodata)
-  #   print 'interpolating'
-  #   return (r0 + r1) / 2.0
+    # Block out these two anomalous grids as nodata:
+    # solar_ghi_20021231_20UT.txt
+    # solar_ghi_20021231_22UT.txt
+    if arr == config.ghi and \
+       (h == Hour(date(2002, 12, 31, 20)) or h == Hour(date(2002, 12, 31, 22))):
+        t = np.empty(config.dims, dtype='int16')
+        t.fill(nodata)
+        return ma.masked_equal(t, nodata)
+    return ma.masked_equal(arr[h], nodata)
 
-  return ma.masked_equal (arr[h], nodata)
 
-def browse (location):
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  try:
-    sock.connect (('localhost', 4000))
-  except:
-    print 'connection failed'
-    return
-  if type (location) == type ((1,2)):
-    # Grid variant.
-    locn = LatLong (location)
-    query = str (locn)
-  else:
-    query = str (location)
-  query = string.strip  (query,'()')
-  query = string.replace (query, ' ', '')
-  print query
-  sock.send (query)
-  sock.close ()
+def browse(location):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect(('localhost', 4000))
+    except:
+        print 'connection failed'
+        return
+    if isinstance(location, tuple):
+        # Grid variant.
+        locn = LatLong(location)
+        query = str(locn)
+    else:
+        query = str(location)
+    query = string.strip(query, '()')
+    query = string.replace(query, ' ', '')
+    print query
+    sock.send(query)
+    sock.close()
 
-def timeseries (locn, set=config.ghi):
+
+def timeseries(locn, set=config.ghi):
     row = locn.xy()[0]
     col = locn.xy()[1]
     # Get all of the data at this location.
     # data = ma.masked_equal (config.ghi[::,row,col], nodata)
-    data = set[::,row,col]
+    data = set[::, row, col]
     return data
 
-def empty_p (grid):
-  """
-  Predicate that returns True if the grid contains only nodata values.
-  """
-  if type (grid) == ma.core.MaskedArray:
-    return ma.count_masked (grid) == maxrows*maxcols
-  else:
-    return (grid == config.nodata).all()
 
-def find_missing (arr):
-  """
-  Find missing grids in arr.  Returns two lists: the missing hour
-  numbers and a per-hour summary (24 elements).
-  """
-  missing = []
-  for i in range (arr.shape[0] - 2):
-    if not empty_p (arr[i]) and \
-          empty_p (arr[i + 1]) and \
-          not empty_p (arr[i + 2]):
-      missing.append (i + 1)
-  return missing
+def empty_p(grid):
+    """
+    Predicate that returns True if the grid contains only nodata values.
+    """
+    if type(grid) == ma.core.MaskedArray:
+        return ma.count_masked(grid) == maxrows * maxcols
+    else:
+        return (grid == config.nodata).all()
 
-def in_date_range_p (hr):
-  """
-  Predicate function that returns True if hr is in the range of dates
-  listed in the BoM metadata documents.
-  """
-  h1 = Hour (date (1998,01,01))
-  h2 = Hour (date (2001,06,30))
-  h3 = Hour (date (2003,07,01))
-  h4 = Hour (date (2009,12,31))
 
-  return (hr >= h1 and hr <= h2) or \
-         (hr >= h3 and hr <= h4)
+def find_missing(arr):
+    """
+    Find missing grids in arr.  Returns two lists: the missing hour
+    numbers and a per-hour summary (24 elements).
+    """
+    missing = []
+    for i in range(arr.shape[0] - 2):
+        if not empty_p(arr[i]) and empty_p(arr[i + 1]) and \
+           not empty_p(arr[i + 2]):
+            missing.append(i + 1)
+    return missing
+
+
+def in_date_range_p(hr):
+    """
+    Predicate function that returns True if hr is in the range of dates
+    listed in the BoM metadata documents.
+    """
+    h1 = Hour(date(1998, 01, 01))
+    h2 = Hour(date(2001, 06, 30))
+    h3 = Hour(date(2003, 07, 01))
+    h4 = Hour(date(2009, 12, 31))
+
+    return (hr >= h1 and hr <= h2) or (hr >= h3 and hr <= h4)
 
 # This is a nice complete grid to use for the nodata mask.
-ozmask = grid (config.ghi, 3).mask
+ozmask = grid(config.ghi, 3).mask

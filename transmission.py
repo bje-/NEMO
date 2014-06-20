@@ -9,7 +9,8 @@
 import regions
 from costs import annuity_factor
 
+
 class Transmission:
-    def __init__ (self, cost_per_mw_km, discount, lifetime = 50):
-        af = annuity_factor (lifetime, discount)
+    def __init__(self, cost_per_mw_km, discount, lifetime=50):
+        af = annuity_factor(lifetime, discount)
         self.cost_matrix = regions.distances * cost_per_mw_km / af

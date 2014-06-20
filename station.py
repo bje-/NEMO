@@ -21,35 +21,34 @@
 #   http://oz-energy-analysis.org/data/generation_wind_farms.php
 
 
-nonsched={'BUTLERSG': ('Butlers Gorge PS', 'TAS', 'hydro', 14),
-          'CAPTL_WF': ('Capital WF', 'NSW', 'wind', 140),
-          'CATHROCK': ('Cathedral Rocks WF', 'SA', 'wind', 66),
-          'CHALLHWF': ('Challicum Hills WF', 'VIC', 'wind', 53),
-          'CLOVER':   ('Clover PS', 'VIC', 'hydro', 30),
-          'CLUNY':    ('Cluny PS', 'TAS', 'hydro', 17),
-          'CNUNDAWF': ('Canunda WF', 'SA', 'wind', 46),
-          'CULLRGWF': ('Cullerin Range WF', 'NSW', 'wind', 30),
-          'GB01':     ('Broken Hill GT 1', 'NSW', 'gas', 50),
-          'GB02':     ('Broken Hill GT 2', 'NSW', 'gas', 50),
-          'INVICTA':  ('Invicta Mill', 'QLD', 'th-bagasse', 39),
-          'LKBONNY1': ('Lake Bonney Stage 1 WF', 'SA', 'wind', 81),
-          'MTMILLAR': ('Mount Millar WF', 'SA', 'wind', 70),
-          'PALOONA':  ('Paloona PS', 'TAS', 'hydro', 28),
-          'PIONEER':  ('Pioneer Sugar Mill', 'QLD', 'bagasse', 68),
-          'PORTWF':   ('Portland (Bridgewater+Nelson) WF', 'VIC', 'wind', 102),
-          'REPULSE':  ('Repulse PS', 'TAS', 'hydro', 28),
-          'ROWALLAN': ('Rowallan PS', 'TAS', 'hydro', 11),
-          'RUBICON':  ('Rubicon Mountain Streams PS', 'VIC', 'hydro', 14),
-          'STARHLWF': ('Starfish Hill WF', 'SA', 'wind', 35),
-          'WAUBRAWF': ('Waubra WF', 'VIC', 'wind', 192),
-          'WG01':     ('Warragamba PS', 'NSW', 'hydro', 50),
-          'WOOLNTH1': ('Woolnorth (Bluff+Studland) WF', 'TAS', 'wind', 140),
-          'WPWF':     ('Wattle Point WF', 'SA', 'wind', 91),
-          'YAMBUKWF': ('Portland (Yambuk) WF', 'VIC', 'wind', 30),
-          }
+nonsched = {'BUTLERSG': ('Butlers Gorge PS', 'TAS', 'hydro', 14),
+            'CAPTL_WF': ('Capital WF', 'NSW', 'wind', 140),
+            'CATHROCK': ('Cathedral Rocks WF', 'SA', 'wind', 66),
+            'CHALLHWF': ('Challicum Hills WF', 'VIC', 'wind', 53),
+            'CLOVER': ('Clover PS', 'VIC', 'hydro', 30),
+            'CLUNY': ('Cluny PS', 'TAS', 'hydro', 17),
+            'CNUNDAWF': ('Canunda WF', 'SA', 'wind', 46),
+            'CULLRGWF': ('Cullerin Range WF', 'NSW', 'wind', 30),
+            'GB01': ('Broken Hill GT 1', 'NSW', 'gas', 50),
+            'GB02': ('Broken Hill GT 2', 'NSW', 'gas', 50),
+            'INVICTA': ('Invicta Mill', 'QLD', 'th-bagasse', 39),
+            'LKBONNY1': ('Lake Bonney Stage 1 WF', 'SA', 'wind', 81),
+            'MTMILLAR': ('Mount Millar WF', 'SA', 'wind', 70),
+            'PALOONA': ('Paloona PS', 'TAS', 'hydro', 28),
+            'PIONEER': ('Pioneer Sugar Mill', 'QLD', 'bagasse', 68),
+            'PORTWF': ('Portland (Bridgewater+Nelson) WF', 'VIC', 'wind', 102),
+            'REPULSE': ('Repulse PS', 'TAS', 'hydro', 28),
+            'ROWALLAN': ('Rowallan PS', 'TAS', 'hydro', 11),
+            'RUBICON': ('Rubicon Mountain Streams PS', 'VIC', 'hydro', 14),
+            'STARHLWF': ('Starfish Hill WF', 'SA', 'wind', 35),
+            'WAUBRAWF': ('Waubra WF', 'VIC', 'wind', 192),
+            'WG01': ('Warragamba PS', 'NSW', 'hydro', 50),
+            'WOOLNTH1': ('Woolnorth (Bluff+Studland) WF', 'TAS', 'wind', 140),
+            'WPWF': ('Wattle Point WF', 'SA', 'wind', 91),
+            'YAMBUKWF': ('Portland (Yambuk) WF', 'VIC', 'wind', 30)}
 
 
-def list(type = ''):
+def list(type=''):
     """
     Prints a table of information about non-scheduled power stations, and
     reports their total capacity. If type is given, only stations of that
@@ -57,12 +56,12 @@ def list(type = ''):
     """
     form = "%-12s %-35s %-6s %-12s %7s"
     totcap = 0
-    print form % ('DUID','Station name','Region','Type','Cap(MW)')
+    print form % ('DUID', 'Station name', 'Region', 'Type', 'Cap(MW)')
     for k, v in sorted(nonsched.items()):
         if not type or v[2] == type:
-            print form % ((k,)+v)
+            print form % ((k,) + v)
             totcap += v[3]
-    print form % ('--------','TOTAL CAPACITY','','',totcap)
+    print form % ('--------', 'TOTAL CAPACITY', '', '', totcap)
 
 
 def type(duid):
@@ -75,7 +74,7 @@ def type(duid):
 
 def capacity(duid):
     """
-    Given the DUID for a non-scheduled power station, return its 
+    Given the DUID for a non-scheduled power station, return its
     generation capacity in MW.
     """
     return nonsched[duid][3]
@@ -104,4 +103,3 @@ def count_duids(table):
             dict[id] = 1
 
     return dict
-
