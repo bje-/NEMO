@@ -1,5 +1,3 @@
-# consts.py: Constants.
-#
 # -*- Python -*-
 # Copyright (C) 2014 Ben Elliston
 #
@@ -8,4 +6,9 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""Constants."""
+
 timesteps = 8760
+
+# Conversion factor between MWh and TWh.
+twh = pow(10,6)

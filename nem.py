@@ -1,12 +1,12 @@
-# nem.py: a Python National Electricity Market simulation
-#
 # -*- Python -*-
-# Copyright (C) 2011, 2012 Ben Elliston
+# Copyright (C) 2011, 2012, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""A National Electricity Market (NEM) simulation"""
 
 import re
 import string
@@ -17,14 +17,13 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.patches import Patch
 
+import consts
 import regions
 import generators
 from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 
-regions.count = 0
 generators.count = 0
 hours = 8760
-twh = 1000 * 1000
 
 h5file = tables.openFile('/home/bje/unsw/thesis/data/nem.h5', mode='r')
 pvdata = '/home/bje/Windows/sam-pv.csv'
@@ -138,7 +137,7 @@ class Context:
 
     def demand_twh(self):
         "Return the total annual demand in TWh"
-        return self.demand.sum() / twh
+        return self.demand.sum() / consts.twh
 
     def __str__(self):
         s = 'Regions: ' + str(self.regions) + '\n'
@@ -150,8 +149,8 @@ class Context:
                     s += '\n\t   ' + g.summary(self.costs) + '\n'
                 else:
                     s += '\n'
-        s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / twh)
-        s += 'Spilled energy: %.1f TWh\n' % (self.spilled_energy / twh)
+        s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / consts.twh)
+        s += 'Spilled energy: %.1f TWh\n' % (self.spilled_energy / consts.twh)
 
         if self.unserved_energy == 0:
             s += 'No unserved energy'

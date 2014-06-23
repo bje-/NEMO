@@ -28,6 +28,7 @@ import sys
 import nem
 import scenarios
 import costs
+import consts
 import transmission
 
 from mpi4py import MPI
@@ -132,7 +133,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is nem.generators.Biofuel:
             biofuel_energy += g.hourly_power.sum()
-    biofuel_exceedance = max(0, biofuel_energy - 20 * nem.twh)
+    biofuel_exceedance = max(0, biofuel_energy - 20 * consts.twh)
     score += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
@@ -140,7 +141,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is nem.generators.Hydro or g.__class__ is nem.generators.PumpedHydro:
             hydro_energy += g.hourly_power.sum()
-    hydro_exceedance = max(0, hydro_energy - 12 * nem.twh)
+    hydro_exceedance = max(0, hydro_energy - 12 * consts.twh)
     score += pow(hydro_exceedance, 3)
 
     if transmission_p:
