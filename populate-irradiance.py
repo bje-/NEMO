@@ -72,9 +72,9 @@ for i in range(0, maxentries, chunksz):
     ghi[i:i + dim] = nodata[0:dim]
     dni[i:i + dim] = nodata[0:dim]
 
-for type in ['ghi', 'dni']:
+for dataset in ['ghi', 'dni']:
     date = startDate
-    if type == 'ghi':
+    if dataset == 'ghi':
         arr = h5file.root.ghi
         prefix = args.prefix + '/HOURLY_GHI/ALL/solar_ghi_'
     else:
@@ -84,7 +84,7 @@ for type in ['ghi', 'dni']:
     hour = 0
     while date < endDate:
         if date.hour == 0:
-            print type, date, time.asctime()
+            print dataset, date, time.asctime()
 
         # Skip these; they are known to never exist.
         if date.hour == 12:
