@@ -195,7 +195,7 @@ def _sim(context, starthour, endhour):
             if src is r and dest in context.regions and regions.in_regions_p(path, context.regions):
                 connections[r].append(path)
         connections[r].sort()
-        connections[r].sort(key=lambda s: len(s))
+        connections[r].sort(key=len)
 
     assert context.demand.shape == (5, hours)
     context.generation = np.zeros((len(context.generators), hours))
