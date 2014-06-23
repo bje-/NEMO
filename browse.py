@@ -80,12 +80,12 @@ def browse(location):
     sock.close()
 
 
-def timeseries(locn, set=config.ghi):
+def timeseries(locn, dataset=config.ghi):
     row = locn.xy()[0]
     col = locn.xy()[1]
     # Get all of the data at this location.
     # data = ma.masked_equal (config.ghi[::,row,col], nodata)
-    data = set[::, row, col]
+    data = dataset[::, row, col]
     return data
 
 
@@ -94,7 +94,7 @@ def empty_p(grid):
     Predicate that returns True if the grid contains only nodata values.
     """
     if type(grid) == ma.core.MaskedArray:
-        return ma.count_masked(grid) == maxrows * maxcols
+        return ma.count_masked(grid) == config.maxrows * config.maxcols
     else:
         return (grid == config.nodata).all()
 
