@@ -22,19 +22,19 @@ class LatLong:
     def __init__(self, (arg1, arg2)):
         if isinstance(arg1, float) and isinstance(arg2, float):
             # Pair of floats
-            self._lat = arg1
-            self._lon = arg2
+            self.lat = arg1
+            self.lon = arg2
         elif isinstance(arg1, int) and isinstance(arg2, int):
             # Pair of ints
-            self._lat = yllcorner + cellsize * (maxrows - arg1)
-            self._lon = xllcorner + cellsize * arg2
+            self.lat = yllcorner + cellsize * (maxrows - arg1)
+            self.lon = xllcorner + cellsize * arg2
         else:
             raise TypeError
 
     def xy(self):
-        col = int((self._lon - xllcorner) / cellsize)
+        col = int((self.lon - xllcorner) / cellsize)
         assert col < maxcols
-        row = int(maxrows - ((self._lat - yllcorner) / cellsize)) - 1
+        row = int(maxrows - ((self.lat - yllcorner) / cellsize)) - 1
         assert row >= 0
         return row, col
 
@@ -42,10 +42,10 @@ class LatLong:
         "Compute the distance between this lat/long and another."
         # Code adapted from Chris Veness
         R = 6371  # km
-        dlat = math.radians(another._lat - self._lat)
-        dlon = math.radians(another._lon - self._lon)
-        lat1 = math.radians(self._lat)
-        lat2 = math.radians(another._lat)
+        dlat = math.radians(another.lat - self.lat)
+        dlon = math.radians(another.lon - self.lon)
+        lat1 = math.radians(self.lat)
+        lat2 = math.radians(another.lat)
         a = math.sin(dlat / 2) * math.sin(dlat / 2) + \
             math.sin(dlon / 2) * math.sin(dlon / 2) * math.cos(lat1) * math.cos(lat2)
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
@@ -55,21 +55,21 @@ class LatLong:
         return self.__str__()
 
     def __str__(self):
-        return '(' + str(self._lat) + ', ' + str(self._lon) + ')'
+        return '(' + str(self.lat) + ', ' + str(self.lon) + ')'
 
 
 class BoundingBox:
     def __init__(self, (ll, ur)):
         self._lowleft = ll
         self._upright = ur
-        assert self._lowleft._lon <= self._upright._lon
-        assert self._lowleft._lat <= self._upright._lat
+        assert self._lowleft.lon <= self._upright.lon
+        assert self._lowleft.lat <= self._upright.lat
 
     def contains_p(self, coord):
-        return (coord._lat >= self._lowleft._lat and
-                coord._lat <= self._upright._lat) and \
-            (coord._lon >= self._lowleft._lon and
-             coord._lon <= self._upright._lon)
+        return (coord.lat >= self._lowleft.lat and
+                coord.lat <= self._upright.lat) and \
+            (coord.lon >= self._lowleft.lon and
+             coord.lon <= self._upright.lon)
 
     def slice(self):
         ll = _lowleft.xy()
