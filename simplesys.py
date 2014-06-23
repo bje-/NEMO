@@ -155,7 +155,6 @@ class Context:
             _alert("Shutdown time must be greater than Start time")
 
     def nexthour(self, load):
-        D = self.HR / 24
         T = self.HR % 24
 
         if T == 0:
