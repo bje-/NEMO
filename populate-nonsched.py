@@ -34,7 +34,6 @@ try:
     h5file.createGroup(h5file.root.aux, 'aemo%s' % args.year)
 except tables.exceptions.NodeError:
     print 'group aemo%s already exists' % args.year
-    pass
 
 
 class DispatchInterval(tables.IsDescription):
