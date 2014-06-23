@@ -42,6 +42,14 @@ class Context:
         self.SU = 0
         self.ZS = 0
 
+        # Partially define here. As NoneType variables, if they are
+        # used before being defined, an exception will be raised.
+        self.MODE = None
+        self.QS = None
+        self.QA = None
+        self.QC = None
+        self.QD = None
+
     def __repr__(self):
         s = 'HR=%d ES=%d ZS=%d SU=%d ISTART=%d SHUT=%d QF=%d SL=%d SM=%d' % \
             (self.HR, self.ES, self.ZS, self.SU, self.ISTART, self.SHUT, self.QF, self.SL, self.SM)
@@ -98,39 +106,39 @@ class Context:
         self.QD = 0
 
         if self.QC > 0:
-                if self.QC > QL:
-                        if self.ES > self.SM:
-                                self.QD = self.QC - QL
-                                self.MODE = 4
-                        else:
-                                self.QS = self.QC - QL
-                                self.MODE = 3
-                                if (self.ES + self.QS) > self.SM:
-                                        self.QD = self.ES + self.QS - self.SM
-                                        self.QS = self.QS - self.QD
-                                        self.MODE = 3.4
+            if self.QC > QL:
+                if self.ES > self.SM:
+                    self.QD = self.QC - QL
+                    self.MODE = 4
                 else:
-                        if self.ES > 0:
-                                self.QS = self.QC - QL
-                                self.MODE = 5
-                                if (self.ES + self.QS) <= 0:
-                                        self.QS = -self.ES
-                                        self.QA = QL + self.QS - self.QC
-                                        self.MODE = 5.1
-                        else:
-                                self.QA = QL - self.QC
-                                self.MODE = 2
-        else:
+                    self.QS = self.QC - QL
+                    self.MODE = 3
+                    if (self.ES + self.QS) > self.SM:
+                        self.QD = self.ES + self.QS - self.SM
+                        self.QS = self.QS - self.QD
+                        self.MODE = 3.4
+            else:
                 if self.ES > 0:
-                        self.QS = -QL
-                        self.MODE = 6
-                        if (self.ES + self.QS) <= 0:
-                                self.QS = -self.ES
-                                self.QA = QL + self.QS - self.QC
-                                self.MODE = 6.1
+                    self.QS = self.QC - QL
+                    self.MODE = 5
+                    if (self.ES + self.QS) <= 0:
+                        self.QS = -self.ES
+                        self.QA = QL + self.QS - self.QC
+                        self.MODE = 5.1
                 else:
-                        self.QA = QL
-                        self.MODE = 1
+                    self.QA = QL - self.QC
+                    self.MODE = 2
+        else:
+            if self.ES > 0:
+                self.QS = -QL
+                self.MODE = 6
+                if (self.ES + self.QS) <= 0:
+                    self.QS = -self.ES
+                    self.QA = QL + self.QS - self.QC
+                    self.MODE = 6.1
+            else:
+                self.QA = QL
+                self.MODE = 1
         if QL <= 0:
             self.MODE = 0
 
