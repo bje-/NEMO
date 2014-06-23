@@ -8,21 +8,16 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-from config import *
-from plot import *
-from hour import Hour
-from latlong import LatLong
-
-import datetime
 from datetime import datetime as date
 import numpy.ma as ma
 import argparse
 import socket
 import tables
 import string
-import sys
+import numpy as np
 
-from pylab import *
+from hour import Hour
+from latlong import LatLong
 import config
 
 parser = argparse.ArgumentParser()
@@ -55,9 +50,9 @@ def grid(arr, dt):
     if arr == config.ghi and \
        (h == Hour(date(2002, 12, 31, 20)) or h == Hour(date(2002, 12, 31, 22))):
         t = np.empty(config.dims, dtype='int16')
-        t.fill(nodata)
-        return ma.masked_equal(t, nodata)
-    return ma.masked_equal(arr[h], nodata)
+        t.fill(config.nodata)
+        return ma.masked_equal(t, config.nodata)
+    return ma.masked_equal(arr[h], config.nodata)
 
 
 def browse(location):
@@ -84,19 +79,19 @@ def timeseries(locn, dataset=config.ghi):
     row = locn.xy()[0]
     col = locn.xy()[1]
     # Get all of the data at this location.
-    # data = ma.masked_equal (config.ghi[::,row,col], nodata)
+    # data = ma.masked_equal (config.ghi[::,row,col], config.nodata)
     data = dataset[::, row, col]
     return data
 
 
-def empty_p(grid):
+def empty_p(grd):
     """
     Predicate that returns True if the grid contains only nodata values.
     """
-    if type(grid) == ma.core.MaskedArray:
-        return ma.count_masked(grid) == config.maxrows * config.maxcols
+    if type(grd) == ma.core.MaskedArray:
+        return ma.count_masked(grd) == config.maxrows * config.maxcols
     else:
-        return (grid == config.nodata).all()
+        return (grd == config.nodata).all()
 
 
 def find_missing(arr):
