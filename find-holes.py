@@ -42,9 +42,9 @@ def readfile(fname):
     for row in range(maxrows):
         values = contents[row + 6].split()
 
-        t1 = map(nodata_p, values)
-        t2 = map(zero_p, values)
-        t3 = map(nonzero_p, values)
+        t1 = [nodata_p(v) for v in values]
+        t2 = [zero_p(v) for v in values]
+        t3 = [nonzero_p(v) for v in values]
 
         nodata[row] = nodata[row] + t1
         zero[row] = zero[row] + t2
