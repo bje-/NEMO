@@ -202,7 +202,7 @@ parser.add_argument("--hm-data", type=str, help='BoM station data file', require
 parser.add_argument("--hm-details", type=str, help='BoM station details file', required=True)
 parser.add_argument("--tz", type=float, default=10.0, help='Time zone [default +10]')
 parser.add_argument("-o", "--out", type=str, help='output filename', required=True)
-parser.add_argument("--format", "--format", default="epw", help="output format: EPW [default], TMY3", metavar="FORMAT")
+parser.add_argument("--format", type=str, default="epw", help="output format: EPW [default] or TMY3")
 parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="verbose run output")
 args = parser.parse_args()
 
