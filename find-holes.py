@@ -24,20 +24,20 @@ def nonzero_p(x):
     return int(x != '0' and x != '-999')
 
 
-def readfile(filename):
-    file = open(filename, 'r')
+def readfile(fname):
+    f = open(fname, 'r')
 
     h = hashlib.sha1()
-    h.update(file.read())
-    hash = h.hexdigest()
-    if hash == 'fc542b04d4fb3993d39324af074c3642ba70b34e' \
-       or hash == 'b7bd75f88b8ec8fd4c7ded7cc167d3158b1e5c8b':
-        file.close()
+    h.update(f.read())
+    digest = h.hexdigest()
+    if digest == 'fc542b04d4fb3993d39324af074c3642ba70b34e' \
+       or digest == 'b7bd75f88b8ec8fd4c7ded7cc167d3158b1e5c8b':
+        f.close()
         return
 
-    file.seek(0)
-    contents = file.readlines()
-    file.close()
+    f.seek(0)
+    contents = f.readlines()
+    f.close()
 
     for row in range(maxrows):
         values = contents[row + 6].split()
@@ -87,7 +87,7 @@ while True:
         date = date + datetime.timedelta(days=1)
     print date
 
-    type = sys.argv[1]
-    np.savetxt('/home/bje/%s-nodata.txt' % type, nodata, fmt='%d', delimiter=',')
-    np.savetxt('/home/bje/%s-zero.txt' % type, zero, fmt='%d', delimiter=',')
-    np.savetxt('/home/bje/%s-nonzero.txt' % type, nonzero, fmt='%d', delimiter=',')
+    dataset = sys.argv[1]
+    np.savetxt('/home/bje/%s-nodata.txt' % dataset, nodata, fmt='%d', delimiter=',')
+    np.savetxt('/home/bje/%s-zero.txt' % dataset, zero, fmt='%d', delimiter=',')
+    np.savetxt('/home/bje/%s-nonzero.txt' % dataset, nonzero, fmt='%d', delimiter=',')
