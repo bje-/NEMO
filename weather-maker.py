@@ -84,31 +84,31 @@ def epw_preamble(f):
     print >>f, 'DATA PERIODS,1,1,Data,Sunday,1/ 1,12/31'
 
 
-def tmy3_record(f, record):
+def tmy3_record(f, rec):
     t = datetime.datetime(args.year, 1, 1)
-    t += datetime.timedelta(hours=record['hour'])
+    t += datetime.timedelta(hours=rec['hour'])
 
-    line = '%02d/%02d/%d,%02d:50,-9900,-9900,%d,1,5,%d,1,5,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,?,9,-9900,?,9,%.1f,A,7,%.1f,A,7,%.1f,A,7,%d,A,7,%d,A,7,%.1f,A,7,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,-9900,?,9' \
-        % (t.month, t.day, t.year, t.hour + 1, record['ghi'], record['dni'],
-           record['dry-bulb'], record['dew-point'], record['rel-humidity'],
-           record['atm-pressure'] / 100, record['wind-direction'], record['wind-speed'])
-    print >>f, line
+    text = '%02d/%02d/%d,%02d:50,-9900,-9900,%d,1,5,%d,1,5,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,?,9,-9900,?,9,%.1f,A,7,%.1f,A,7,%.1f,A,7,%d,A,7,%d,A,7,%.1f,A,7,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,-9900,?,9' \
+        % (t.month, t.day, t.year, t.hour + 1, rec['ghi'], rec['dni'],
+           rec['dry-bulb'], rec['dew-point'], rec['rel-humidity'],
+           rec['atm-pressure'] / 100, rec['wind-direction'], rec['wind-speed'])
+    print >>f, text
 
 
-def epw_record(f, record):
+def epw_record(f, rec):
     t = datetime.datetime(args.year, 1, 1)
-    t += datetime.timedelta(hours=record['hour'])
+    t += datetime.timedelta(hours=rec['hour'])
 
-    line = '%d,%d,%d,%d,50,_______________________________________,%.1f,%.1f,%d,%d,9999,9999,9999,%d,%d,%d,999999,999999,999999,999999,%d,%.1f,99,99,9999,99999,9,999999999,99999,0.999,999,99,999,0,99' \
-        % (t.year, t.month, t.day, t.hour + 1, record['dry-bulb'], record['dew-point'],
-           record['rel-humidity'], record['atm-pressure'], record['ghi'], record['dni'], record['dhi'],
-           record['wind-direction'], record['wind-speed'])
-    print >>f, line
+    text = '%d,%d,%d,%d,50,_______________________________________,%.1f,%.1f,%d,%d,9999,9999,9999,%d,%d,%d,999999,999999,999999,999999,%d,%.1f,99,99,9999,99999,9,999999999,99999,0.999,999,99,999,0,99' \
+        % (t.year, t.month, t.day, t.hour + 1, rec['dry-bulb'], rec['dew-point'],
+           rec['rel-humidity'], rec['atm-pressure'], rec['ghi'], rec['dni'], rec['dhi'],
+           rec['wind-direction'], rec['wind-speed'])
+    print >>f, text
 
 
 # Return the GHI and DNI for a given location and time.
-def irradiances(locn, hour):
-    x, y = locn.xy()
+def irradiances(location, hour):
+    x, y = location.xy()
     # Compute a solar data filename from the hour
     # Use 2010 as the reference year, as it was not a leap year.
     hours = datetime.timedelta(hours=hour)
@@ -169,29 +169,25 @@ def irradiances(locn, hour):
 
 # Read station details file.
 def station_details():
-    global stnumber
-    global stname
-    global ststate
+    details = [l for l in open(args.hm_details, 'r') if 'st,' + args.st in l][0]
+    # .. st = details[0:2]
+    stNumber = details[3:9].strip().lstrip('0')
+    stName = details[15:55].strip()
+    stState = details[107:110]
+    verbose('Processing station number %s (%s)' % (stNumber, stName))
 
-    line = [line for line in open(args.hm_details, 'r') if 'st,' + args.st in line][0]
-    # .. st = line[0:2]
-    stnumber = line[3:9].strip().lstrip('0')
-    stname = line[15:55].strip()
-    ststate = line[107:110]
-    verbose('Processing station number %s (%s)' % (stnumber, stname))
-
-    latitude = float(line[72:80])
-    longitude = float(line[81:90])
-    locn = LatLong((latitude, longitude))
-    altitude = int(float(line[111:117]))
-    wflags = line[153:156]
-    sflags = line[157:160]
-    iflags = line[161:164]
+    latitude = float(details[72:80])
+    longitude = float(details[81:90])
+    location = LatLong((latitude, longitude))
+    altitude = int(float(details[111:117]))
+    wflags = details[153:156]
+    sflags = details[157:160]
+    iflags = details[161:164]
     if int(wflags) or int(sflags) or int(iflags):
         warn('%% wrong = %s, %% suspect = %s, %% inconsistent = %s'
              % (wflags, sflags, iflags))
 
-    return(locn, altitude)
+    return(location, altitude, stNumber, stName, stState)
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
 parser.add_argument('--version', action='version', version='1.1')
@@ -214,7 +210,7 @@ if not os.path.isdir(args.grids):
 infile = open(args.hm_data, 'r')
 outfile = open(args.out, 'wb')
 
-locn, elevation = station_details()
+locn, elevation, stnumber, stname, ststate = station_details()
 sun = ephem.Sun()
 observer = ephem.Observer()
 observer.elevation = elevation
@@ -231,11 +227,11 @@ else:
     raise ValueError("unknown format %s" % args.format)
 
 i = 0
-for line in infile:
-    if len(line) == 1:
+for inline in infile:
+    if len(inline) == 1:
         # Skip weird ^Z lines.
         continue
-    data = line.split(',')
+    data = inline.split(',')
     if data[1] == 'Station Number':
         # Skip this line; it is the header.
         continue

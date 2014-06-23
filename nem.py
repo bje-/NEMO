@@ -35,18 +35,18 @@ capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Bi
 energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
 popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
-demand = h5file.root.aux.aemo2010.demand[::]
+demand2010 = h5file.root.aux.aemo2010.demand[::]
 # Demand is in 30 minute intervals.
-assert demand.shape == (5, 2 * hours)
+assert demand2010.shape == (5, 2 * hours)
 # For hourly, average half-hours n and n+1.
-regional_demand = (demand[::, ::2] + demand[::, 1::2]) / 2
-del demand
+regional_demand = (demand2010[::, ::2] + demand2010[::, 1::2]) / 2
+del demand2010
 
 
 # Read BoM station data.
 def _import_bom_stations(filename):
     f = open(filename)
-    stns = {}
+    stations = {}
     for line in f:
         fields = line.split(',')
         stncode = fields[1]
@@ -56,7 +56,7 @@ def _import_bom_stations(filename):
         location = string.replace(location, 'Aws', 'AWS')
         stns[stncode] = (location, state)
     f.close()
-    return stns
+    return stations
 stns = _import_bom_stations('Stations.txt')
 
 
