@@ -49,15 +49,15 @@ context = nem.Context()
 capacities = []
 replayfile = open(args.f)
 for line in replayfile:
-    if re.search('^\s*$', line):
+    if re.search(r'^\s*$', line):
         continue
-    if re.search('^\s*#', line):
+    if re.search(r'^\s*#', line):
         print line,
         continue
-    if not re.search('^\s*List:\s*\[.*\].?$', line) and args.v:
+    if not re.search(r'^\s*List:\s*\[.*\].?$', line) and args.v:
         print 'skipping malformed input:', line
         continue
-    m = re.match(r"^\s*List:\s*\[(.*)\].?$", line)
+    m = re.match(r'^\s*List:\s*\[(.*)\].?$', line)
     capacities = m.group(1).split(',')
     capacities = [float(elt) for elt in capacities]  # str -> float
     run_one(capacities)
