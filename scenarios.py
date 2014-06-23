@@ -3,31 +3,24 @@ import numpy as np
 
 import nem
 
+supply_scenarios = {'re100': re100,
+                    'ccgt': ccgt,
+                    'ccgt-ccs': ccgt_ccs,
+                    'coal-ccs': coal_ccs,
+                    're100+batteries': re100_batteries,
+                    'replacement': replacement,
+                    're100+dsp': re100_dsp,
+                    're100+geoth': re100_geothermal,
+                    're+fossil': re_plus_fossil,
+                    'theworks': theworks }
 
 def supply_switch(label):
     "Return a callback function to set up a given scenario."
-    if label == 're100':
-        return re100
-    elif label == 'ccgt':
-        return ccgt
-    elif label == 'ccgt-ccs':
-        return ccgt_ccs
-    elif label == 'coal-ccs':
-        return coal_ccs
-    elif label == 're100+batteries':
-        return re100_batteries
-    elif label == 'replacement':
-        return replacement
-    elif label == 're100+dsp':
-        return re100_dsp
-    elif label == 're100+geoth':
-        return re100_geothermal
-    elif label == 're+fossil':
-        return re_plus_fossil
-    elif label == 'theworks':
-        return theworks
-    else:
+    try:
+        callback = supply_scenarios[label]
+    except KeyError:
         raise ValueError('unknown supply scenario %s' % label)
+    return callback
 
 
 def _hydro():
@@ -57,6 +50,7 @@ def replacement(context):
 
 def ccgt(context):
     "All gas scenario"
+    # pylint: disable=redefined-outer-name
     ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
     ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
@@ -64,6 +58,7 @@ def ccgt(context):
 
 def ccgt_ccs(context):
     "Gas CCS scenario"
+    # pylint: disable=redefined-outer-name
     ccgt = nem.generators.CCGT_CCS(nem.regions.nsw, 0)
     ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
@@ -77,6 +72,7 @@ def coal_ccs(context):
 
 
 def re100(context):
+    # pylint: disable=unused-argument
     "100% renewable electricity"
     pass
 
@@ -90,6 +86,7 @@ def re100_batteries(context):
 
 def re_plus_fossil(context):
     "Mostly renewables with some fossil augmentation"
+    # pylint: disable=redefined-outer-name
     ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
     ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
     g = context.generators
@@ -114,6 +111,7 @@ def re100_geothermal(context):
 
 def theworks(context):
     "All technologies"
+    # pylint: disable=redefined-outer-name
     coal = nem.generators.Black_Coal(nem.regions.nsw, 0)
     coal_ccs = nem.generators.Coal_CCS(nem.regions.nsw, 0)
     ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
@@ -175,6 +173,7 @@ def demand_switch(label):
 
 
 def unchanged(context):
+    # pylint: disable=unused-argument
     pass
 
 
