@@ -174,7 +174,7 @@ def station_details():
     global ststate
 
     line = [line for line in open(opts.hm_details, 'r') if 'st,' + opts.st in line][0]
-    st = line[0:2]
+    # .. st = line[0:2]
     stnumber = line[3:9].strip().lstrip('0')
     stname = line[15:55].strip()
     ststate = line[107:110]
