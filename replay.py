@@ -8,22 +8,18 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-import optparse
+import argparse
 import costs
 import nem
 import sys
 import re
 
-parser = optparse.OptionParser(version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
-parser.add_option("-f", type='string', default=None, help='replay file')
-parser.add_option("-v", action="store_true", default=False, help='verbose mode [default: False]')
-parser.add_option("-x", action="store_true", default=False, help='producing a balancing plot [default: False]')
-parser.add_option("-s", "--spills", action="store_true", default=False, help='plot spills [default: False]')
-opts, args = parser.parse_args()
-
-if opts.f is None:
-    parser.print_help()
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser.add_argument("-f", type=str, help='replay file', required=True)
+parser.add_argument("-v", action="store_true", help='verbose mode')
+parser.add_argument("-x", action="store_true", help='producing a balancing plot')
+parser.add_argument("-s", "--spills", action="store_true", help='plot spills')
+args = parser.parse_args()
 
 
 def set_generators(chromosome):

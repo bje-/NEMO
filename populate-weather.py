@@ -2,7 +2,7 @@
 # Load BoM AWS data for a year into the nem.h5 database.
 #
 # -*- Python -*-
-# Copyright (C) 2011 Ben Elliston
+# Copyright (C) 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -10,18 +10,18 @@
 # (at your option) any later version.
 
 from pylab import *
-import optparse
+import argparse
 import sys
 import datetime
 import tables
 
-parser = optparse.OptionParser('populate-weather.py')
-parser.add_option("--db", type='string', default='nem.h5', help='filename')
-parser.add_option("--compressor", type='string', default='blosc', help='PyTable compressor')
-parser.add_option("--complevel", type='int', default=6, help='PyTable compression level')
-opts, args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')
+parser.add_argument("--compressor", type=str, default='blosc', help='PyTable compressor')
+parser.add_argument("--complevel", type=int, default=6, help='PyTable compression level')
+args = parser.parse_args()
 
-h5file = tables.openFile(opts.db, mode="r+")
+h5file = tables.openFile(args.db, mode="r+")
 
 
 class WeatherStation(tables.IsDescription):
@@ -56,7 +56,7 @@ try:
 except tables.exceptions.NodeError:
     pass
 
-filter = tables.Filters(complevel=opts.complevel, complib=opts.compressor)
+filter = tables.Filters(complevel=args.complevel, complib=args.compressor)
 try:
     table = h5file.createTable('/aux', 'weather', WeatherObservation,
                                "BoM weather observations", filters=filter)

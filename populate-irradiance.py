@@ -7,7 +7,7 @@ import time
 import datetime
 import numpy as np
 import tables
-import optparse
+import argparse
 import bz2
 import os
 
@@ -33,28 +33,24 @@ def readfile(filename):
 
 # Command line processing.
 
-parser = optparse.OptionParser('fill-h5')
-parser.add_option("--prefix", type='string', default='', help='directory where SOLAR_DATA is')
-parser.add_option("--compressor", type='string', default='blosc', help='PyTable compressor')
-parser.add_option("--complevel", type='int', default=6, help='PyTable compression level')
-parser.add_option("--init", action="store_true", default=False, help='initialise a new HDF5 database')
-opts, args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("--prefix", type=str, default='', help='directory where SOLAR_DATA is', required=True)
+parser.add_argument("--compressor", type=str, default='blosc', help='PyTable compressor')
+parser.add_argument("--complevel", type=int, default=6, help='PyTable compression level')
+parser.add_argument("--init", action="store_true", help='initialise a new HDF5 database')
+args = parser.parse_args()
 
-if opts.prefix == '':
-    print >>sys.stderr, 'must supply prefix'
+# Check that the grid directory exists
+if not os.path.isdir(args.prefix):
+    print >>sys.stderr, 'error: %s is not a directory' % args.prefix
     sys.exit(1)
 
-# Check that the opts.grid directory exists
-if not os.path.isdir(opts.prefix):
-    print >>sys.stderr, 'error: %s is not a directory' % opts.prefix
-    sys.exit(1)
-
-if opts.init:
+if args.init:
     h5file = tables.openFile("nem.h5", mode='w', title="Simulated NEM data")
 else:
     h5file = tables.openFile("nem.h5", mode='r+')
 
-f = tables.Filters(complevel=opts.complevel, complib=opts.compressor)
+f = tables.Filters(complevel=args.complevel, complib=args.compressor)
 try:
     ghi = h5file.createCArray(h5file.root, 'ghi', tables.Int16Atom(), shape=(maxentries, maxrows, maxcols), filters=f)
     dni = h5file.createCArray(h5file.root, 'dni', tables.Int16Atom(), shape=(maxentries, maxrows, maxcols), filters=f)
@@ -80,10 +76,10 @@ for type in ['ghi', 'dni']:
     date = startDate
     if type == 'ghi':
         arr = h5file.root.ghi
-        prefix = opts.prefix + '/HOURLY_GHI/ALL/solar_ghi_'
+        prefix = args.prefix + '/HOURLY_GHI/ALL/solar_ghi_'
     else:
         arr = h5file.root.dni
-        prefix = opts.prefix + '/HOURLY_DNI/ALL/solar_dni_'
+        prefix = args.prefix + '/HOURLY_DNI/ALL/solar_dni_'
 
     hour = 0
     while date < endDate:

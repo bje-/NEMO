@@ -14,7 +14,7 @@ import os
 import bz2
 import math
 import sys
-import optparse
+import argparse
 import datetime
 from latlong import LatLong
 
@@ -44,12 +44,12 @@ import ephem
 
 
 def verbose(s):
-    if opts.verbose:
+    if args.verbose:
         print >>sys.stderr, s
 
 
 def warn(s):
-    if opts.verbose:
+    if args.verbose:
         print >>sys.stderr, 'warning:',
         print >>sys.stderr, s
 
@@ -67,13 +67,13 @@ def verify(items):
 def tmy3_preamble(f):
     # eg. 722287,"ANNISTON METROPOLITAN AP",AL,-6.0,33.583,-85.850,186
     print >>f, '%s in %s,\"%s\",%s,%.1f,%.3f,%.3f,%d' % \
-        (stnumber, stname, opts.year, ststate[0:2], opts.tz, locn.lat, locn.lon, elevation)
+        (stnumber, stname, args.year, ststate[0:2], args.tz, locn.lat, locn.lon, elevation)
     print >>f, 'Date (MM/DD/YYYY),Time (HH:MM),ETR (W/m^2),ETRN (W/m^2),GHI (W/m^2),GHI source,GHI uncert (%),DNI (W/m^2),DNI source,DNI uncert (%),DHI (W/m^2),DHI source,DHI uncert (%),GH illum (lx),GH illum source,Global illum uncert (%),DN illum (lx),DN illum source,DN illum uncert (%),DH illum (lx),DH illum source,DH illum uncert (%),Zenith lum (cd/m^2),Zenith lum source,Zenith lum uncert (%),TotCld (tenths),TotCld source,TotCld uncert (code),OpqCld (tenths),OpqCld source,OpqCld uncert (code),Dry-bulb (C),Dry-bulb source,Dry-bulb uncert (code),Dew-point (C),Dew-point source,Dew-point uncert (code),RHum (%),RHum source,RHum uncert (code),Pressure (mbar),Pressure source,Pressure uncert (code),Wdir (degrees),Wdir source,Wdir uncert (code),Wspd (m/s),Wspd source,Wspd uncert (code),Hvis (m),Hvis source,Hvis uncert (code),CeilHgt (m),CeilHgt source,CeilHgt uncert (code),Pwat (cm),Pwat source,Pwat uncert (code),AOD (unitless),AOD source,AOD uncert (code),Alb (unitless),Alb source,Alb uncert (code),Lprecip depth (mm),Lprecip quantity (hr),Lprecip source,Lprecip uncert (code)'
 
 
 def epw_preamble(f):
     print >>f, 'LOCATION,%s (%s) in %s,%s,AUS,BoM,%s,%.2f,%.2f,%.1f,%.1f' % \
-        (stname, stnumber, opts.year, ststate, stnumber, locn.lat, locn.lon, opts.tz, elevation)
+        (stname, stnumber, args.year, ststate, stnumber, locn.lat, locn.lon, opts.args, elevation)
 
     print >>f, 'DESIGN CONDITIONS,0'
     print >>f, 'TYPICAL/EXTREME PERIODS,,'
@@ -85,7 +85,7 @@ def epw_preamble(f):
 
 
 def tmy3_record(f, record):
-    t = datetime.datetime(opts.year, 1, 1)
+    t = datetime.datetime(args.year, 1, 1)
     t += datetime.timedelta(hours=record['hour'])
 
     line = '%02d/%02d/%d,%02d:50,-9900,-9900,%d,1,5,%d,1,5,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,1,0,-9900,?,9,-9900,?,9,%.1f,A,7,%.1f,A,7,%.1f,A,7,%d,A,7,%d,A,7,%.1f,A,7,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,?,9,-9900,-9900,?,9' \
@@ -96,7 +96,7 @@ def tmy3_record(f, record):
 
 
 def epw_record(f, record):
-    t = datetime.datetime(opts.year, 1, 1)
+    t = datetime.datetime(args.year, 1, 1)
     t += datetime.timedelta(hours=record['hour'])
 
     line = '%d,%d,%d,%d,50,_______________________________________,%.1f,%.1f,%d,%d,9999,9999,9999,%d,%d,%d,999999,999999,999999,999999,%d,%.1f,99,99,9999,99999,9,999999999,99999,0.999,999,99,999,0,99' \
@@ -112,12 +112,12 @@ def irradiances(locn, hour):
     # Compute a solar data filename from the hour
     # Use 2010 as the reference year, as it was not a leap year.
     hours = datetime.timedelta(hours=hour)
-    tzoffset = datetime.timedelta(hours=opts.tz)
-    hr = datetime.datetime(opts.year, 1, 1) + hours - tzoffset
+    tzoffset = datetime.timedelta(hours=args.tz)
+    hr = datetime.datetime(args.year, 1, 1) + hours - tzoffset
     if hr.month == 2 and hr.day == 29:
         # skip Feb 29 on leap years
         hr += datetime.timedelta(days=1)
-    filename = hr.strftime(opts.grids + '/HOURLY_GHI/%d/' % opts.year + hr.strftime('solar_ghi_%Y%m%d_%HUT.txt'))
+    filename = hr.strftime(args.grids + '/HOURLY_GHI/%d/' % args.year + hr.strftime('solar_ghi_%Y%m%d_%HUT.txt'))
     try:
         f = bz2.BZ2File(filename + '.bz2', 'r')
         line = f.readlines()[x + 6]
@@ -133,7 +133,7 @@ def irradiances(locn, hour):
             # print 'missing', filename
             ghr = 0
 
-    filename = hr.strftime(opts.grids + '/HOURLY_DNI/%d/' % opts.year + hr.strftime('solar_dni_%Y%m%d_%HUT.txt'))
+    filename = hr.strftime(args.grids + '/HOURLY_DNI/%d/' % args.year + hr.strftime('solar_dni_%Y%m%d_%HUT.txt'))
     try:
         f = bz2.BZ2File(filename + '.bz2', 'r')
         line = f.readlines()[x + 6]
@@ -173,7 +173,7 @@ def station_details():
     global stname
     global ststate
 
-    line = [line for line in open(opts.hm_details, 'r') if 'st,' + opts.st in line][0]
+    line = [line for line in open(args.hm_details, 'r') if 'st,' + args.st in line][0]
     st = line[0:2]
     stnumber = line[3:9].strip().lstrip('0')
     stname = line[15:55].strip()
@@ -193,32 +193,26 @@ def station_details():
 
     return(locn, altitude)
 
-parser = optparse.OptionParser(version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
-parser.add_option("--grids", type='string', help='top of gridded data tree')
-parser.add_option("-y", "--year", type='int', help='year to generate')
-parser.add_option("--st", type='string', help='BoM station code (required)')
-parser.add_option("--hm-data", type='string', help='BoM station data file')
-parser.add_option("--hm-details", type='string', help='BoM station details file')
-parser.add_option("--tz", type='float', default=10.0, help='Time zone [default +10]')
-parser.add_option("-o", "--out", type='string', help='output filename')
-parser.add_option("--format", "--format", default="epw", help="output format: EPW [default], TMY3", metavar="FORMAT")
-parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose run")
-opts, args = parser.parse_args()
+parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser.add_argument('--version', action='version', version='1.1')
+parser.add_argument("--grids", type=str, help='top of gridded data tree', required=True)
+parser.add_argument("-y", "--year", type=int, help='year to generate', required=True)
+parser.add_argument("--st", type=str, help='BoM station code (required)', required=True)
+parser.add_argument("--hm-data", type=str, help='BoM station data file', required=True)
+parser.add_argument("--hm-details", type=str, help='BoM station details file', required=True)
+parser.add_argument("--tz", type=float, default=10.0, help='Time zone [default +10]')
+parser.add_argument("-o", "--out", type=str, help='output filename', required=True)
+parser.add_argument("--format", "--format", default="epw", help="output format: EPW [default], TMY3", metavar="FORMAT")
+parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="verbose run output")
+args = parser.parse_args()
 
-if not opts.grids or not opts.hm_data or \
-        not opts.hm_details or \
-        not opts.out or not opts.year or not opts.st:
-    parser.print_help()
-    print
+# Check that the grid directory exists
+if not os.path.isdir(args.grids):
+    print >>sys.stderr, 'error: %s is not a directory' % args.grids
     sys.exit(1)
 
-# Check that the opts.grid directory exists
-if not os.path.isdir(opts.grids):
-    print >>sys.stderr, 'error: %s is not a directory' % opts.grids
-    sys.exit(1)
-
-infile = open(opts.hm_data, 'r')
-outfile = open(opts.out, 'wb')
+infile = open(args.hm_data, 'r')
+outfile = open(args.out, 'wb')
 
 locn, elevation = station_details()
 sun = ephem.Sun()
@@ -227,14 +221,14 @@ observer.elevation = elevation
 observer.lat = str(locn.lat)
 observer.long = str(locn.lon)
 
-if opts.format.lower() == 'tmy3':
+if args.format.lower() == 'tmy3':
     verbose('Generating a TMY3 file')
     tmy3_preamble(outfile)
-elif opts.format.lower() == 'epw':
+elif args.format.lower() == 'epw':
     verbose('Generating an EPW file')
     epw_preamble(outfile)
 else:
-    raise ValueError("unknown format %s" % opts.format)
+    raise ValueError("unknown format %s" % args.format)
 
 i = 0
 for line in infile:
@@ -245,7 +239,7 @@ for line in infile:
     if data[1] == 'Station Number':
         # Skip this line; it is the header.
         continue
-    if data[2] != str(opts.year):
+    if data[2] != str(args.year):
         # Skip years that are not of interest.
         continue
     if data[3] == '02' and data[4] == '29':
@@ -290,9 +284,9 @@ for line in infile:
     record['ghi'], record['dni'], record['dhi'] = irradiances(locn, i)
     i += 1
 
-    if opts.format.lower() == 'tmy3':
+    if args.format.lower() == 'tmy3':
         tmy3_record(outfile, record)
-    elif opts.format.lower() == 'epw':
+    elif args.format.lower() == 'epw':
         epw_record(outfile, record)
 
 infile.close()

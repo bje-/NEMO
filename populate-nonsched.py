@@ -2,7 +2,7 @@
 # Load AEMO non-scheduled generation data for a year into the nem.h5 database.
 #
 # -*- Python -*-
-# Copyright (C) 2011 Ben Elliston
+# Copyright (C) 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -10,26 +10,20 @@
 # (at your option) any later version.
 
 from pylab import *
-import optparse
+import argparse
 import sys
 import time
 import datetime
 import tables
 
-parser = optparse.OptionParser('populate-nonsched.py')
-parser.add_option("--db", type='string', default='nem.h5', help='filename')
-parser.add_option("--year", type='string', help='year of data set')
-parser.add_option("--compressor", type='string', default='blosc', help='PyTable compressor')
-parser.add_option("--complevel", type='int', default=6, help='PyTable compression level')
+parser = argparse.ArgumentParser()
+parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')
+parser.add_argument("--year", type=str, help='year of data set', required=True)
+parser.add_argument("--compressor", type=str, default='blosc', help='PyTable compressor')
+parser.add_argument("--complevel", type=int, default=6, help='PyTable compression level')
+args = parser.parse_args()
 
-opts, args = parser.parse_args()
-
-if not opts.year:
-    parser.print_help()
-    print
-    sys.exit(1)
-
-h5file = tables.openFile(opts.db, mode="r+")
+h5file = tables.openFile(args.db, mode="r+")
 print h5file
 try:
     h5file.createGroup(h5file.root, 'aux')
@@ -37,9 +31,9 @@ except tables.exceptions.NodeError:
     pass
 
 try:
-    h5file.createGroup(h5file.root.aux, 'aemo%s' % opts.year)
+    h5file.createGroup(h5file.root.aux, 'aemo%s' % args.year)
 except tables.exceptions.NodeError:
-    print 'group aemo%s already exists' % opts.year
+    print 'group aemo%s already exists' % args.year
     pass
 
 
@@ -48,12 +42,12 @@ class DispatchInterval(tables.IsDescription):
     duid = tables.StringCol(8, pos=1)
     power = tables.Float32Col(pos=2)
 
-f = tables.Filters(complevel=opts.complevel, complib=opts.compressor)
-table = h5file.createTable('/aux/aemo%s' % opts.year, 'nonsched', DispatchInterval,
-                           "NEM %s non-scheduled generation" % opts.year, filters=f)
+f = tables.Filters(complevel=args.complevel, complib=args.compressor)
+table = h5file.createTable('/aux/aemo%s' % args.year, 'nonsched', DispatchInterval,
+                           "NEM %s non-scheduled generation" % args.year, filters=f)
 dispatch = table.row
 
-f = open('%s.csv' % opts.year, 'r')
+f = open('%s.csv' % args.year, 'r')
 for count, line in enumerate(f):
     # eg. D,METER_DATA,GEN_DUID,1,"2008/12/31 04:05:00",CATHROCK,7.645,"2008/12/31 04:05:00"
 
@@ -63,7 +57,7 @@ for count, line in enumerate(f):
 
     fields = line.split(',')
     timestamp = fields[4].strip('"')
-    if timestamp[0:4] != opts.year:
+    if timestamp[0:4] != args.year:
         print 'skipping line out of date range: ', timestamp, fields[5]
         continue
 
