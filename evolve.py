@@ -78,8 +78,8 @@ if args.coal_ccs_costs is not None:
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
 # Apply each demand modifier in the order given on the command line.
-if args.demand_modifiers is not None:
-    for arg in args.demand_modifiers:
+if args.demand_modifier is not None:
+    for arg in args.demand_modifier:
         scenarios.demand_switch(arg)(context)
 
 if not args.quiet and rank == 0:
