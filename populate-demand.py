@@ -9,11 +9,9 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-from pylab import *
 import argparse
-import sys
-import datetime
 import tables
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')

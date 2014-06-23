@@ -10,12 +10,9 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-from pylab import *
 import argparse
-import sys
 import string
 import time
-import datetime
 import tables
 
 parser = argparse.ArgumentParser()
