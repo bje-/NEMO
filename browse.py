@@ -64,7 +64,7 @@ def browse(location):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sock.connect(('localhost', 4000))
-    except:
+    except socket.error:
         print 'connection failed'
         return
     if isinstance(location, tuple):
