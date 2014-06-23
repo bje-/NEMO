@@ -170,7 +170,4 @@ def fillgaps(series, gaps=None, time=None):
     for i, z in enumerate(gaps):
         s[z] = sint[i]
 
-    changed = sint.nonzero()[0]
-    # print 'fillgaps interpolated ', len(changed), ' values'
-
     return s
