@@ -56,30 +56,3 @@ class LatLong:
 
     def __str__(self):
         return '(' + str(self.lat) + ', ' + str(self.lon) + ')'
-
-
-class BoundingBox:
-    def __init__(self, (ll, ur)):
-        self._lowleft = ll
-        self._upright = ur
-        assert self._lowleft.lon <= self._upright.lon
-        assert self._lowleft.lat <= self._upright.lat
-
-    def contains_p(self, coord):
-        return (coord.lat >= self._lowleft.lat and
-                coord.lat <= self._upright.lat) and \
-            (coord.lon >= self._lowleft.lon and
-             coord.lon <= self._upright.lon)
-
-    def slice(self):
-        ll = _lowleft.xy()
-        ur = _upright.xy()
-        s1 = slice(ur[0], ll[0])
-        s2 = slice(ll[1], ur[1])
-        return s1, s2
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __str__(self):
-        return '(' + str(self._lowleft) + ', ' + str(self._upright) + ')'
