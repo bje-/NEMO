@@ -39,7 +39,7 @@ def run_one(chromosome):
     context.costs = costs.AETA2012_2030Low(0.05, 1.3, 11, 42)
     set_generators(chromosome)
     nem.run(context)
-    context.verbose = opts.v
+    context.verbose = args.v
     print context
 
     for i in range(nem.hours):
@@ -47,14 +47,14 @@ def run_one(chromosome):
 
 context = nem.Context()
 capacities = []
-replayfile = open(opts.f)
+replayfile = open(args.f)
 for line in replayfile:
     if re.search('^\s*$', line):
         continue
     if re.search('^\s*#', line):
         print line,
         continue
-    if not re.search('^\s*List:\s*\[.*\].?$', line) and opts.v:
+    if not re.search('^\s*List:\s*\[.*\].?$', line) and args.v:
         print 'skipping malformed input:', line
         continue
     m = re.match(r"^\s*List:\s*\[(.*)\].?$", line)
@@ -63,7 +63,7 @@ for line in replayfile:
     run_one(capacities)
     print
 
-    if opts.x:
+    if args.x:
         print 'Press Enter to start graphical browser ',
         sys.stdin.readline()
-        nem.plot(context, spills=opts.spills)
+        nem.plot(context, spills=args.spills)

@@ -25,7 +25,7 @@ parser.add_argument("--compressor", type=str, default='blosc', help='PyTable com
 parser.add_argument("--complevel", type=int, default=6, help='PyTable compression level')
 args = parser.parse_args()
 
-h5file = tables.openFile(opts.db, mode='r+')
+h5file = tables.openFile(args.db, mode='r+')
 print h5file
 try:
     h5file.createGroup(h5file.root, 'aux')
@@ -33,9 +33,9 @@ except tables.exceptions.NodeError:
     pass
 
 try:
-    h5file.createGroup(h5file.root.aux, 'windfarmperf%s' % opts.year)
+    h5file.createGroup(h5file.root.aux, 'windfarmperf%s' % args.year)
 except tables.exceptions.NodeError:
-    print 'group windfarmperf%s already exists' % opts.year
+    print 'group windfarmperf%s already exists' % args.year
     pass
 
 
@@ -44,13 +44,13 @@ class DispatchInterval(tables.IsDescription):
     duid = tables.StringCol(8, pos=1)
     power = tables.Float32Col(pos=2)
 
-f = tables.Filters(complevel=opts.complevel, complib=opts.compressor)
-table = h5file.createTable('/aux/windfarmperf%s' % opts.year, 'data', DispatchInterval,
-                           "windfarmperformance.info %s wind generation" % opts.year, filters=f)
+f = tables.Filters(complevel=args.complevel, complib=args.compressor)
+table = h5file.createTable('/aux/windfarmperf%s' % args.year, 'data', DispatchInterval,
+                           "windfarmperformance.info %s wind generation" % args.year, filters=f)
 dispatch = table.row
 
 for month in range(12):
-    f = open('aemo_wind_%s%02d.csv' % (opts.year, month + 1), 'r')
+    f = open('aemo_wind_%s%02d.csv' % (args.year, month + 1), 'r')
     for count, line in enumerate(f):
         line = line.strip()
         # "timestamp","woolnth1","captl_wf","cathrock", ...
@@ -61,7 +61,7 @@ for month in range(12):
         else:
             fields = line.split(',')
             timestamp = fields[0].strip('"')
-            if timestamp[0:4] != opts.year:
+            if timestamp[0:4] != args.year:
                 print 'skipping line out of date range: ', timestamp
                 continue
             t = time.mktime(time.strptime(timestamp, "%Y-%m-%d %H:%M:%S"))
