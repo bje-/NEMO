@@ -113,7 +113,6 @@ def default_generation_mix():
             result.append(g(regions.tas, capacity * 0.07, h5file, label='TAS wind'))
         else:
             raise(ValueError)
-            result.append(g(regions.Any, capacity, h5file))
 
     # You can't modify these capacities.
     for g in result:
