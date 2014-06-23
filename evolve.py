@@ -9,10 +9,10 @@
 # (at your option) any later version.
 
 import pyevolve
-import logging
+import os
 
 if __name__ == '__main__':
-    pyevolve.logEnable('/home/ubuntu/pyevolve.log')
+    pyevolve.logEnable(os.getenv('HOME') + '/pyevolve.log')
 
 from pyevolve import Consts
 from pyevolve import G1DList
