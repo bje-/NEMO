@@ -19,7 +19,7 @@ from matplotlib.patches import Patch
 
 import regions
 import generators
-from generators import *
+from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 
 regions.count = 0
 generators.count = 0
