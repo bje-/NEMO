@@ -8,6 +8,8 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+# pylint: disable=too-many-public-methods
+
 import math
 import nem
 import regions
@@ -26,6 +28,7 @@ class SuperGenerator(generators.Generator):
         self.energy = 0
         self.runhours = 0
 
+    # pylint: disable=unused-argument
     def step(self, hr, demand):
         self.runhours += 1
         self.energy += demand
