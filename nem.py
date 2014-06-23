@@ -282,7 +282,6 @@ def _sim(context, starthour, endhour):
 
 def plot(context, spills=False, filename=None, xlimit=None):
     "Produce a pretty plot of supply and demand."
-    gen = context.generation
     spill = context.spill
     # aggregate demand
     demand = context.demand.sum(axis=0)
