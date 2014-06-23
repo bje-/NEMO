@@ -11,8 +11,6 @@ from nem import twh
 from generators import Generator, Wind, SAMWind
 import generators
 
-from pylab import *
-
 
 class SingleWindFarm(Wind):
     patch = generators.Patch(facecolor='green')
