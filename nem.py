@@ -90,11 +90,11 @@ def default_generation_mix():
             total_popn = sum(popns.values())
             for city in popns.keys():
                 pv[city] = (popns[city] / total_popn) * capacity
-            result.append(g(regions.vic, pv['Melbourne'], h5file, pvdata, 0, label='Melbourne PV'))
-            result.append(g(regions.nsw, pv['Sydney'], h5file, pvdata, 1, label='Sydney PV'))
-            result.append(g(regions.qld, pv['SE Qld'], h5file, pvdata, 2, label='SE Qld PV'))
-            result.append(g(regions.nsw, pv['Canberra'], h5file, pvdata, 3, label='Canberra PV'))
-            result.append(g(regions.sa, pv['Adelaide'], h5file, pvdata, 4, label='Adelaide PV'))
+            result.append(g(regions.vic, pv['Melbourne'], pvdata, 0, label='Melbourne PV'))
+            result.append(g(regions.nsw, pv['Sydney'], pvdata, 1, label='Sydney PV'))
+            result.append(g(regions.qld, pv['SE Qld'], pvdata, 2, label='SE Qld PV'))
+            result.append(g(regions.nsw, pv['Canberra'], pvdata, 3, label='Canberra PV'))
+            result.append(g(regions.sa, pv['Adelaide'], pvdata, 4, label='Adelaide PV'))
         elif g == CST:
             line1 = open(cstdata).readline()
             # Pull out all of the station numbers, in column order.

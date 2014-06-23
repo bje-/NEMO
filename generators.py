@@ -186,7 +186,7 @@ class CST(Generator):
 class PV(Generator):
     patch = Patch(facecolor='blue')
 
-    def __init__(self, region, capacity, table, filename, locn, label='PV'):
+    def __init__(self, region, capacity, filename, locn, label='PV'):
         Generator.__init__(self, region, capacity, label)
         # Normalised to 1 MW
         self.generation = np.genfromtxt(filename, delimiter=',', skip_header=1)
