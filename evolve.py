@@ -89,22 +89,22 @@ if not args.quiet and rank == 0:
     print context.generators
 
 
-def cost(context, transmission_p):
+def cost(ctx, transmission_p):
     "sum up the costs"
     score = 0
 
-    for g in context.generators:
-        score += g.capcost(context.costs) + g.opcost(context.costs)
+    for g in ctx.generators:
+        score += g.capcost(ctx.costs) + g.opcost(ctx.costs)
 
     ### Penalty: unserved energy
-    minuse = context.demand.sum() * (context.relstd / 100)
-    use = max(0, context.unserved_energy - minuse)
+    minuse = ctx.demand.sum() * (ctx.relstd / 100)
+    use = max(0, ctx.unserved_energy - minuse)
     score += pow(use, 3)
 
     ### Penalty: total emissions
     if args.emissions_limit is not None:
         emissions = 0
-        for g in context.generators:
+        for g in ctx.generators:
             try:
                 emissions += g.hourly_power.sum() * g.intensity
             except AttributeError:
@@ -117,19 +117,19 @@ def cost(context, transmission_p):
     ### Penalty: limit fossil to fraction of annual demand
     if args.fossil_limit is not None:
         fossil_energy = 0
-        for g in context.generators:
+        for g in ctx.generators:
             if g.__class__ is nem.generators.CCGT or \
                g.__class__ is nem.generators.OCGT or \
                g.__class__ is nem.generators.Coal_CCS or \
                g.__class__ is nem.generators.CCGT_CCS or \
                g.__class__ is nem.generators.Black_Coal:
                 fossil_energy += g.hourly_power.sum()
-        fossil_exceedance = max(0, fossil_energy - context.demand.sum() * args.fossil_limit)
+        fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit)
         score += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
     biofuel_energy = 0
-    for g in context.generators:
+    for g in ctx.generators:
         if g.__class__ is nem.generators.Biofuel:
             biofuel_energy += g.hourly_power.sum()
     biofuel_exceedance = max(0, biofuel_energy - 20 * nem.twh)
@@ -137,14 +137,14 @@ def cost(context, transmission_p):
 
     ### Penalty: limit hydro use
     hydro_energy = 0
-    for g in context.generators:
+    for g in ctx.generators:
         if g.__class__ is nem.generators.Hydro or g.__class__ is nem.generators.PumpedHydro:
             hydro_energy += g.hourly_power.sum()
     hydro_exceedance = max(0, hydro_energy - 12 * nem.twh)
     score += pow(hydro_exceedance, 3)
 
     if transmission_p:
-        maxexchanges = context.exchanges.max(axis=0)
+        maxexchanges = ctx.exchanges.max(axis=0)
         for i in range(5):
             # zero the diagonal entries
             maxexchanges[i, i] = 0
@@ -155,7 +155,7 @@ def cost(context, transmission_p):
             for j in range(i):
                 maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
                 maxexchanges[j, i] = 0
-        txscore = (maxexchanges * context.costs.transmission.cost_matrix).sum()
+        txscore = (maxexchanges * ctx.costs.transmission.cost_matrix).sum()
         score += txscore
 
     return score / pow(10, 9)
