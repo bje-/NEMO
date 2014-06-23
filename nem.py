@@ -379,6 +379,7 @@ def run(context, starthour=0, endhour=hours):
 
 def _format_date(x, pos=None):
     "Pretty printer for dates/times."
+    # pylint: disable=unused-argument
     import datetime
     delta = datetime.timedelta(hours=x)
     t = datetime.datetime(2010, 1, 1) + delta
