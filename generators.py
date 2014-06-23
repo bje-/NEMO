@@ -398,6 +398,7 @@ class Battery(Generator):
     def set_storage(self, maxstorage):
         self.maxstorage = maxstorage
 
+    # pylint: disable=unused-argument
     def store(self, hr, power):
         "Charge for one hour."
         energy = power * self.rte
@@ -460,6 +461,7 @@ class Geothermal(Generator):
 class DemandResponse(Generator):
     patch = Patch(facecolor='white')
 
+    # pylint: disable=unused-argument
     def __init__(self, region, capacity, cost_per_mwh, label='demand-response'):
         "Load shedding generator"
         Generator.__init__(self, region, capacity, label)
