@@ -94,12 +94,11 @@ def count_duids(table):
     where the keys are DUIDs and the values are the number of times
     each appears in the table.
     """
-    dict = {}
+    dictionary = {}
     for row in table:
         id = row['duid']
         try:
-            dict[id] += 1
+            dictionary[id] += 1
         except:
-            dict[id] = 1
-
-    return dict
+            dictionary[id] = 1
+    return dictionary
