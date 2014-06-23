@@ -1,5 +1,5 @@
 # -*- Python -*-
-# Copyright (C) 2012, 2013 Ben Elliston
+# Copyright (C) 2012, 2013, 2014 Ben Elliston
 #
 # evolve.py -- evolutionary exploration of the NEM
 #
@@ -78,8 +78,9 @@ if args.coal_ccs_costs is not None:
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
 # Apply each demand modifier in the order given on the command line.
-for arg in opt_d_args:
-    scenarios.demand_switch(arg)(context)
+if args.demand_modifiers is not None:
+    for arg in args.demand_modifiers:
+        scenarios.demand_switch(arg)(context)
 
 if not args.quiet and rank == 0:
     docstring = scenarios.supply_switch(args.supply_scenario).__doc__
