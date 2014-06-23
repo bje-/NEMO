@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 
+
 def format_date(x, pos=None):
     # pylint: disable=unused-argument
     import datetime
