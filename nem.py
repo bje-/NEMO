@@ -54,7 +54,7 @@ def _import_bom_stations(filename):
         location = fields[3].strip()
         location = string.capwords(location)
         location = string.replace(location, 'Aws', 'AWS')
-        stns[stncode] = (location, state)
+        stations[stncode] = (location, state)
     f.close()
     return stations
 stns = _import_bom_stations('Stations.txt')
