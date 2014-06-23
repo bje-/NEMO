@@ -81,7 +81,7 @@ def default_generation_mix():
             # 24 GW biofuelled gas turbines (fixed)
             # distribute 24GW of biofuelled turbines across all regions
             # the region list is in order of approximate demand
-            for r in regions.all:
+            for r in regions.All:
                 result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
         elif g == PV:
             # Calculate proportions across major cities.
@@ -125,7 +125,7 @@ def default_generation_mix():
 class Context:
     def __init__(self):
         self.verbose = False
-        self.regions = regions.all
+        self.regions = regions.All
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
         self.generators = default_generation_mix()
@@ -204,8 +204,8 @@ def _sim(context, starthour, endhour):
     demand_copy = context.demand.copy()
 
     # Zero out regions we don't care about.
-    for r in [r for r in regions.all if r not in context.regions]:
-        demand_copy[r] = 0
+    for rgn in [r for r in regions.All if r not in context.regions]:
+        demand_copy[rgn] = 0
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region in context.regions]
@@ -245,7 +245,7 @@ def _sim(context, starthour, endhour):
                     break
 
                 rgn = g.region if len(path) is 0 else path[-1][-1]
-                rgnidx = rgn._num
+                rgnidx = rgn.num
                 transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
 
                 if transfer:

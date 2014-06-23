@@ -47,7 +47,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_001(self):
         'Test that all regions are present'
-        self.assertEqual(self.context.regions, regions.all)
+        self.assertEqual(self.context.regions, regions.All)
 
     def test_002(self):
         'Demand equals approx. 204 TWh'
@@ -94,7 +94,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_008(self):
         'A NSW generator runs in NSW only'
-        for rgn in regions.all:
+        for rgn in regions.All:
             self.context.regions = [rgn]
             gen = SuperGenerator(None)
             self.context.generators = [gen]
@@ -107,7 +107,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_009(self):
         'A NSW generators runs in any set of regions that includes NSW'
         rgnset = []
-        for rgn in regions.all:
+        for rgn in regions.All:
             rgnset.append(rgn)
             self.context.regions = rgnset
             gen = SuperGenerator(None)
@@ -117,7 +117,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_010(self):
         'Running in one region only produces no interstate exchanges'
-        for rgn in regions.all:
+        for rgn in regions.All:
             self.context.regions = [rgn]
             nem.run(self.context, endhour=1)
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1)
@@ -125,16 +125,16 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_011(self):
         'Running in two regions only produces limited interstate exchanges'
-        for rgn1 in regions.all:
-            for rgn2 in regions.all:
+        for rgn1 in regions.All:
+            for rgn2 in regions.All:
                 if rgn1 is rgn2:
                     continue
                 self.context.regions = [rgn1, rgn2]
                 nem.run(self.context, endhour=1)
                 self.assertTrue(self.context.exchanges[0, rgn1, rgn1] >= 0)
                 self.assertTrue(self.context.exchanges[0, rgn2, rgn2] >= 0)
-                for i in regions.all:
-                    for j in regions.all:
+                for i in regions.All:
+                    for j in regions.All:
                         # Check that various elements of the exchanges matrix are 0.
                         # Ignore: diagonals, [RGN1,RGN2] and [RGN2,RGN1].
                         if i != j and (i, j) != (rgn1, rgn2) and (i, j) != (rgn2, rgn1):
@@ -144,7 +144,7 @@ class TestSequenceFunctions(unittest.TestCase):
         'A NSW generator does not run in other regions'
         rgnset = []
         # Skip NSW (first in the list).
-        for rgn in regions.all[1:]:
+        for rgn in regions.All[1:]:
             rgnset.append(rgn)
             self.context.regions = rgnset
             gen = SuperGenerator(None)
