@@ -1,5 +1,5 @@
 # -*- Python -*-
-# Copyright (C) 2012, 2013 Ben Elliston
+# Copyright (C) 2012, 2013, 2014 Ben Elliston
 #
 # evolve.py -- evolutionary exploration of the NEM
 #
@@ -9,10 +9,10 @@
 # (at your option) any later version.
 
 import pyevolve
-import logging
+import os
 
 if __name__ == '__main__':
-    pyevolve.logEnable('/home/ubuntu/pyevolve.log')
+    pyevolve.logEnable(os.getenv('HOME') + '/pyevolve.log')
 
 from pyevolve import Consts
 from pyevolve import G1DList
@@ -23,7 +23,7 @@ from pyevolve import Mutators
 from pyevolve import Crossovers
 
 import numpy as np
-import optparse
+import argparse
 import sys
 import nem
 import scenarios
@@ -34,66 +34,58 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
-# Note: argparse would be a better choice here for its "append"
-# action, but we can't yet assume widespread use of Python 2.7.
-
-opt_d_args = []
-
-
-def opt_d_callback(option, opt, value, parser):
-    opt_d_args.append(value)
-
-parser = optparse.OptionParser(version='1.0', description='Bug reports to: b.elliston@student.unsw.edu.au')
-parser.add_option("-d", "--demand-modifier", type='string', action="callback", callback=opt_d_callback, help='demand modifier [default: unchanged]')
-parser.add_option("-f", "--frequency", type='int', default=10, help='frequency of stats output [default: 10]')
-parser.add_option("-g", "--generations", type='int', default=100, help='generations [default: 100]')
-parser.add_option("-m", "--mutation-rate", type='float', default=0.02, help='mutation rate [default: 0.02]')
-parser.add_option("-p", "--population", type='int', default=100, help='population size [default: 100]')
-parser.add_option("-q", "--quiet", action="store_true", default=False, help='be quiet')
-parser.add_option("-r", "--discount-rate", type='float', default=0.05, help='discount rate [default: 0.05]')
-parser.add_option("-s", "--supply-scenario", type='string', default='re100', help='generation mix scenario [default: \'re100\']')
-parser.add_option("-t", "--transmission", action="store_true", default=False, help="include transmission [default: False]")
-parser.add_option("-c", "--carbon-price", type='int', default=25, help='carbon price ($/t) [default: 25]')
-parser.add_option("-x", action="store_true", default=False, help='Plot best individual at the end of run [default: False]')
-parser.add_option("--coal-price", type='float', default=1.86, help='black coal price ($/GJ) [default: 1.86]')
-parser.add_option("--gas-price", type='float', default=11.0, help='gas price ($/GJ) [default: 11]')
-parser.add_option("--ccs-storage-costs", type='float', default=27, help='CCS storage costs ($/t) [default: 27]')
-parser.add_option("--emissions-limit", type='float', default=None, help='CO2 emissions limit (Mt) [default: None]')
-parser.add_option("--fossil-limit", type='float', default=None, help='Fraction of energy from fossil fuel [default: None]')
-parser.add_option("--coal-ccs-costs", type='float', default=None, help='override capital cost of coal CCS ($/kW)')
-parser.add_option("--tx-costs", type='int', default=800, help='transmission costs ($/MW.km) [default: 800]')
-parser.add_option("--low-cost", action="store_true", default=True, help='Use low technology costs [default]')
-parser.add_option("--high-cost", action="store_false", dest="low_cost", help='Use high technology costs')
-parser.add_option("--spills", action="store_true", default=False, help='Plot spills [default: False]')
-
-opts, args = parser.parse_args()
+parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser.add_argument('--version', action='version', version='1.0')
+parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
+parser.add_argument("-f", "--frequency", type=int, default=10, help='frequency of stats output [default: 10]')
+parser.add_argument("-g", "--generations", type=int, default=100, help='generations [default: 100]')
+parser.add_argument("-m", "--mutation-rate", type=float, default=0.02, help='mutation rate [default: 0.02]')
+parser.add_argument("-p", "--population", type=int, default=100, help='population size [default: 100]')
+parser.add_argument("-q", "--quiet", action="store_true", help='be quiet')
+parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
+parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
+parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
+parser.add_argument("-c", "--carbon-price", type=int, default=25, help='carbon price ($/t) [default: 25]')
+parser.add_argument("-x", action="store_true", help='Plot best individual at the end of run [default: False]')
+parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
+parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
+parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
+parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (Mt) [default: None]')
+parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
+parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
+parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
+parser.add_argument("--low-cost", action="store_true", default=True, help='Use low technology costs [default]')
+parser.add_argument("--high-cost", action="store_false", dest="low_cost", help='Use high technology costs')
+parser.add_argument("--spills", action="store_true", help='Plot spills [default: False]')
+args = parser.parse_args()
 if rank == 0:
-    print opts
+    print vars(args)
 
 np.set_printoptions(precision=5)
 context = nem.Context()
 
-if opts.low_cost:
-    context.costs = costs.AETA2012_2030Low(opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
+if args.low_cost:
+    context.costs = costs.AETA2012_2030Low(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
 else:
-    context.costs = costs.AETA2012_2030High(opts.discount_rate, opts.coal_price, opts.gas_price, opts.ccs_storage_costs)
-context.costs.carbon = opts.carbon_price
-context.costs.transmission = transmission.Transmission(opts.tx_costs, opts.discount_rate)
-if opts.coal_ccs_costs is not None:
+    context.costs = costs.AETA2012_2030High(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
+context.costs.carbon = args.carbon_price
+context.costs.transmission = transmission.Transmission(args.tx_costs, args.discount_rate)
+if args.coal_ccs_costs is not None:
     fom = context.costs.fixed_om_costs[nem.generators.Coal_CCS]
-    af = costs.annuity_factor(costs.AETA2012_2030.lifetime, opts.discount_rate)
-    context.costs.capcost_per_kw_per_yr[nem.generators.Coal_CCS] = opts.coal_ccs_costs / af + fom
+    af = costs.annuity_factor(costs.AETA2012_2030.lifetime, args.discount_rate)
+    context.costs.capcost_per_kw_per_yr[nem.generators.Coal_CCS] = args.coal_ccs_costs / af + fom
 
 # Set up the scenario.
-scenarios.supply_switch(opts.supply_scenario)(context)
+scenarios.supply_switch(args.supply_scenario)(context)
 # Apply each demand modifier in the order given on the command line.
-for arg in opt_d_args:
-    scenarios.demand_switch(arg)(context)
+if args.demand_modifiers is not None:
+    for arg in args.demand_modifiers:
+        scenarios.demand_switch(arg)(context)
 
-if not opts.quiet and rank == 0:
-    docstring = scenarios.supply_switch(opts.supply_scenario).__doc__
+if not args.quiet and rank == 0:
+    docstring = scenarios.supply_switch(args.supply_scenario).__doc__
     assert docstring is not None
-    print "supply scenario: %s (%s)" % (opts.supply_scenario, docstring)
+    print "supply scenario: %s (%s)" % (args.supply_scenario, docstring)
     print context.generators
 
 
@@ -110,7 +102,7 @@ def cost(context, transmission_p):
     score += pow(use, 3)
 
     ### Penalty: total emissions
-    if opts.emissions_limit is not None:
+    if args.emissions_limit is not None:
         emissions = 0
         for g in context.generators:
             try:
@@ -119,11 +111,11 @@ def cost(context, transmission_p):
                 # not all generators have an intensity attribute
                 pass
         # exceedance in tonnes CO2-e
-        emissions_exceedance = max(0, emissions - opts.emissions_limit * pow(10, 6))
+        emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6))
         score += pow(emissions_exceedance, 3)
 
     ### Penalty: limit fossil to fraction of annual demand
-    if opts.fossil_limit is not None:
+    if args.fossil_limit is not None:
         fossil_energy = 0
         for g in context.generators:
             if g.__class__ is nem.generators.CCGT or \
@@ -132,7 +124,7 @@ def cost(context, transmission_p):
                g.__class__ is nem.generators.CCGT_CCS or \
                g.__class__ is nem.generators.Black_Coal:
                 fossil_energy += g.hourly_power.sum()
-        fossil_exceedance = max(0, fossil_energy - context.demand.sum() * opts.fossil_limit)
+        fossil_exceedance = max(0, fossil_energy - context.demand.sum() * args.fossil_limit)
         score += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
@@ -184,7 +176,7 @@ def eval_func(chromosome):
     "annual cost of the system (in billion $)"
     set_generators(chromosome)
     nem.run(context)
-    score = cost(context, transmission_p=opts.transmission)
+    score = cost(context, transmission_p=args.transmission)
     return score
 
 
@@ -203,15 +195,15 @@ def run():
         genome.crossover.set(Crossovers.G1DListCrossoverUniform)
 
     ga = GSimpleGA.GSimpleGA(genome)
-    ga.setPopulationSize(opts.population)
+    ga.setPopulationSize(args.population)
     ga.setElitism(True)
-    ga.setGenerations(opts.generations)
-    ga.setMutationRate(opts.mutation_rate)
+    ga.setGenerations(args.generations)
+    ga.setMutationRate(args.mutation_rate)
     ga.setMultiProcessing(True)
     ga.setMinimax(Consts.minimaxType["minimize"])
-    ga.evolve(freq_stats=opts.frequency)
+    ga.evolve(freq_stats=args.frequency)
 
-    if not opts.quiet and rank == 0:
+    if not args.quiet and rank == 0:
         best = ga.bestIndividual()
         print best
 
@@ -219,13 +211,13 @@ def run():
         nem.run(context)
         context.verbose = True
         print context
-        if opts.transmission:
+        if args.transmission:
             print context.exchanges.max(axis=0)
 
-    if opts.x and rank == 0:
+    if args.x and rank == 0:
         print 'Press Enter to start graphical browser ',
         sys.stdin.readline()
-        nem.plot(context, spills=opts.spills)
+        nem.plot(context, spills=args.spills)
 
     # Force database closure to avoid pytables output.
     nem.h5file.close()

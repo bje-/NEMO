@@ -3,7 +3,7 @@
 # year into the database.
 #
 # -*- Python -*-
-# Copyright (C) 2011 Ben Elliston
+# Copyright (C) 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -11,25 +11,19 @@
 # (at your option) any later version.
 
 from pylab import *
-import optparse
+import argparse
 import sys
 import string
 import time
 import datetime
 import tables
 
-parser = optparse.OptionParser('populate-nonsched.py')
-parser.add_option("--db", type='string', default='nem.h5', help='filename')
-parser.add_option("--year", type='string', help='year of data set')
-parser.add_option("--compressor", type='string', default='blosc', help='PyTable compressor')
-parser.add_option("--complevel", type='int', default=6, help='PyTable compression level')
-
-opts, args = parser.parse_args()
-
-if not opts.year:
-    parser.print_help()
-    print
-    sys.exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')
+parser.add_argument("--year", type=str, help='year of data set', required=True)
+parser.add_argument("--compressor", type=str, default='blosc', help='PyTable compressor')
+parser.add_argument("--complevel", type=int, default=6, help='PyTable compression level')
+args = parser.parse_args()
 
 h5file = tables.openFile(opts.db, mode='r+')
 print h5file

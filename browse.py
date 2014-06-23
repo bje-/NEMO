@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # -*- Python -*-
-# Copyright (C) 2010, 2011 Ben Elliston
+# Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@ from latlong import LatLong
 import datetime
 from datetime import datetime as date
 import numpy.ma as ma
-import optparse
+import argparse
 import socket
 import tables
 import string
@@ -25,10 +25,10 @@ import sys
 from pylab import *
 import config
 
-parser = optparse.OptionParser('browse.py')
-parser.add_option("--db", type='string', default='nem.h5', help='filename')
-opts, args = parser.parse_args()
-h5file = tables.openFile(opts.db, mode='r')
+parser = argparse.ArgumentParser()
+parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')
+args = parser.parse_args()
+h5file = tables.openFile(args.db, mode='r')
 print h5file
 config.ghi = h5file.root.ghi
 config.dni = h5file.root.dni
