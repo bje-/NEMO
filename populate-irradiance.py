@@ -19,13 +19,13 @@ maxcols = 839
 maxrows = 679
 
 
-def readfile(filename):
+def readfile(fname):
     try:
-        file = bz2.BZ2File(filename + '.bz2', 'r')
+        gridfile = bz2.BZ2File(fname + '.bz2', 'r')
     except IOError:
-        file = open(filename, 'r')
-    contents = file.readlines()
-    file.close()
+        gridfile = open(fname, 'r')
+    contents = gridfile.readlines()
+    gridfile.close()
     mat = np.empty((maxrows, maxcols), dtype='int16')
     for row in range(maxrows):
         mat[row] = contents[row + 6].split()
