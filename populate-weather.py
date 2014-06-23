@@ -56,10 +56,10 @@ try:
 except tables.exceptions.NodeError:
     pass
 
-filter = tables.Filters(complevel=args.complevel, complib=args.compressor)
+filt = tables.Filters(complevel=args.complevel, complib=args.compressor)
 try:
     table = h5file.createTable('/aux', 'weather', WeatherObservation,
-                               "BoM weather observations", filters=filter)
+                               "BoM weather observations", filters=filt)
 except tables.exceptions.NodeError:
     table = h5file.root.aux.weather
 obs = table.row
@@ -108,7 +108,7 @@ table.flush()
 
 try:
     table = h5file.createTable('/aux', 'wstations', WeatherStation,
-                               "BoM weather stations", filters=filter)
+                               "BoM weather stations", filters=filt)
 except tables.exceptions.NodeError:
     table = h5file.root.aux.stations
 stn = table.row
