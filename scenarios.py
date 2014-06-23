@@ -3,16 +3,6 @@ import numpy as np
 
 import nem
 
-supply_scenarios = {'re100': re100,
-                    'ccgt': ccgt,
-                    'ccgt-ccs': ccgt_ccs,
-                    'coal-ccs': coal_ccs,
-                    're100+batteries': re100_batteries,
-                    'replacement': replacement,
-                    're100+dsp': re100_dsp,
-                    're100+geoth': re100_geothermal,
-                    're+fossil': re_plus_fossil,
-                    'theworks': theworks }
 
 def supply_switch(label):
     "Return a callback function to set up a given scenario."
@@ -119,6 +109,17 @@ def theworks(context):
     ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
     g = context.generators
     context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
+
+supply_scenarios = {'re100': re100,
+                    'ccgt': ccgt,
+                    'ccgt-ccs': ccgt_ccs,
+                    'coal-ccs': coal_ccs,
+                    're100+batteries': re100_batteries,
+                    'replacement': replacement,
+                    're100+dsp': re100_dsp,
+                    're100+geoth': re100_geothermal,
+                    're+fossil': re_plus_fossil,
+                    'theworks': theworks}
 
 
 ### Demand modifiers
