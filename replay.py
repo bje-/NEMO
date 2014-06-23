@@ -59,7 +59,7 @@ for line in replayfile:
         continue
     m = re.match(r"^\s*List:\s*\[(.*)\].?$", line)
     capacities = m.group(1).split(',')
-    capacities = map(float, capacities)  # str -> float
+    capacities = [float(elt) for elt in capacities]  # str -> float
     run_one(capacities)
     print
 
