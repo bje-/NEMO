@@ -73,7 +73,7 @@ def tmy3_preamble(f):
 
 def epw_preamble(f):
     print >>f, 'LOCATION,%s (%s) in %s,%s,AUS,BoM,%s,%.2f,%.2f,%.1f,%.1f' % \
-        (stname, stnumber, args.year, ststate, stnumber, locn.lat, locn.lon, opts.args, elevation)
+        (stname, stnumber, args.year, ststate, stnumber, locn.lat, locn.lon, args.tz, elevation)
 
     print >>f, 'DESIGN CONDITIONS,0'
     print >>f, 'TYPICAL/EXTREME PERIODS,,'
