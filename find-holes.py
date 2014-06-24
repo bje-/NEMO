@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Collect statistics on missing, zero and non-zero values.
 
 import sys

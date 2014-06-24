@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # A utility to populate a new HDF5 file. -*- Python -*-
 
 import sys
