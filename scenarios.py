@@ -1,7 +1,8 @@
 import heapq
 import numpy as np
 
-import nem
+import generators
+import regions
 
 
 def supply_switch(label):
@@ -15,16 +16,16 @@ def supply_switch(label):
 
 def _hydro():
     "Return a list of existing hydroelectric generators"
-    hydro1 = nem.generators.Hydro(nem.regions.tas, 2740,
-                                  label=nem.regions.tas.id + ' hydro')
-    hydro2 = nem.generators.Hydro(nem.regions.nsw, 1160,
-                                  label=nem.regions.nsw.id + ' hydro')
-    hydro3 = nem.generators.Hydro(nem.regions.vic, 960,
-                                  label=nem.regions.vic.id + ' hydro')
-    psh1 = nem.generators.PumpedHydro(nem.regions.qld, 500, 5000,
-                                      label='QLD1 pumped-hydro')
-    psh2 = nem.generators.PumpedHydro(nem.regions.nsw, 1740, 15000,
-                                      label='NSW1 pumped-hydro')
+    hydro1 = generators.Hydro(regions.tas, 2740,
+                              label=regions.tas.id + ' hydro')
+    hydro2 = generators.Hydro(regions.nsw, 1160,
+                              label=regions.nsw.id + ' hydro')
+    hydro3 = generators.Hydro(regions.vic, 960,
+                              label=regions.vic.id + ' hydro')
+    psh1 = generators.PumpedHydro(regions.qld, 500, 5000,
+                                  label='QLD1 pumped-hydro')
+    psh2 = generators.PumpedHydro(regions.nsw, 1740, 15000,
+                                  label='NSW1 pumped-hydro')
     hydros = [hydro1, hydro2, hydro3, psh1, psh2]
     for h in hydros:
         h.setters = []
@@ -33,31 +34,31 @@ def _hydro():
 
 def replacement(context):
     "The current NEM fleet, more or less."
-    coal = nem.generators.Black_Coal(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    coal = generators.Black_Coal(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
 def ccgt(context):
     "All gas scenario"
     # pylint: disable=redefined-outer-name
-    ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    ccgt = generators.CCGT(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
 def ccgt_ccs(context):
     "Gas CCS scenario"
     # pylint: disable=redefined-outer-name
-    ccgt = nem.generators.CCGT_CCS(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    ccgt = generators.CCGT_CCS(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
 def coal_ccs(context):
     "Coal CCS scenario"
-    coal = nem.generators.Coal_CCS(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    coal = generators.Coal_CCS(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -69,7 +70,7 @@ def re100(context):
 
 def re100_batteries(context):
     "Lots of renewables plus battery storage"
-    nsw_battery = nem.generators.Battery(nem.regions.nsw, 0, 0)
+    nsw_battery = generators.Battery(regions.nsw, 0, 0)
     g = context.generators
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
@@ -77,24 +78,24 @@ def re100_batteries(context):
 def re_plus_fossil(context):
     "Mostly renewables with some fossil augmentation"
     # pylint: disable=redefined-outer-name
-    ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    ccgt = generators.CCGT(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     g = context.generators
     context.generators = [ccgt] + g[:-5] + [ocgt]
 
 
 def re100_dsp(context):
     "Mostly renewables with demand side participation"
-    dr1 = nem.generators.DemandResponse(nem.regions.nsw, 2000, 300)
-    dr2 = nem.generators.DemandResponse(nem.regions.nsw, 2000, 1000)
-    dr3 = nem.generators.DemandResponse(nem.regions.nsw, 2000, 3000)
+    dr1 = generators.DemandResponse(regions.nsw, 2000, 300)
+    dr2 = generators.DemandResponse(regions.nsw, 2000, 1000)
+    dr3 = generators.DemandResponse(regions.nsw, 2000, 3000)
     g = context.generators
     context.generators = g + [dr1, dr2, dr3]
 
 
 def re100_geothermal(context):
     "100% reneables plus geothermal"
-    geo = nem.generators.Geothermal(nem.regions.sa, 0)
+    geo = generators.Geothermal(regions.sa, 0)
     g = context.generators
     context.generators = [geo] + g[:-4]
 
@@ -102,11 +103,11 @@ def re100_geothermal(context):
 def theworks(context):
     "All technologies"
     # pylint: disable=redefined-outer-name
-    coal = nem.generators.Black_Coal(nem.regions.nsw, 0)
-    coal_ccs = nem.generators.Coal_CCS(nem.regions.nsw, 0)
-    ccgt = nem.generators.CCGT(nem.regions.nsw, 0)
-    ccgt_ccs = nem.generators.CCGT_CCS(nem.regions.nsw, 0)
-    ocgt = nem.generators.OCGT(nem.regions.nsw, 0)
+    coal = generators.Black_Coal(regions.nsw, 0)
+    coal_ccs = generators.Coal_CCS(regions.nsw, 0)
+    ccgt = generators.CCGT(regions.nsw, 0)
+    ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
     g = context.generators
     context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
 
