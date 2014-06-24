@@ -1,5 +1,5 @@
 # -*- Python -*-
-# Copyright (C) 2012 Ben Elliston
+# Copyright (C) 2012, 2014 Ben Elliston
 #
 # Adapted from SIMPLESYS, a solar thermal system model.
 # http://www.powerfromthesun.net/simplesys.html
@@ -15,10 +15,6 @@
 
 def _alert(message):
     print message
-
-
-def _percent(x):
-    return str(round(float(x) * 100)) + '%'
 
 
 class Context:
