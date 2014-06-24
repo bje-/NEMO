@@ -169,16 +169,6 @@ class Context:
         return s
 
 
-def _path_in_regions_p(path, context):
-    print 'path_in_regions_p:', path
-    if path is []:
-        return True
-    for (src, dest) in path:
-        if src not in context.regions or dest not in context.regions:
-            return False
-    return True
-
-
 def _sim(context, starthour, endhour):
     genlookup = {}
     for i, g in enumerate(context.generators):
