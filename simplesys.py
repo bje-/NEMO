@@ -176,5 +176,6 @@ class Context:
         self.ZS += self.QS
         self.HR += 1
 
-        return {'T': T, 'QC': round(self.QC, 3), 'QA': round(self.QA, 3), 'QS': round(self.QS, 3), 'ES': round(self.ES, 3),
-                'QD': round(self.QD, 3), 'QL': round(rQL, 3), 'MODE': self.MODE}
+        return {'T': T, 'QC': self.QC, 'QA': self.QA, 'QS': self.QS,
+                'ES': self.ES, 'QD': self.QD, 'QL': rQL,
+                'MODE': self.MODE}
