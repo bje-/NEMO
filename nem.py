@@ -170,11 +170,8 @@ class Context:
 
 
 def _sim(context, starthour, endhour):
-    genlookup = {}
-    for i, g in enumerate(context.generators):
-        # reset generator internal state
-        g.reset()
-        genlookup[g] = i
+    # reset generator internal state
+    [g.reset() for g in context.generators]
 
     connections = {}
     c = regions.connections
@@ -207,8 +204,7 @@ def _sim(context, starthour, endhour):
             print 'hour', hr, 'demand:', hour_demand
 
         # Dispatch power from each generator in merit order
-        for g in gens:
-            gidx = genlookup[g]
+        for gidx, g in enumerate (gens):
             gen, context.spill[gidx, hr] = g.step(hr, residual_hour_demand)
             context.generation[gidx, hr] = gen
             if not gen:
@@ -275,10 +271,6 @@ def plot(context, spills=False, filename=None, xlimit=None):
     # aggregate demand
     demand = context.demand.sum(axis=0)
 
-    genlookup = {}
-    for i, g in enumerate(context.generators):
-        genlookup[g] = i
-
     fig = plt.figure()
     plt.ylabel('MW')
     plt.xlabel('Hour')
@@ -314,7 +306,8 @@ def plot(context, spills=False, filename=None, xlimit=None):
     accum = np.zeros(hours)
     prev = accum.copy()
     for g in [g for g in context.generators if g.region in context.regions]:
-        accum += context.generation[genlookup[g]]
+        idx = context.generation.index(g)
+        accum += context.generation[idx]
         assert(np.trunc(accum) > np.trunc(demand)).sum() == 0
         plt.plot(xdata, accum, color='black', linewidth=0.5)
         plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc())
@@ -325,7 +318,8 @@ def plot(context, spills=False, filename=None, xlimit=None):
     if spills:
         prev = demand.copy()
         for g in [g for g in context.generators if g.region in context.regions]:
-            accum += spill[genlookup[g]]
+            idx = context.generation.index(g)
+            accum += spill[idx]
             plt.plot(xdata, accum, color='black')
             plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
