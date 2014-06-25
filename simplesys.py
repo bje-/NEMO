@@ -57,21 +57,10 @@ class Context:
         self.ZS = 0
         self.SU = 0
 
-    def returnQL(self, QL):
-        T = self.HR % 24
-        x = QL
-        if T < self.ISTART:
-            x = 0
-        if T >= self.SHUT:
-            x = 0
-        return x
-
     def collectorOutput(self):
         """Calculate collector field output"""
         x = self.COLLECTOR[self.HR] - self.QF
-        if x < 0:
-            x = 0
-        self.QC = x
+        self.QC = 0 if x < 0 else x
 
     def startupEnergy(self):
         if self.SU < self.EP:
@@ -166,10 +155,10 @@ class Context:
             self.ZS = 0
             self.SU = 0
 
-        rQL = self.returnQL(load)
         self.collectorOutput()
         self.startupEnergy()
         self.storageLoss()
+        rQL = load if (T >= self.ISTART or T < self.SHUT) else 0
         self.controlLogic(rQL)
 
         self.ES += self.QS
@@ -177,5 +166,5 @@ class Context:
         self.HR += 1
 
         return {'T': T, 'QC': self.QC, 'QA': self.QA, 'QS': self.QS,
-                'ES': self.ES, 'QD': self.QD, 'QL': rQL,
-                'MODE': self.MODE}
+                'ES': self.ES, 'QD': self.QD, 'QL': rQL, 'MODE':
+                self.MODE}
