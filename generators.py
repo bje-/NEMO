@@ -129,7 +129,6 @@ class CST(Generator):
         self.hourly_power[hr] = served
         self.hourly_dumped[hr] = result['QD']
         self.hourly_storage_level[hr] = result['ES']
-        self.hourly_spilled[hr] = 0
 
         if served == 0:
             self.still_running_p = False
