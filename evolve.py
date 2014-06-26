@@ -196,7 +196,9 @@ def run():
         genome.crossover.set(Crossovers.G1DListCrossoverUniform)
 
     ga = GSimpleGA.GSimpleGA(genome)
-    ga.setMigrationAdapter(Migration.MPIMigration())
+    mig = Migration.MPIMigration()
+    mig.setMigrationRate(2)
+    ga.setMigrationAdapter(mig)
     ga.setPopulationSize(args.population)
     ga.setElitism(True)
     ga.setGenerations(args.generations)
