@@ -124,6 +124,7 @@ def default_generation_mix():
 class Context:
     def __init__(self):
         self.verbose = False
+        self.track_exchanges = False
         self.regions = regions.All
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
@@ -173,6 +174,11 @@ def _sim(context, starthour, endhour):
     # reset generator internal state
     [g.reset() for g in context.generators]
 
+    # Extract generators in the regions of interest.
+    gens = [g for g in context.generators if g.region in context.regions]
+    # And storage-capable generators.
+    storages = [g for g in gens if g.storage_p]
+
     connections = {}
     c = regions.connections
     for r in context.regions:
@@ -192,9 +198,6 @@ def _sim(context, starthour, endhour):
     # Zero out regions we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
         demand_copy[rgn] = 0
-
-    # Extract generators in the regions of interest.
-    gens = [g for g in context.generators if g.region in context.regions]
 
     for hr in xrange(starthour, endhour):
         hour_demand = demand_copy[::, hr]
@@ -221,43 +224,43 @@ def _sim(context, starthour, endhour):
 
             # distribute the generation across the regions (local region first)
 
-            paths = connections[g.region]
-            if context.verbose:
-                print 'PATHS:', paths
+            if context.track_exchanges:
+                paths = connections[g.region]
+                if context.verbose:
+                    print 'PATHS:', paths
+                for path in paths:
+                    if not gen:
+                        break
 
-            for path in paths:
-                if not gen:
-                    break
+                    rgn = g.region if len(path) is 0 else path[-1][-1]
+                    rgnidx = rgn.num
+                    transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
 
-                rgn = g.region if len(path) is 0 else path[-1][-1]
-                rgnidx = rgn.num
-                transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
-
-                if transfer:
-                    if context.verbose:
-                        print 'dispatch', int(transfer), 'to', rgn
-                    if rgn is g.region:
-                        context.exchanges[hr, rgnidx, rgnidx] += transfer
-                    else:
-                        # dispatch to another region
-                        for src, dest in path:
-                            context.exchanges[hr, src, dest] += transfer
-                            if context.verbose:
-                                print src, '->', dest, '(%d)' % transfer
-                                assert regions.direct_p(src, dest)
-                    hour_demand[rgnidx] -= transfer
-                    gen -= transfer
-
-                if context.spill[gidx, hr]:
-                    for other in [g2 for g2 in gens if g2 is not g and g2.storage_p]:
-                        stored = other.store(hr, context.spill[gidx, hr])
-                        # show the energy transferred, not stored (this is where the loss is handled)
+                    if transfer > 0:
                         if context.verbose:
-                            print 'STORE:', g.region, '->', other.region, '(%.1f)' % stored
-                        for src, dest in regions.path(g.region, other.region):
-                            context.exchanges[hr, src, dest] += stored
-                        context.spill[gidx, hr] -= stored
-                        assert context.spill[gidx, hr] >= 0
+                            print 'dispatch', int(transfer), 'to', rgn
+                        if rgn is g.region:
+                            context.exchanges[hr, rgnidx, rgnidx] += transfer
+                        else:
+                            # dispatch to another region
+                            for src, dest in path:
+                                context.exchanges[hr, src, dest] += transfer
+                                if context.verbose:
+                                    print src, '->', dest, '(%d)' % transfer
+                                    assert regions.direct_p(src, dest)
+                        hour_demand[rgnidx] -= transfer
+                        gen -= transfer
+
+            if context.spill[gidx, hr]:
+                for other in storages:
+                    stored = other.store(hr, context.spill[gidx, hr])
+                    # show the energy transferred, not stored (this is where the loss is handled)
+                    if context.verbose:
+                        print 'STORE:', g.region, '->', other.region, '(%.1f)' % stored
+                    for src, dest in regions.path(g.region, other.region):
+                        context.exchanges[hr, src, dest] += stored
+                    context.spill[gidx, hr] -= stored
+                    assert context.spill[gidx, hr] >= 0
 
         if context.verbose:
             if (hour_demand > 0).any():
