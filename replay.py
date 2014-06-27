@@ -1,12 +1,12 @@
 # -*- Python -*-
 # Copyright (C) 2012, 2013 Ben Elliston
 #
-# replay.py -- replay NEM runs from a text file of generators
-#
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""Replay NEM runs from a text file of generators."""
 
 import argparse
 import costs
@@ -23,7 +23,7 @@ args = parser.parse_args()
 
 
 def set_generators(chromosome):
-    "Set the generator list from the GA chromosome"
+    """Set the generator list from the GA chromosome."""
     i = 0
     for gen in context.generators:
         for setter, scale in gen.setters:
@@ -34,7 +34,7 @@ def set_generators(chromosome):
 
 
 def run_one(chromosome):
-    "annual cost of the system (in billion $)"
+    """Annual cost of the system (in billion $)."""
     assert len(chromosome) == 20
     context.costs = costs.AETA2012_2030Low(0.05, 1.3, 11, 42)
     set_generators(chromosome)

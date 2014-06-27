@@ -1,5 +1,3 @@
-# Load AEMO demand data for a year into the nem.h5 database.
-#
 # -*- Python -*-
 # Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
@@ -7,6 +5,8 @@
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""Load AEMO demand data for a year into the HDF5 database."""
 
 import argparse
 import tables

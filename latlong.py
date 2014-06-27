@@ -1,5 +1,5 @@
-# latlong.py: latitude and longitude support
-# Copyright (C) 2010, 2011 Ben Elliston
+# -*- Python -*-
+# Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
 # Latitude/longitude spherical geodesy formulae & scripts (C) Chris Veness 2002-2011
 # (www.movable-type.co.uk/scripts/latlong.html)
@@ -8,6 +8,8 @@
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""Latitude and longitude support for the BoM solar irradiance grids."""
 
 cellsize = 0.05
 xllcorner = 112.025
@@ -19,8 +21,24 @@ import math
 
 
 class LatLong:
+
+    """A point of latitude and logitude."""
+
     def __init__(self, arg1, arg2, isXY=False):
-        """Initialise a lat/long object."""
+        """Initialise a lat/long object.
+
+        >>> obj = LatLong(-35, 149)
+        >>> obj = LatLong(1, 10, True)
+        >>> obj = LatLong(1, 2, True)
+        >>> obj = LatLong(679, 839, True)
+        >>> obj = LatLong(839, 679, True)
+        Traceback (most recent call last):
+          ...
+        ValueError
+        >>> obj = LatLong (499, 739, True)
+        >>> obj
+        (-34.925, 148.975)
+        """
         if isXY:
             if arg1 > maxrows or arg2 > maxcols:
                 raise ValueError
@@ -31,6 +49,16 @@ class LatLong:
             self.lon = arg2
 
     def xy(self):
+        """
+        Return the Cartesian coordinate.
+
+        >>> obj = LatLong(-35, 149)
+        >>> obj.xy()
+        (499, 739)
+        >>> obj = LatLong(0, 0, True)
+        >>> obj
+        (-9.975, 112.025)
+        """
         col = int((self.lon - xllcorner) / cellsize)
         assert col < maxcols
         row = int(maxrows - ((self.lat - yllcorner) / cellsize)) - 1
@@ -38,7 +66,16 @@ class LatLong:
         return row, col
 
     def distance(self, another):
-        "Compute the distance between this lat/long and another."
+        """
+        Compute the distance in kilometres between this position and another.
+
+        >>> obj = LatLong (-35, 149)
+        >>> obj2 = LatLong (-36, 150)
+        >>> obj.distance (obj)
+        0.0
+        >>> print '%.1f' % obj.distance (obj2)
+        143.4
+        """
         # Code adapted from Chris Veness
         R = 6371  # km
         dlat = math.radians(another.lat - self.lat)
@@ -51,7 +88,25 @@ class LatLong:
         return R * c
 
     def __repr__(self):
+        """
+        Print object representation.
+
+        >>> obj = LatLong(-35, 149)
+        >>> print obj
+        (-35, 149)
+        """
         return self.__str__()
 
     def __str__(self):
+        """
+        Return string representation of the object.
+
+        >>> obj = LatLong(-35, 149)
+        >>> str(obj)
+        '(-35, 149)'
+        """
         return '(' + str(self.lat) + ', ' + str(self.lon) + ')'
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

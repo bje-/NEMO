@@ -6,6 +6,8 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""Simulated generators for the NEMO framework."""
+
 import locale
 import numpy as np
 import simplesys
@@ -18,8 +20,14 @@ locale.setlocale(locale.LC_ALL, '')
 
 
 class Generator:
+
+    """Base generator class."""
+
     def __init__(self, region, capacity, label):
-        "Base generator class"
+        """Base class constructor.
+
+        Arguments: installed region, installed capacity, descriptive label.
+        """
         self.setters = [(self.set_capacity, 1000)]
         self.storage_p = False
         self.label = label
@@ -31,18 +39,20 @@ class Generator:
         self.hourly_spilled = np.zeros(consts.timesteps)
 
     def capcost(self, costs):
-        "Returns annual capital cost"
+        """Return the annual capital cost."""
         return costs.capcost_per_kw_per_yr[self.__class__] * self.capacity * 1000
 
     def opcost(self, costs):
-        "Returns annual operating and maintenance cost"
+        """Return the annual operating and maintenance cost."""
         return int(self.hourly_power.sum()) * costs.opcost_per_mwh[self.__class__]
 
     def reset(self):
+        """Reset the generator."""
         self.hourly_power.fill(0)
         self.hourly_spilled.fill(0)
 
     def summary(self, costs):
+        """Return a summary of the generator activity."""
         s = 'supplied %.1f TWh' % (self.hourly_power.sum() / 1000000.)
         if self.hourly_spilled.sum() > 0:
             s += ', spilled %.1f TWh' % (self.hourly_spilled.sum() / 1000000.)
@@ -53,17 +63,23 @@ class Generator:
         return s
 
     def set_capacity(self, cap):
+        """Change the capacity of the generator to 'cap'."""
         self.capacity = cap
 
     def __str__(self):
+        """A short string representation of the generator."""
         return '%s (%s), %.1f GW' \
             % (self.label, self.region, self.capacity / 1000.)
 
     def __repr__(self):
+        """A representation of the generator."""
         return self.__str__()
 
 
 class Wind(Generator):
+
+    """Wind farm using real production data."""
+
     patch = Patch(facecolor='green')
 
     def __init__(self, region, capacity, h5file, label='wind'):
@@ -82,6 +98,9 @@ class Wind(Generator):
 
 
 class SAMWind(Wind):
+
+    """A wind farm simulated in NREL's SAM model."""
+
     patch = Patch(facecolor='lightgreen')
 
     def __init__(self, region, capacity, filename, modelcapacity, label='wind'):
@@ -94,6 +113,12 @@ class SAMWind(Wind):
 
 
 class CST(Generator):
+
+    """A CST power station.
+
+    Model adapted from SIMPLESYS, a solar thermal system model.
+    """
+
     patch = Patch(facecolor='yellow')
 
     def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
@@ -138,7 +163,7 @@ class CST(Generator):
         return served, 0
 
     def store(self, hr, power):
-        "Accept spilled energy by heating the CST storage (1.0 efficiency)."
+        """Accept spilled energy by heating the storage medium (unity efficiency)."""
         # Only accept some energy if storage is near full.
         rejected = self.s.storageInput(power)
         power -= rejected
@@ -159,7 +184,6 @@ class CST(Generator):
         self.s.reset()
 
     def capcost(self, costs):
-        "Calculate the capital cost based on the solar field and storage size"
         fom = costs.fixed_om_costs[self.__class__]
         af = costs.annuityf
         anncost = costs.capcost_per_kw_per_yr[self.__class__]
@@ -183,6 +207,9 @@ class CST(Generator):
 
 
 class PV(Generator):
+
+    """Solar photovoltaic (PV) model."""
+
     patch = Patch(facecolor='blue')
 
     def __init__(self, region, capacity, filename, locn, label='PV'):
@@ -203,7 +230,9 @@ class PV(Generator):
 
 
 class Fuelled(Generator):
-    "The class of generators that consume fuel."
+
+    """The class of generators that consume fuel."""
+
     def __init__(self, region, capacity, label):
         Generator.__init__(self, region, capacity, label)
         self.runhours = 0
@@ -225,6 +254,9 @@ class Fuelled(Generator):
 
 
 class Hydro(Fuelled):
+
+    """Hydro power stations."""
+
     patch = Patch(facecolor='lightskyblue')
 
     def __init__(self, region, capacity, label='hydro'):
@@ -232,6 +264,9 @@ class Hydro(Fuelled):
 
 
 class PumpedHydro(Hydro):
+
+    """Pumped storage hydro (PSH) model."""
+
     patch = Patch(facecolor='powderblue')
 
     def __init__(self, region, capacity, maxstorage, rte=0.8, label='pumped-hydro'):
@@ -244,7 +279,7 @@ class PumpedHydro(Hydro):
         self.last_run = None
 
     def store(self, hr, power):
-        "Pump water uphill for one hour."
+        """Pump water uphill for one hour."""
         if self.last_run == hr:
             # Can't pump in the same hour as the turbine.
             return 0
@@ -272,6 +307,9 @@ class PumpedHydro(Hydro):
 
 
 class Biofuel(Fuelled):
+
+    """Model of open cycle gas turbines burning biofuel."""
+
     patch = Patch(facecolor='wheat')
 
     def __init__(self, region, capacity, label='biofuel'):
@@ -289,6 +327,9 @@ class Biofuel(Fuelled):
 
 
 class Fossil(Fuelled):
+
+    """Base class for GHG emitting power stations."""
+
     patch = Patch(facecolor='brown')
 
     def __init__(self, region, capacity, intensity, label='fossil'):
@@ -302,6 +343,9 @@ class Fossil(Fuelled):
 
 
 class Black_Coal(Fossil):
+
+    """Black coal power stations with no CCS."""
+
     patch = Patch(facecolor='black')
 
     def __init__(self, region, capacity, intensity=0.773, label='coal'):
@@ -315,6 +359,9 @@ class Black_Coal(Fossil):
 
 
 class OCGT(Fossil):
+
+    """Open cycle gas turbine (OCGT) model."""
+
     patch = Patch(facecolor='brown')
 
     def __init__(self, region, capacity, intensity=0.7, label='OCGT'):
@@ -328,6 +375,9 @@ class OCGT(Fossil):
 
 
 class CCGT(Fossil):
+
+    """Combined cycle gas turbine (CCGT) model."""
+
     patch = Patch(facecolor='brown')
 
     def __init__(self, region, capacity, intensity=0.4, label='CCGT'):
@@ -341,6 +391,9 @@ class CCGT(Fossil):
 
 
 class CCS(Fossil):
+
+    """Base class of carbon capture and storage (CCS)."""
+
     def __init__(self, region, capacity, intensity, capture, label='CCS'):
         Fossil.__init__(self, region, capacity, intensity, label)
         # capture fraction ranges from 0 to 1
@@ -352,6 +405,9 @@ class CCS(Fossil):
 
 
 class Coal_CCS(CCS):
+
+    """Coal with CCS."""
+
     def __init__(self, region, capacity, intensity=0.8, capture=0.85, label='Coal-CCS'):
         CCS.__init__(self, region, capacity, intensity, capture, label)
 
@@ -368,6 +424,9 @@ class Coal_CCS(CCS):
 
 
 class CCGT_CCS(CCS):
+
+    """CCGT with CCS."""
+
     def __init__(self, region, capacity, intensity=0.4, capture=0.85, label='CCGT-CCS'):
         CCS.__init__(self, region, capacity, intensity, capture, label)
 
@@ -382,6 +441,9 @@ class CCGT_CCS(CCS):
 
 
 class Battery(Generator):
+
+    """Battery storage (of any type)."""
+
     patch = Patch(facecolor='grey')
 
     def __init__(self, region, capacity, maxstorage, rte=0.95, label='battery'):
@@ -399,7 +461,6 @@ class Battery(Generator):
 
     # pylint: disable=unused-argument
     def store(self, hr, power):
-        "Charge for one hour."
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
@@ -444,10 +505,12 @@ class Battery(Generator):
 
 
 class Geothermal(Generator):
+
+    """Hot dry rocks geothermal power plant."""
+
     patch = Patch(facecolor='brown')
 
     def __init__(self, region, capacity, label='geothermal'):
-        "Hot rock geothermal"
         Generator.__init__(self, region, capacity, label)
 
     def step(self, hr, demand):
@@ -458,11 +521,13 @@ class Geothermal(Generator):
 
 
 class DemandResponse(Generator):
+
+    """Load shedding generator."""
+
     patch = Patch(facecolor='white')
 
     # pylint: disable=unused-argument
     def __init__(self, region, capacity, cost_per_mwh, label='demand-response'):
-        "Load shedding generator"
         Generator.__init__(self, region, capacity, label)
         self.setters = []
         self.runhours = 0

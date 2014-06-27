@@ -1,5 +1,3 @@
-# Load AEMO non-scheduled generation data for a year into the nem.h5 database.
-#
 # -*- Python -*-
 # Copyright (C) 2011, 2014 Ben Elliston
 #
@@ -7,6 +5,8 @@
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""Load AEMO non-scheduled generation data into the HDF5 database."""
 
 import argparse
 import time
@@ -33,6 +33,9 @@ except tables.exceptions.NodeError:
 
 
 class DispatchInterval(tables.IsDescription):
+
+    """Record format for dispatch data."""
+
     time = tables.Time32Col(pos=0)
     duid = tables.StringCol(8, pos=1)
     power = tables.Float32Col(pos=2)

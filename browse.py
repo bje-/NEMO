@@ -6,6 +6,8 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""A tool to browse the gridded solar database."""
+
 from datetime import datetime as date
 import numpy.ma as ma
 import argparse
@@ -32,6 +34,7 @@ config.demand = h5file.root.aux.aemo2009.demand
 
 
 def grid(arr, dt):
+    """Return the grid for hour dt in the dataset arr (GHI or DNI)."""
     h = Hour(dt)
 
     # if arr == config.ghi:
@@ -51,18 +54,16 @@ def grid(arr, dt):
 
 
 def timeseries(locn, dataset=config.ghi):
+    """Get all of the data at this location."""
     row = locn.xy()[0]
     col = locn.xy()[1]
-    # Get all of the data at this location.
     # data = ma.masked_equal (config.ghi[::,row,col], config.nodata)
     data = dataset[::, row, col]
     return data
 
 
 def empty_p(grd):
-    """
-    Predicate that returns True if the grid contains only nodata values.
-    """
+    """True if the grid contains only nodata values."""
     if type(grd) == ma.core.MaskedArray:
         return ma.count_masked(grd) == config.maxrows * config.maxcols
     else:
@@ -70,9 +71,10 @@ def empty_p(grd):
 
 
 def find_missing(arr):
-    """
-    Find missing grids in arr.  Returns two lists: the missing hour
-    numbers and a per-hour summary (24 elements).
+    """Find missing grids in arr.
+
+    Returns two lists: the missing hour numbers and a per-hour summary
+    (24 elements).
     """
     missing = []
     for i in range(arr.shape[0] - 2):
@@ -83,9 +85,10 @@ def find_missing(arr):
 
 
 def in_date_range_p(hr):
-    """
-    Predicate function that returns True if hr is in the range of dates
-    listed in the BoM metadata documents.
+    """True if hr is in the exclusion range.
+
+    True is hr is in the range of dates listed as missing in the BoM
+    metadata documents.
     """
     h1 = Hour(date(1998, 01, 01))
     h2 = Hour(date(2001, 06, 30))

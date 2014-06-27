@@ -1,7 +1,5 @@
-# testsuite.py: a testsuite for the National Electricity Market sim.
-#
 # -*- Python -*-
-# Copyright (C) 2011 Ben Elliston
+# Copyright (C) 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -9,6 +7,8 @@
 # (at your option) any later version.
 
 # pylint: disable=too-many-public-methods
+
+"""A testsuite for NEMO."""
 
 import math
 import nem
@@ -18,18 +18,23 @@ import unittest
 
 
 class SuperGenerator(generators.Generator):
-    "A synthetic generator that can always meet demand."
+
+    """A synthetic generator that can always meet demand."""
+
     def __init__(self, capacity):
+        """Create a super generator."""
         generators.Generator.__init__(self, regions.nsw, capacity, 'super')
         self.energy = 0
         self.runhours = 0
 
     def reset(self):
+        """Reset context between tests."""
         self.energy = 0
         self.runhours = 0
 
     # pylint: disable=unused-argument
     def step(self, hr, demand):
+        """Step the super generator."""
         self.runhours += 1
         self.energy += demand
         if self.capacity is None:
@@ -42,27 +47,31 @@ class SuperGenerator(generators.Generator):
 
 
 class TestSequenceFunctions(unittest.TestCase):
+
+    """Basic tests for now."""
+
     def setUp(self):
+        """Test harness setup."""
         self.context = nem.Context()
 
     def test_001(self):
-        'Test that all regions are present'
+        """Test that all regions are present."""
         self.assertEqual(self.context.regions, regions.All)
 
     def test_002(self):
-        'Demand equals approx. 204 TWh'
+        """Demand equals approx. 204 TWh."""
         self.context.generators = []
         nem.run(self.context)
         self.assertEqual(math.trunc(self.context.demand.sum() / pow(10, 6)), 204)
 
     def test_003(self):
-        'Power system with no generators meets none of the demand'
+        """Power system with no generators meets none of the demand."""
         self.context.generators = []
         nem.run(self.context)
         self.assertEqual(self.context.unserved_energy, self.context.demand.sum())
 
     def test_004(self):
-        '100 MW fossil plant generates exactly 876,000 MWh'
+        """100 MW fossil plant generates exactly 876,000 MWh."""
         fossil = generators.Fossil(regions.nsw, 100)
         self.context.generators = [fossil]
         nem.run(self.context)
@@ -72,28 +81,28 @@ class TestSequenceFunctions(unittest.TestCase):
     # Check unserved_energy = 0
 
     def test_005(self):
-        'Super generator runs every hour'
+        """Super generator runs every hour."""
         gen = SuperGenerator(None)
         self.context.generators = [gen]
         nem.run(self.context)
         self.assertEqual(gen.runhours, nem.hours)
 
     def test_006(self):
-        'Generation to meet minimum load leads to no spills'
+        """Generation to meet minimum load leads to no spills."""
         minload = math.floor(nem.aggregate_demand.min())
         self.context.generators = [SuperGenerator(minload)]
         nem.run(self.context)
         self.assertEqual(self.context.spilled_energy, 0)
 
     def test_007(self):
-        'Generation to meet minimum load + 1GW produces some spills'
+        """Generation to meet minimum load + 1GW produces some spills."""
         minload = math.floor(nem.aggregate_demand.min())
         self.context.generators = [SuperGenerator(minload + 1000)]
         nem.run(self.context)
         self.assertTrue(self.context.spilled_energy > 0)
 
     def test_008(self):
-        'A NSW generator runs in NSW only'
+        """A NSW generator runs in NSW only."""
         for rgn in regions.All:
             self.context.regions = [rgn]
             gen = SuperGenerator(None)
@@ -105,7 +114,7 @@ class TestSequenceFunctions(unittest.TestCase):
                 self.assertEqual(gen.runhours, 0)
 
     def test_009(self):
-        'A NSW generators runs in any set of regions that includes NSW'
+        """A NSW generators runs in any set of regions that includes NSW."""
         rgnset = []
         for rgn in regions.All:
             rgnset.append(rgn)
@@ -116,7 +125,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(gen.runhours, nem.hours)
 
     def test_010(self):
-        'Running in one region only produces no interstate exchanges'
+        """Running in one region only produces no interstate exchanges."""
         for rgn in regions.All:
             self.context.regions = [rgn]
             nem.run(self.context, endhour=1)
@@ -124,7 +133,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertTrue(self.context.exchanges[0, rgn, rgn] > 0, 'Only one exchange > 0')
 
     def test_011(self):
-        'Running in two regions only produces limited interstate exchanges'
+        """Running in two regions only produces limited interstate exchanges."""
         for rgn1 in regions.All:
             for rgn2 in regions.All:
                 if rgn1 is rgn2:
@@ -141,7 +150,7 @@ class TestSequenceFunctions(unittest.TestCase):
                             self.assertEqual(self.context.exchanges[0, i, j], 0)
 
     def test_012(self):
-        'A NSW generator does not run in other regions'
+        """A NSW generator does not run in other regions."""
         rgnset = []
         # Skip NSW (first in the list).
         for rgn in regions.All[1:]:
@@ -153,7 +162,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.assertEqual(gen.runhours, 0)
 
     def test_013(self):
-        'Fossil plant records power generation history'
+        """Fossil plant records power generation history."""
         fossil = generators.Fossil(regions.nsw, 100)
         self.context.generators = [fossil]
         nem.run(self.context)

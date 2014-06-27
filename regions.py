@@ -1,12 +1,12 @@
-# regions.py: support for NEM regions
-#
 # -*- Python -*-
-# Copyright (C) 2011 Ben Elliston
+# Copyright (C) 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""NEM regions and interconnections."""
 
 import string
 from latlong import LatLong
@@ -14,16 +14,39 @@ import numpy as np
 
 
 class Region:
+
+    """Each NEM region is described by a Region object."""
+
     def __init__(self, count, regionid, descr, (centreLat, centreLon)):
+        """
+        Construct a Region given a count, NEM region ID, description and lat/long of the region's centre.
+
+        >>> r = Region(0, 'cbr', 'Capital region', ((-35, 149)))
+        """
         self.id = regionid
         self.descr = descr
         self.centre = LatLong(centreLat, centreLon)
         self.num = count
 
     def __repr__(self):
+        """
+        Return region code.
+
+        >>> r = Region(1, 'QLD1', 'Queensland', ((-22, 144)))
+        >>> r
+        QLD1
+        """
         return self.id
 
     def __index__(self):
+        """
+        Return region numnber.
+
+        >>> r = Region(1, 'QLD1', 'Queensland', ((-22, 144)))
+        >>> x = [0,1,2,3,4]
+        >>> x[r]
+        1
+        """
         return self.num
 
 # Centres taken from:
@@ -38,7 +61,16 @@ numregions = len(All)
 
 
 def find(s):
-    "Return the first region object matching the substring s."
+    """
+    Return the first region object matching the substring s.
+
+    >>> find('NS')
+    NSW1
+    >>> find('QP')
+    Traceback (most recent call last):
+      ...
+    ValueError
+    """
     for r in All:
         if string.find(r.id, s) == 0:
             return r
@@ -85,19 +117,44 @@ for rgn1 in All:
 
 
 def path(regiona, regionb):
-    "Return a path from region A to region B."
+    """
+    Return a path from region A to region B.
+
+    >>> path(nsw,qld)
+    [(NSW1, QLD1)]
+    >>> path(sa,tas)
+    [(SA1, VIC1), (VIC1, TAS1)]
+    """
     return connections[(regiona, regionb)]
 
 
 def direct_p(regiona, regionb):
-    "Return True if region A and B are directly connected."
+    """
+    Return True if region A and B are directly connected.
+
+    >>> direct_p(nsw,qld)
+    True
+    >>> direct_p(qld,tas)
+    False
+    """
     return len(path(regiona, regionb)) <= 1
 
 
 def in_regions_p(rpath, rgnset):
-    "Ensure every region in rpath is in rgnset"
+    """
+    Ensure every region in rpath is in rgnset.
+
+    >>> in_regions_p([(nsw, vic)], All)
+    True
+    >>> in_regions_p([(qld,nsw), (nsw,vic), (vic,tas)], [vic, nsw, sa])
+    False
+    """
     if len(rpath) > 0:
         for (source, destn) in rpath:
             if source not in rgnset or destn not in rgnset:
                 return False
     return True
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

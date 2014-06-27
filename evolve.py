@@ -8,6 +8,8 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""Evolutionary programming applied to NEM optimisations."""
+
 import pyevolve
 import os
 
@@ -91,7 +93,7 @@ if not args.quiet and rank == 0:
 
 
 def cost(ctx, transmission_p):
-    "sum up the costs"
+    """Sum up the costs."""
     score = 0
 
     for g in ctx.generators:
@@ -163,7 +165,7 @@ def cost(ctx, transmission_p):
 
 
 def set_generators(chromosome):
-    "Set the generator list from the GA chromosome"
+    """Set the generator list from the GA chromosome."""
     i = 0
     for gen in context.generators:
         for setter, scale in gen.setters:
@@ -174,7 +176,7 @@ def set_generators(chromosome):
 
 
 def eval_func(chromosome):
-    "annual cost of the system (in billion $)"
+    """Annual cost of the system (in billion $)."""
     set_generators(chromosome)
     nem.run(context)
     score = cost(context, transmission_p=args.transmission)
@@ -182,6 +184,7 @@ def eval_func(chromosome):
 
 
 def run():
+    """Run the GA."""
     if rank == 0:
         print "objective: minimise", eval_func.__doc__
 

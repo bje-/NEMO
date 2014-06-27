@@ -10,6 +10,8 @@
 # to the author in the form of a unified context diff (diff -u) to
 # <b.elliston@student.unsw.edu.au>.
 
+"""A tool to generate TMY3 or EPW weather data files."""
+
 import os
 import bz2
 import math
@@ -43,21 +45,21 @@ import ephem
 ### hm, 48027,2009,01,01,00,00, 22.3,N, 13.1,N,  3.4,N, 29,N,   7.8,N,  26.9,N,  1.5,N,220,N,  2.1,N,1005.6,N, 975.6,N, 1,#
 
 
-def verbose(s):
+def _verbose(s):
     if args.verbose:
         print >>sys.stderr, s
 
 
-def warn(s):
+def _warn(s):
     if args.verbose:
         print >>sys.stderr, 'warning:',
         print >>sys.stderr, s
 
 
-def verify(items):
+def _verify(items):
     # Verify that the line is valid.
     if items[0] != 'hm':
-        warn('non-hm record')
+        _warn('non-hm record')
 
     st = items[1].strip().lstrip('0')
     if st != stnumber:
@@ -65,13 +67,17 @@ def verify(items):
 
 
 def tmy3_preamble(f):
-    # eg. 722287,"ANNISTON METROPOLITAN AP",AL,-6.0,33.583,-85.850,186
+    """Emit the required headers for a TMY3 file.
+
+    eg. 722287,"ANNISTON METROPOLITAN AP",AL,-6.0,33.583,-85.850,186
+    """
     print >>f, '%s in %s,\"%s\",%s,%.1f,%.3f,%.3f,%d' % \
         (stnumber, stname, args.year, ststate[0:2], args.tz, locn.lat, locn.lon, elevation)
     print >>f, 'Date (MM/DD/YYYY),Time (HH:MM),ETR (W/m^2),ETRN (W/m^2),GHI (W/m^2),GHI source,GHI uncert (%),DNI (W/m^2),DNI source,DNI uncert (%),DHI (W/m^2),DHI source,DHI uncert (%),GH illum (lx),GH illum source,Global illum uncert (%),DN illum (lx),DN illum source,DN illum uncert (%),DH illum (lx),DH illum source,DH illum uncert (%),Zenith lum (cd/m^2),Zenith lum source,Zenith lum uncert (%),TotCld (tenths),TotCld source,TotCld uncert (code),OpqCld (tenths),OpqCld source,OpqCld uncert (code),Dry-bulb (C),Dry-bulb source,Dry-bulb uncert (code),Dew-point (C),Dew-point source,Dew-point uncert (code),RHum (%),RHum source,RHum uncert (code),Pressure (mbar),Pressure source,Pressure uncert (code),Wdir (degrees),Wdir source,Wdir uncert (code),Wspd (m/s),Wspd source,Wspd uncert (code),Hvis (m),Hvis source,Hvis uncert (code),CeilHgt (m),CeilHgt source,CeilHgt uncert (code),Pwat (cm),Pwat source,Pwat uncert (code),AOD (unitless),AOD source,AOD uncert (code),Alb (unitless),Alb source,Alb uncert (code),Lprecip depth (mm),Lprecip quantity (hr),Lprecip source,Lprecip uncert (code)'
 
 
 def epw_preamble(f):
+    """Emit the required headers for an EPW file."""
     print >>f, 'LOCATION,%s (%s) in %s,%s,AUS,BoM,%s,%.2f,%.2f,%.1f,%.1f' % \
         (stname, stnumber, args.year, ststate, stnumber, locn.lat, locn.lon, args.tz, elevation)
 
@@ -85,6 +91,7 @@ def epw_preamble(f):
 
 
 def tmy3_record(f, rec):
+    """Emit a record in TMY3 format."""
     t = datetime.datetime(args.year, 1, 1)
     t += datetime.timedelta(hours=rec['hour'])
 
@@ -96,6 +103,7 @@ def tmy3_record(f, rec):
 
 
 def epw_record(f, rec):
+    """Emit a record in EPW format."""
     t = datetime.datetime(args.year, 1, 1)
     t += datetime.timedelta(hours=rec['hour'])
 
@@ -106,8 +114,8 @@ def epw_record(f, rec):
     print >>f, text
 
 
-# Return the GHI and DNI for a given location and time.
 def irradiances(location, hour):
+    """Return the GHI and DNI for a given location and time."""
     x, y = location.xy()
     # Compute a solar data filename from the hour
     # Use 2010 as the reference year, as it was not a leap year.
@@ -162,19 +170,19 @@ def irradiances(location, hour):
     dhr = ghr - dnr * math.cos(zenith)
     if dhr < -10:
         # Don't worry about diffuse levels below 10 W/m2.
-        warn('negative diffuse horizontal irradiance: %d' % dhr)
+        _warn('negative diffuse horizontal irradiance: %d' % dhr)
         dhr = 0
     return ghr, dnr, dhr
 
 
-# Read station details file.
 def station_details():
+    """Read station details file."""
     details = [l for l in open(args.hm_details, 'r') if 'st,' + args.st in l][0]
     # .. st = details[0:2]
     stNumber = details[3:9].strip().lstrip('0')
     stName = details[15:55].strip()
     stState = details[107:110]
-    verbose('Processing station number %s (%s)' % (stNumber, stName))
+    _verbose('Processing station number %s (%s)' % (stNumber, stName))
 
     latitude = float(details[72:80])
     longitude = float(details[81:90])
@@ -184,8 +192,8 @@ def station_details():
     sflags = details[157:160]
     iflags = details[161:164]
     if int(wflags) or int(sflags) or int(iflags):
-        warn('%% wrong = %s, %% suspect = %s, %% inconsistent = %s'
-             % (wflags, sflags, iflags))
+        _warn('%% wrong = %s, %% suspect = %s, %% inconsistent = %s'
+              % (wflags, sflags, iflags))
 
     return(location, altitude, stNumber, stName, stState)
 
@@ -218,10 +226,10 @@ observer.lat = str(locn.lat)
 observer.long = str(locn.lon)
 
 if args.format.lower() == 'tmy3':
-    verbose('Generating a TMY3 file')
+    _verbose('Generating a TMY3 file')
     tmy3_preamble(outfile)
 elif args.format.lower() == 'epw':
-    verbose('Generating an EPW file')
+    _verbose('Generating an EPW file')
     epw_preamble(outfile)
 else:
     raise ValueError("unknown format %s" % args.format)
@@ -239,12 +247,12 @@ for inline in infile:
         # Skip years that are not of interest.
         continue
     if data[3] == '02' and data[4] == '29':
-        warn('skipping Feb 29')
+        _warn('skipping Feb 29')
         i += 1
         continue
 
     # Generate pedantic warnings.
-    verify(data)
+    _verify(data)
 
     record = {}
     record['hour'] = i

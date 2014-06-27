@@ -1,3 +1,13 @@
+# -*- Python -*-
+# Copyright (C) 2012, 2013, 2014 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+"""Supply and demand side scenarios."""
+
 import heapq
 import numpy as np
 
@@ -6,7 +16,16 @@ import regions
 
 
 def supply_switch(label):
-    "Return a callback function to set up a given scenario."
+    """
+    Return a callback function to set up a given scenario.
+
+    >>> supply_switch('re100') # doctest: +ELLIPSIS
+    <function re100 at 0x...>
+    >>> supply_switch('foo')
+    Traceback (most recent call last):
+      ...
+    ValueError: unknown supply scenario foo
+    """
     try:
         callback = supply_scenarios[label]
     except KeyError:
@@ -15,7 +34,13 @@ def supply_switch(label):
 
 
 def _hydro():
-    "Return a list of existing hydroelectric generators"
+    """
+    Return a list of existing hydroelectric generators.
+
+    >>> h = _hydro()
+    >>> len(h)
+    5
+    """
     hydro1 = generators.Hydro(regions.tas, 2740,
                               label=regions.tas.id + ' hydro')
     hydro2 = generators.Hydro(regions.nsw, 1160,
@@ -33,14 +58,28 @@ def _hydro():
 
 
 def replacement(context):
-    "The current NEM fleet, more or less."
+    """The current NEM fleet, more or less.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> replacement(c)
+    >>> len(c.generators)
+    7
+    """
     coal = generators.Black_Coal(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
 def ccgt(context):
-    "All gas scenario"
+    """All gas scenario.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> ccgt(c)
+    >>> len(c.generators)
+    7
+    """
     # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
@@ -48,7 +87,14 @@ def ccgt(context):
 
 
 def ccgt_ccs(context):
-    "Gas CCS scenario"
+    """CCGT CCS scenario.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> ccgt_ccs(c)
+    >>> len(c.generators)
+    7
+    """
     # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT_CCS(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
@@ -56,7 +102,14 @@ def ccgt_ccs(context):
 
 
 def coal_ccs(context):
-    "Coal CCS scenario"
+    """Coal CCS scenario.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> coal_ccs(c)
+    >>> len(c.generators)
+    7
+    """
     coal = generators.Coal_CCS(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
     context.generators = [coal] + _hydro() + [ocgt]
@@ -64,19 +117,44 @@ def coal_ccs(context):
 
 def re100(context):
     # pylint: disable=unused-argument
-    "100% renewable electricity"
+    """100% renewable electricity.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100(c)
+    >>> c.generators
+    Traceback (most recent call last):
+      ...
+    AttributeError: C instance has no attribute 'generators'
+    """
     pass
 
 
 def re100_batteries(context):
-    "Lots of renewables plus battery storage"
+    """Use lots of renewables plus battery storage.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(25)
+    >>> re100_batteries(c)
+    >>> len(c.generators)
+    26
+    """
     nsw_battery = generators.Battery(regions.nsw, 0, 0)
     g = context.generators
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
 
 def re_plus_fossil(context):
-    "Mostly renewables with some fossil augmentation"
+    """Mostly renewables with some fossil augmentation.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(25)
+    >>> re_plus_fossil(c)
+    >>> len(c.generators)
+    22
+    """
     # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
@@ -85,7 +163,17 @@ def re_plus_fossil(context):
 
 
 def re100_dsp(context):
-    "Mostly renewables with demand side participation"
+    """Mostly renewables with demand side participation.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(10)
+    >>> re100_dsp(c)
+    >>> len(c.generators)
+    13
+    >>> isinstance(c.generators[-1], generators.DemandResponse)
+    True
+    """
     dr1 = generators.DemandResponse(regions.nsw, 2000, 300)
     dr2 = generators.DemandResponse(regions.nsw, 2000, 1000)
     dr3 = generators.DemandResponse(regions.nsw, 2000, 3000)
@@ -94,14 +182,32 @@ def re100_dsp(context):
 
 
 def re100_geothermal(context):
-    "100% reneables plus geothermal"
+    """100% renewables plus geothermal.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(10)
+    >>> re100_geothermal(c)
+    >>> len(c.generators)
+    7
+    >>> isinstance(c.generators[0], generators.Geothermal)
+    True
+    """
     geo = generators.Geothermal(regions.sa, 0)
     g = context.generators
     context.generators = [geo] + g[:-4]
 
 
 def theworks(context):
-    "All technologies"
+    """All technologies.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(10)
+    >>> theworks(c)
+    >>> len(c.generators)
+    11
+    """
     # pylint: disable=redefined-outer-name
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
@@ -126,7 +232,7 @@ supply_scenarios = {'re100': re100,
 ### Demand modifiers
 
 def demand_switch(label):
-    "Return a callback function to modify the demand."
+    """Return a callback function to modify the demand."""
     try:
         if label == 'unchanged':
             return unchanged
@@ -175,22 +281,46 @@ def demand_switch(label):
 
 
 def unchanged(context):
+    """No demand modification.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> unchanged(c)
+    """
     # pylint: disable=unused-argument
     pass
 
 
 def roll_demand(context, posns):
-    "Roll demand by posns hours"
-    np.roll(context.demand, posns)
+    """
+    Roll demand by posns hours.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.arange(3)
+    >>> roll_demand(c, 1)
+    >>> print c.demand
+    [2 0 1]
+    """
+    context.demand = np.roll(context.demand, posns)
 
 
 def scale_demand(context, factor):
-    "Scale demand by factor%"
-    context.demand *= factor
+    """
+    Scale demand by factor%.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.arange(3)
+    >>> scale_demand(c, 1.2)
+    >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
+    [ 0. 1.2 2.4]
+    """
+    context.demand = context.demand * factor
 
 
 def shift_demand(context, demand, fromHour, toHour):
-    "Move N MW of demand from fromHour to toHour"
+    """Move N MW of demand from fromHour to toHour."""
     # Shed equally in each region for simplicity
     demand /= 5
     context.demand[::, fromHour::24] -= demand
@@ -200,14 +330,14 @@ def shift_demand(context, demand, fromHour, toHour):
 
 
 def scale_peaks(context, power, factor):
-    "Adjust demand peaks over N megawatts by X%"
+    """Adjust demand peaks over N megawatts by X%."""
     agg_demand = context.demand.sum(axis=0)
     where = np.where(agg_demand > power)
     context.demand[::, where] *= factor
 
 
 def scale_npeaks(context, topn, factor):
-    "Adjust top N demand peaks by X%"
+    """Adjust top N demand peaks by X%."""
     agg_demand = context.demand.sum(axis=0)
     top_demands = heapq.nlargest(topn, agg_demand)
     # A trick from:
@@ -216,3 +346,7 @@ def scale_npeaks(context, topn, factor):
     ix = np.in1d(agg_demand.ravel(), top_demands).reshape(agg_demand.shape)
     where = np.where(ix)
     context.demand[::, where] *= factor
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

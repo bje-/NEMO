@@ -1,4 +1,12 @@
-# A utility to populate a new HDF5 file. -*- Python -*-
+# -*- Python -*-
+# Copyright (C) 2011, 2014 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+"""A utility to populate a new HDF5 database with BoM solar data."""
 
 import sys
 import time
@@ -18,6 +26,10 @@ maxrows = 679
 
 
 def readfile(fname):
+    """Read a file of ASCII data into a numpy matrix.
+
+    The file can optionally be compressed with bz2.
+    """
     try:
         gridfile = bz2.BZ2File(fname + '.bz2', 'r')
     except IOError:

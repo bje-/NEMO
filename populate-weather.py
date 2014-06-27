@@ -1,5 +1,3 @@
-# Load BoM AWS data for a year into the nem.h5 database.
-#
 # -*- Python -*-
 # Copyright (C) 2011, 2014 Ben Elliston
 #
@@ -7,6 +5,8 @@
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+"""Load a BoM AWS data set into the HDF5 database under /aux."""
 
 import argparse
 import tables
@@ -21,6 +21,9 @@ h5file = tables.openFile(args.db, mode="r+")
 
 
 class WeatherStation(tables.IsDescription):
+
+    """Record format for weather stations."""
+
     stationid = tables.UInt32Col(pos=0)
     latitude = tables.Float32Col(pos=1)
     longitude = tables.Float32Col(pos=2)
@@ -30,6 +33,9 @@ class WeatherStation(tables.IsDescription):
 
 
 class WeatherObservation(tables.IsDescription):
+
+    """Record format for weather observations."""
+
     stationid = tables.UInt32Col(pos=0)
     year = tables.UInt16Col(pos=1)
     month = tables.UInt8Col(pos=2)

@@ -1,21 +1,42 @@
 # -*- Python -*-
-# Copyright (C) 2010, 2011 Ben Elliston
+# Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""Implementation of Hour class."""
+
 import datetime
 from datetime import datetime as date
 
 
 class Hour:
+
+    """
+    In the BoM gridded solar data, hour 0 is Jan 1, 1998 (UTC 00h).
+
+        >>> h = Hour (0)
+        >>> print (h)
+        1998-01-01--00
+        >>> dt = date(1998,1,1)
+        >>> h = Hour (dt)
+        >>> h
+        0
+        >>> dt = date(1998,1,1,1,1)
+        >>> h = Hour (dt)
+        Traceback (most recent call last):
+          ...
+        ValueError
+    """
+
     def __init__(self, arg):
+        """Polymorphic constructor that takes two argument types, integer and datetime."""
         origin = datetime.datetime(1998, 1, 1)
         if type(arg) == type(origin):
             # Datetime variant
-            if arg.minute != 0 and arg.second != 0:
+            if arg.minute != 0 or arg.second != 0:
                 raise ValueError
             delta = arg - origin
             self.value = int(delta.days * 24 + delta.seconds / 3600)
@@ -26,25 +47,32 @@ class Hour:
             raise TypeError
 
     def datetime(self):
+        """Return the hour as a Python datetime."""
         delta = datetime.timedelta(hours=self.value)
         return datetime.datetime(1998, 1, 1) + delta
 
     def __repr__(self):
+        """Return the ordinal hour number."""
         return str(int(self.value))
 
     def __str__(self):
+        """Format the hour as YYYY-MM-DD--HH."""
         return str(self.datetime().strftime('%Y-%m-%d--%H'))
 
     def __cmp__(self, v):
+        """Compare v with self."""
         return cmp(self.value, v)
 
     def __add__(self, v):
+        """Add v hours."""
         return Hour(self.value + int(v))
 
     def __sub__(self, v):
+        """Subtract v hours."""
         return Hour(self.value - int(v))
 
     def __trunc__(self):
+        """Return ordinal value."""
         return self.value
 
 # Module initialisation.
@@ -91,7 +119,8 @@ hours += range(h1, h2)
 
 
 def missing_p(h):
-    """
+    """Return True if hour h is missing.
+
     Filter the most egregious sequences of 'nodata' hours that
     represent holes in the data sets, perhaps due to satellite
     transmission problems?

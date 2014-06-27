@@ -6,7 +6,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""A National Electricity Market (NEM) simulation"""
+"""A National Electricity Market (NEM) simulation."""
 
 import re
 import string
@@ -60,6 +60,7 @@ stns = _import_bom_stations('Stations.txt')
 
 
 def default_generation_mix():
+    """Return a default generator list."""
     result = []
     # This list is in merit order.
     for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
@@ -122,7 +123,11 @@ def default_generation_mix():
 
 # Context objects are used throughout this module.
 class Context:
+
+    """All state is kept in a Context object."""
+
     def __init__(self):
+        """Initialise a default context."""
         self.verbose = False
         self.track_exchanges = False
         self.regions = regions.All
@@ -137,10 +142,11 @@ class Context:
         self.unserved_percent = 0
 
     def demand_twh(self):
-        "Return the total annual demand in TWh"
+        """Return the total annual demand in TWh."""
         return self.demand.sum() / consts.twh
 
     def __str__(self):
+        """A human-readable representation of the context."""
         s = 'Regions: ' + str(self.regions) + '\n'
         if self.verbose:
             s += 'Generators:' + '\n'
@@ -269,7 +275,7 @@ def _sim(context, starthour, endhour):
 
 
 def plot(context, spills=False, filename=None, xlimit=None):
-    "Produce a pretty plot of supply and demand."
+    """Produce a pretty plot of supply and demand."""
     spill = context.spill
     # aggregate demand
     demand = context.demand.sum(axis=0)
@@ -337,8 +343,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
 
 def run(context, starthour=0, endhour=hours):
-    "Run the simulation without a plot."
-
+    """Run the simulation (without a plot)."""
     if not isinstance(context.regions, list):
         raise ValueError('regions is not a list')
     _sim(context, starthour, endhour)
@@ -363,7 +368,7 @@ def run(context, starthour=0, endhour=hours):
 
 
 def _format_date(x, pos=None):
-    "Pretty printer for dates/times."
+    """Pretty printer for dates/times."""
     # pylint: disable=unused-argument
     import datetime
     delta = datetime.timedelta(hours=x)

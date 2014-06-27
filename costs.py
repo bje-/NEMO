@@ -6,22 +6,27 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+"""Generation technology costs."""
+
 import generators as tech
 
 
 def annuity_factor(t, r):
-    "Return the annuity factor for lifetime t and interest rate r."
+    """Return the annuity factor for lifetime t and interest rate r."""
     return (1 - (1 / pow(1 + r, t))) / r
 
 
-####
-# Data source: BREE AETA report (2012)
-####
-
 class AETA2012_2030:
+
+    """Australian Energy Technology Assessment (2012) costs for 2030.
+
+    Source: BREE AETA report (2012), bree.gov.au
+    """
+
     lifetime = 30
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object given discount rate, coal, gas and CCS costs."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         self.coal_price_per_gj = coal_price
@@ -72,7 +77,11 @@ class AETA2012_2030:
 
 
 class AETA2012_2030Low (AETA2012_2030):
+
+    """AETA (2012) costs for 2030, low end of the range."""
+
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
+        """Construct a cost object given discount rate, coal, gas and CCS costs."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         af = self.annuityf
@@ -92,7 +101,11 @@ class AETA2012_2030Low (AETA2012_2030):
 
 
 class AETA2012_2030High (AETA2012_2030):
+
+    """AETA (2012) costs for 2030, high end of the range."""
+
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
+        """Construct a cost object given discount rate, coal, gas and CCS costs."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         af = self.annuityf

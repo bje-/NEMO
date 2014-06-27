@@ -1,4 +1,12 @@
-# Collect statistics on missing, zero and non-zero values.
+# -*- Python -*-
+# Copyright (C) 2011, 2014 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+"""Collect statistics on missing, zero and non-zero values in BoM data."""
 
 import sys
 import datetime
@@ -11,6 +19,7 @@ np.set_printoptions(threshold=np.nan)
 
 
 def readfile(fname):
+    """Process a single file."""
     f = open(fname, 'r')
 
     h = hashlib.sha1()
