@@ -22,7 +22,6 @@ import regions
 import generators
 from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 
-generators.count = 0
 hours = 8760
 
 h5file = tables.openFile('/home/bje/unsw/thesis/data/nem.h5', mode='r')
