@@ -14,7 +14,7 @@ import nem
 import sys
 import re
 
-parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-v", action="store_true", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
