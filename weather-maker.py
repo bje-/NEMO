@@ -178,7 +178,7 @@ def station_details():
 
     latitude = float(details[72:80])
     longitude = float(details[81:90])
-    location = LatLong((latitude, longitude))
+    location = LatLong(latitude, longitude)
     altitude = int(float(details[111:117]))
     wflags = details[153:156]
     sflags = details[157:160]

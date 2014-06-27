@@ -19,17 +19,16 @@ import math
 
 
 class LatLong:
-    def __init__(self, (arg1, arg2)):
-        if isinstance(arg1, float) and isinstance(arg2, float):
-            # Pair of floats
-            self.lat = arg1
-            self.lon = arg2
-        elif isinstance(arg1, int) and isinstance(arg2, int):
-            # Pair of ints
+    def __init__(self, arg1, arg2, isXY=False):
+        """Initialise a lat/long object."""
+        if isXY:
+            if arg1 > maxrows or arg2 > maxcols:
+                raise ValueError
             self.lat = yllcorner + cellsize * (maxrows - arg1)
             self.lon = xllcorner + cellsize * arg2
         else:
-            raise TypeError
+            self.lat = arg1
+            self.lon = arg2
 
     def xy(self):
         col = int((self.lon - xllcorner) / cellsize)

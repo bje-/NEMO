@@ -53,19 +53,19 @@ def grid(arr, dt):
     return ma.masked_equal(arr[h], config.nodata)
 
 
-def browse(location):
+def browse(lat, lon, isXY=False):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sock.connect(('localhost', 4000))
     except socket.error:
         print 'connection failed'
         return
-    if isinstance(location, tuple):
+    if isXY:
         # Grid variant.
-        locn = LatLong(location)
+        locn = LatLong(lat, lon, isXY)
         query = str(locn)
     else:
-        query = str(location)
+        query = str((lat, lon))
     query = string.strip(query, '()')
     query = string.replace(query, ' ', '')
     print query

@@ -14,10 +14,10 @@ import numpy as np
 
 
 class Region:
-    def __init__(self, count, regionid, descr, centre):
+    def __init__(self, count, regionid, descr, (centreLat, centreLon)):
         self.id = regionid
         self.descr = descr
-        self.centre = LatLong(centre)
+        self.centre = LatLong(centreLat, centreLon)
         self.num = count
 
     def __repr__(self):
