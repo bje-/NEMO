@@ -88,6 +88,8 @@ if args.demand_modifier is not None:
 if not args.quiet and rank == 0:
     docstring = scenarios.supply_switch(args.supply_scenario).__doc__
     assert docstring is not None
+    # Prune off any doctest test from the docstring.
+    docstring = docstring.split('\n')[0]
     print "supply scenario: %s (%s)" % (args.supply_scenario, docstring)
     print context.generators
 
