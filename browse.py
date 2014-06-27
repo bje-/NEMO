@@ -9,13 +9,10 @@
 from datetime import datetime as date
 import numpy.ma as ma
 import argparse
-import socket
 import tables
-import string
 import numpy as np
 
 from hour import Hour
-from latlong import LatLong
 import config
 
 parser = argparse.ArgumentParser()
