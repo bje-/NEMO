@@ -141,10 +141,6 @@ class Context:
         self.unserved_hours = 0
         self.unserved_percent = 0
 
-    def demand_twh(self):
-        """Return the total annual demand in TWh."""
-        return self.demand.sum() / consts.twh
-
     def __str__(self):
         """A human-readable representation of the context."""
         s = 'Regions: ' + str(self.regions) + '\n'
