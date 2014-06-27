@@ -37,7 +37,7 @@ from mpi4py import MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
-parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@student.unsw.edu.au')
+parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument('--version', action='version', version='1.0')
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
 parser.add_argument("-f", "--frequency", type=int, default=10, help='frequency of stats output [default: 10]')
