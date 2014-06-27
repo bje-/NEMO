@@ -251,16 +251,16 @@ def _sim(context, starthour, endhour):
                         hour_demand[rgnidx] -= transfer
                         gen -= transfer
 
-            if context.spill[gidx, hr]:
+            if context.spill[gidx, hr] > 0:
                 for other in storages:
                     stored = other.store(hr, context.spill[gidx, hr])
+                    context.spill[gidx, hr] -= stored
+                    assert context.spill[gidx, hr] >= 0
                     # show the energy transferred, not stored (this is where the loss is handled)
                     if context.verbose:
                         print 'STORE:', g.region, '->', other.region, '(%.1f)' % stored
                     for src, dest in regions.path(g.region, other.region):
                         context.exchanges[hr, src, dest] += stored
-                    context.spill[gidx, hr] -= stored
-                    assert context.spill[gidx, hr] >= 0
 
         if context.verbose:
             if (hour_demand > 0).any():
