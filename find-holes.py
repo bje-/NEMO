@@ -86,6 +86,6 @@ while True:
     print date
 
     dataset = sys.argv[1]
-    np.savetxt('/home/bje/%s-nodata.txt' % dataset, nodata, fmt='%d', delimiter=',')
-    np.savetxt('/home/bje/%s-zero.txt' % dataset, zero, fmt='%d', delimiter=',')
-    np.savetxt('/home/bje/%s-nonzero.txt' % dataset, nonzero, fmt='%d', delimiter=',')
+    np.savetxt('%s-nodata.txt' % dataset, nodata, fmt='%d', delimiter=',')
+    np.savetxt('%s-zero.txt' % dataset, zero, fmt='%d', delimiter=',')
+    np.savetxt('%s-nonzero.txt' % dataset, nonzero, fmt='%d', delimiter=',')
