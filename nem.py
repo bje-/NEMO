@@ -173,7 +173,8 @@ class Context:
 
 def _sim(context, starthour, endhour):
     # reset generator internal state
-    [g.reset() for g in context.generators]
+    for g in context.generators:
+        g.reset()
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region in context.regions]
