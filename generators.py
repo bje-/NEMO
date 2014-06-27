@@ -97,21 +97,6 @@ class Wind(Generator):
         return power, spilled
 
 
-class SAMWind(Wind):
-
-    """A wind farm simulated in NREL's SAM model."""
-
-    patch = Patch(facecolor='lightgreen')
-
-    def __init__(self, region, capacity, filename, modelcapacity, label='wind'):
-        Generator.__init__(self, region, capacity, label)
-        self.generation = np.genfromtxt(filename, delimiter=',', skip_header=1)
-        # SAM data is in kWh
-        self.generation /= 1000.
-        # Normalise into MW
-        self.generation /= modelcapacity
-
-
 class CST(Generator):
 
     """A CST power station.
