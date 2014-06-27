@@ -53,26 +53,6 @@ def grid(arr, dt):
     return ma.masked_equal(arr[h], config.nodata)
 
 
-def browse(lat, lon, isXY=False):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.connect(('localhost', 4000))
-    except socket.error:
-        print 'connection failed'
-        return
-    if isXY:
-        # Grid variant.
-        locn = LatLong(lat, lon, isXY)
-        query = str(locn)
-    else:
-        query = str((lat, lon))
-    query = string.strip(query, '()')
-    query = string.replace(query, ' ', '')
-    print query
-    sock.send(query)
-    sock.close()
-
-
 def timeseries(locn, dataset=config.ghi):
     row = locn.xy()[0]
     col = locn.xy()[1]
