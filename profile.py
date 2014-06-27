@@ -1,3 +1,3 @@
 import nem
-c=nem.Context()
+c = nem.Context()
 nem.run(c)
