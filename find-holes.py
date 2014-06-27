@@ -10,18 +10,6 @@ maxrows = 679
 np.set_printoptions(threshold=np.nan)
 
 
-def nodata_p(x):
-    return int(x == '-999')
-
-
-def zero_p(x):
-    return int(x == '0')
-
-
-def nonzero_p(x):
-    return int(x != '0' and x != '-999')
-
-
 def readfile(fname):
     f = open(fname, 'r')
 
@@ -40,9 +28,9 @@ def readfile(fname):
     for row in range(maxrows):
         values = contents[row + 6].split()
 
-        t1 = [nodata_p(v) for v in values]
-        t2 = [zero_p(v) for v in values]
-        t3 = [nonzero_p(v) for v in values]
+        t1 = [int(v) == '-999' for v in values]
+        t2 = [int(v) == '0' for v in values]
+        t3 = [int(v) != '0' and int(v) != '-999' for v in values]
 
         nodata[row] = nodata[row] + t1
         zero[row] = zero[row] + t2
@@ -56,7 +44,6 @@ nodata = np.zeros((maxrows, maxcols))
 zero = np.zeros((maxrows, maxcols))
 nonzero = np.zeros((maxrows, maxcols))
 
-count = 0
 print date
 
 while True:
