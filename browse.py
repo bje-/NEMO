@@ -37,11 +37,6 @@ def grid(arr, dt):
     """Return the grid for hour dt in the dataset arr (GHI or DNI)."""
     h = Hour(dt)
 
-    # if arr == config.ghi:
-    #   missing = config.missing_ghi
-    # else:
-    #   missing = config.missing_dni
-
     # Block out these two anomalous grids as nodata:
     # solar_ghi_20021231_20UT.txt
     # solar_ghi_20021231_22UT.txt
