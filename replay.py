@@ -42,9 +42,6 @@ def run_one(chromosome):
     context.verbose = args.v
     print context
 
-    for i in range(nem.hours):
-        print int(context.spill[::, i].sum())
-
 context = nem.Context()
 capacities = []
 replayfile = open(args.f)
