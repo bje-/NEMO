@@ -442,10 +442,18 @@ class Battery(Generator):
         self.chargehours = 0
 
     def set_storage(self, maxstorage):
+        """Vary the storage capacity."""
         self.maxstorage = maxstorage
 
     # pylint: disable=unused-argument
     def store(self, hr, power):
+        """Store power.
+
+        >>> import regions
+        >>> b = Battery(regions.nsw, 1000, 10000)
+        >>> b.store (0, 500)
+        >>> b.store (0, 2000)
+        """
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
@@ -536,3 +544,7 @@ class DemandResponse(Generator):
     def summary(self, costs):
         return Generator.summary(self, costs) + ', ran %s hours' \
             % locale.format('%d', self.runhours, grouping=True)
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

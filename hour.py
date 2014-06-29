@@ -17,18 +17,22 @@ class Hour:
     """
     In the BoM gridded solar data, hour 0 is Jan 1, 1998 (UTC 00h).
 
-        >>> h = Hour (0)
-        >>> print (h)
-        1998-01-01--00
-        >>> dt = date(1998,1,1)
-        >>> h = Hour (dt)
-        >>> h
-        0
-        >>> dt = date(1998,1,1,1,1)
-        >>> h = Hour (dt)
-        Traceback (most recent call last):
-          ...
-        ValueError
+    >>> h = Hour (0)
+    >>> print (h)
+    1998-01-01--00
+    >>> dt = date(1998,1,1)
+    >>> h = Hour (dt)
+    >>> h
+    0
+    >>> h = Hour('foo')
+    Traceback (most recent call last):
+    ...
+    TypeError
+    >>> dt = date(1998,1,1,1,1)
+    >>> h = Hour (dt)
+    Traceback (most recent call last):
+    ...
+    ValueError
     """
 
     def __init__(self, arg):
@@ -47,7 +51,12 @@ class Hour:
             raise TypeError
 
     def datetime(self):
-        """Return the hour as a Python datetime."""
+        """Return the hour as a Python datetime.
+
+        >>> h = Hour(0)
+        >>> h.datetime()
+        datetime.datetime(1998, 1, 1, 0, 0)
+        """
         delta = datetime.timedelta(hours=self.value)
         return datetime.datetime(1998, 1, 1) + delta
 
@@ -60,15 +69,29 @@ class Hour:
         return str(self.datetime().strftime('%Y-%m-%d--%H'))
 
     def __cmp__(self, v):
-        """Compare v with self."""
+        """Compare v with self.
+
+        >>> h1 = Hour(0)
+        >>> h2 = Hour(date(1998,1,1))
+        >>> h1 == h2
+        True
+        """
         return cmp(self.value, v)
 
     def __add__(self, v):
-        """Add v hours."""
+        """Add v hours.
+
+        >>> Hour(0) + 2
+        2
+        """
         return Hour(self.value + int(v))
 
     def __sub__(self, v):
-        """Subtract v hours."""
+        """Subtract v hours.
+
+        >>> Hour(10) - 2
+        8
+        """
         return Hour(self.value - int(v))
 
     def __trunc__(self):
@@ -124,6 +147,19 @@ def missing_p(h):
     Filter the most egregious sequences of 'nodata' hours that
     represent holes in the data sets, perhaps due to satellite
     transmission problems?
+
+    >>> missing_p(0)
+    False
+    >>> missing_p([0,1,2,3])
+    False
+    >>> h1 = Hour(date(2009, 2, 17))
+    >>> h2 = Hour(date(2009, 2, 17, 2))
+    >>> missing_p(range(h1,h2))
+    True
+    >>> missing_p('foo')
+    Traceback (most recent call last):
+      ...
+    TypeError
     """
     if isinstance(h, int):
         # scalar variant
@@ -135,3 +171,7 @@ def missing_p(h):
         return s1.issubset(s2)
     else:
         raise TypeError
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

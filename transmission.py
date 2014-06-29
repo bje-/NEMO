@@ -17,6 +17,13 @@ class Transmission:
     """An encapsulating class for transmission specific bits."""
 
     def __init__(self, cost_per_mw_km, discount, lifetime=50):
-        """Construct transmission costs given cost per MW/km, discount rate and lifetime."""
+        """Construct transmission costs given cost per MW/km, discount rate and lifetime.
+
+	>>> t = Transmission(30, 0.05)
+	"""
         af = annuity_factor(lifetime, discount)
         self.cost_matrix = regions.distances * cost_per_mw_km / af
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

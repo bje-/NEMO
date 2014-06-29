@@ -232,7 +232,29 @@ supply_scenarios = {'re100': re100,
 ### Demand modifiers
 
 def demand_switch(label):
-    """Return a callback function to modify the demand."""
+    """Return a callback function to modify the demand.
+
+    >>> demand_switch('unchanged')	  # doctest: +ELLIPSIS
+    <function unchanged at ...>
+    >>> demand_switch('roll:10')      # doctest: +ELLIPSIS
+    <function <lambda> at ...>
+    >>> demand_switch('scale:5')    # doctest: +ELLIPSIS
+    <function <lambda> at ...>
+    >>> demand_switch('shift:100:10:12') # doctest: +ELLIPSIS
+    <function <lambda> at ...>
+    >>> demand_switch('shift:100:-2:12')
+    Traceback (most recent call last):
+      ...
+    ValueError: invalid scenario: shift:100:-2:12
+    >>> demand_switch('peaks:10:34000') # doctest: +ELLIPSIS
+    <function <lambda> at ...>
+    >>> demand_switch('npeaks:10:5') # doctest: +ELLIPSIS
+    <function <lambda> at ...>
+    >>> demand_switch('foo')
+    Traceback (most recent call last):
+      ...
+    ValueError: invalid scenario: foo
+    """
     try:
         if label == 'unchanged':
             return unchanged
@@ -320,7 +342,18 @@ def scale_demand(context, factor):
 
 
 def shift_demand(context, demand, fromHour, toHour):
-    """Move N MW of demand from fromHour to toHour."""
+    """Move N MW of demand from fromHour to toHour.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.zeros ((5,10))
+    >>> c.demand[::,3] = 5000
+    >>> shift_demand(c, 2500, 3, 4)
+    >>> c.demand[::,3]
+    array([ 4500.,  4500.,  4500.,  4500.,  4500.])
+    >>> c.demand[::,4]
+    array([ 500.,  500.,  500.,  500.,  500.])
+    """
     # Shed equally in each region for simplicity
     demand /= 5
     context.demand[::, fromHour::24] -= demand
@@ -330,14 +363,35 @@ def shift_demand(context, demand, fromHour, toHour):
 
 
 def scale_peaks(context, power, factor):
-    """Adjust demand peaks over N megawatts by X%."""
+    """Adjust demand peaks over N megawatts by factor%.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.zeros ((5,10))
+    >>> c.demand[::,3] = 5000
+    >>> scale_peaks(c, 3000, 0.5)
+    >>> c.demand[::,3]
+    array([ 2500.,  2500.,  2500.,  2500.,  2500.])
+    """
     agg_demand = context.demand.sum(axis=0)
     where = np.where(agg_demand > power)
     context.demand[::, where] *= factor
 
 
 def scale_npeaks(context, topn, factor):
-    """Adjust top N demand peaks by X%."""
+    """Adjust top N demand peaks by X%.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.zeros ((5,10))
+    >>> c.demand[::,3] = 5000
+    >>> c.demand[::,4] = 3000
+    >>> scale_npeaks(c, 1, 0.5)
+    >>> c.demand[::,4]
+    array([ 3000.,  3000.,  3000.,  3000.,  3000.])
+    >>> c.demand[::,3]
+    array([ 2500.,  2500.,  2500.,  2500.,  2500.])
+    """
     agg_demand = context.demand.sum(axis=0)
     top_demands = heapq.nlargest(topn, agg_demand)
     # A trick from:

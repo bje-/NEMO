@@ -49,10 +49,15 @@ def grid(arr, dt):
 
 
 def timeseries(locn, dataset=config.ghi):
-    """Get all of the data at this location."""
+    """Get all of the data at this location.
+
+    >>> from LatLong import latlong
+    >>> loc = latlong(-35,149)
+    >>> data = timeseries(loc, config.dni)
+    >>> data = timeseries(loc, config.ghi)
+    """
     row = locn.xy()[0]
     col = locn.xy()[1]
-    # data = ma.masked_equal (config.ghi[::,row,col], config.nodata)
     data = dataset[::, row, col]
     return data
 
@@ -79,18 +84,6 @@ def find_missing(arr):
     return missing
 
 
-def in_date_range_p(hr):
-    """True if hr is in the exclusion range.
-
-    True is hr is in the range of dates listed as missing in the BoM
-    metadata documents.
-    """
-    h1 = Hour(date(1998, 01, 01))
-    h2 = Hour(date(2001, 06, 30))
-    h3 = Hour(date(2003, 07, 01))
-    h4 = Hour(date(2009, 12, 31))
-
-    return (hr >= h1 and hr <= h2) or (hr >= h3 and hr <= h4)
-
-# This is a nice complete grid to use for the nodata mask.
-ozmask = grid(config.ghi, 3).mask
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
