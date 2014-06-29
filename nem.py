@@ -108,7 +108,7 @@ def default_generation_mix():
             result.append(g(regions.sa, capacity * 0.59, h5file, label='SA wind'))
             result.append(g(regions.nsw, capacity * 0.09, h5file, label='NSW wind'))
             result.append(g(regions.tas, capacity * 0.07, h5file, label='TAS wind'))
-        else:
+        else:  # pragma: no cover
             raise(ValueError)
 
     # You can't modify these capacities.

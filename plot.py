@@ -53,7 +53,15 @@ def plot_timeseries(data, interval=1, style='o-', filename=None):
 
 def plot_distribution(data, label, nbins=48, cumulative=False,
                       heading='Untitled', filename=None, orientation='vertical'):
-    """Plot a frequency distribution."""
+    """Plot a frequency distribution.
+
+    >>> import os
+    >>> plot_distribution([1,2,3,4], 'Test', filename='foo.png', orientation='horizontal')
+    >>> plot_distribution([1,2,3,4], 'Test', filename='foo.png')
+    >>> os.path.isfile('foo.png')
+    True
+    >>> os.unlink('foo.png')
+    """
     fig = plt.figure()
     plt.title(heading)
     ax = fig.add_subplot(111)
@@ -71,7 +79,18 @@ def plot_distribution(data, label, nbins=48, cumulative=False,
 
 def plot_grid(data, filename=None, heading='Unspecified', ylabel='W/m$^2$',
               vmin=None, vmax=None, hsv=False, markers=None):
-    """Plot a BoM solar irradiance grid."""
+    """Plot a BoM solar irradiance grid.
+
+    >>> import os
+    >>> import latlong
+    >>> plot_grid([[1,2,3,4]], filename='foo.png', heading='Test')
+    >>> plot_grid([[1,2,3,4]], filename='foo.png', heading='Test', hsv=True)
+    >>> m1 = latlong.LatLong(-35,149)
+    >>> plot_grid([[1,2,3,4]], filename='foo.png', heading='Test', markers=[m1])
+    >>> os.path.isfile('foo.png')
+    True
+    >>> os.unlink('foo.png')
+    """
     plt.clf()
     plt.imshow(data, vmin=vmin, vmax=vmax)
     plt.axis('off')
@@ -90,3 +109,7 @@ def plot_grid(data, filename=None, heading='Unspecified', ylabel='W/m$^2$',
         plt.show()
     else:
         plt.savefig(filename)
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

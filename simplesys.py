@@ -172,11 +172,6 @@ class Context:
         >>> obj.EP = -1
         >>> obj.validate()
         Energy to heat-up piping must be positive!
-        >>> obj = Context()
-        >>> obj.ISTART = 12
-        >>> obj.SHUT = 8
-        >>> obj.validate()
-        Shutdown time must be greater than Start time
         """
         if self.EP < 0:
             _alert("Energy to heat-up piping must be positive!")

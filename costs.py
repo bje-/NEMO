@@ -81,7 +81,10 @@ class AETA2012_2030Low (AETA2012_2030):
     """AETA (2012) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        """Construct a cost object given discount rate, coal, gas and CCS costs.
+
+        >>> obj = AETA2012_2030Low(0.05, 1.00, 9.00, 30)
+        """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         af = self.annuityf
@@ -105,7 +108,10 @@ class AETA2012_2030High (AETA2012_2030):
     """AETA (2012) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        """Construct a cost object given discount rate, coal, gas and CCS costs.
+
+        >>> obj = AETA2012_2030High(0.05, 1.00, 9.00, 30)
+        """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         af = self.annuityf
@@ -122,3 +128,7 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Coal_CCS] = 4727 / af + fom[tech.Coal_CCS]
         table[tech.Black_Coal] = 3128 / af + fom[tech.Black_Coal]
         table[tech.Geothermal] = 7822 / af + fom[tech.Geothermal]
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

@@ -224,7 +224,7 @@ def run():
         if args.transmission:
             print context.exchanges.max(axis=0)
 
-    if args.x and rank == 0:
+    if args.x and rank == 0:  # pragma: no cover
         print 'Press Enter to start graphical browser ',
         sys.stdin.readline()
         nem.plot(context, spills=args.spills)
@@ -233,4 +233,6 @@ def run():
     nem.h5file.close()
 
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
     run()
