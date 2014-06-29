@@ -19,7 +19,6 @@ from matplotlib.patches import Patch
 
 import consts
 import regions
-import generators
 from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 
 hours = 8760

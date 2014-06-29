@@ -28,6 +28,7 @@ import numpy as np
 import argparse
 import sys
 import nem
+import generators
 import scenarios
 import costs
 import consts
@@ -74,9 +75,9 @@ else:
 context.costs.carbon = args.carbon_price
 context.costs.transmission = transmission.Transmission(args.tx_costs, args.discount_rate)
 if args.coal_ccs_costs is not None:
-    fom = context.costs.fixed_om_costs[nem.generators.Coal_CCS]
+    fom = context.costs.fixed_om_costs[generators.Coal_CCS]
     af = costs.annuity_factor(costs.AETA2012_2030.lifetime, args.discount_rate)
-    context.costs.capcost_per_kw_per_yr[nem.generators.Coal_CCS] = args.coal_ccs_costs / af + fom
+    context.costs.capcost_per_kw_per_yr[generators.Coal_CCS] = args.coal_ccs_costs / af + fom
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
@@ -123,11 +124,11 @@ def cost(ctx, transmission_p):
     if args.fossil_limit is not None:
         fossil_energy = 0
         for g in ctx.generators:
-            if g.__class__ is nem.generators.CCGT or \
-               g.__class__ is nem.generators.OCGT or \
-               g.__class__ is nem.generators.Coal_CCS or \
-               g.__class__ is nem.generators.CCGT_CCS or \
-               g.__class__ is nem.generators.Black_Coal:
+            if g.__class__ is generators.CCGT or \
+               g.__class__ is generators.OCGT or \
+               g.__class__ is generators.Coal_CCS or \
+               g.__class__ is generators.CCGT_CCS or \
+               g.__class__ is generators.Black_Coal:
                 fossil_energy += g.hourly_power.sum()
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit)
         score += pow(fossil_exceedance, 3)
@@ -135,7 +136,7 @@ def cost(ctx, transmission_p):
     ### Penalty: limit biofuel use
     biofuel_energy = 0
     for g in ctx.generators:
-        if g.__class__ is nem.generators.Biofuel:
+        if g.__class__ is generators.Biofuel:
             biofuel_energy += g.hourly_power.sum()
     biofuel_exceedance = max(0, biofuel_energy - 20 * consts.twh)
     score += pow(biofuel_exceedance, 3)
@@ -143,7 +144,7 @@ def cost(ctx, transmission_p):
     ### Penalty: limit hydro use
     hydro_energy = 0
     for g in ctx.generators:
-        if g.__class__ is nem.generators.Hydro or g.__class__ is nem.generators.PumpedHydro:
+        if g.__class__ is generators.Hydro or g.__class__ is generators.PumpedHydro:
             hydro_energy += g.hourly_power.sum()
     hydro_exceedance = max(0, hydro_energy - 12 * consts.twh)
     score += pow(hydro_exceedance, 3)
