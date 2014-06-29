@@ -311,7 +311,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
     accum = np.zeros(hours)
     prev = accum.copy()
     for g in [g for g in context.generators if g.region in context.regions]:
-        idx = context.generation.index(g)
+        idx = context.generators.index(g)
         accum += context.generation[idx]
         assert(np.trunc(accum) > np.trunc(demand)).sum() == 0
         plt.plot(xdata, accum, color='black', linewidth=0.5)
@@ -323,7 +323,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
     if spills:
         prev = demand.copy()
         for g in [g for g in context.generators if g.region in context.regions]:
-            idx = context.generation.index(g)
+            idx = context.generators.index(g)
             accum += spill[idx]
             plt.plot(xdata, accum, color='black')
             plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
