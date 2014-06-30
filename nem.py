@@ -23,7 +23,7 @@ from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 
 hours = 8760
 
-h5file = tables.openFile('/home/bje/unsw/thesis/data/nem.h5', mode='r')
+h5file = tables.openFile('nem.h5', mode='r')
 pvdata = '/home/bje/Windows/sam-pv.csv'
 cstdata = '/home/bje/Windows/sam-cst-15h-sm2.5.csv'
 fielddata = '/home/bje/Windows/field.csv'
