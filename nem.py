@@ -313,7 +313,8 @@ def plot(context, spills=False, filename=None, xlimit=None):
     for g in [g for g in context.generators if g.region in context.regions]:
         idx = context.generators.index(g)
         accum += context.generation[idx]
-        assert(np.trunc(accum) > np.trunc(demand)).sum() == 0
+        # Ensure total generation does not exceed demand in any timestep.
+        assert(np.round(accum, 6) > np.round(demand, 6)).sum() == 0
         plt.plot(xdata, accum, color='black', linewidth=0.5)
         plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc())
         prev = accum.copy()
