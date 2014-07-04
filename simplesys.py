@@ -162,7 +162,7 @@ class Context:
         if QL <= 0:
             self.MODE = 0
 
-    def validate(self):
+    def validate(self):   # pragma: no cover
         """
         Call to validate the object state.
 
