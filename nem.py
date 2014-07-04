@@ -334,7 +334,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
         plt.plot([h[0]], [ymax], "yv", markersize=15, color='red')
 
     if not filename:
-        plt.show()
+        plt.show()  # pragma: no cover
     else:
         plt.savefig(filename)
 
