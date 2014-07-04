@@ -19,8 +19,8 @@ import config
 parser = argparse.ArgumentParser()
 parser.add_argument("--db", type=str, default='nem.h5', help='HDF5 database filename')
 args = parser.parse_args()
+
 h5file = tables.openFile(args.db, mode='r')
-print h5file
 config.ghi = h5file.root.ghi
 config.dni = h5file.root.dni
 ghi = config.ghi
@@ -33,7 +33,7 @@ config.demand = h5file.root.aux.aemo2009.demand
 
 
 def grid(arr, dt):
-    """Return the grid for hour dt in the dataset arr (GHI or DNI)."""
+    """Return the grid for hour `dt' in the dataset `arr' (GHI or DNI)."""
     h = Hour(dt)
 
     # Block out these two anomalous grids as nodata:
@@ -70,7 +70,7 @@ def empty_p(grd):
 
 
 def find_missing(arr):
-    """Find missing grids in arr.
+    """Find missing grids in `arr'.
 
     Returns two lists: the missing hour numbers and a per-hour summary
     (24 elements).
