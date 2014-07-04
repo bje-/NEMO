@@ -15,6 +15,24 @@ def annuity_factor(t, r):
     return (1 - (1 / pow(1 + r, t))) / r
 
 
+class NullCosts:
+
+    """All costs are zero. Useful for debugging."""
+
+    def __init__(self):
+        self.capcost_per_kw_per_yr = {}
+        self.fixed_om_costs = {}
+        self.opcost_per_mwh = {}
+
+        for t in [tech.Biofuel, tech.Black_Coal, tech.CCGT,
+                  tech.CCGT_CCS, tech.CST, tech.Coal_CCS, tech.DemandResponse,
+                  tech.Geothermal, tech.Hydro, tech.OCGT, tech.PV, tech.PumpedHydro,
+                  tech.Wind, ]:
+            self.capcost_per_kw_per_yr[t] = 0
+            self.opcost_per_mwh[t] = 0
+            self.fixed_om_costs[t] = 0
+
+
 class AETA2012_2030:
 
     """Australian Energy Technology Assessment (2012) costs for 2030.
