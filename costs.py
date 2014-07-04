@@ -162,7 +162,7 @@ class AETA2013_2030High (AETA2012_2030High):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.CST] = 72.381  * self.escalation
+        fom[tech.CST] = 72.381 * self.escalation
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
         vom[tech.CST] = 11.39 * self.escalation
