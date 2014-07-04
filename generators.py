@@ -450,9 +450,9 @@ class Battery(Generator):
         """Store power.
 
         >>> import regions
-        >>> b = Battery(regions.nsw, 1000, 10000)
-        >>> b.store (0, 500)
-        >>> b.store (0, 2000)
+        >>> b = Battery(regions.nsw, 400, 10000)
+        >>> b.store (0, 400)
+	400
         """
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
