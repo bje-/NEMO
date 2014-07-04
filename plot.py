@@ -46,7 +46,7 @@ def plot_timeseries(data, interval=1, style='o-', filename=None):
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(format_date))
     fig.autofmt_xdate()
     if not filename:
-        plt.show()
+        plt.show()  # pragma: no cover
     else:
         plt.savefig(filename)
 
@@ -72,7 +72,7 @@ def plot_distribution(data, label, nbins=48, cumulative=False,
         ax.set_ylabel(label)
 
     if not filename:
-        plt.show()
+        plt.show()  # pragma: no cover
     else:
         plt.savefig(filename)
 
@@ -106,7 +106,7 @@ def plot_grid(data, filename=None, heading='Unspecified', ylabel='W/m$^2$',
             ycoord, xcoord = marker.xy()
             plt.plot([xcoord], [ycoord], "y.", markersize=15, color='white')
     if not filename:
-        plt.show()
+        plt.show()  # pragma: no cover
     else:
         plt.savefig(filename)
 
