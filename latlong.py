@@ -1,4 +1,3 @@
-# -*- Python -*-
 # Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
 # Latitude/longitude spherical geodesy formulae & scripts (C) Chris Veness 2002-2011

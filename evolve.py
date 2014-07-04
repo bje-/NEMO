@@ -1,4 +1,3 @@
-# -*- Python -*-
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 #
 # evolve.py -- evolutionary exploration of the NEM
