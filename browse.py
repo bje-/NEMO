@@ -48,21 +48,14 @@ def grid(arr, dt):
 
 
 def timeseries(locn, dataset=config.ghi):
-    """Get all of the data at this location.
-
-    >>> from LatLong import latlong
-    >>> loc = latlong(-35,149)
-    >>> data = timeseries(loc, config.dni)
-    >>> data = timeseries(loc, config.ghi)
-    """
-    row = locn.xy()[0]
-    col = locn.xy()[1]
+    """Get all of the data at location `locn'."""
+    row, col = locn.xy()
     data = dataset[::, row, col]
     return data
 
 
 def empty_p(grd):
-    """True if the grid contains only nodata values."""
+    """True if the grid `grd' contains only nodata values."""
     if type(grd) == ma.core.MaskedArray:
         return ma.count_masked(grd) == config.maxrows * config.maxcols
     else:
