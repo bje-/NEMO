@@ -23,6 +23,7 @@ class NullCosts:
         self.capcost_per_kw_per_yr = {}
         self.fixed_om_costs = {}
         self.opcost_per_mwh = {}
+        self.annuityf = 1
 
         for t in [tech.Biofuel, tech.Black_Coal, tech.CCGT,
                   tech.CCGT_CCS, tech.CST, tech.Coal_CCS, tech.DemandResponse,
