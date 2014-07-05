@@ -3,6 +3,7 @@
 import os
 import generators
 import nem
+import regions
 import unittest
 
 
