@@ -167,6 +167,3 @@ class TestSequenceFunctions(unittest.TestCase):
         self.context.generators = [ccgt]
         nem.run(self.context)
         self.assertTrue((self.context.generators[0].hourly_power > 0).sum())
-
-if __name__ == '__main__':
-    unittest.main()
