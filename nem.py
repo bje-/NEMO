@@ -180,10 +180,7 @@ class Context:
             s += 'min, max shortfalls: ' + str(self.shortfalls)
 
         if self.spilled_energy > 0:
-            try:
-                s += '\n' + 'spilled hours = ' + str((self.spill.sum(axis=0) > 0).sum())
-            except AttributeError:
-                pass
+            s += '\n' + 'spilled hours = ' + str((self.spill.sum(axis=0) > 0).sum())
         return s
 
 
