@@ -224,7 +224,8 @@ def _sim(context, starthour, endhour):
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
             gen, context.spill[gidx, hr] = g.step(hr, residual_hour_demand)
-            assert gen <= residual_hour_demand, "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
+            assert round(gen, 2) <= round(residual_hour_demand, 2), \
+                "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
             context.generation[gidx, hr] = gen
             if not gen:
                 continue
