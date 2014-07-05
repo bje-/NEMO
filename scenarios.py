@@ -205,16 +205,19 @@ def theworks(context):
     >>> c.generators = range(10)
     >>> theworks(c)
     >>> len(c.generators)
-    11
+    14
     """
     # pylint: disable=redefined-outer-name
+    geo = generators.Geothermal(regions.nsw, 0)
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
     ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
+    batt = generators.Battery(regions.nsw, 0, 0)
+    dem = generators.DemandResponse(regions.nsw, 0, 300)
     g = context.generators
-    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
+    context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt, batt, dem]
 
 supply_scenarios = {'re100': re100,
                     'ccgt': ccgt,
