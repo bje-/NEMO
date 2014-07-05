@@ -53,7 +53,7 @@ class AETA2012_2030:
         self.capcost_per_kw_per_yr = {}
         self.opcost_per_mwh = {}
         self.fixed_om_costs = {}
-        self.annuityf = annuity_factor(AETA2012_2030.lifetime, discount)
+        self.annuityf = annuity_factor(self.lifetime, discount)
 
         # Common capital costs
         table = self.capcost_per_kw_per_yr

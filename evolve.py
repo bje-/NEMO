@@ -75,7 +75,7 @@ context.costs.carbon = args.carbon_price
 context.costs.transmission = transmission.Transmission(args.tx_costs, args.discount_rate)
 if args.coal_ccs_costs is not None:
     fom = context.costs.fixed_om_costs[generators.Coal_CCS]
-    af = costs.annuity_factor(costs.AETA2013_2030.lifetime, args.discount_rate)
+    af = costs.annuity_factor(context.costs.lifetime, args.discount_rate)
     context.costs.capcost_per_kw_per_yr[generators.Coal_CCS] = args.coal_ccs_costs / af + fom
 
 # Set up the scenario.
