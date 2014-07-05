@@ -147,7 +147,15 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Geothermal] = 7822 / af + fom[tech.Geothermal]
 
 
-class AETA2013_2030Low (AETA2012_2030Low):
+class AETA2013_2030(AETA2012_2030):
+    """Australian Energy Technology Assessment (2013 update) costs for 2030.
+
+    Source: BREE AETA update report (2013), bree.gov.au
+    """
+    pass
+
+
+class AETA2013_2030Low(AETA2013_2030Low):
     """AETA (2013 update) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -166,7 +174,7 @@ class AETA2013_2030Low (AETA2012_2030Low):
         vom[tech.CST] = 11.39 * self.escalation
 
 
-class AETA2013_2030High (AETA2012_2030High):
+class AETA2013_2030High(AETA2013_2030High):
     """AETA (2013 update) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
