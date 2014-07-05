@@ -398,8 +398,3 @@ def _format_date(x, pos=None):
     delta = datetime.timedelta(hours=x)
     t = datetime.datetime(2010, 1, 1) + delta
     return t.strftime('%b %d %Hh')
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

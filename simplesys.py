@@ -222,7 +222,3 @@ class Context:
         return {'T': T, 'QC': self.QC, 'QA': self.QA, 'QS': self.QS,
                 'ES': self.ES, 'QD': self.QD, 'QL': rQL, 'MODE':
                 self.MODE}
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -74,8 +74,3 @@ def find_missing(arr):
            not empty_p(arr[i + 2]):
             missing.append(i + 1)
     return missing
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

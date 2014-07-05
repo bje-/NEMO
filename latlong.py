@@ -105,7 +105,3 @@ class LatLong:
         '(-35, 149)'
         """
         return '(' + str(self.lat) + ', ' + str(self.lon) + ')'
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -108,7 +108,3 @@ def plot_grid(data, filename=None, heading='Unspecified', ylabel='W/m$^2$',
         plt.show()  # pragma: no cover
     else:
         plt.savefig(filename)
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

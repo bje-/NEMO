@@ -402,7 +402,3 @@ def scale_npeaks(context, topn, factor):
     ix = np.in1d(agg_demand.ravel(), top_demands).reshape(agg_demand.shape)
     where = np.where(ix)
     context.demand[::, where] *= factor
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

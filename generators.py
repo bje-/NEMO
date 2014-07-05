@@ -553,7 +553,3 @@ class DemandResponse(Generator):
     def summary(self, costs):
         return Generator.summary(self, costs) + ', ran %s hours' \
             % locale.format('%d', self.runhours, grouping=True)
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

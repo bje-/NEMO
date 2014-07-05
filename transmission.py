@@ -22,7 +22,3 @@ class Transmission:
     """
         af = annuity_factor(lifetime, discount)
         self.cost_matrix = regions.distances * cost_per_mw_km / af
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

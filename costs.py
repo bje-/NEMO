@@ -184,8 +184,3 @@ class AETA2013_2030High (AETA2012_2030High):
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
         vom[tech.CST] = 11.39 * self.escalation
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

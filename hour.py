@@ -170,7 +170,3 @@ def missing_p(h):
         return s1.issubset(s2)
     else:
         raise TypeError
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

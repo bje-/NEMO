@@ -153,7 +153,3 @@ def in_regions_p(rpath, rgnset):
             if source not in rgnset or destn not in rgnset:
                 return False
     return True
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
