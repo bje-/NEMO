@@ -35,7 +35,7 @@ def set_generators(chromosome):
 def run_one(chromosome):
     """Annual cost of the system (in billion $)."""
     assert len(chromosome) == 20
-    context.costs = costs.AETA2012_2030Low(0.05, 1.3, 11, 42)
+    context.costs = costs.AETA2013_2030Low(0.05, 1.3, 11, 42)
     set_generators(chromosome)
     nem.run(context)
     context.verbose = args.v
