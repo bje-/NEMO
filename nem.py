@@ -57,7 +57,12 @@ stns = _import_bom_stations('Stations.txt')
 
 
 def default_generation_mix():
-    """Return a default generator list."""
+    """Return a default generator list.
+
+    >>> g = default_generation_mix()
+    >>> len(g)
+    25
+    """
     result = []
     # This list is in merit order.
     for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
@@ -139,7 +144,20 @@ class Context:
         self.unserved_percent = 0
 
     def __str__(self):
-        """A human-readable representation of the context."""
+        """A human-readable representation of the context.
+
+        >>> import costs
+        >>> import types
+        >>> def foo(self, costs): return None
+        >>> c = Context()
+        >>> c.costs = costs.NullCosts()
+        >>> c.verbose=1
+        >>> f = types.MethodType(foo, c.generators[-1], Context)
+        >>> c.generators[-1].summary = f
+        >>> c.generators[-1].summary(None) is None
+        True
+        >>> s = str(c)
+        """
         s = 'Regions: ' + str(self.regions) + '\n'
         if self.verbose:
             s += 'Generators:' + '\n'
@@ -339,7 +357,15 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
 
 def run(context, starthour=0, endhour=hours):
-    """Run the simulation (without a plot)."""
+    """Run the simulation (without a plot).
+
+    >>> c = Context()
+    >>> c.regions = (1,2)
+    >>> run(c)
+    Traceback (most recent call last):
+      ...
+    ValueError: regions is not a list
+    """
     if not isinstance(context.regions, list):
         raise ValueError('regions is not a list')
     _sim(context, starthour, endhour)
@@ -364,9 +390,18 @@ def run(context, starthour=0, endhour=hours):
 
 
 def _format_date(x, pos=None):
-    """Pretty printer for dates/times."""
+    """Pretty printer for dates/times.
+
+    >>> _format_date(0)
+    'Jan 01 00h'
+    """
     # pylint: disable=unused-argument
     import datetime
     delta = datetime.timedelta(hours=x)
     t = datetime.datetime(2010, 1, 1) + delta
     return t.strftime('%b %d %Hh')
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
