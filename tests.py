@@ -52,6 +52,8 @@ class TestSequenceFunctions(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.context = nem.Context()
+        self.minload = math.floor(self.context.demand.sum(axis=0).min())
+
 
     def test_001(self):
         """Test that all regions are present."""
@@ -67,14 +69,14 @@ class TestSequenceFunctions(unittest.TestCase):
         """Power system with no generators meets none of the demand."""
         self.context.generators = []
         nem.run(self.context)
-        self.assertEqual(self.context.unserved_energy, self.context.demand.sum())
+        self.assertEqual(math.trunc(self.context.unserved_energy), math.trunc(self.context.demand.sum()))
 
     def test_004(self):
         """100 MW fossil plant generates exactly 876,000 MWh."""
-        fossil = generators.Fossil(regions.nsw, 100)
-        self.context.generators = [fossil]
+        ccgt = generators.CCGT(regions.nsw, 100)
+        self.context.generators = [ccgt]
         nem.run(self.context)
-        self.assertEqual(fossil.hourly_power.sum(), nem.hours * 100)
+        self.assertEqual(ccgt.hourly_power.sum(), nem.hours * 100)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0
@@ -88,15 +90,13 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_006(self):
         """Generation to meet minimum load leads to no spills."""
-        minload = math.floor(nem.aggregate_demand.min())
-        self.context.generators = [SuperGenerator(minload)]
+        self.context.generators = [SuperGenerator(self.minload)]
         nem.run(self.context)
         self.assertEqual(self.context.spilled_energy, 0)
 
     def test_007(self):
         """Generation to meet minimum load + 1GW produces some spills."""
-        minload = math.floor(nem.aggregate_demand.min())
-        self.context.generators = [SuperGenerator(minload + 1000)]
+        self.context.generators = [SuperGenerator(self.minload + 1000)]
         nem.run(self.context)
         self.assertTrue(self.context.spilled_energy > 0)
 
@@ -125,6 +125,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_010(self):
         """Running in one region only produces no interstate exchanges."""
+        self.context.track_exchanges = True
         for rgn in regions.All:
             self.context.regions = [rgn]
             nem.run(self.context, endhour=1)
@@ -162,8 +163,8 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_013(self):
         """Fossil plant records power generation history."""
-        fossil = generators.Fossil(regions.nsw, 100)
-        self.context.generators = [fossil]
+        ccgt = generators.CCGT(regions.nsw, 100)
+        self.context.generators = [ccgt]
         nem.run(self.context)
         self.assertTrue((self.context.generators[0].hourly_power > 0).sum())
 
