@@ -70,6 +70,18 @@ def replacement(context):
     context.generators = [coal] + _hydro() + [ocgt]
 
 
+def _one_ccgt(context):
+    """One CCGT only.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> _one_ccgt(c)
+    >>> len(c.generators)
+    1
+    """
+    context.generators = [generators.CCGT(regions.nsw, 0)]
+
+
 def ccgt(context):
     """All gas scenario.
 
@@ -228,7 +240,9 @@ supply_scenarios = {'re100': re100,
                     're100+dsp': re100_dsp,
                     're100+geoth': re100_geothermal,
                     're+fossil': re_plus_fossil,
-                    'theworks': theworks}
+                    'theworks': theworks,
+                    '__one_ccgt__': _one_ccgt  # for testing only
+                    }
 
 
 ### Demand modifiers
