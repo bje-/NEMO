@@ -25,6 +25,3 @@ class TestSIMPLESYS(unittest.TestCase):
     def test_001(self):
         """Test that hour is zero."""
         self.assertEqual(self.context.HR, 0)
-
-if __name__ == '__main__':
-    unittest.main()
