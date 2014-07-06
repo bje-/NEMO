@@ -10,18 +10,90 @@
 
 """A testsuite for simplesys.py."""
 
+import math
 import simplesys
 import unittest
+
+
+class OrigContext(simplesys.Context):
+    def collectorOutput(self):
+        """Calculate collector field output."""
+        CM = 500
+        T = self.HR % 24
+        x = CM * math.sin((T-6) / 3.8192) - self.QF
+        if T < self.ISTART:
+            x = 0
+        if T >= self.SHUT:
+            x = 0
+        self.QC = 0 if x < 0 else x
 
 
 class TestSIMPLESYS(unittest.TestCase):
 
     """Tests for SIMPLESYS."""
 
-    def setUp(self):
-        """Test harness setup."""
-        self.context = simplesys.Context()
+    def testResultsAgainstTableData(self):
+        """Check results match the output given on the SIMPLESYS web page."""
 
-    def test_001(self):
-        """Test that hour is zero."""
-        self.assertEqual(self.context.HR, 0)
+        self.context = OrigContext(ep=200, qf=10, sl=10, sm=500)
+        data = [[0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [159, 0, 9, 9, 0, 150, 3],
+                [344, 0, 194, 193, 0, 150, 3],
+                [423, 0, 273, 456, 0, 150, 3],
+                [473, 0, 54, 500, 269, 150, 3.4],
+                [490, 0, 10, 500, 330, 150, 3.4],
+                [473, 0, 10, 500, 313, 150, 3.4],
+                [423, 0, 10, 500, 263, 150, 3.4],
+                [343, 0, 10, 500, 183, 150, 3.4],
+                [240, 0, 10, 500, 80, 150, 3.4],
+                [119, 0, -31, 459, 0, 150, 5],
+                [0, 0, -150, 299, 0, 150, 6],
+                [0, 0, -150, 139, 0, 150, 6],
+                [0, 21, -129, 0, 0, 150, 6.1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                # day 2
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [159, 0, 9, 9, 0, 150, 3],
+                [344, 0, 194, 193, 0, 150, 3],
+                [423, 0, 273, 456, 0, 150, 3],
+                [473, 0, 54, 500, 269, 150, 3.4],
+                [490, 0, 10, 500, 330, 150, 3.4],
+                [473, 0, 10, 500, 313, 150, 3.4],
+                [423, 0, 10, 500, 263, 150, 3.4],
+                [343, 0, 10, 500, 183, 150, 3.4],
+                [240, 0, 10, 500, 80, 150, 3.4],
+                [119, 0, -31, 459, 0, 150, 5],
+                [0, 0, -150, 299, 0, 150, 6],
+                [0, 0, -150, 139, 0, 150, 6],
+                [0, 21, -129, 0, 0, 150, 6.1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1],
+                [0, 150, 0, 0, 0, 150, 1]]
+
+        for i, row in enumerate(data):
+            qc, qa, qs, es, qd, ql, mode = row
+            c = self.context
+            self.context.nexthour(150)
+            self.assertEqual(c.HR - 1, i)
+            self.assertEqual(round(c.QC), round(qc))
+            self.assertEqual(round(c.QA), round(qa))
+            self.assertEqual(round(c.QS), round(qs))
+            self.assertEqual(round(c.ES), round(es))
+            self.assertEqual(round(c.QD), round(qd))
+            self.assertEqual(c.MODE, mode)
