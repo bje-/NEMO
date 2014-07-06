@@ -229,7 +229,8 @@ def theworks(context):
     batt = generators.Battery(regions.nsw, 0, 0)
     dem = generators.DemandResponse(regions.nsw, 0, 300)
     g = context.generators
-    context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt, batt, dem]
+    context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
+                         [ocgt, batt, dem]
 
 supply_scenarios = {'re100': re100,
                     'ccgt': ccgt,
