@@ -472,7 +472,7 @@ class Battery(Generator):
         else:
             self.chargehours += 1
             self.stored += energy
-        return power
+        return int(power)
 
     def step(self, hr, demand):
         """
