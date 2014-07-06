@@ -230,3 +230,6 @@ def run():
 
     # Force database closure to avoid pytables output.
     nem.h5file.close()
+
+if __name__ == '__main__':
+    run()
