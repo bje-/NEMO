@@ -267,11 +267,11 @@ class PumpedHydro(Hydro):
 
         >>> import regions
         >>> psh = PumpedHydro(regions.nsw, 100, 1000)
-        >>> psh.step(0, 100)
+        >>> psh.step(hr=0, demand=100)
         (100, 0)
 
         Cannot pump and generate at the same time.
-        >>> psh.store(0, 100)
+        >>> psh.store(hr=0, power=100)
         0
         """
         if self.last_run == hr:
@@ -459,9 +459,11 @@ class Battery(Generator):
         """Store power.
 
         >>> import regions
-        >>> b = Battery(regions.nsw, 400, 10000)
-        >>> b.store (0, 400)
+        >>> b = Battery(regions.nsw, 400, 1000, rte=1.0)
+        >>> b.store(hr=0, power=400)
         400
+        >>> b.store(hr=0, power=700)
+        600
         """
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
@@ -473,6 +475,16 @@ class Battery(Generator):
         return power
 
     def step(self, hr, demand):
+        """
+        >>> import regions
+        >>> b = Battery(regions.nsw, 400, 1000, rte=1.0)
+        >>> b.step(hr=0, demand=200)
+        (0, 0)
+        >>> b.store(hr=0, power=400)
+        400
+        >>> b.step(hr=2, demand=200)
+        (200, 0)
+        """
         power = min(self.stored, min(self.capacity, demand))
         self.hourly_power[hr] = power
         self.stored -= power
@@ -536,6 +548,14 @@ class DemandResponse(Generator):
         self.cost_per_mwh = 0
 
     def step(self, hr, demand):
+        """
+        >>> import regions
+        >>> dr = DemandResponse(regions.nsw, 500, 1500)
+        >>> dr.step(hr=0, demand=200)
+        (200, 0)
+        >>> dr.runhours
+        1
+        """
         power = min(self.capacity, demand)
         self.hourly_power[hr] = power
         self.hourly_spilled[hr] = 0
