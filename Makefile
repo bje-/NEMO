@@ -1,8 +1,14 @@
-check:
-	python tests.py -v
+all:
 
-flake8:
-	flake8 --ignore=E501 *.py
+COVRUN=python-coverage run -a --source .
+
+check:  replay.data
+	nosetests -I '(browse|populate-.*|evolve|replay|find-holes).py' --with-doctest --with-coverage --cover-package=.
+	$(COVRUN) evolve.py -f0 -p2 -g1 > /dev/null
+	$(COVRUN) evolve.py -f0 -p2 -g1 -s theworks --emissions-limit=100 --fossil-limit=1.0 -t --high-cost --coal-ccs-costs=20 -d unchanged > /dev/null
+	$(COVRUN) replay.py -f replay.data -v > /dev/null
+	rm replay.data
+	make html
 
 nem.prof:
 	python -m cProfile -o $@ profile.py
@@ -14,7 +20,21 @@ lineprof:
 	kernprof.py -v -l profile.py
 
 lint:
+	flake8 --ignore=E501 *.py
 	pylint *.py
 
+html:
+	python-coverage html
+
+html-upload:
+	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo-coverage
+
+replay.data:
+	echo "# comment line" >> $@
+	echo "malformed line" >> $@
+	echo >> $@
+	echo "List: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" >> $@
+
 clean:
+	rm -rf .coverage htmlcov replay.data
 	rm *.pyc nem.prof profile.py.lprof
