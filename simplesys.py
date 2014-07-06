@@ -127,7 +127,7 @@ class Context:
 
         if self.QC > 0:
             if self.QC > QL:
-                if self.ES > self.SM:
+                if self.ES > self.SM:  # pragma: no cover
                     self.QD = self.QC - QL
                     self.MODE = 4
                 else:
