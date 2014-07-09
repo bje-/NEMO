@@ -9,6 +9,7 @@
 
 import argparse
 import costs
+import scenarios
 import nem
 import sys
 import re
@@ -17,7 +18,8 @@ parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.ed
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-v", action="store_true", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
-parser.add_argument("-s", "--spills", action="store_true", help='plot spills')
+parser.add_argument("-s", "--supply-scenario", type=str, help='scenario name', default='unchanged')
+parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
 
@@ -42,6 +44,7 @@ def run_one(chromosome):
     print context
 
 context = nem.Context()
+scenarios.supply_switch(args.supply_scenario)(context)
 capacities = []
 replayfile = open(args.f)
 for line in replayfile:
