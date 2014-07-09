@@ -538,21 +538,21 @@ class DemandResponse(Generator):
 
     """Load shedding generator."""
 
-    patch = Patch(facecolor='white')
+    patch = Patch(facecolor='#A6233B')
 
     # pylint: disable=unused-argument
     def __init__(self, region, capacity, cost_per_mwh, label='demand-response'):
         Generator.__init__(self, region, capacity, label)
         self.setters = []
         self.runhours = 0
-        self.cost_per_mwh = 0
+        self.cost_per_mwh = cost_per_mwh
 
     def step(self, hr, demand):
         """
         >>> import regions
         >>> dr = DemandResponse(regions.nsw, 500, 1500)
         >>> dr.step(hr=0, demand=200)
-        (200, 0)
+       (200, 0)
         >>> dr.runhours
         1
         """
@@ -568,7 +568,7 @@ class DemandResponse(Generator):
         self.runhours = 0
 
     def opcost(self, costs):
-        return self.cost_per_mwh
+        return int(self.hourly_power.sum()) * self.cost_per_mwh
 
     def summary(self, costs):
         return Generator.summary(self, costs) + ', ran %s hours' \
