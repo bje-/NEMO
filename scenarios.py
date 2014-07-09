@@ -185,9 +185,9 @@ def re100_dsp(context):
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
-    dr1 = generators.DemandResponse(regions.nsw, 2000, 300)
-    dr2 = generators.DemandResponse(regions.nsw, 2000, 1000)
-    dr3 = generators.DemandResponse(regions.nsw, 2000, 3000)
+    dr1 = generators.DemandResponse(regions.nsw, 1000, 100, "DR100")
+    dr2 = generators.DemandResponse(regions.nsw, 1000, 500, "DR500")
+    dr3 = generators.DemandResponse(regions.nsw, 1000, 1000, DR1000")
     g = context.generators
     context.generators = g + [dr1, dr2, dr3]
 
