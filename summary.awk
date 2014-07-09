@@ -20,7 +20,7 @@ BEGIN {
     merit[9] = "PSH"
     merit[10] = "GT"
     merit[11] = "OCGT"
-    merit[12] = "DM"
+    merit[12] = "DR"
 }
 
 /geothermal.*GW.?$/	{ caps["geoth"] += $(NF-1); last="geoth" }
@@ -35,7 +35,7 @@ BEGIN {
 /coal.*GW.?$/		{ caps["Coal"] += $(NF-1); last="Coal" }
 /Coal-CCS.*GW.?$/	{ caps["Coal-CCS"] += $(NF-1); last="Coal-CCS" }
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
-/demand.*GW.?$/		{ caps["DM"] += $(NF-1); last="DM" }
+/demand.*GW.?$/		{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
 /Score:/		{ cost = $2 }
 
