@@ -35,7 +35,7 @@ BEGIN {
 /coal.*GW.?$/		{ caps["Coal"] += $(NF-1); last="Coal" }
 /Coal-CCS.*GW.?$/	{ caps["Coal-CCS"] += $(NF-1); last="Coal-CCS" }
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
-/demand.*GW.?$/		{ caps["DR"] += $(NF-1); last="DR" }
+/(DR|demand).*GW.?$/	{ caps["DM"] += $(NF-1); last="DM" }
 /supplied.*TWh/		{ energy[last] += $2 }
 /Score:/		{ cost = $2 }
 
