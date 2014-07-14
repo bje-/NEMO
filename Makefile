@@ -20,8 +20,10 @@ prof: nem.prof
 lineprof:
 	kernprof.py -v -l profile.py
 
-lint:
-	flake8 --ignore=E501 *.py
+flake8:
+	flake8 --ignore=E501 *.py tests/*.py
+
+lint:	flake8
 	pylint *.py
 
 html:
