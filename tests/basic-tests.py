@@ -54,7 +54,6 @@ class TestSequenceFunctions(unittest.TestCase):
         self.context = nem.Context()
         self.minload = math.floor(self.context.demand.sum(axis=0).min())
 
-
     def test_001(self):
         """Test that all regions are present."""
         self.assertEqual(self.context.regions, regions.All)

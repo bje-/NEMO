@@ -20,7 +20,7 @@ class OrigContext(simplesys.Context):
         """Calculate collector field output."""
         CM = 500
         T = self.HR % 24
-        x = CM * math.sin((T-6) / 3.8192) - self.QF
+        x = CM * math.sin((T - 6) / 3.8192) - self.QF
         if T < self.ISTART:
             x = 0
         if T >= self.SHUT:
