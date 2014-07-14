@@ -212,7 +212,7 @@ class Context:
         self.collectorOutput()
         self.startupEnergy()
         self.storageLoss()
-        rQL = load if (T >= self.ISTART or T < self.SHUT) else 0
+        rQL = load if (T >= self.ISTART and T < self.SHUT) else 0
         self.controlLogic(rQL)
 
         self.ES += self.QS
