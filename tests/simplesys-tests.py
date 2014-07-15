@@ -35,7 +35,6 @@ class TestSIMPLESYS(unittest.TestCase):
         print [i] + row
         qc, qa, qs, es, qd, ql, mode = row
         c = self.context
-        self.context.nexthour(150)
         self.assertEqual(c.HR - 1, i)
         self.assertEqual(round(c.QC), round(qc))
         self.assertEqual(round(c.QA), round(qa))
@@ -98,8 +97,9 @@ class TestSIMPLESYS(unittest.TestCase):
                 [0, 150, 0, 0, 0, 150, 1],
                 [0, 150, 0, 0, 0, 150, 1]]
 
-        for i, row in enumerate(data):
-            self.check_row(i, row)
+        for i in range(len(data)):
+            self.context.nexthour(150)
+            self.check_row(i, data[i])
 
     def testResultsAgainstTableData_7am_to_3pm(self):
         """Check results match for a day of limited operation (7am to 3pm)."""
@@ -131,5 +131,6 @@ class TestSIMPLESYS(unittest.TestCase):
                 [0, 0, 0, 420, 0, 0, 0],
                 [0, 0, 0, 410, 0, 0, 0]]
 
-        for i, row in enumerate(data):
-            self.check_row(i, row)
+        for i in range(len(data)):
+            self.context.nexthour(150)
+            self.check_row(i, data[i])
