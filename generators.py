@@ -144,6 +144,9 @@ class CST(Generator):
         elif served > 0:
             self.still_running_p = True
 
+        if served > demand:
+            # This can happen due to rounding errors.
+            served = demand
         return served, 0
 
     def store(self, hr, power):
