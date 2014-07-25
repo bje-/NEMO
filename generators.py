@@ -280,6 +280,7 @@ class PumpedHydro(Hydro):
         if self.last_run == hr:
             # Can't pump in the same hour as the turbine.
             return 0
+        power = min(power, self.capacity)
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
@@ -466,8 +467,9 @@ class Battery(Generator):
         >>> b.store(hr=0, power=400)
         400
         >>> b.store(hr=0, power=700)
-        600
+        400
         """
+        power = min(power, self.capacity)
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
