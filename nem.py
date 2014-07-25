@@ -223,7 +223,7 @@ def _sim(context, starthour, endhour):
 
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
-            gen, context.spill[gidx, hr] = g.step(hr, residual_hour_demand)
+            gen, spl = g.step(hr, residual_hour_demand)
             assert gen <= residual_hour_demand, \
                 "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
             context.generation[gidx, hr] = gen
@@ -237,7 +237,7 @@ def _sim(context, starthour, endhour):
 
             if context.verbose:
                 print 'GENERATOR:', g, 'generation =', context.generation[gidx, hr], 'spill =', \
-                    context.spill[gidx, hr], 'residual demand =', residual_hour_demand
+                    spl, 'residual demand =', residual_hour_demand
 
             # distribute the generation across the regions (local region first)
 
@@ -268,16 +268,18 @@ def _sim(context, starthour, endhour):
                         hour_demand[rgnidx] -= transfer
                         gen -= transfer
 
-            if context.spill[gidx, hr] > 0:
+            if spl > 0:
                 for other in storages:
-                    stored = other.store(hr, context.spill[gidx, hr])
-                    context.spill[gidx, hr] -= stored
-                    assert context.spill[gidx, hr] >= 0
+                    stored = other.store(hr, spl)
+                    spl -= stored
+                    assert spl >= 0
+
                     # show the energy transferred, not stored (this is where the loss is handled)
                     if context.verbose:
                         print 'STORE:', g.region, '->', other.region, '(%.1f)' % stored
                     for src, dest in regions.path(g.region, other.region):
                         context.exchanges[hr, src, dest] += stored
+            context.spill[gidx, hr] = spl
 
         if context.verbose:
             if (hour_demand > 0).any():
