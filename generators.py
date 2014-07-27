@@ -543,7 +543,7 @@ class DemandResponse(Generator):
 
     """Load shedding generator."""
 
-    patch = Patch(facecolor='#A6233B')
+    patch = Patch(facecolor='white')
 
     # pylint: disable=unused-argument
     def __init__(self, region, capacity, cost_per_mwh, label='demand-response'):
