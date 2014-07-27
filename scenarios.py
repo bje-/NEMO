@@ -32,6 +32,20 @@ def supply_switch(label):
     return callback
 
 
+def _demand_response():
+    """
+    Return a list of DR 'generators'.
+
+    >>> dr = _demand_response()
+    >>> len(dr)
+    3
+    """
+    dr1 = generators.DemandResponse(regions.nsw, 1000, 100, "DR100")
+    dr2 = generators.DemandResponse(regions.nsw, 1000, 500, "DR500")
+    dr3 = generators.DemandResponse(regions.nsw, 1000, 1000, "DR1000")
+    return [dr1, dr2, dr3]
+
+
 def _hydro():
     """
     Return a list of existing hydroelectric generators.
@@ -185,11 +199,8 @@ def re100_dsp(context):
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
-    dr1 = generators.DemandResponse(regions.nsw, 1000, 100, "DR100")
-    dr2 = generators.DemandResponse(regions.nsw, 1000, 500, "DR500")
-    dr3 = generators.DemandResponse(regions.nsw, 1000, 1000, "DR1000")
     g = context.generators
-    context.generators = g + [dr1, dr2, dr3]
+    context.generators = g + _demand_response()
 
 
 def re100_geothermal(context):
@@ -200,13 +211,15 @@ def re100_geothermal(context):
     >>> c.generators = range(10)
     >>> re100_geothermal(c)
     >>> len(c.generators)
-    7
+    14
     >>> isinstance(c.generators[0], generators.Geothermal)
     True
+    >>> isinstance(c.generators[-1], generators.DemandResponse)
+    True
     """
-    geo = generators.Geothermal(regions.sa, 0)
     g = context.generators
-    context.generators = [geo] + g[:-4]
+    geo = generators.Geothermal(regions.sa, 0, 'HSA geoth.')
+    context.generators = [geo] + g + _demand_response()
 
 
 def theworks(context):
