@@ -49,6 +49,7 @@ parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='dis
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 parser.add_argument("-x", action="store_true", help='Plot best individual at the end of run [default: False]')
+parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on annual energy from bioenergy (TWh) [default: 20]')
 parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
 parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
@@ -56,6 +57,7 @@ parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_argument("--high-cost", action="store_false", dest="low_cost", help='Use high technology costs')
+parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh) [default: 12]')
 parser.add_argument("--low-cost", action="store_true", default=True, help='Use low technology costs [default]')
 parser.add_argument("--spills", action="store_true", help='Plot spills [default: False]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
@@ -137,7 +139,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is generators.Biofuel:
             biofuel_energy += g.hourly_power.sum()
-    biofuel_exceedance = max(0, biofuel_energy - 20 * consts.twh)
+    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh)
     score += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
@@ -145,7 +147,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is generators.Hydro or g.__class__ is generators.PumpedHydro:
             hydro_energy += g.hourly_power.sum()
-    hydro_exceedance = max(0, hydro_energy - 12 * consts.twh)
+    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh)
     score += pow(hydro_exceedance, 3)
 
     if transmission_p:
