@@ -46,13 +46,15 @@ BEGIN {
     for (c in caps) {
     	total_capacity += caps[c]
     }
-    printf ("scenario\t%d\t%d\t%d\t%d\n", i, i, i, i)
+    printf ("# scenario %d\n", i)
+    printf ("# score %.2f\n", cost)
+    printf ("# tech\tGW\t%%\tTWh\t%%\n")
     for (m in merit) {
 	c = merit[m]
 	if (caps[c] != "")
-	    printf ("%s\t%.3f\t%.3f\t%.3f\t%.3f\t%.2f\n", c, \
+	    printf ("%s\t%.3f\t%.3f\t%.3f\t%.3f\n", c, \
 		    caps[c], (float) caps[c] / total_capacity, \
-		    energy[c], (float) energy[c] / total_demand, cost)
+		    energy[c], (float) energy[c] / total_demand)
     }
 
     delete caps
