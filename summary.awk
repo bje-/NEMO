@@ -37,6 +37,7 @@ BEGIN {
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
+/spilled.*TWh/		{ spilled += $5 }
 /Score:/		{ cost = $2 }
 
 /Demand energy:/ {
@@ -56,6 +57,8 @@ BEGIN {
 		    caps[c], (float) caps[c] / total_capacity, \
 		    energy[c], (float) energy[c] / total_demand)
     }
+    if (spilled > 0)
+	printf ("spilled\t\t\t%.3f\t%.3f\n", spilled, spilled / total_demand)
 
     delete caps
     delete energy
