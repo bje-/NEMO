@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Ben Elliston
+# Copyright (C) 2013, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -49,16 +49,17 @@ BEGIN {
     }
     printf ("# scenario %d\n", i)
     printf ("# score %.2f\n", cost)
-    printf ("# tech\tGW\t%%\tTWh\t%%\n")
+    printf ("# tech\t  GW\tshare\t  TWh\tshare\tCF\n")
     for (m in merit) {
 	c = merit[m]
 	if (caps[c] != "")
-	    printf ("%s\t%.3f\t%.3f\t%.3f\t%.3f\n", c, \
+	    printf ("%s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
 		    caps[c], (float) caps[c] / total_capacity, \
-		    energy[c], (float) energy[c] / total_demand)
+		    energy[c], (float) energy[c] / total_demand, \
+		    (float) (energy[c] * 1000) / (caps[c] * 8760))
     }
     if (spilled > 0)
-	printf ("spilled\t\t\t%.3f\t%.3f\n", spilled, spilled / total_demand)
+	printf ("spilled\t\t\t%5.1f\t%.3f\n", spilled, spilled / total_demand)
 
     delete caps
     delete energy
