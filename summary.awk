@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2014 Ben Elliston
+# Copyright (C) 2013 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ BEGIN {
     merit[12] = "DR"
 }
 
-/geothermal.*GW.?$/	{ caps["geoth"] += $(NF-1); last="geoth" }
+/geoth.*GW.?$/		{ caps["geoth"] += $(NF-1); last="geoth" }
 /PV.*GW.?$/		{ caps["PV"] += $(NF-1); last="PV" }
 /wind.*GW.?$/		{ caps["wind"] += $(NF-1); last="wind" }
 /SCST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
