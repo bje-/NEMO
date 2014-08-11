@@ -181,10 +181,11 @@ def re_plus_fossil(context):
     22
     """
     # pylint: disable=redefined-outer-name
+    coal = generators.Black_Coal(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
     g = context.generators
-    context.generators = [ccgt] + g[:-5] + [ocgt]
+    context.generators = [coal, ccgt] + g[:-4] + [ocgt]
 
 
 def re100_dsp(context):
