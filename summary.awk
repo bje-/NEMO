@@ -56,7 +56,7 @@ BEGIN {
 	    printf ("%s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
 		    caps[c], (float) caps[c] / total_capacity, \
 		    energy[c], (float) energy[c] / total_demand, \
-		    (float) (energy[c] * 1000) / (caps[c] * 8760))
+		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * 8760) : 0)
     }
     if (spilled > 0)
 	printf ("spilled\t\t\t%5.1f\t%.3f\n", spilled, spilled / total_demand)
