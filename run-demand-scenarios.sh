@@ -1,8 +1,8 @@
 #! /bin/bash
 
 PYTHON=python
-EVOLVE=~/code/evolve.py
-EVOPTS="-m 0.2 -p 10 -g 500"
+EVOLVE=~/source/nemo/evolve.py
+EVOPTS="-m 0.1 -p 40 -g 200"
 
 # mmm, bash associative arrays
 
