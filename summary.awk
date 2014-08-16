@@ -59,8 +59,9 @@ BEGIN {
 		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * 8760) : 0)
     }
     if (spilled > 0)
-	printf ("spilled\t\t\t%5.1f\t%.3f\n", spilled, spilled / total_demand)
+	printf ("spilled\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", spilled, spilled / total_demand)
 
+    spilled = 0
     delete caps
     delete energy
     printf ("\n\n")
