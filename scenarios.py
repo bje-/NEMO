@@ -178,7 +178,7 @@ def re_plus_fossil(context):
     >>> c.generators = range(25)
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    22
+    24
     """
     # pylint: disable=redefined-outer-name
     coal = generators.Black_Coal(regions.nsw, 0)
