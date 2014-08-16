@@ -202,7 +202,7 @@ def run():
 
     ga = GSimpleGA.GSimpleGA(genome)
     mig = Migration.MPIMigration()
-    mig.setMigrationRate(2)
+    mig.setMigrationRate(10)
     ga.setMigrationAdapter(mig)
     ga.setPopulationSize(args.population)
     ga.setElitism(True)
