@@ -557,7 +557,7 @@ class DemandResponse(Generator):
         >>> import regions
         >>> dr = DemandResponse(regions.nsw, 500, 1500)
         >>> dr.step(hr=0, demand=200)
-       (200, 0)
+        (200, 0)
         >>> dr.runhours
         1
         """
