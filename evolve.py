@@ -212,8 +212,15 @@ def run():
     ga.setMinimax(Consts.minimaxType["minimize"])
     ga.evolve(freq_stats=args.frequency)
 
+    print 'waiting (rank %d)' % rank
+    mig.selector.set(Selectors.GRankSelector)
+    mig.gather_bests()
+
     if not args.quiet and rank == 0:
-        best = ga.bestIndividual()
+        if mig.all_stars is not None:
+            best = min(mig.all_stars, key=lambda(x): x.score)
+        else:
+            best = ga.bestIndividual()
         print best
 
         set_generators(best.getInternalList())
