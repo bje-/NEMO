@@ -194,7 +194,7 @@ def run():
     genome = G1DList.G1DList(numparams)
 
     genome.evaluator.set(eval_func)
-    genome.setParams(rangemin=0, rangemax=40)
+    genome.setParams(rangemin=0, rangemax=40, gauss_mu=-1)
     genome.initializator.set(Initializators.G1DListInitializatorReal)
     genome.mutator.set(Mutators.G1DListMutatorRealGaussian)
     if numparams == 1:
