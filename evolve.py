@@ -20,6 +20,7 @@ from pyevolve import Initializators
 from pyevolve import Migration
 from pyevolve import Mutators
 from pyevolve import Crossovers
+from pyevolve import Selectors
 
 import numpy as np
 import argparse
