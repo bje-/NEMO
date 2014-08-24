@@ -198,8 +198,7 @@ def run():
     genome.setParams(rangemin=0, rangemax=40, gauss_mu=-1)
     genome.initializator.set(Initializators.G1DListInitializatorReal)
     genome.mutator.set(Mutators.G1DListMutatorRealGaussian)
-    if numparams == 1:
-        genome.crossover.set(Crossovers.G1DListCrossoverUniform)
+    genome.crossover.set(Crossovers.G1DListCrossoverUniform)
 
     ga = GSimpleGA.GSimpleGA(genome)
     mig = Migration.MPIMigration()
