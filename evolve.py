@@ -213,7 +213,6 @@ def run():
     ga.setMinimax(Consts.minimaxType["minimize"])
     ga.evolve(freq_stats=args.frequency)
 
-    print 'waiting (rank %d)' % rank
     mig.selector.set(Selectors.GRankSelector)
     mig.gather_bests()
 
