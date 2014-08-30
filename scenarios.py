@@ -170,6 +170,17 @@ def re100_batteries(context):
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
 
+def re_plus_ccs(context):
+    """Mostly renewables with fossil and CCS augmentation."""
+    coal = generators.Black_Coal(regions.nsw, 0)
+    coal_ccs = generators.Coal_CCS(regions.nsw, 0)
+    ccgt = generators.CCGT(regions.nsw, 0)
+    ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
+    ocgt = generators.OCGT(regions.nsw, 0)
+    g = context.generators
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
+
+
 def re_plus_fossil(context):
     """Mostly renewables with some fossil augmentation.
 
@@ -255,6 +266,7 @@ supply_scenarios = {'re100': re100,
                     're100+dsp': re100_dsp,
                     're100+geoth': re100_geothermal,
                     're+fossil': re_plus_fossil,
+                    're+ccs': re_plus_ccs,
                     'theworks': theworks,
                     '__one_ccgt__': _one_ccgt  # for testing only
                     }
