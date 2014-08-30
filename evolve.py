@@ -206,6 +206,7 @@ def run():
     mig.setMigrationRate(10)
     ga.setMigrationAdapter(mig)
     ga.setPopulationSize(args.population)
+    ga.selector.set(Selectors.GTournamentSelector)
     ga.setElitism(True)
     ga.setGenerations(args.generations)
     ga.setMutationRate(args.mutation_rate)
