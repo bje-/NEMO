@@ -210,7 +210,8 @@ def run():
     ga.setElitism(True)
     ga.setGenerations(args.generations)
     ga.setMutationRate(args.mutation_rate)
-    ga.setMultiProcessing(True, max_processes=args.jobs)
+    if args.jobs > 1:
+      ga.setMultiProcessing(True, max_processes=args.jobs)
     ga.setMinimax(Consts.minimaxType["minimize"])
     ga.evolve(freq_stats=args.frequency)
 
