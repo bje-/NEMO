@@ -218,27 +218,31 @@ class PV(Generator):
 
 class CSV_PV(PV):
     patch = Patch(facecolor='darkblue')
+    csvfilename = None
     csvdata = None
 
     def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
         Generator.__init__(self, region, capacity, label)
         cls = self.__class__
-        if cls.csvdata is None:
+        if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
             cls.csvdata = np.maximum(0, cls.csvdata)
+            cls.csvfilename = filename
         self.generation = CSV_PV.csvdata[::, column]
 
 
 class CSV_Wind(Wind):
     patch = Patch(facecolor='darkgreen')
+    csvfilename = None
     csvdata = None
 
     def __init__(self, region, capacity, filename, column, label='wind'):
         Generator.__init__(self, region, capacity, label)
         cls = self.__class__
-        if cls.csvdata is None:
+        if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
             cls.csvdata = np.maximum(0, cls.csvdata)
+            cls.csvfilename = filename
         self.generation = CSV_Wind.csvdata[::, column]
 
 
