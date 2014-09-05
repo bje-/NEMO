@@ -1,5 +1,15 @@
+# Copyright (C) 2014 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+"""Support code for the 43 polygons of the AEMO study."""
+
 import regions
 
+# Table mapping polygon number to NEM region.
 region_table = [None] * 44
 
 for num in range(21, 25) + range(28, 32) + range(33, 37):
