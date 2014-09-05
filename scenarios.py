@@ -171,7 +171,15 @@ def re100_batteries(context):
 
 
 def re_plus_ccs(context):
-    """Mostly renewables with fossil and CCS augmentation."""
+    """Mostly renewables with fossil and CCS augmentation.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(25)
+    >>> re_plus_ccs(c)
+    >>> len(c.generators)
+    26
+    """
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
