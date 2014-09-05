@@ -12,6 +12,7 @@ import numpy as np
 
 import generators
 import regions
+import siteinfo
 
 
 def supply_switch(label):
@@ -170,6 +171,29 @@ def re100_batteries(context):
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
 
+def re100_roam(context):
+    """Renewables including wind and PV over the AEMO 43 polygons.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = range(25)
+    >>> re100_roam(c)
+    >>> len(c.generators)
+    97
+    """
+    import polygons
+    pv = []
+    wind = []
+    for i in range(1, 44):
+        rgn = polygons.region_table[i]
+        pv.append(generators.CSV_PV(rgn, 0, siteinfo.roam_pv1axis_data, i - 1, label='Poly. %d PV' % i))
+        # Skip regions with no apparent wind.
+        if i not in [2, 9, 15, 16, 19, 22, 33, 34]:
+            wind.append(generators.CSV_Wind(rgn, 0, siteinfo.roam_wind_data, i - 1, label='Poly. %d wind' % i))
+    g = context.generators
+    context.generators = pv + wind + g[9:] + _demand_response()
+
+
 def re_plus_ccs(context):
     """Mostly renewables with fossil and CCS augmentation.
 
@@ -269,6 +293,7 @@ supply_scenarios = {'re100': re100,
                     'ccgt': ccgt,
                     'ccgt-ccs': ccgt_ccs,
                     'coal-ccs': coal_ccs,
+                    're100-roam': re100_roam,
                     're100+batteries': re100_batteries,
                     'replacement': replacement,
                     're100+dsp': re100_dsp,

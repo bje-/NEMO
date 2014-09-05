@@ -216,6 +216,32 @@ class PV(Generator):
         return power, spilled
 
 
+class CSV_PV(PV):
+    patch = Patch(facecolor='darkblue')
+    csvdata = None
+
+    def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
+        Generator.__init__(self, region, capacity, label)
+        cls = self.__class__
+        if cls.csvdata is None:
+            cls.csvdata = np.genfromtxt(filename, delimiter=',')
+            cls.csvdata = np.maximum(0, cls.csvdata)
+        self.generation = CSV_PV.csvdata[::, column]
+
+
+class CSV_Wind(Wind):
+    patch = Patch(facecolor='darkgreen')
+    csvdata = None
+
+    def __init__(self, region, capacity, filename, column, label='wind'):
+        Generator.__init__(self, region, capacity, label)
+        cls = self.__class__
+        if cls.csvdata is None:
+            cls.csvdata = np.genfromtxt(filename, delimiter=',')
+            cls.csvdata = np.maximum(0, cls.csvdata)
+        self.generation = CSV_Wind.csvdata[::, column]
+
+
 class Fuelled(Generator):
 
     """The class of generators that consume fuel."""
