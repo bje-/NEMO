@@ -476,7 +476,7 @@ class Battery(Generator):
 
     def __init__(self, region, capacity, maxstorage, rte=0.95, label='battery'):
         Generator.__init__(self, region, capacity, label)
-        self.setters = [(self.set_capacity, 1000), (self.set_storage, 1000000)]
+        self.setters += [(self.set_storage, 1000000)]
         self.maxstorage = maxstorage
         self.stored = 0
         self.rte = rte
