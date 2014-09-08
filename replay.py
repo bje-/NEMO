@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013 Ben Elliston
+# Copyright (C) 2012, 2013, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ def set_generators(chromosome):
     """Set the generator list from the GA chromosome."""
     i = 0
     for gen in context.generators:
-        for setter, scale in gen.setters:
-            setter(chromosome[i] * scale)
+        for (setter, _, _) in gen.setters:
+            setter(chromosome[i])
             i += 1
     # Check every parameter has been set.
     assert i == len(chromosome), '%d != %d' % (i, len(chromosome))

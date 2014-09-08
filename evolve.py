@@ -15,10 +15,10 @@ if __name__ == '__main__':
 
 from pyevolve import Consts
 from pyevolve import G1DList
+from pyevolve import GAllele
 from pyevolve import GSimpleGA
 from pyevolve import Initializators
 from pyevolve import Migration
-from pyevolve import Mutators
 from pyevolve import Crossovers
 from pyevolve import Selectors
 
@@ -30,6 +30,7 @@ import generators
 import scenarios
 import costs
 import consts
+import mutator
 import transmission
 
 from mpi4py import MPI
@@ -172,8 +173,8 @@ def set_generators(chromosome):
     """Set the generator list from the GA chromosome."""
     i = 0
     for gen in context.generators:
-        for setter, scale in gen.setters:
-            setter(chromosome[i] * scale)
+        for (setter, _, _) in gen.setters:
+            setter(chromosome[i])
             i += 1
     # Check every parameter has been set.
     assert i == len(chromosome)
@@ -195,10 +196,16 @@ def run():
     numparams = sum([len(g.setters) for g in context.generators])
     genome = G1DList.G1DList(numparams)
 
+    alleles = GAllele.GAlleles()
+    for g in context.generators:
+        for (_, rangemin, rangemax) in g.setters:
+            a = GAllele.GAlleleRange(rangemin, rangemax, real=True)
+            alleles.add(a)
+
     genome.evaluator.set(eval_func)
-    genome.setParams(rangemin=0, rangemax=40)
-    genome.initializator.set(Initializators.G1DListInitializatorReal)
-    genome.mutator.set(Mutators.G1DListMutatorRealGaussian)
+    genome.setParams(allele=alleles)
+    genome.initializator.set(Initializators.G1DListInitializatorAllele)
+    genome.mutator.set(mutator.gaussian_mutator)
     genome.crossover.set(Crossovers.G1DListCrossoverUniform)
 
     ga = GSimpleGA.GSimpleGA(genome)

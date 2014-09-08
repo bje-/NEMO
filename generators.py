@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013 Ben Elliston
+# Copyright (C) 2011, 2012, 2013, 2014 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class Generator:
 
         Arguments: installed region, installed capacity, descriptive label.
         """
-        self.setters = [(self.set_capacity, 1000)]
+        self.setters = [(self.set_capacity, 0, 40)]
         self.storage_p = False
         self.label = label
         self.capacity = capacity
@@ -62,8 +62,8 @@ class Generator:
         return s
 
     def set_capacity(self, cap):
-        """Change the capacity of the generator to 'cap'."""
-        self.capacity = cap
+        """Change the capacity of the generator to 'cap' GW."""
+        self.capacity = cap * 1000
 
     def __str__(self):
         """A short string representation of the generator."""
@@ -158,8 +158,8 @@ class CST(Generator):
         return power
 
     def set_capacity(self, cap):
-        self.capacity = cap
-        self.capacity_th = cap / self.turbine_effcy
+        self.capacity = cap * 1000
+        self.capacity_th = self.capacity / self.turbine_effcy
         self.s.COLLECTOR = self.collectorseries * self.capacity * self.solarmult
         self.s.SM = self.capacity_th * self.tes
 
@@ -476,7 +476,7 @@ class Battery(Generator):
 
     def __init__(self, region, capacity, maxstorage, rte=0.95, label='battery'):
         Generator.__init__(self, region, capacity, label)
-        self.setters += [(self.set_storage, 1000000)]
+        self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
         self.rte = rte
@@ -485,8 +485,8 @@ class Battery(Generator):
         self.chargehours = 0
 
     def set_storage(self, maxstorage):
-        """Vary the storage capacity."""
-        self.maxstorage = maxstorage
+        """Vary the storage capacity (GWh)."""
+        self.maxstorage = maxstorage * 1000
 
     # pylint: disable=unused-argument
     def store(self, hr, power):
