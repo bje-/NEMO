@@ -60,6 +60,7 @@ parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/
 parser.add_argument("--high-cost", action="store_false", dest="low_cost", help='Use high technology costs')
 parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh) [default: 12]')
 parser.add_argument("--low-cost", action="store_true", default=True, help='Use low technology costs [default]')
+parser.add_argument("--snsp-limit", type=float, default=0.8, help='system non-synchronous penetration limit [default: 0.8]')
 parser.add_argument("--spills", action="store_true", help='Plot spills [default: False]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
@@ -69,6 +70,9 @@ if rank == 0:
 
 np.set_printoptions(precision=5)
 context = nem.Context()
+
+# Set the system non-synchronous penetration limit.
+context.snsp_limit = args.snsp_limit
 
 if args.low_cost:
     context.costs = costs.AETA2013_2030Low(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
