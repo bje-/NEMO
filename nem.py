@@ -135,7 +135,6 @@ class Context:
         self.relstd = 0.002
         self.generators = default_generation_mix()
         self.demand = regional_demand.copy()
-        self.spilled_energy = 0
         self.unserved = []
         self.unserved_energy = 0
         self.unserved_hours = 0
@@ -166,7 +165,7 @@ class Context:
                 else:
                     s += '\n'
         s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / consts.twh)
-        s += 'Spilled energy: %.1f TWh\n' % (self.spilled_energy / consts.twh)
+        s += 'Spilled energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
 
         if self.unserved_energy == 0:
             s += 'No unserved energy'
@@ -177,7 +176,7 @@ class Context:
             s += 'Unserved total hours: ' + str(self.unserved_hours) + '\n'
             s += 'min, max shortfalls: ' + str(self.shortfalls)
 
-        if self.spilled_energy > 0:
+        if self.spill.sum() > 0:
             s += '\n' + 'spilled hours = ' + str((self.spill.sum(axis=0) > 0).sum())
         return s
 
@@ -388,7 +387,6 @@ def run(context, starthour=0, endhour=hours):
 
     # Calculate some summary statistics.
     agg_demand = context.demand.sum(axis=0)
-    context.spilled_energy = context.spill.sum()
     context.accum = context.generation.sum(axis=0)
     context.unserved_energy = (agg_demand - context.accum).sum()
     context.unserved_energy = max(0, round(context.unserved_energy, 0))
