@@ -228,6 +228,7 @@ class CSV_PV(PV):
 
     def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
         Generator.__init__(self, region, capacity, label)
+        self.synchronous_p = False
         cls = self.__class__
         if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
@@ -243,6 +244,7 @@ class CSV_Wind(Wind):
 
     def __init__(self, region, capacity, filename, column, label='wind'):
         Generator.__init__(self, region, capacity, label)
+        self.synchronous_p = False
         cls = self.__class__
         if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
