@@ -285,6 +285,11 @@ def _sim(context, starthour, endhour):
     return context
 
 
+def _generator_list(context):
+    """Return a list of the generators of interest in this run."""
+    return [g for g in context.generators if g.region in context.regions and g.capacity > 0]
+
+
 def plot(context, spills=False, filename=None, xlimit=None):
     """Produce a pretty plot of supply and demand."""
     spill = context.spill
@@ -305,9 +310,10 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
     # The ::-1 slicing reverses the 'gens' list so that the legend
     # appears in "merit order".
+    gen_list = _generator_list(context)[::-1]
     f = plt.figlegend([Patch('black', 'red')] +
-                      [g.patch for g in context.generators[::-1] if g.region in context.regions],
-                      ['unserved'] + [g.label for g in context.generators[::-1] if g.region in context.regions],
+                      [g.patch for g in gen_list],
+                      ['unserved'] + [g.label for g in gen_list],
                       'upper right')
     plt.setp(f.get_texts(), fontsize='small')
 
@@ -325,7 +331,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
     accum = np.zeros(hours)
     prev = accum.copy()
-    for g in [g for g in context.generators if g.region in context.regions]:
+    for g in _generator_list(context):
         idx = context.generators.index(g)
         accum += context.generation[idx]
         # Ensure total generation does not exceed demand in any timestep.
