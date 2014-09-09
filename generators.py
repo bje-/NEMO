@@ -34,7 +34,7 @@ class Generator:
         self.region = region
 
         # Is the generator a rotating machine?
-        self.synchronous_p = True
+        self.non_synchronous_p = False
 
         # Time series of dispatched power and spills
         self.hourly_power = np.zeros(consts.timesteps)
@@ -86,7 +86,7 @@ class Wind(Generator):
 
     def __init__(self, region, capacity, h5file, label='wind'):
         Generator.__init__(self, region, capacity, label)
-        self.synchronous_p = False
+        self.non_synchronous_p = True
         self.generation = h5file.root.aux.aemo2010.wind[::]
         # Normalise the generation (1555 MW installed in 2010)
         self.generation /= 1555.
@@ -205,7 +205,7 @@ class PV(Generator):
 
     def __init__(self, region, capacity, filename, locn, label='PV'):
         Generator.__init__(self, region, capacity, label)
-        self.synchronous_p = False
+        self.non_synchronous_p = True
         # Normalised to 1 MW
         self.generation = np.genfromtxt(filename, delimiter=',', skip_header=1)
         self.generation = np.maximum(0, self.generation)
@@ -228,7 +228,7 @@ class CSV_PV(PV):
 
     def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
         Generator.__init__(self, region, capacity, label)
-        self.synchronous_p = False
+        self.non_synchronous_p = True
         cls = self.__class__
         if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
@@ -244,7 +244,7 @@ class CSV_Wind(Wind):
 
     def __init__(self, region, capacity, filename, column, label='wind'):
         Generator.__init__(self, region, capacity, label)
-        self.synchronous_p = False
+        self.non_synchronous_p = True
         cls = self.__class__
         if cls.csvfilename != filename:
             cls.csvdata = np.genfromtxt(filename, delimiter=',')
@@ -483,7 +483,7 @@ class Battery(Generator):
 
     def __init__(self, region, capacity, maxstorage, rte=0.95, label='battery'):
         Generator.__init__(self, region, capacity, label)
-        self.synchronous_p = False
+        self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
