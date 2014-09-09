@@ -172,7 +172,7 @@ def re100_batteries(context):
 
 
 def re100_roam(context):
-    """Renewables including wind and PV over the AEMO 43 polygons.
+    """Renewables including wind and PV over the ROAM 43 polygons.
 
     >>> class C: pass
     >>> c = C()
