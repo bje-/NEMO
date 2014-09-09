@@ -311,6 +311,18 @@ def plot(context, spills=False, filename=None, xlimit=None):
     # The ::-1 slicing reverses the 'gens' list so that the legend
     # appears in "merit order".
     gen_list = _generator_list(context)[::-1]
+
+    if len(gen_list) > 12:
+        unique = []
+        keep = []
+        for g in gen_list:
+            if g.__class__ not in unique:
+                unique.append(g.__class__)
+                # Replace the generator label with its class type.
+                g.label  = str(g.__class__).strip('<>').split()[0].split('.')[1]
+                keep.append(g)
+        gen_list = keep
+
     f = plt.figlegend([Patch('black', 'red')] +
                       [g.patch for g in gen_list],
                       ['unserved'] + [g.label for g in gen_list],
