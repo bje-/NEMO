@@ -155,7 +155,6 @@ class Context:
         >>> c.generators[-1].summary = f
         >>> c.generators[-1].summary(None) is None
         True
-        >>> s = str(c)
         """
         s = 'Regions: ' + str(self.regions) + '\n'
         if self.verbose:
