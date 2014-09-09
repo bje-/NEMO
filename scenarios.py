@@ -184,12 +184,20 @@ def re100_roam(context):
     import polygons
     pv = []
     wind = []
-    for i in range(1, 44):
-        rgn = polygons.region_table[i]
-        pv.append(generators.CSV_PV(rgn, 0, siteinfo.roam_pv1axis_data, i - 1, label='Poly. %d PV' % i))
+    for i in range(43):
+        rgn = polygons.region_table[i + 1]
+        g = generators.CSV_PV(rgn, 0, siteinfo.roam_pv1axis_data, i, label='Poly. %d PV' % (i + 1))
+        func, _, _ = g.setters[0]
+        maxcapacity = min(polygons.pv_limit[i], 40)
+        g.setters[0] = (func, 0, maxcapacity)
+        pv.append(g)
         # Skip regions with no apparent wind.
-        if i not in [2, 9, 15, 16, 19, 22, 33, 34]:
-            wind.append(generators.CSV_Wind(rgn, 0, siteinfo.roam_wind_data, i - 1, label='Poly. %d wind' % i))
+        if polygons.wind_limit[i] > 0:
+            g = generators.CSV_Wind(rgn, 0, siteinfo.roam_wind_data, i, label='Poly. %d wind' % (i + 1))
+            func, _, _ = g.setters[0]
+            maxcapacity = min(polygons.wind_limit[i], 40)
+            g.setters[0] = (func, 0, maxcapacity)
+            wind.append(g)
     g = context.generators
     context.generators = pv + wind + g[9:] + _demand_response()
 
