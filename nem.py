@@ -139,6 +139,8 @@ class Context:
         self.unserved_energy = 0
         self.unserved_hours = 0
         self.unserved_percent = 0
+        # System non-synchronous penetration limit
+        self.snsp_limit = 1.0
 
     def __str__(self):
         """A human-readable representation of the context.
