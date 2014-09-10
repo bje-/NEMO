@@ -215,18 +215,27 @@ def _sim(context, starthour, endhour):
     for hr in xrange(starthour, endhour):
         hour_demand = demand_copy[::, hr]
         residual_hour_demand = hour_demand.sum()
+        async_demand = residual_hour_demand * context.snsp_limit
 
         if context.verbose:
             print 'hour', hr, 'demand:', hour_demand
 
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
-            gen, spl = g.step(hr, residual_hour_demand)
+            if g.non_synchronous_p and async_demand < residual_hour_demand:
+                gen, spl = g.step(hr, async_demand)
+            else:
+                gen, spl = g.step(hr, residual_hour_demand)
             assert gen <= residual_hour_demand, \
                 "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
             context.generation[gidx, hr] = gen
             if not gen:
                 continue
+
+            if g.non_synchronous_p:
+                async_demand -= gen
+                assert async_demand > -0.1
+                async_demand = max(0, async_demand)
 
             residual_hour_demand -= gen
             # residual can go below zero due to rounding
@@ -235,7 +244,7 @@ def _sim(context, starthour, endhour):
 
             if context.verbose:
                 print 'GENERATOR:', g, 'generation =', context.generation[gidx, hr], 'spill =', \
-                    spl, 'residual demand =', residual_hour_demand
+                    spl, 'residual demand =', residual_hour_demand, 'async demand =', async_demand
 
             # distribute the generation across the regions (local region first)
 
