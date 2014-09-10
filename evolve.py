@@ -73,6 +73,8 @@ context = nem.Context()
 
 # Set the system non-synchronous penetration limit.
 context.snsp_limit = args.snsp_limit
+assert context.snsp_limit >= 0 and context.snsp_limit <= 1, \
+    "SNSP limit must be in the interval [0,1]"
 
 if args.low_cost:
     context.costs = costs.AETA2013_2030Low(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)

@@ -47,6 +47,8 @@ def run_one(chromosome):
 
 context = nem.Context()
 context.snsp_limit = args.snsp_limit
+assert context.snsp_limit >= 0 and context.snsp_limit <= 1, \
+    "SNSP limit must be in the interval [0,1]"
 scenarios.supply_switch(args.supply_scenario)(context)
 capacities = []
 replayfile = open(args.f)
