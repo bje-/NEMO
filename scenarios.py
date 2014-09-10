@@ -191,8 +191,8 @@ def re100_roam(context):
         maxcapacity = min(polygons.pv_limit[i], 40)
         g.setters[0] = (func, 0, maxcapacity)
         pv.append(g)
-        # Skip regions with no apparent wind.
-        if polygons.wind_limit[i] > 0:
+        # Skip regions with no significant wind resource.
+        if polygons.wind_limit[i] >= 0.5:
             g = generators.CSV_Wind(rgn, 0, siteinfo.roam_wind_data, i, label='Poly. %d wind' % (i + 1))
             func, _, _ = g.setters[0]
             maxcapacity = min(polygons.wind_limit[i], 40)
