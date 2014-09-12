@@ -45,10 +45,10 @@ parser.add_argument("-g", "--generations", type=int, default=100, help='generati
 parser.add_argument("-j", "--jobs", type=int, help='limit on worker processes [default: None]')
 parser.add_argument("-m", "--mutation-rate", type=float, default=0.02, help='mutation rate [default: 0.02]')
 parser.add_argument("-p", "--population", type=int, default=100, help='population size [default: 100]')
-parser.add_argument("-q", "--quiet", action="store_true", help='be quiet')
 parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
+parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
 parser.add_argument("-x", action="store_true", help='Plot best individual at the end of run [default: False]')
 parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on annual energy from bioenergy (TWh) [default: 20]')
 parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
@@ -94,7 +94,7 @@ if args.demand_modifier is not None:
     for arg in args.demand_modifier:
         scenarios.demand_switch(arg)(context)
 
-if not args.quiet and rank == 0:
+if args.verbose and rank == 0:
     docstring = scenarios.supply_switch(args.supply_scenario).__doc__
     assert docstring is not None
     # Prune off any doctest test from the docstring.
@@ -196,7 +196,7 @@ def eval_func(chromosome):
 
 def run():
     """Run the GA."""
-    if rank == 0:
+    if args.verbose and rank == 0:
         print "objective: minimise", eval_func.__doc__
 
     numparams = sum([len(g.setters) for g in context.generators])
@@ -231,12 +231,16 @@ def run():
     mig.selector.set(Selectors.GRankSelector)
     mig.gather_bests()
 
-    if not args.quiet and rank == 0:
+    if rank == 0:
         if mig.all_stars is not None:
             best = min(mig.all_stars, key=lambda(x): x.score)
         else:
             best = ga.bestIndividual()
-        print best
+        if args.verbose:
+            print best
+        else:
+            print 'Score: %.2f' % best.score
+            print 'List:', best.getInternalList()
 
         set_generators(best.getInternalList())
         nem.run(context)
