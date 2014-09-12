@@ -156,7 +156,9 @@ class Context:
         >>> c.generators[-1].summary(None) is None
         True
         """
-        s = 'Regions: ' + str(self.regions) + '\n'
+        s = ""
+        if self.regions != regions.All:
+            s += 'Regions: ' + str(self.regions) + '\n'
         if self.verbose:
             s += 'Generators:' + '\n'
             for g in self.generators:
