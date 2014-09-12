@@ -19,7 +19,7 @@ parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-v", action="store_true", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
 parser.add_argument("-s", "--supply-scenario", type=str, help='scenario name', default='re100')
-parser.add_argument("--snsp-limit", type=float, help='system non-synchronous penetration limit [default: 1.0]', default=1.0)
+parser.add_argument("--nsp-limit", type=float, help='system non-synchronous penetration limit [default: 1.0]', default=1.0)
 parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
@@ -46,9 +46,9 @@ def run_one(chromosome):
     print context
 
 context = nem.Context()
-context.snsp_limit = args.snsp_limit
-assert context.snsp_limit >= 0 and context.snsp_limit <= 1, \
-    "SNSP limit must be in the interval [0,1]"
+context.nsp_limit = args.nsp_limit
+assert context.nsp_limit >= 0 and context.nsp_limit <= 1, \
+    "NSP limit must be in the interval [0,1]"
 scenarios.supply_switch(args.supply_scenario)(context)
 capacities = []
 replayfile = open(args.f)
