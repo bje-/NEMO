@@ -42,7 +42,7 @@ parser.add_argument("-c", "--carbon-price", type=int, default=25, help='carbon p
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
 parser.add_argument("-f", "--frequency", type=int, default=10, help='frequency of stats output [default: 10]')
 parser.add_argument("-g", "--generations", type=int, default=100, help='generations [default: 100]')
-parser.add_argument("-j", "--jobs", type=int, help='limit on worker processes [default: None]')
+parser.add_argument("-j", "--jobs", type=int, default=1, help='number of worker processes [default: 1]')
 parser.add_argument("-m", "--mutation-rate", type=float, default=0.02, help='mutation rate [default: 0.02]')
 parser.add_argument("-p", "--population", type=int, default=100, help='population size [default: 100]')
 parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
