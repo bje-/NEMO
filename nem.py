@@ -328,7 +328,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
             if g.__class__ not in unique:
                 unique.append(g.__class__)
                 # Replace the generator label with its class type.
-                g.label  = str(g.__class__).strip('<>').split()[0].split('.')[1]
+                g.label = str(g.__class__).strip('<>').split()[0].split('.')[1]
                 keep.append(g)
         gen_list = keep
 
