@@ -7,7 +7,6 @@
 
 """Site-specific data (eg, filenames)."""
 
-h5filename = '/home/bje/nem.h5'
 pvdata = '/home/bje/Windows/sam-pv.csv'
 cstdata = '/home/bje/Windows/sam-cst-15h-sm2.5.csv'
 fielddata = '/home/bje/Windows/field.csv'
@@ -15,3 +14,4 @@ stations_txt = 'Stations.txt'
 roam_wind_data = 'roam-wind.csv'
 roam_pv1axis_data = 'roam-pv.csv'
 demand_data = 'demand2010.csv'
+wind_gen_data = 'aemo2010-wind.csv'

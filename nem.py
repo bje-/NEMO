@@ -10,7 +10,6 @@
 import re
 import string
 import numpy as np
-import tables
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -20,7 +19,7 @@ import consts
 import regions
 from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
 import siteinfo
-from siteinfo import pvdata, cstdata, fielddata
+from siteinfo import pvdata, cstdata, fielddata, wind_gen_data as wind_data
 
 hours = 8760
 
@@ -28,7 +27,6 @@ capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Bi
 energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
 popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
-h5file = tables.openFile(siteinfo.h5filename, mode='r')
 demand2010 = np.genfromtxt(siteinfo.demand_data, comments='#')
 demand2010 = demand2010.transpose()
 # Demand is in 30 minute intervals.
@@ -107,10 +105,10 @@ def default_generation_mix():
                 result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == Wind:
             # 25% of NEM wind is in Vic, 59% in SA, 9% in NSW and 7% in Tas.
-            result.append(g(regions.vic, capacity * 0.25, h5file, label='VIC wind'))
-            result.append(g(regions.sa, capacity * 0.59, h5file, label='SA wind'))
-            result.append(g(regions.nsw, capacity * 0.09, h5file, label='NSW wind'))
-            result.append(g(regions.tas, capacity * 0.07, h5file, label='TAS wind'))
+            result.append(g(regions.vic, capacity * 0.25, wind_data, label='VIC wind'))
+            result.append(g(regions.sa, capacity * 0.59, wind_data, label='SA wind'))
+            result.append(g(regions.nsw, capacity * 0.09, wind_data, label='NSW wind'))
+            result.append(g(regions.tas, capacity * 0.07, wind_data, label='TAS wind'))
         else:  # pragma: no cover
             raise(ValueError)
 

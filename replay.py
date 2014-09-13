@@ -71,6 +71,3 @@ for line in replayfile:
         print 'Press Enter to start graphical browser ',
         sys.stdin.readline()
         nem.plot(context, spills=args.spills)
-
-# Force database closure to avoid pytables output.
-nem.h5file.close()

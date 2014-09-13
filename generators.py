@@ -84,10 +84,10 @@ class Wind(Generator):
 
     patch = Patch(facecolor='green')
 
-    def __init__(self, region, capacity, h5file, label='wind'):
+    def __init__(self, region, capacity, csvfile, label='wind'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
-        self.generation = h5file.root.aux.aemo2010.wind[::]
+        self.generation = np.genfromtxt(csvfile, comments='#')
         # Normalise the generation (1555 MW installed in 2010)
         self.generation /= 1555.
 
