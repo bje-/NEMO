@@ -29,7 +29,8 @@ energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: No
 popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
 h5file = tables.openFile(siteinfo.h5filename, mode='r')
-demand2010 = h5file.root.aux.aemo2010.demand[::]
+demand2010 = np.genfromtxt(siteinfo.demand_data, comments='#')
+demand2010 = demand2010.transpose()
 # Demand is in 30 minute intervals.
 assert demand2010.shape == (5, 2 * hours)
 # For hourly, average half-hours n and n+1.
