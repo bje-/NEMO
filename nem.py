@@ -24,16 +24,16 @@ hours = 8760
 demand = np.genfromtxt(siteinfo.demand_data, comments='#')
 demand = demand.transpose()
 
-# There must be 12 columns: date, time and ten demand/price columns (5 regions).
-assert demand.shape[0] == 5
+# There must be 12 columns: date, time and ten demand/price columns (for 5 regions).
+assert demand.shape[0] == 12
 
 # The number of rows must be even.
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
 
 # For hourly demand, average half-hours n and n+1.
 # Demand is in every second column from columns 2 onwards.
-regional_demand = (demand[::, ::2] + demand[::, 1::2]) / 2
-
+regional_demand = (demand[2::2, ::2] + demand[2::2, 1::2]) / 2
+assert regional_demand.shape[0] == 5
 
 def default_generation_mix():
     """Return a default generator list.
