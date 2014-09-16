@@ -80,16 +80,23 @@ class Generator:
 
 class Wind(Generator):
 
-    """Wind farm using real production data."""
+    """Wind power."""
 
     patch = Patch(facecolor='green')
+    csvfilename = None
+    csvdata = None
 
-    def __init__(self, region, capacity, csvfile, label='wind'):
+    def __init__(self, region, capacity, filename, column, delimiter=None, label='wind'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
-        data = np.genfromtxt(csvfile, comments='#')
-        # Normalised generation in column 2 (index 1).
-        self.generation = data[::,1]
+        cls = self.__class__
+        if cls.csvfilename != filename:
+            # Optimisation:
+            # Only if the filename changes do we invoke genfromtxt.
+            cls.csvdata = np.genfromtxt(filename, delimiter=delimiter)
+            cls.csvdata = np.maximum(0, cls.csvdata)
+            cls.csvfilename = filename
+        self.generation = Wind.csvdata[::, column]
 
     def step(self, hr, demand):
         generation = self.generation[hr] * self.capacity
@@ -235,22 +242,6 @@ class CSV_PV(PV):
             cls.csvdata = np.maximum(0, cls.csvdata)
             cls.csvfilename = filename
         self.generation = CSV_PV.csvdata[::, column]
-
-
-class CSV_Wind(Wind):
-    patch = Patch(facecolor='darkgreen')
-    csvfilename = None
-    csvdata = None
-
-    def __init__(self, region, capacity, filename, column, label='wind'):
-        Generator.__init__(self, region, capacity, label)
-        self.non_synchronous_p = True
-        cls = self.__class__
-        if cls.csvfilename != filename:
-            cls.csvdata = np.genfromtxt(filename, delimiter=',')
-            cls.csvdata = np.maximum(0, cls.csvdata)
-            cls.csvfilename = filename
-        self.generation = CSV_Wind.csvdata[::, column]
 
 
 class Fuelled(Generator):

@@ -66,7 +66,6 @@ class AETA2012_2030:
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 12 * self.escalation
-        table[tech.CSV_Wind] = table[tech.Wind]
         table[tech.CST] = 20 * self.escalation
         table[tech.PV] = 0
         table[tech.CSV_PV] = 0
@@ -84,7 +83,6 @@ class AETA2012_2030:
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 40 * self.escalation
-        table[tech.CSV_Wind] = table[tech.Wind]
         table[tech.CST] = 65 * self.escalation
         table[tech.PV] = 25 * self.escalation
         table[tech.CSV_PV] = 38 * self.escalation
@@ -113,7 +111,6 @@ class AETA2012_2030Low (AETA2012_2030):
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
         table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CSV_Wind] = table[tech.Wind]
         table[tech.CST] = 4563 / af + fom[tech.CST]
         table[tech.PV] = 1482 / af + fom[tech.PV]
         table[tech.CSV_PV] = 2013 / af + fom[tech.CSV_PV]
@@ -142,7 +139,6 @@ class AETA2012_2030High (AETA2012_2030):
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
         table[tech.Wind] = 1917 / af + fom[tech.Wind]
-        table[tech.CSV_Wind] = table[tech.Wind]
         table[tech.CST] = 5659 / af + fom[tech.CST]
         table[tech.PV] = 1871 / af + fom[tech.PV]
         table[tech.CSV_PV] = 2542 / af + fom[tech.CSV_PV]
@@ -168,7 +164,6 @@ class AETA2013_2030Low (AETA2012_2030Low):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.CSV_Wind] = fom[tech.Wind]
         fom[tech.CST] = 72.381 * self.escalation
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
@@ -189,7 +184,6 @@ class AETA2013_2030High (AETA2012_2030High):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.CSV_Wind] = fom[tech.Wind]
         fom[tech.CST] = 72.381 * self.escalation
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation

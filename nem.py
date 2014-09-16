@@ -105,10 +105,10 @@ def default_generation_mix():
                 result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == Wind:
             # 25% of NEM wind is in Vic, 59% in SA, 9% in NSW and 7% in Tas.
-            result.append(g(regions.vic, capacity * 0.25, wind_data, label='VIC wind'))
-            result.append(g(regions.sa, capacity * 0.59, wind_data, label='SA wind'))
-            result.append(g(regions.nsw, capacity * 0.09, wind_data, label='NSW wind'))
-            result.append(g(regions.tas, capacity * 0.07, wind_data, label='TAS wind'))
+            result.append(g(regions.vic, capacity * 0.25, wind_data, 1, label='VIC wind'))
+            result.append(g(regions.sa, capacity * 0.59, wind_data, 1, label='SA wind'))
+            result.append(g(regions.nsw, capacity * 0.09, wind_data, 1, label='NSW wind'))
+            result.append(g(regions.tas, capacity * 0.07, wind_data, 1, label='TAS wind'))
         else:  # pragma: no cover
             raise(ValueError)
 
