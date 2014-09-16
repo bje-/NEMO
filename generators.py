@@ -214,7 +214,7 @@ class PV(Generator):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
         # Normalised to 1 MW
-        self.generation = np.genfromtxt(filename, delimiter=',', skip_header=1)
+        self.generation = np.genfromtxt(filename, delimiter=',', comments='#')
         self.generation = np.maximum(0, self.generation)
         self.generation = self.generation[::, locn]
         self.generation /= 1000.

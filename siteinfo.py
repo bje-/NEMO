@@ -10,6 +10,7 @@
 pvdata = '/home/bje/Windows/sam-pv.csv'
 cstdata = '/home/bje/Windows/sam-cst-15h-sm2.5.csv'
 fielddata = '/home/bje/Windows/field.csv'
+pvdata = 'data/sam-pv.csv'
 stations_txt = 'data/Stations.txt'
 roam_wind_data = 'data/roam-wind.csv'
 roam_pv1axis_data = 'data/roam-pv.csv'
