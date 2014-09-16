@@ -68,7 +68,7 @@ class AETA2012_2030:
         table[tech.Wind] = 12 * self.escalation
         table[tech.CST] = 20 * self.escalation
         table[tech.PV] = 0
-        table[tech.CSV_PV] = 0
+        table[tech.PV1Axis] = 0
         table[tech.Biofuel] = 10 * self.escalation + 80  # (fuel)
         table[tech.CCGT] = 4 * self.escalation
         table[tech.OCGT] = 10 * self.escalation
@@ -85,7 +85,7 @@ class AETA2012_2030:
         table[tech.Wind] = 40 * self.escalation
         table[tech.CST] = 65 * self.escalation
         table[tech.PV] = 25 * self.escalation
-        table[tech.CSV_PV] = 38 * self.escalation
+        table[tech.PV1Axis] = 38 * self.escalation
         table[tech.Biofuel] = 4 * self.escalation
         table[tech.CCGT] = 10 * self.escalation
         table[tech.OCGT] = 4 * self.escalation
@@ -113,7 +113,7 @@ class AETA2012_2030Low (AETA2012_2030):
         table[tech.Wind] = 1701 / af + fom[tech.Wind]
         table[tech.CST] = 4563 / af + fom[tech.CST]
         table[tech.PV] = 1482 / af + fom[tech.PV]
-        table[tech.CSV_PV] = 2013 / af + fom[tech.CSV_PV]
+        table[tech.PV1Axis] = 2013 / af + fom[tech.PV1Axis]
         table[tech.Biofuel] = 694 / af + fom[tech.Biofuel]
         table[tech.CCGT] = 1015 / af + fom[tech.CCGT]
         table[tech.OCGT] = 694 / af + fom[tech.OCGT]
@@ -141,7 +141,7 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Wind] = 1917 / af + fom[tech.Wind]
         table[tech.CST] = 5659 / af + fom[tech.CST]
         table[tech.PV] = 1871 / af + fom[tech.PV]
-        table[tech.CSV_PV] = 2542 / af + fom[tech.CSV_PV]
+        table[tech.PV1Axis] = 2542 / af + fom[tech.PV1Axis]
         table[tech.Biofuel] = 809 / af + fom[tech.Biofuel]
         table[tech.CCGT] = 1221 / af + fom[tech.CCGT]
         table[tech.OCGT] = 809 / af + fom[tech.OCGT]

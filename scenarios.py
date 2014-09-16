@@ -268,7 +268,7 @@ def re100_roam(context):
     wind = []
     for i in range(43):
         rgn = polygons.region_table[i + 1]
-        g = generators.CSV_PV(rgn, 0, siteinfo.roam_pv1axis_data, i, label='Poly. %d PV' % (i + 1))
+        g = generators.PV1Axis(rgn, 0, siteinfo.roam_pv1axis_data, i, label='Poly. %d PV' % (i + 1))
         func, _, _ = g.setters[0]
         maxcapacity = min(polygons.pv_limit[i], 40)
         g.setters[0] = (func, 0, maxcapacity)

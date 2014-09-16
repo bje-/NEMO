@@ -209,15 +209,17 @@ class PV(Generator):
     """Solar photovoltaic (PV) model."""
 
     patch = Patch(facecolor='blue')
+    csvfilename = None
+    csvdata = None
 
-    def __init__(self, region, capacity, filename, locn, label='PV'):
+    def __init__(self, region, capacity, filename, column, label='PV'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
-        # Normalised to 1 MW
-        self.generation = np.genfromtxt(filename, delimiter=',', comments='#')
-        self.generation = np.maximum(0, self.generation)
-        self.generation = self.generation[::, locn]
-        self.generation /= 1000.
+        if PV.csvfilename != filename:
+            PV.csvdata = np.genfromtxt(filename, delimiter=',')
+            PV.csvdata = np.maximum(0, PV.csvdata)
+            PV.csvfilename = filename
+        self.generation = PV.csvdata[::, column]
 
     def step(self, hr, demand):
         generation = self.generation[hr] * self.capacity
@@ -228,20 +230,12 @@ class PV(Generator):
         return power, spilled
 
 
-class CSV_PV(PV):
-    patch = Patch(facecolor='darkblue')
-    csvfilename = None
-    csvdata = None
+class PV1Axis(PV):
+    """Single-axis tracking PV."""
 
+    patch = Patch(facecolor='blue')
     def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
-        Generator.__init__(self, region, capacity, label)
-        self.non_synchronous_p = True
-        cls = self.__class__
-        if cls.csvfilename != filename:
-            cls.csvdata = np.genfromtxt(filename, delimiter=',')
-            cls.csvdata = np.maximum(0, cls.csvdata)
-            cls.csvfilename = filename
-        self.generation = CSV_PV.csvdata[::, column]
+        PV.__init__(self, region, capacity, filename, column, label)
 
 
 class Fuelled(Generator):
