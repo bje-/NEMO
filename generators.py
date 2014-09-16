@@ -89,13 +89,12 @@ class Wind(Generator):
     def __init__(self, region, capacity, filename, column, delimiter=None, label='wind'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
-        cls = self.__class__
-        if cls.csvfilename != filename:
+        if Wind.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            cls.csvdata = np.genfromtxt(filename, delimiter=delimiter)
-            cls.csvdata = np.maximum(0, cls.csvdata)
-            cls.csvfilename = filename
+            Wind.csvdata = np.genfromtxt(filename, delimiter=delimiter)
+            Wind.csvdata = np.maximum(0, Wind.csvdata)
+            Wind.csvfilename = filename
         self.generation = Wind.csvdata[::, column]
 
     def step(self, hr, demand):
