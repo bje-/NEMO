@@ -122,7 +122,7 @@ class CST(Generator):
         self.capacity_th = capacity / self.turbine_effcy
         self.solarmult = solarmult
         self.tes = tes
-        self.collectorseries = np.genfromtxt(filename, delimiter=',', skip_header=1, usecols=(locn))
+        self.collectorseries = np.genfromtxt(filename, delimiter=',', comments='#', usecols=(locn))
         self.s = simplesys.Context(ep=0.2, qf=0.1, sl=0.03, sm=self.capacity_th * tes)
         self.dispHour = dispHour
         self.still_running_p = False

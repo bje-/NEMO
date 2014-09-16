@@ -171,7 +171,7 @@ def re100(context):
     25
     """
     from generators import CST, Wind, PV, Hydro, PumpedHydro, Biofuel
-    from siteinfo import cstdata, fielddata, pvdata, wind_gen_data as wind_data
+    from siteinfo import fielddata, pvdata, wind_gen_data as wind_data
 
     capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
     energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
@@ -210,7 +210,7 @@ def re100(context):
             result.append(g(regions.nsw, pv['Canberra'], pvdata, 3, label='Canberra PV'))
             result.append(g(regions.sa, pv['Adelaide'], pvdata, 4, label='Adelaide PV'))
         elif g == CST:
-            line1 = open(cstdata).readline()
+            line1 = open(fielddata).readline()
             # Pull out all of the station numbers, in column order.
             sites = re.compile(r'\d{6}').findall(line1)
             # Divide evenly among locations.
