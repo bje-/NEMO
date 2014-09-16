@@ -87,9 +87,9 @@ class Wind(Generator):
     def __init__(self, region, capacity, csvfile, label='wind'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
-        self.generation = np.genfromtxt(csvfile, comments='#')
-        # Normalise the generation (1555 MW installed in 2010)
-        self.generation /= 1555.
+        data = np.genfromtxt(csvfile, comments='#')
+        # Normalised generation in column 2 (index 1).
+        self.generation = data[::,1]
 
     def step(self, hr, demand):
         generation = self.generation[hr] * self.capacity
