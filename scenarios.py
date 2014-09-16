@@ -431,7 +431,7 @@ def demand_switch(label):
             return unchanged
 
         elif label.startswith('roll:'):
-            # label form: "roll:X" rolls the load by X hours
+            # label form: "roll:X" rolls the load by X timesteps
             _, posns = label.split(':')
             posns = int(posns)
             return lambda context: roll_demand(context, posns)
@@ -486,7 +486,7 @@ def unchanged(context):
 
 def roll_demand(context, posns):
     """
-    Roll demand by posns hours.
+    Roll demand by posns timesteps.
 
     >>> class C: pass
     >>> c = C()

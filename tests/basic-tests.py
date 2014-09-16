@@ -75,7 +75,7 @@ class TestSequenceFunctions(unittest.TestCase):
         ccgt = generators.CCGT(regions.nsw, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
-        self.assertEqual(ccgt.hourly_power.sum(), nem.hours * 100)
+        self.assertEqual(sum(ccgt.hourly_power.values()), self.context.timesteps * 100)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0
@@ -85,7 +85,7 @@ class TestSequenceFunctions(unittest.TestCase):
         gen = SuperGenerator(None)
         self.context.generators = [gen]
         nem.run(self.context)
-        self.assertEqual(gen.runhours, nem.hours)
+        self.assertEqual(gen.runhours, self.context.timesteps)
 
     def test_006(self):
         """Generation to meet minimum load leads to no spills."""
@@ -107,7 +107,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = [gen]
             nem.run(self.context)
             if rgn == regions.nsw:
-                self.assertEqual(gen.runhours, nem.hours)
+                self.assertEqual(gen.runhours, self.context.timesteps)
             else:
                 self.assertEqual(gen.runhours, 0)
 
@@ -120,11 +120,16 @@ class TestSequenceFunctions(unittest.TestCase):
             gen = SuperGenerator(None)
             self.context.generators = [gen]
             nem.run(self.context)
-            self.assertEqual(gen.runhours, nem.hours)
+            self.assertEqual(gen.runhours, self.context.timesteps)
 
     def test_010(self):
         """Running in one region only produces no interstate exchanges."""
         self.context.track_exchanges = True
+        self.context.generators = [generators.OCGT(regions.nsw, 100),
+                                   generators.OCGT(regions.qld, 100),
+                                   generators.OCGT(regions.sa, 100),
+                                   generators.OCGT(regions.tas, 100),
+                                   generators.OCGT(regions.vic, 100)]
         for rgn in regions.All:
             self.context.regions = [rgn]
             self.context.generators = [generators.OCGT(regions.nsw, 100),
@@ -170,4 +175,4 @@ class TestSequenceFunctions(unittest.TestCase):
         ccgt = generators.CCGT(regions.nsw, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
-        self.assertTrue((self.context.generators[0].hourly_power > 0).sum())
+        self.assertTrue(len(self.context.generators[0].hourly_power) > 0)

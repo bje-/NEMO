@@ -120,7 +120,7 @@ def cost(ctx, transmission_p):
         emissions = 0
         for g in ctx.generators:
             try:
-                emissions += g.hourly_power.sum() * g.intensity
+                emissions += sum(g.hourly_power.values()) * g.intensity
             except AttributeError:
                 # not all generators have an intensity attribute
                 pass
@@ -137,7 +137,7 @@ def cost(ctx, transmission_p):
                g.__class__ is generators.Coal_CCS or \
                g.__class__ is generators.CCGT_CCS or \
                g.__class__ is generators.Black_Coal:
-                fossil_energy += g.hourly_power.sum()
+                fossil_energy += sum(g.hourly_power.values())
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit)
         score += pow(fossil_exceedance, 3)
 
@@ -145,7 +145,7 @@ def cost(ctx, transmission_p):
     biofuel_energy = 0
     for g in ctx.generators:
         if g.__class__ is generators.Biofuel:
-            biofuel_energy += g.hourly_power.sum()
+            biofuel_energy += sum(g.hourly_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh)
     score += pow(biofuel_exceedance, 3)
 
@@ -153,7 +153,7 @@ def cost(ctx, transmission_p):
     hydro_energy = 0
     for g in ctx.generators:
         if g.__class__ is generators.Hydro or g.__class__ is generators.PumpedHydro:
-            hydro_energy += g.hourly_power.sum()
+            hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh)
     score += pow(hydro_exceedance, 3)
 

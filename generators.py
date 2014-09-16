@@ -7,13 +7,13 @@
 
 """Simulated generators for the NEMO framework."""
 
-import locale
 import numpy as np
-import simplesys
-import consts
-
 from matplotlib.patches import Patch
 
+import consts
+import simplesys
+
+import locale
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
 
@@ -37,8 +37,8 @@ class Generator:
         self.non_synchronous_p = False
 
         # Time series of dispatched power and spills
-        self.hourly_power = np.zeros(consts.timesteps)
-        self.hourly_spilled = np.zeros(consts.timesteps)
+        self.hourly_power = {}
+        self.hourly_spilled = {}
 
     def capcost(self, costs):
         """Return the annual capital cost."""
@@ -46,18 +46,18 @@ class Generator:
 
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""
-        return int(self.hourly_power.sum()) * costs.opcost_per_mwh[self.__class__]
+        return sum(self.hourly_power.values()) * costs.opcost_per_mwh[self.__class__]
 
     def reset(self):
         """Reset the generator."""
-        self.hourly_power.fill(0)
-        self.hourly_spilled.fill(0)
+        self.hourly_power.clear()
+        self.hourly_spilled.clear()
 
     def summary(self, costs):
         """Return a summary of the generator activity."""
-        s = 'supplied %.1f TWh' % (self.hourly_power.sum() / 1000000.)
-        if self.hourly_spilled.sum() > 0:
-            s += ', spilled %.1f TWh' % (self.hourly_spilled.sum() / 1000000.)
+        s = 'supplied %.1f TWh' % (sum(self.hourly_power.values()) / consts.twh)
+        if sum(self.hourly_spilled.values()) > 0:
+            s += ', spilled %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
@@ -131,9 +131,9 @@ class CST(Generator):
         # Then we can scale it here to anything we like.
         self.s.COLLECTOR = self.collectorseries * self.capacity * self.solarmult
 
-        self.hourly_dumped = np.zeros(consts.timesteps)
-        self.hourly_stored = np.zeros(consts.timesteps)
-        self.hourly_storage_level = np.zeros(consts.timesteps)
+        self.hourly_dumped = {}
+        self.hourly_stored = {}
+        self.hourly_storage_level = {}
         self.storage_p = True
 
     def step(self, hr, demand):
@@ -176,9 +176,9 @@ class CST(Generator):
 
     def reset(self):
         Generator.reset(self)
-        self.hourly_dumped.fill(0)
-        self.hourly_stored.fill(0)
-        self.hourly_storage_level.fill(0)
+        self.hourly_dumped.clear()
+        self.hourly_stored.clear()
+        self.hourly_storage_level.clear()
         self.s.reset()
 
     def capcost(self, costs):
@@ -199,8 +199,8 @@ class CST(Generator):
         return anncost * self.capacity * 1000
 
     def summary(self, costs):
-        return Generator.summary(self, costs) + ', stored %d MWh' % self.hourly_stored.sum() + \
-            ', dumped %d MWh-t' % self.hourly_dumped.sum() + \
+        return Generator.summary(self, costs) + ', stored %d MWh' % sum(self.hourly_stored.values()) + \
+            ', dumped %d MWh-t' % sum(self.hourly_dumped.values()) + \
             ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.tes
 
 
@@ -365,7 +365,7 @@ class Fossil(Fuelled):
 
     def summary(self, costs):
         return Fuelled.summary(self, costs) + ', %.1f Mt CO2' \
-            % (self.hourly_power.sum() * self.intensity / 1000000.)
+            % (sum(self.hourly_power.values()) * self.intensity / 1000000.)
 
 
 class Black_Coal(Fossil):
@@ -381,7 +381,7 @@ class Black_Coal(Fossil):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.coal_price_per_gj * 8.57
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return self.hourly_power.sum() * total_opcost
+        return sum(self.hourly_power.values()) * total_opcost
 
 
 class OCGT(Fossil):
@@ -397,7 +397,7 @@ class OCGT(Fossil):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.gas_price_per_gj * 11.61
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return self.hourly_power.sum() * total_opcost
+        return sum(self.hourly_power.values()) * total_opcost
 
 
 class CCGT(Fossil):
@@ -413,7 +413,7 @@ class CCGT(Fossil):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.gas_price_per_gj * 6.92
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return self.hourly_power.sum() * total_opcost
+        return sum(self.hourly_power.values()) * total_opcost
 
 
 class CCS(Fossil):
@@ -427,7 +427,7 @@ class CCS(Fossil):
 
     def summary(self, costs):
         return Fossil.summary(self, costs) + ', %.1f Mt captured' \
-            % (self.hourly_power.sum() * self.intensity / 1000000. * self.capture)
+            % (sum(self.hourly_power.values()) * self.intensity / 1000000. * self.capture)
 
 
 class Coal_CCS(CCS):
@@ -446,7 +446,7 @@ class Coal_CCS(CCS):
         total_opcost = vom + fuel_cost + \
             (emissions_rate * costs.carbon) + \
             (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return self.hourly_power.sum() * total_opcost
+        return sum(self.hourly_power.values()) * total_opcost
 
 
 class CCGT_CCS(CCS):
@@ -463,7 +463,7 @@ class CCGT_CCS(CCS):
         total_opcost = vom + fuel_cost + \
             (self.intensity * (1 - self.capture) * costs.carbon) + \
             (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return self.hourly_power.sum() * total_opcost
+        return sum(self.hourly_power.values()) * total_opcost
 
 
 class Battery(Generator):
@@ -602,7 +602,7 @@ class DemandResponse(Generator):
         self.runhours = 0
 
     def opcost(self, costs):
-        return int(self.hourly_power.sum()) * self.cost_per_mwh
+        return sum(self.hourly_power.values()) * self.cost_per_mwh
 
     def summary(self, costs):
         return Generator.summary(self, costs) + ', ran %s hours' \

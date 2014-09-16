@@ -19,13 +19,20 @@ import siteinfo
 
 hours = 8760
 
-demand2010 = np.genfromtxt(siteinfo.demand_data, comments='#')
-demand2010 = demand2010.transpose()
-# Demand is in 30 minute intervals.
-assert demand2010.shape == (5, 2 * hours)
-# For hourly, average half-hours n and n+1.
-regional_demand = (demand2010[::, ::2] + demand2010[::, 1::2]) / 2
-del demand2010
+# Demand is in 30 minute intervals. NOTE: the number of rows in the
+# demand file now dictates the number of timesteps in the simulation.
+demand = np.genfromtxt(siteinfo.demand_data, comments='#')
+demand = demand.transpose()
+
+# There must be 12 columns: date, time and ten demand/price columns (5 regions).
+assert demand.shape[0] == 5
+
+# The number of rows must be even.
+assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
+
+# For hourly demand, average half-hours n and n+1.
+# Demand is in every second column from columns 2 onwards.
+regional_demand = (demand[::, ::2] + demand[::, 1::2]) / 2
 
 
 def default_generation_mix():
@@ -53,6 +60,7 @@ class Context:
         self.relstd = 0.002
         self.generators = default_generation_mix()
         self.demand = regional_demand.copy()
+        self.timesteps = self.demand.shape[1]
         self.unserved = []
         self.unserved_energy = 0
         self.unserved_hours = 0
@@ -127,7 +135,7 @@ def _sim(context, starthour, endhour):
         connections[r].sort()
         connections[r].sort(key=len)
 
-    assert context.demand.shape == (5, hours)
+    assert context.demand.shape == (5, context.timesteps)
     demand_copy = context.demand.copy()
 
     # Zero out regions we don't care about.
@@ -232,7 +240,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
     plt.xlabel('Hour')
     title = 'NEM supply/demand for 2010\nRegions: %s' % str(context.regions)
     plt.suptitle(title)
-    plt.xlim(0, hours)
+    plt.xlim(0, context.timesteps)
     ymax = (spill.max() + demand.max()) * 1.05 if spills else demand.max() * 1.05
     plt.ylim(0, ymax)
 
@@ -265,14 +273,14 @@ def plot(context, spills=False, filename=None, xlimit=None):
     fig.autofmt_xdate()
 
     # Plot demand first.
-    xdata = np.arange(hours)
+    xdata = np.arange(context.timesteps)
     plt.plot(xdata, demand, color='black', linewidth=2)
     if spills:
         peakdemand = np.empty_like(demand)
         peakdemand.fill(demand.max())
         plt.plot(xdata, peakdemand, color='black', linestyle='dashed')
 
-    accum = np.zeros(hours)
+    accum = np.zeros(context.timesteps)
     prev = accum.copy()
     for g in _generator_list(context):
         idx = context.generators.index(g)
@@ -303,7 +311,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
         plt.savefig(filename)
 
 
-def run(context, starthour=0, endhour=hours):
+def run(context, starthour=0, endhour=None):
     """Run the simulation (without a plot).
 
     >>> c = Context()
@@ -315,6 +323,10 @@ def run(context, starthour=0, endhour=hours):
     """
     if not isinstance(context.regions, list):
         raise ValueError('regions is not a list')
+
+    if endhour is None:
+        endhour = context.timesteps
+
     _sim(context, starthour, endhour)
 
     # Calculate some summary statistics.

@@ -7,7 +7,5 @@
 
 """Constants."""
 
-timesteps = 8760
-
 # Conversion factor between MWh and TWh.
 twh = pow(10, 6)
