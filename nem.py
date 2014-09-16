@@ -7,25 +7,17 @@
 
 """A National Electricity Market (NEM) simulation."""
 
-import re
-import string
 import numpy as np
-
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.patches import Patch
 
 import consts
 import regions
-from generators import PV, Wind, CST, PumpedHydro, Hydro, Biofuel
+import generators
 import siteinfo
-from siteinfo import pvdata, cstdata, fielddata, wind_gen_data as wind_data
 
 hours = 8760
-
-capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
-energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
-popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
 demand2010 = np.genfromtxt(siteinfo.demand_data, comments='#')
 demand2010 = demand2010.transpose()
@@ -36,88 +28,15 @@ regional_demand = (demand2010[::, ::2] + demand2010[::, 1::2]) / 2
 del demand2010
 
 
-# Read BoM station data.
-def _import_bom_stations(filename):
-    f = open(filename)
-    stations = {}
-    for line in f:
-        fields = line.split(',')
-        stncode = fields[1]
-        state = fields[9].strip()
-        location = fields[3].strip()
-        location = string.capwords(location)
-        location = string.replace(location, 'Aws', 'AWS')
-        stations[stncode] = (location, state)
-    f.close()
-    return stations
-stns = _import_bom_stations(siteinfo.stations_txt)
-
-
 def default_generation_mix():
     """Return a default generator list.
 
     >>> g = default_generation_mix()
     >>> len(g)
-    25
+    2
     """
-    result = []
-    # This list is in merit order.
-    for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
-        if capfactor[g] is not None:
-            capacity = \
-                (regional_demand.sum() * energy_fraction[g]) / (capfactor[g] * hours)
-        if g == PumpedHydro:
-            # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-            result.append(PumpedHydro(regions.qld, 500, 5000, label='QLD1 pumped-hydro'))
-            # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-            result.append(PumpedHydro(regions.nsw, 1740, 15000, label='NSW1 pumped-hydro'))
-        elif g == Hydro:
-            # Ignore the one small hydro plant in SA.
-            result.append(Hydro(regions.tas, 2740, label=regions.tas.id + ' hydro'))
-            result.append(Hydro(regions.nsw, 1160, label=regions.nsw.id + ' hydro'))
-            result.append(Hydro(regions.vic, 960, label=regions.vic.id + ' hydro'))
-        elif g == Biofuel:
-            # 24 GW biofuelled gas turbines (fixed)
-            # distribute 24GW of biofuelled turbines across all regions
-            # the region list is in order of approximate demand
-            for r in regions.All:
-                result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
-        elif g == PV:
-            # Calculate proportions across major cities.
-            pv = {}
-            total_popn = sum(popns.values())
-            for city in popns.keys():
-                pv[city] = (popns[city] / total_popn) * capacity
-            result.append(g(regions.vic, pv['Melbourne'], pvdata, 0, label='Melbourne PV'))
-            result.append(g(regions.nsw, pv['Sydney'], pvdata, 1, label='Sydney PV'))
-            result.append(g(regions.qld, pv['SE Qld'], pvdata, 2, label='SE Qld PV'))
-            result.append(g(regions.nsw, pv['Canberra'], pvdata, 3, label='Canberra PV'))
-            result.append(g(regions.sa, pv['Adelaide'], pvdata, 4, label='Adelaide PV'))
-        elif g == CST:
-            line1 = open(cstdata).readline()
-            # Pull out all of the station numbers, in column order.
-            sites = re.compile(r'\d{6}').findall(line1)
-            # Divide evenly among locations.
-            capacity /= len(sites)
-            for i, site in enumerate(sites):
-                aws, state = stns[site]
-                region = regions.find(state)
-                result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
-        elif g == Wind:
-            # 25% of NEM wind is in Vic, 59% in SA, 9% in NSW and 7% in Tas.
-            result.append(g(regions.vic, capacity * 0.25, wind_data, 1, label='VIC wind'))
-            result.append(g(regions.sa, capacity * 0.59, wind_data, 1, label='SA wind'))
-            result.append(g(regions.nsw, capacity * 0.09, wind_data, 1, label='NSW wind'))
-            result.append(g(regions.tas, capacity * 0.07, wind_data, 1, label='TAS wind'))
-        else:  # pragma: no cover
-            raise(ValueError)
-
-    # You can't modify these capacities.
-    for g in result:
-        if g.__class__ is Hydro or g.__class__ is PumpedHydro:
-            g.setters = []
-
-    return result
+    return [generators.CCGT(regions.nsw, 20000),
+            generators.OCGT(regions.nsw, 20000)]
 
 
 # Context objects are used throughout this module.
@@ -140,6 +59,7 @@ class Context:
         self.unserved_percent = 0
         # System non-synchronous penetration limit
         self.nsp_limit = 1.0
+        self.exchanges = np.zeros((hours, regions.numregions, regions.numregions))
 
     def __str__(self):
         """A human-readable representation of the context.
@@ -188,6 +108,10 @@ def _sim(context, starthour, endhour):
     for g in context.generators:
         g.reset()
 
+    context.exchanges.fill(0)
+    context.generation = np.zeros((len(context.generators), hours))
+    context.spill = np.zeros((len(context.generators), hours))
+
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region in context.regions]
     # And storage-capable generators.
@@ -204,9 +128,6 @@ def _sim(context, starthour, endhour):
         connections[r].sort(key=len)
 
     assert context.demand.shape == (5, hours)
-    context.generation = np.zeros((len(context.generators), hours))
-    context.spill = np.zeros((len(context.generators), hours))
-    context.exchanges = np.zeros((hours, regions.numregions, regions.numregions))
     demand_copy = context.demand.copy()
 
     # Zero out regions we don't care about.

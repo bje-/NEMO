@@ -127,6 +127,11 @@ class TestSequenceFunctions(unittest.TestCase):
         self.context.track_exchanges = True
         for rgn in regions.All:
             self.context.regions = [rgn]
+            self.context.generators = [generators.OCGT(regions.nsw, 100),
+                                       generators.OCGT(regions.qld, 100),
+                                       generators.OCGT(regions.sa, 100),
+                                       generators.OCGT(regions.tas, 100),
+                                       generators.OCGT(regions.vic, 100)]
             nem.run(self.context, endhour=1)
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1)
             self.assertTrue(self.context.exchanges[0, rgn, rgn] > 0, 'Only one exchange > 0')

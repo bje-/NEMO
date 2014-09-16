@@ -9,7 +9,10 @@
 
 import heapq
 import numpy as np
+import string
+import re
 
+import consts
 import generators
 import regions
 import siteinfo
@@ -141,6 +144,22 @@ def coal_ccs(context):
     context.generators = [coal] + _hydro() + [ocgt]
 
 
+def _import_bom_stations(filename):
+    """Read BoM station data."""
+    f = open(filename)
+    stations = {}
+    for line in f:
+        fields = line.split(',')
+        stncode = fields[1]
+        state = fields[9].strip()
+        location = fields[3].strip()
+        location = string.capwords(location)
+        location = string.replace(location, 'Aws', 'AWS')
+        stations[stncode] = (location, state)
+    f.close()
+    return stations
+
+
 def re100(context):
     # pylint: disable=unused-argument
     """100% renewable electricity.
@@ -148,12 +167,73 @@ def re100(context):
     >>> class C: pass
     >>> c = C()
     >>> re100(c)
-    >>> c.generators
-    Traceback (most recent call last):
-      ...
-    AttributeError: C instance has no attribute 'generators'
+    >>> len(c.generators)
+    25
     """
-    pass
+    from generators import CST, Wind, PV, Hydro, PumpedHydro, Biofuel
+    from siteinfo import cstdata, fielddata, pvdata, wind_gen_data as wind_data
+
+    capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
+    energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
+    popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
+
+    result = []
+    # The following list is in merit order.
+    for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
+        if capfactor[g] is not None:
+            capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
+        if g == PumpedHydro:
+            # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
+            result.append(PumpedHydro(regions.qld, 500, 5000, label='QLD1 pumped-hydro'))
+            # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
+            result.append(PumpedHydro(regions.nsw, 1740, 15000, label='NSW1 pumped-hydro'))
+        elif g == Hydro:
+            # Ignore the one small hydro plant in SA.
+            result.append(Hydro(regions.tas, 2740, label=regions.tas.id + ' hydro'))
+            result.append(Hydro(regions.nsw, 1160, label=regions.nsw.id + ' hydro'))
+            result.append(Hydro(regions.vic, 960, label=regions.vic.id + ' hydro'))
+        elif g == Biofuel:
+            # 24 GW biofuelled gas turbines (fixed)
+            # distribute 24GW of biofuelled turbines across all regions
+            # the region list is in order of approximate demand
+            for r in regions.All:
+                result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
+        elif g == PV:
+            # Calculate proportions across major cities.
+            pv = {}
+            total_popn = sum(popns.values())
+            for city in popns.keys():
+                pv[city] = (popns[city] / total_popn) * capacity
+            result.append(g(regions.vic, pv['Melbourne'], pvdata, 0, label='Melbourne PV'))
+            result.append(g(regions.nsw, pv['Sydney'], pvdata, 1, label='Sydney PV'))
+            result.append(g(regions.qld, pv['SE Qld'], pvdata, 2, label='SE Qld PV'))
+            result.append(g(regions.nsw, pv['Canberra'], pvdata, 3, label='Canberra PV'))
+            result.append(g(regions.sa, pv['Adelaide'], pvdata, 4, label='Adelaide PV'))
+        elif g == CST:
+            line1 = open(cstdata).readline()
+            # Pull out all of the station numbers, in column order.
+            sites = re.compile(r'\d{6}').findall(line1)
+            # Divide evenly among locations.
+            capacity /= len(sites)
+            stns = _import_bom_stations(siteinfo.stations_txt)
+            for i, site in enumerate(sites):
+                aws, state = stns[site]
+                region = regions.find(state)
+                result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
+        elif g == Wind:
+            # 25% of NEM wind is in Vic, 59% in SA, 9% in NSW and 7% in Tas.
+            result.append(g(regions.vic, capacity * 0.25, wind_data, 1, label='VIC wind'))
+            result.append(g(regions.sa, capacity * 0.59, wind_data, 1, label='SA wind'))
+            result.append(g(regions.nsw, capacity * 0.09, wind_data, 1, label='NSW wind'))
+            result.append(g(regions.tas, capacity * 0.07, wind_data, 1, label='TAS wind'))
+        else:  # pragma: no cover
+            raise(ValueError)
+
+    # You can't modify these capacities.
+    for g in result:
+        if g.__class__ is Hydro or g.__class__ is PumpedHydro:
+            g.setters = []
+    context.generators = result
 
 
 def re100_batteries(context):
@@ -161,11 +241,12 @@ def re100_batteries(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(25)
+    >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
     26
     """
+    re100(context)
     nsw_battery = generators.Battery(regions.nsw, 0, 0)
     g = context.generators
     context.generators = g[0:9] + [nsw_battery] + g[9:]
@@ -176,12 +257,13 @@ def re100_roam(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(25)
+    >>> c.generators = []
     >>> re100_roam(c)
     >>> len(c.generators)
     96
     """
     import polygons
+    re100(context)
     pv = []
     wind = []
     for i in range(43):
@@ -207,11 +289,12 @@ def re_plus_ccs(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(25)
+    >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
     26
     """
+    re100(context)
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
@@ -226,11 +309,12 @@ def re_plus_fossil(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(25)
+    >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
     24
     """
+    re100(context)
     # pylint: disable=redefined-outer-name
     coal = generators.Black_Coal(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
@@ -244,13 +328,14 @@ def re100_dsp(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(10)
+    >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    13
+    28
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
+    re100(context)
     g = context.generators
     context.generators = g + _demand_response()
 
@@ -260,15 +345,16 @@ def re100_geothermal(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(10)
+    >>> c.generators = []
     >>> re100_geothermal(c)
     >>> len(c.generators)
-    14
+    29
     >>> isinstance(c.generators[0], generators.Geothermal)
     True
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
+    re100(context)
     g = context.generators
     geo = generators.Geothermal(regions.sa, 0, 'HSA geoth.')
     context.generators = [geo] + g + _demand_response()
@@ -279,11 +365,12 @@ def theworks(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = range(10)
+    >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    14
+    29
     """
+    re100(context)
     # pylint: disable=redefined-outer-name
     geo = generators.Geothermal(regions.nsw, 0)
     coal = generators.Black_Coal(regions.nsw, 0)
