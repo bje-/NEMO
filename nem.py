@@ -35,6 +35,7 @@ assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
 regional_demand = (demand[2::2, ::2] + demand[2::2, 1::2]) / 2
 assert regional_demand.shape[0] == 5
 
+
 def default_generation_mix():
     """Return a default generator list.
 
