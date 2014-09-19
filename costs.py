@@ -188,3 +188,31 @@ class AETA2013_2030High (AETA2012_2030High):
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
         vom[tech.CST] = 11.39 * self.escalation
+
+
+def cost_switch(label):
+    """
+    Return a class for a given cost scenario.
+
+    >>> cost_switch('AETA2013-in2030-low') # doctest: +ELLIPSIS
+    <class costs.AETA2013_2030Low at 0x...>
+    >>> cost_switch('foo')
+    Traceback (most recent call last):
+      ...
+    ValueError: unknown cost scenario foo
+    """
+    try:
+        callback = cost_scenarios[label]
+    except KeyError:
+        print 'valid scenarios:'
+        for k in sorted(cost_scenarios.keys()):
+            print '\t', k
+        raise ValueError('unknown cost scenario: %s' % label)
+    return callback
+
+
+cost_scenarios = {'null': NullCosts,
+                  'AETA2012-in2030-low': AETA2012_2030Low,
+                  'AETA2012-in2030-high': AETA2012_2030High,
+                  'AETA2013-in2030-low': AETA2013_2030Low,
+                  'AETA2013-in2030-high': AETA2013_2030Low}
