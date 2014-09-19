@@ -161,7 +161,7 @@ class CST(Generator):
 
     def store(self, hr, power):
         """Accept spilled energy by heating the storage medium (unity efficiency)."""
-        # Only accept some energy if storage is near full.
+        # Only accept partial energy if storage is near full, reject the rest.
         rejected = self.s.storageInput(power)
         power -= rejected
         self.hourly_stored[hr] = power
