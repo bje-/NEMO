@@ -190,6 +190,7 @@ class AETA2013_2030Low (AETA2012_2030Low):
         """
         AETA2012_2030Low.__init__(self, discount, coal_price, gas_price,
                                   ccs_storage_costs)
+
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
@@ -197,6 +198,13 @@ class AETA2013_2030Low (AETA2012_2030Low):
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
         vom[tech.CST] = 11.39 * self.escalation
+
+        # Re-calculate annual capital costs for wind and CST.
+        af = self.annuityf
+        table = self.capcost_per_kw_per_yr
+        fom = self.fixed_om_costs
+        table[tech.Wind] = 1701 / af + fom[tech.Wind]
+        table[tech.CST] = 4563 / af + fom[tech.CST]
 
 
 class AETA2013_2030High (AETA2012_2030High):
@@ -217,6 +225,38 @@ class AETA2013_2030High (AETA2012_2030High):
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
         vom[tech.CST] = 11.39 * self.escalation
+
+        # Re-calculate annual capital costs for wind and CST.
+        af = self.annuityf
+        table = self.capcost_per_kw_per_yr
+        fom = self.fixed_om_costs
+        table[tech.Wind] = 1701 / af + fom[tech.Wind]
+        table[tech.CST] = 4563 / af + fom[tech.CST]
+
+
+class AETA2013_2030Mid (AETA2012_2030):
+
+    """AETA (2013) costs for 2030, middle of the range."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
+        """Construct a cost object given discount rate, coal, gas and CCS costs.
+
+        >>> obj = AETA2013_2030Mid(0.05, 1.00, 9.00, 30)
+        """
+        AETA2012_2030.__init__(self, discount, coal_price, gas_price,
+                               ccs_storage_costs)
+
+        low = AETA2013_2030Low(discount, coal_price, gas_price, ccs_storage_costs)
+        high = AETA2013_2030High(discount, coal_price, gas_price, ccs_storage_costs)
+        assert low.opcost_per_mwh == high.opcost_per_mwh
+        assert low.fixed_om_costs == high.fixed_om_costs
+
+        table = self.capcost_per_kw_per_yr
+        lowtable = low.capcost_per_kw_per_yr
+        hightable = high.capcost_per_kw_per_yr
+        for t in lowtable:
+            # See comment in AETA2012_2030Mid.
+            table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
 def cost_switch(label):
@@ -242,7 +282,8 @@ def cost_switch(label):
 
 cost_scenarios = {'null': NullCosts,
                   'AETA2012-in2030-low': AETA2012_2030Low,
-                  'AETA2012-in2030-high': AETA2012_2030High,
                   'AETA2012-in2030-mid': AETA2012_2030Mid,
+                  'AETA2012-in2030-high': AETA2012_2030High,
                   'AETA2013-in2030-low': AETA2013_2030Low,
+                  'AETA2013-in2030-mid': AETA2013_2030Mid,
                   'AETA2013-in2030-high': AETA2013_2030Low}
