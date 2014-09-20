@@ -7,7 +7,6 @@
 
 """Site-specific data (eg, filenames)."""
 
-pvdata = 'data/sam-pv.csv'
 fielddata = 'data/field.csv'
 stations_txt = 'data/Stations.txt'
 roam_wind_data = 'data/roam-wind.csv'

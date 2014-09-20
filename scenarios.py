@@ -172,11 +172,10 @@ def re100(context):
     25
     """
     from generators import CST, Wind, PV, Hydro, PumpedHydro, Biofuel
-    from siteinfo import fielddata, pvdata
+    from siteinfo import fielddata
 
-    capfactor = {CST: 0.60, Wind: 0.40, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
+    capfactor = {CST: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
     energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
-    popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
     result = []
     # The following list is in merit order.
@@ -200,16 +199,13 @@ def re100(context):
             for r in regions.All:
                 result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
         elif g == PV:
-            # Calculate proportions across major cities.
-            pv = {}
-            total_popn = sum(popns.values())
-            for city in popns.keys():
-                pv[city] = (popns[city] / total_popn) * capacity
-            result.append(g(regions.vic, pv['Melbourne'], pvdata, 0, label='Melbourne PV'))
-            result.append(g(regions.nsw, pv['Sydney'], pvdata, 1, label='Sydney PV'))
-            result.append(g(regions.qld, pv['SE Qld'], pvdata, 2, label='SE Qld PV'))
-            result.append(g(regions.nsw, pv['Canberra'], pvdata, 3, label='Canberra PV'))
-            result.append(g(regions.sa, pv['Adelaide'], pvdata, 4, label='Adelaide PV'))
+            # Hand chosen polygons with high capacity factors
+            for poly in [14, 21, 13, 37]:
+                rgn = polygons.region_table[poly]
+                # Put 25% PV capacity in each region.
+                result.append(g(rgn, capacity * 0.25,
+                                siteinfo.roam_pv1axis_data, poly - 1,
+                                label=rgn.id + ' 1-axis PV'))
         elif g == CST:
             line1 = open(fielddata).readline()
             # Pull out all of the station numbers, in column order.
