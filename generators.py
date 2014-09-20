@@ -207,7 +207,7 @@ class PV(Generator):
 
     """Solar photovoltaic (PV) model."""
 
-    patch = Patch(facecolor='blue')
+    patch = Patch(facecolor='darkblue')
     csvfilename = None
     csvdata = None
 
