@@ -268,14 +268,14 @@ def re100_roam(context):
         rgn = polygons.region_table[i + 1]
         g = generators.PV1Axis(rgn, 0, siteinfo.roam_pv1axis_data, i, label='Poly. %d PV' % (i + 1))
         func, _, _ = g.setters[0]
-        maxcapacity = min(polygons.pv_limit[i], 40)
+        maxcapacity = min(polygons.pv_limit[i + 1], 40)
         g.setters[0] = (func, 0, maxcapacity)
         pv.append(g)
         # Skip regions with no significant wind resource.
         if polygons.wind_limit[i] >= 0.5:
             g = generators.Wind(rgn, 0, siteinfo.roam_wind_data, i, delimiter=',', label='Poly. %d wind' % (i + 1))
             func, _, _ = g.setters[0]
-            maxcapacity = min(polygons.wind_limit[i], 40)
+            maxcapacity = min(polygons.wind_limit[i + 1], 40)
             g.setters[0] = (func, 0, maxcapacity)
             wind.append(g)
     g = context.generators
