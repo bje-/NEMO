@@ -14,6 +14,7 @@ import re
 
 import consts
 import generators
+import polygons
 import regions
 import siteinfo
 
@@ -171,9 +172,9 @@ def re100(context):
     25
     """
     from generators import CST, Wind, PV, Hydro, PumpedHydro, Biofuel
-    from siteinfo import fielddata, pvdata, wind_gen_data as wind_data
+    from siteinfo import fielddata, pvdata
 
-    capfactor = {CST: 0.60, Wind: 0.30, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
+    capfactor = {CST: 0.60, Wind: 0.40, PV: 0.16, Hydro: None, PumpedHydro: None, Biofuel: None}
     energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
     popns = {'SE Qld': 2.97, 'Canberra': 0.358, 'Sydney': 4.58, 'Melbourne': 4.08, 'Adelaide': 1.20}
 
@@ -221,11 +222,13 @@ def re100(context):
                 region = regions.find(state)
                 result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == Wind:
-            # 25% of NEM wind is in Vic, 59% in SA, 9% in NSW and 7% in Tas.
-            result.append(g(regions.vic, capacity * 0.25, wind_data, 1, label='VIC wind'))
-            result.append(g(regions.sa, capacity * 0.59, wind_data, 1, label='SA wind'))
-            result.append(g(regions.nsw, capacity * 0.09, wind_data, 1, label='NSW wind'))
-            result.append(g(regions.tas, capacity * 0.07, wind_data, 1, label='TAS wind'))
+            # Hand chosen polygons:
+            # 1 (col 0), 20 (col 19), 24 (col 23), 38b (col 38), 43 (col 42)
+            for poly in [0, 19, 23, 38, 42]:
+                rgn = polygons.region_table[poly + 1]
+                # Put 20% wind capacity in each region.
+                result.append(g(rgn, capacity * 0.2, siteinfo.roam_wind_data,
+                                poly, delimiter=',', label=rgn.id + ' wind'))
         else:  # pragma: no cover
             raise(ValueError)
 
@@ -262,7 +265,6 @@ def re100_roam(context):
     >>> len(c.generators)
     96
     """
-    import polygons
     re100(context)
     pv = []
     wind = []
