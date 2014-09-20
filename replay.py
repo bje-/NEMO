@@ -58,10 +58,10 @@ for line in replayfile:
     if re.search(r'^\s*#', line):
         print line,
         continue
-    if not re.search(r'^\s*List:\s*\[.*\].?$', line):
+    if not re.search(r'^\s*List:\s*\[.*\]\s*.?$', line):
         print 'skipping malformed input:', line
         continue
-    m = re.match(r'^\s*List:\s*\[(.*)\].?$', line)
+    m = re.match(r'^\s*List:\s*\[(.*)\]\s*.?$', line)
     capacities = m.group(1).split(',')
     capacities = [float(elt) for elt in capacities]  # str -> float
     run_one(capacities)
