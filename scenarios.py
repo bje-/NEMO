@@ -218,13 +218,13 @@ def re100(context):
                 region = regions.find(state)
                 result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == Wind:
-            # Hand chosen polygons:
-            # 1 (col 0), 20 (col 19), 24 (col 23), 38b (col 38), 43 (col 42)
-            for poly in [0, 19, 23, 38, 42]:
-                rgn = polygons.region_table[poly + 1]
+            # Hand chosen polygons with high capacity factors
+            for poly in [1, 20, 24, 39, 43]:
+                rgn = polygons.region_table[poly]
                 # Put 20% wind capacity in each region.
-                result.append(g(rgn, capacity * 0.2, siteinfo.roam_wind_data,
-                                poly, delimiter=',', label=rgn.id + ' wind'))
+                result.append(g(rgn, capacity * 0.2,
+                                siteinfo.roam_wind_data, poly - 1,
+                                delimiter=',', label=rgn.id + ' wind'))
         else:  # pragma: no cover
             raise(ValueError)
 
