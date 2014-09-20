@@ -13,7 +13,7 @@ import regions
 region_table = [None] * 44
 
 for num in range(21, 25) + range(28, 32) + range(33, 37):
-    region_table[num] = regions.vic
+    region_table[num] = regions.nsw
 
 for num in range(1, 12) + range(14, 18):
     region_table[num] = regions.qld
