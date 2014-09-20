@@ -6,7 +6,7 @@ check:  replay.data
 	nosetests -I '(browse|evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 	$(COVRUN) evolve.py -f0 -p2 -g1 > /dev/null
 	$(COVRUN) evolve.py -f0 -p2 -g1 -s __one_ccgt__ > /dev/null
-	$(COVRUN) evolve.py -f0 -p2 -g1 -s theworks --emissions-limit=100 --fossil-limit=1.0 -t --high-cost --coal-ccs-costs=20 -d unchanged > /dev/null
+	$(COVRUN) evolve.py -f0 -p2 -g1 -s theworks --emissions-limit=100 --fossil-limit=1.0 -t --cost=AETA2013-in2030-high --coal-ccs-costs=20 -d unchanged > /dev/null
 	$(COVRUN) replay.py -f replay.data -v > /dev/null
 	rm replay.data
 	make html
