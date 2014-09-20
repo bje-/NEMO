@@ -251,37 +251,6 @@ def re100_batteries(context):
     context.generators = g[0:9] + [nsw_battery] + g[9:]
 
 
-def re100_roam(context):
-    """Renewables including wind and PV over the ROAM 43 polygons.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> c.generators = []
-    >>> re100_roam(c)
-    >>> len(c.generators)
-    96
-    """
-    re100(context)
-    pv = []
-    wind = []
-    for i in range(43):
-        rgn = polygons.region_table[i + 1]
-        g = generators.PV1Axis(rgn, 0, siteinfo.roam_pv1axis_data, i, label='Poly. %d PV' % (i + 1))
-        func, _, _ = g.setters[0]
-        maxcapacity = min(polygons.pv_limit[i + 1], 40)
-        g.setters[0] = (func, 0, maxcapacity)
-        pv.append(g)
-        # Skip regions with no significant wind resource.
-        if polygons.wind_limit[i] >= 0.5:
-            g = generators.Wind(rgn, 0, siteinfo.roam_wind_data, i, delimiter=',', label='Poly. %d wind' % (i + 1))
-            func, _, _ = g.setters[0]
-            maxcapacity = min(polygons.wind_limit[i + 1], 40)
-            g.setters[0] = (func, 0, maxcapacity)
-            wind.append(g)
-    g = context.generators
-    context.generators = pv + wind + g[9:] + _demand_response()
-
-
 def re_plus_ccs(context):
     """Mostly renewables with fossil and CCS augmentation.
 
@@ -386,7 +355,6 @@ supply_scenarios = {'re100': re100,
                     'ccgt': ccgt,
                     'ccgt-ccs': ccgt_ccs,
                     'coal-ccs': coal_ccs,
-                    're100-roam': re100_roam,
                     're100+batteries': re100_batteries,
                     'replacement': replacement,
                     're100+dsp': re100_dsp,
