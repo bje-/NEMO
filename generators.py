@@ -247,7 +247,6 @@ class CST(Generator):
 
     """Solar thermal (CST) model."""
 
-    patch = Patch(facecolor='orange')
     csvfilename = None
     csvdata = None
 
@@ -305,6 +304,8 @@ class ParabolicTrough(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
+    patch = Patch(facecolor='yellow')
+
     def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
         CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
 
@@ -315,6 +316,8 @@ class CentralReceiver(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
+    patch = Patch(facecolor='orange')
+
     def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
         CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
 
