@@ -53,7 +53,7 @@ parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on an
 parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
 parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
-parser.add_argument("--costs", type=str, default='AETA2013-in2030-low', help='cost scenario [default: AETA2013-in2030-low]')
+parser.add_argument("--costs", type=str, default='AETA2013-in2030-mid', help='cost scenario [default: AETA2013-in2030-mid]')
 parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (Mt) [default: None]')
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
