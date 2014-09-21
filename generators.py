@@ -207,6 +207,26 @@ class CST(Generator):
             ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.tes
 
 
+class ParabolicTrough(CST):
+
+    """Parabolic trough CST generator.
+
+    This stub class allows differentiated CST costs in costs.py.
+    """
+    def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
+        CST.__init__(self, region, capacity, solarmult, tes, filename, locn, label, dispHour)
+
+
+class CentralReceiver(CST):
+
+    """Central receiver CST generator.
+
+    This stub class allows differentiated CST costs in costs.py.
+    """
+    def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
+        CST.__init__(self, region, capacity, solarmult, tes, filename, locn, label, dispHour)
+
+
 class PV(Generator):
 
     """Solar photovoltaic (PV) model."""

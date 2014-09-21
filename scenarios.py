@@ -171,15 +171,15 @@ def re100(context):
     >>> len(c.generators)
     25
     """
-    from generators import CST, Wind, PV, Hydro, PumpedHydro, Biofuel
+    from generators import ParabolicTrough, Wind, PV, Hydro, PumpedHydro, Biofuel
     from siteinfo import fielddata
 
-    capfactor = {CST: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
-    energy_fraction = {CST: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
+    capfactor = {ParabolicTrough: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
+    energy_fraction = {ParabolicTrough: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
 
     result = []
     # The following list is in merit order.
-    for g in [PV, Wind, CST, Hydro, PumpedHydro, Biofuel]:
+    for g in [PV, Wind, ParabolicTrough, Hydro, PumpedHydro, Biofuel]:
         if capfactor[g] is not None:
             capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
         if g == PumpedHydro:
@@ -207,7 +207,7 @@ def re100(context):
                                 siteinfo.roam_pv1axis_data, poly - 1,
                                 build_limit=polygons.pv_limit[poly],
                                 label=rgn.id + ' 1-axis PV'))
-        elif g == CST:
+        elif g == ParabolicTrough:
             line1 = open(fielddata).readline()
             # Pull out all of the station numbers, in column order.
             sites = re.compile(r'\d{6}').findall(line1)
@@ -217,7 +217,7 @@ def re100(context):
             for i, site in enumerate(sites):
                 aws, state = stns[site]
                 region = regions.find(state)
-                result.append(CST(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
+                result.append(g(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == Wind:
             # Hand chosen polygons with high capacity factors
             for poly in [1, 20, 24, 39, 43]:
