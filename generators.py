@@ -280,7 +280,7 @@ class CST(Generator):
             self.stored = min(self.stored, self.maxstorage)
         else:
             from_storage = min(remainder - generation, self.stored)
-            generation =+ from_storage
+            generation += from_storage
             self.stored -= from_storage
             assert self.stored >= 0
         assert self.stored <= self.maxstorage
