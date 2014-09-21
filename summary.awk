@@ -26,7 +26,7 @@ BEGIN {
 /geoth.*GW.?$/		{ caps["geoth"] += $(NF-1); last="geoth" }
 /PV.*GW.?$/		{ caps["PV"] += $(NF-1); last="PV" }
 /wind.*GW.?$/		{ caps["wind"] += $(NF-1); last="wind" }
-/SCST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
+/ S?CST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
 / hydro.*GW.?$/		{ caps["hydro"] += $(NF-1); last="hydro" }
 /pumped-hydro.*GW.?$/	{ caps["PSH"] += $(NF-1); last="PSH" }
 / GT.*GW.?$/		{ caps["GT"] += $(NF-1); last="GT" }
