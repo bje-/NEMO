@@ -66,7 +66,7 @@ class AETA2012_2030:
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 12 * self.escalation
-        table[tech.CST] = 20 * self.escalation
+        table[tech.CST] = 15 * self.escalation
         table[tech.PV] = 0
         table[tech.PV1Axis] = 0
         table[tech.Biofuel] = 10 * self.escalation + 80  # (fuel)
@@ -83,7 +83,7 @@ class AETA2012_2030:
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 40 * self.escalation
-        table[tech.CST] = 65 * self.escalation
+        table[tech.CST] = 60 * self.escalation
         table[tech.PV] = 25 * self.escalation
         table[tech.PV1Axis] = 38 * self.escalation
         table[tech.Biofuel] = 4 * self.escalation
@@ -111,7 +111,7 @@ class AETA2012_2030Low (AETA2012_2030):
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
         table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CST] = 4563 / af + fom[tech.CST]
+        table[tech.CST] = 4203 / af + fom[tech.CST]
         table[tech.PV] = 1482 / af + fom[tech.PV]
         table[tech.PV1Axis] = 2013 / af + fom[tech.PV1Axis]
         table[tech.Biofuel] = 694 / af + fom[tech.Biofuel]
@@ -139,7 +139,7 @@ class AETA2012_2030High (AETA2012_2030):
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
         table[tech.Wind] = 1917 / af + fom[tech.Wind]
-        table[tech.CST] = 5659 / af + fom[tech.CST]
+        table[tech.CST] = 5253 / af + fom[tech.CST]
         table[tech.PV] = 1871 / af + fom[tech.PV]
         table[tech.PV1Axis] = 2542 / af + fom[tech.PV1Axis]
         table[tech.Biofuel] = 809 / af + fom[tech.Biofuel]
@@ -194,17 +194,17 @@ class AETA2013_2030Low (AETA2012_2030Low):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.CST] = 72.381 * self.escalation
+        fom[tech.CST] = 71.312 * self.escalation
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
-        vom[tech.CST] = 11.39 * self.escalation
+        vom[tech.CST] = 5.65 * self.escalation
 
         # Re-calculate annual capital costs for wind and CST.
         af = self.annuityf
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
         table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CST] = 4563 / af + fom[tech.CST]
+        table[tech.CST] = 4203 / af + fom[tech.CST]
 
 
 class AETA2013_2030High (AETA2012_2030High):
@@ -221,17 +221,17 @@ class AETA2013_2030High (AETA2012_2030High):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.CST] = 72.381 * self.escalation
+        fom[tech.CST] = 71.312 * self.escalation
         vom = self.opcost_per_mwh
         vom[tech.Wind] = 10 * self.escalation
-        vom[tech.CST] = 11.39 * self.escalation
+        vom[tech.CST] = 5.65 * self.escalation
 
         # Re-calculate annual capital costs for wind and CST.
         af = self.annuityf
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
-        table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CST] = 4563 / af + fom[tech.CST]
+        table[tech.Wind] = 1917 / af + fom[tech.Wind]
+        table[tech.CST] = 5253 / af + fom[tech.CST]
 
 
 class AETA2013_2030Mid (AETA2012_2030):
