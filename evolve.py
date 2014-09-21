@@ -24,7 +24,6 @@ from pyevolve import Selectors
 
 import numpy as np
 import argparse
-import sys
 import nem
 import generators
 import scenarios
