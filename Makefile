@@ -36,7 +36,7 @@ replay.data:
 	echo "# comment line" >> $@
 	echo "malformed line" >> $@
 	echo >> $@
-	echo "List: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" >> $@
+	echo "List: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" >> $@
 
 clean:
 	rm -rf .coverage htmlcov replay.data

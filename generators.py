@@ -110,12 +110,9 @@ class Wind(Generator):
         return power, spilled
 
 
-class CST(Generator):
+class SCST(Generator):
 
-    """A CST power station.
-
-    Model adapted from SIMPLESYS, a solar thermal system model.
-    """
+    """A CST power station based on SIMPLESYS."""
 
     patch = Patch(facecolor='yellow')
 
@@ -207,26 +204,6 @@ class CST(Generator):
             ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.tes
 
 
-class ParabolicTrough(CST):
-
-    """Parabolic trough CST generator.
-
-    This stub class allows differentiated CST costs in costs.py.
-    """
-    def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
-        CST.__init__(self, region, capacity, solarmult, tes, filename, locn, label, dispHour)
-
-
-class CentralReceiver(CST):
-
-    """Central receiver CST generator.
-
-    This stub class allows differentiated CST costs in costs.py.
-    """
-    def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
-        CST.__init__(self, region, capacity, solarmult, tes, filename, locn, label, dispHour)
-
-
 class PV(Generator):
 
     """Solar photovoltaic (PV) model."""
@@ -264,6 +241,82 @@ class PV1Axis(PV):
 
     def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
         PV.__init__(self, region, capacity, filename, column, label)
+
+
+class CST(Generator):
+
+    """Solar thermal (CST) model."""
+
+    patch = Patch(facecolor='orange')
+    csvfilename = None
+    csvdata = None
+
+    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        Generator.__init__(self, region, capacity, label)
+        if build_limit is not None:
+            # Override maximum generator capacity with build_limit
+            _, _, limit = self.setters[0]
+            self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
+        self.sm = sm
+        if CST.csvfilename != filename:
+            CST.csvdata = np.genfromtxt(filename, delimiter=',')
+            CST.csvfilename = filename
+        self.generation = CST.csvdata[::, column]
+        self.shours = shours
+        self.maxstorage = capacity * shours
+        self.stored = 0.5 * self.maxstorage
+
+    def set_capacity(self, cap):
+        Generator.set_capacity(self, cap)
+        self.maxstorage = cap * 1000 * self.shours
+
+    def step(self, hr, demand):
+        generation = self.generation[hr] * self.capacity * self.sm
+        remainder = min(self.capacity, demand)
+        if generation > remainder:
+            to_storage = generation - remainder
+            generation -= to_storage
+            self.stored += to_storage
+            self.stored = min(self.stored, self.maxstorage)
+        else:
+            from_storage = min(remainder - generation, self.stored)
+            generation =+ from_storage
+            self.stored -= from_storage
+            assert self.stored >= 0
+        assert self.stored <= self.maxstorage
+        assert self.stored >= 0
+        # assert generation <= self.capacity
+        self.hourly_power[hr] = generation
+        self.hourly_spilled[hr] = 0
+
+        if generation > demand:
+            # This can happen due to rounding errors.
+            generation = demand
+        return generation, 0
+
+    def reset(self):
+        Generator.reset(self)
+        self.stored = 0.5 * self.maxstorage
+
+
+class ParabolicTrough(CST):
+
+    """Parabolic trough CST generator.
+
+    This stub class allows differentiated CST costs in costs.py.
+    """
+    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
+
+
+class CentralReceiver(CST):
+
+    """Central receiver CST generator.
+
+    This stub class allows differentiated CST costs in costs.py.
+    """
+    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
 
 
 class Fuelled(Generator):

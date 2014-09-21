@@ -169,17 +169,17 @@ def re100(context):
     >>> c = C()
     >>> re100(c)
     >>> len(c.generators)
-    25
+    22
     """
-    from generators import ParabolicTrough, Wind, PV, Hydro, PumpedHydro, Biofuel
+    from generators import CentralReceiver, ParabolicTrough, Wind, PV, Hydro, PumpedHydro, Biofuel
     from siteinfo import fielddata
 
-    capfactor = {ParabolicTrough: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
-    energy_fraction = {ParabolicTrough: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
+    capfactor = {CentralReceiver: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
+    energy_fraction = {CentralReceiver: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
 
     result = []
     # The following list is in merit order.
-    for g in [PV, Wind, ParabolicTrough, Hydro, PumpedHydro, Biofuel]:
+    for g in [PV, Wind, CentralReceiver, Hydro, PumpedHydro, Biofuel]:
         if capfactor[g] is not None:
             capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
         if g == PumpedHydro:
@@ -218,6 +218,15 @@ def re100(context):
                 aws, state = stns[site]
                 region = regions.find(state)
                 result.append(g(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
+        elif g == CentralReceiver:
+            polys = [14, 20, 21]
+            capacity /= len(polys)
+            for poly in polys:
+                rgn = polygons.region_table[poly]
+                result.append(g(rgn, capacity, 2, 6,
+                                siteinfo.roam_cst_data, poly - 1,
+                                build_limit=polygons.cst_limit[poly],
+                                label=rgn.id + ' CST'))
         elif g == Wind:
             # Hand chosen polygons with high capacity factors
             for poly in [1, 20, 24, 39, 43]:
@@ -246,7 +255,7 @@ def re100_batteries(context):
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
-    26
+    23
     """
     re100(context)
     nsw_battery = generators.Battery(regions.nsw, 0, 0)
@@ -262,7 +271,7 @@ def re_plus_ccs(context):
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
-    26
+    23
     """
     re100(context)
     coal = generators.Black_Coal(regions.nsw, 0)
@@ -282,7 +291,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    24
+    21
     """
     re100(context)
     # pylint: disable=redefined-outer-name
@@ -301,7 +310,7 @@ def re100_dsp(context):
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    28
+    25
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
@@ -318,7 +327,7 @@ def re100_geothermal(context):
     >>> c.generators = []
     >>> re100_geothermal(c)
     >>> len(c.generators)
-    29
+    26
     >>> isinstance(c.generators[0], generators.Geothermal)
     True
     >>> isinstance(c.generators[-1], generators.DemandResponse)
@@ -338,7 +347,7 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    29
+    26
     """
     re100(context)
     # pylint: disable=redefined-outer-name
