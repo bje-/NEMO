@@ -205,7 +205,8 @@ def re100(context):
                 # Put 25% PV capacity in each region.
                 result.append(g(rgn, capacity * 0.25,
                                 siteinfo.roam_pv1axis_data, poly - 1,
-                                label=rgn.id + ' 1-axis PV'))
+                                build_limit=polygons.pv_limit[poly],
+                                label=rgn.id + '1-axis PV'))
         elif g == CST:
             line1 = open(fielddata).readline()
             # Pull out all of the station numbers, in column order.
@@ -224,7 +225,9 @@ def re100(context):
                 # Put 20% wind capacity in each region.
                 result.append(g(rgn, capacity * 0.2,
                                 siteinfo.roam_wind_data, poly - 1,
-                                delimiter=',', label=rgn.id + ' wind'))
+                                delimiter=',',
+                                build_limit=polygons.wind_limit[poly],
+                                label=rgn.id + ' wind'))
         else:  # pragma: no cover
             raise(ValueError)
 

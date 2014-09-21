@@ -86,8 +86,12 @@ class Wind(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, delimiter=None, label='wind'):
+    def __init__(self, region, capacity, filename, column, delimiter=None, build_limit=None, label='wind'):
         Generator.__init__(self, region, capacity, label)
+        if build_limit is not None:
+            # Override maximum generator capacity with build_limit
+            _, _, limit = self.setters[0]
+            self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.non_synchronous_p = True
         if Wind.csvfilename != filename:
             # Optimisation:
@@ -211,9 +215,13 @@ class PV(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, label='PV'):
+    def __init__(self, region, capacity, filename, column, build_limit=None, label='PV'):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
+        if build_limit is not None:
+            # Override maximum generator capacity with build_limit
+            _, _, limit = self.setters[0]
+            self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         if PV.csvfilename != filename:
             PV.csvdata = np.genfromtxt(filename, delimiter=',')
             PV.csvdata = np.maximum(0, PV.csvdata)
