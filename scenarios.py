@@ -9,8 +9,6 @@
 
 import heapq
 import numpy as np
-import string
-import re
 
 import consts
 import generators
@@ -145,22 +143,6 @@ def coal_ccs(context):
     context.generators = [coal] + _hydro() + [ocgt]
 
 
-def _import_bom_stations(filename):
-    """Read BoM station data."""
-    f = open(filename)
-    stations = {}
-    for line in f:
-        fields = line.split(',')
-        stncode = fields[1]
-        state = fields[9].strip()
-        location = fields[3].strip()
-        location = string.capwords(location)
-        location = string.replace(location, 'Aws', 'AWS')
-        stations[stncode] = (location, state)
-    f.close()
-    return stations
-
-
 def re100(context):
     # pylint: disable=unused-argument
     """100% renewable electricity.
@@ -171,8 +153,7 @@ def re100(context):
     >>> len(c.generators)
     22
     """
-    from generators import CentralReceiver, ParabolicTrough, Wind, PV, Hydro, PumpedHydro, Biofuel
-    from siteinfo import fielddata
+    from generators import CentralReceiver, Wind, PV, Hydro, PumpedHydro, Biofuel
 
     capfactor = {CentralReceiver: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
     energy_fraction = {CentralReceiver: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
@@ -207,17 +188,6 @@ def re100(context):
                                 siteinfo.roam_pv1axis_data, poly - 1,
                                 build_limit=polygons.pv_limit[poly],
                                 label=rgn.id + ' 1-axis PV'))
-        elif g == ParabolicTrough:
-            line1 = open(fielddata).readline()
-            # Pull out all of the station numbers, in column order.
-            sites = re.compile(r'\d{6}').findall(line1)
-            # Divide evenly among locations.
-            capacity /= len(sites)
-            stns = _import_bom_stations(siteinfo.stations_txt)
-            for i, site in enumerate(sites):
-                aws, state = stns[site]
-                region = regions.find(state)
-                result.append(g(region, capacity, 2.5, 15, fielddata, i, label=aws + ' SCST'))
         elif g == CentralReceiver:
             polys = [14, 20, 21]
             capacity /= len(polys)
