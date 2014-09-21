@@ -252,7 +252,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
     # appears in "merit order".
     gen_list = _generator_list(context)[::-1]
 
-    if len(gen_list) > 12:
+    if len(gen_list) > 25:
         unique = []
         keep = []
         for g in gen_list:
