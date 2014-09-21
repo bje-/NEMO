@@ -7,7 +7,7 @@
 
 """Site-specific data (eg, filenames)."""
 
-roam_cst_data = 'data/roam-cst.csv'
-roam_wind_data = 'data/roam-wind.csv'
-roam_pv1axis_data = 'data/roam-pv.csv'
+cst_data = 'data/cst-data.csv'
+wind_data = 'data/wind-data.csv'
+pv1axis_data = 'data/pv1axis-data.csv'
 demand_data = 'data/demand.data'
