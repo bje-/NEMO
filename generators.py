@@ -237,10 +237,8 @@ class PV(Generator):
 class PV1Axis(PV):
     """Single-axis tracking PV."""
 
-    patch = Patch(facecolor='blue')
-
-    def __init__(self, region, capacity, filename, column, label='PV 1-axis'):
-        PV.__init__(self, region, capacity, filename, column, label)
+    def __init__(self, region, capacity, filename, column, build_limit=None, label='PV 1-axis'):
+        PV.__init__(self, region, capacity, filename, column, build_limit, label)
 
 
 class CST(Generator):

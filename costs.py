@@ -199,6 +199,7 @@ class AETA2013_2030Low (AETA2012_2030Low):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
+        fom[tech.PV1Axis] = 30 * self.escalation
         fom[tech.CentralReceiver] = 71.312 * self.escalation
         fom[tech.ParabolicTrough] = 72.381 * self.escalation
         vom = self.opcost_per_mwh
@@ -229,6 +230,7 @@ class AETA2013_2030High (AETA2012_2030High):
         # Override a few O&M costs.
         fom = self.fixed_om_costs
         fom[tech.Wind] = 32.5 * self.escalation
+        fom[tech.PV1Axis] = 30 * self.escalation
         fom[tech.CentralReceiver] = 71.312 * self.escalation
         fom[tech.ParabolicTrough] = 72.381 * self.escalation
         vom = self.opcost_per_mwh

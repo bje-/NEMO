@@ -153,14 +153,14 @@ def re100(context):
     >>> len(c.generators)
     22
     """
-    from generators import CentralReceiver, Wind, PV, Hydro, PumpedHydro, Biofuel
+    from generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
-    capfactor = {CentralReceiver: 0.60, Wind: 0.40, PV: 0.30, Hydro: None, PumpedHydro: None, Biofuel: None}
-    energy_fraction = {CentralReceiver: 0.40, Wind: 0.30, PV: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
+    capfactor = {CentralReceiver: 0.60, Wind: 0.40, PV1Axis: 0.33, Hydro: None, PumpedHydro: None, Biofuel: None}
+    energy_fraction = {CentralReceiver: 0.40, Wind: 0.30, PV1Axis: 0.10, Hydro: None, PumpedHydro: None, Biofuel: None}
 
     result = []
     # The following list is in merit order.
-    for g in [PV, Wind, CentralReceiver, Hydro, PumpedHydro, Biofuel]:
+    for g in [PV1Axis, Wind, CentralReceiver, Hydro, PumpedHydro, Biofuel]:
         if capfactor[g] is not None:
             capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
         if g == PumpedHydro:
@@ -179,7 +179,7 @@ def re100(context):
             # the region list is in order of approximate demand
             for r in regions.All:
                 result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
-        elif g == PV:
+        elif g == PV1Axis:
             # Hand chosen polygons with high capacity factors
             for poly in [14, 21, 13, 37]:
                 rgn = polygons.region_table[poly]
