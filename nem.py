@@ -265,7 +265,7 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
     f = plt.figlegend([Patch('black', 'red')] +
                       [g.patch for g in gen_list],
-                      ['unserved'] + [g.label for g in gen_list],
+                      ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000) for g in gen_list],
                       'upper right')
     plt.setp(f.get_texts(), fontsize='small')
 
