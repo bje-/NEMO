@@ -235,7 +235,7 @@ def run():
         if args.verbose:
             print best
         else:
-            print 'Score: $%.2f per MWh' % best.score
+            print 'Score: %.2f $/MWh' % best.score
             print 'List:', best.getInternalList()
 
         set_generators(best.getInternalList())
