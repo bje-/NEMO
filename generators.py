@@ -295,6 +295,9 @@ class CST(Generator):
         Generator.reset(self)
         self.stored = 0.5 * self.maxstorage
 
+    def summary(self, costs):
+        return Generator.summary(self, costs) + \
+            ', solar mult %.2f' % self.sm + ', %dh storage' % self.shours
 
 class ParabolicTrough(CST):
 
