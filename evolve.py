@@ -167,7 +167,8 @@ def cost(ctx, transmission_p):
         txscore = (maxexchanges * ctx.costs.transmission.cost_matrix).sum()
         score += txscore
 
-    return score / pow(10, 9)
+    # Express $/yr as an average $/MWh over the period
+    return score / ctx.demand.sum()
 
 
 def set_generators(chromosome):
@@ -234,7 +235,7 @@ def run():
         if args.verbose:
             print best
         else:
-            print 'Score: %.2f' % best.score
+            print 'Score: $%.2f per MWh' % best.score
             print 'List:', best.getInternalList()
 
         set_generators(best.getInternalList())
