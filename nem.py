@@ -1,4 +1,5 @@
 # Copyright (C) 2011, 2012, 2014 Ben Elliston
+# Copyright (C) 2014 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
