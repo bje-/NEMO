@@ -180,7 +180,7 @@ def set_generators(chromosome):
             setter(chromosome[i])
             i += 1
     # Check every parameter has been set.
-    assert i == len(chromosome)
+    assert i == len(chromosome), '%d != %d' % (i, len(chromosome))
 
 
 def eval_func(chromosome):
