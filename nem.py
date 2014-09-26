@@ -8,6 +8,8 @@
 
 """A National Electricity Market (NEM) simulation."""
 
+import re
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -17,8 +19,6 @@ import consts
 import regions
 import generators
 import siteinfo
-
-hours = 8760
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
@@ -30,6 +30,18 @@ assert demand.shape[0] == 12
 
 # The number of rows must be even.
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
+
+# Find the start date of the demand data.
+f = open(siteinfo.demand_data)
+for line in f:
+    if re.search(r'^\s*#', line):
+        continue
+    cols = line.split()
+    year, month, day = cols[0].split('/')
+    startdate = datetime.datetime(int(year), int(month), int(day))
+    assert cols[1] == '00:30:00', 'demand data must start at midnight'
+    break
+f.close()
 
 # For hourly demand, average half-hours n and n+1.
 # Demand is in every second column from columns 2 onwards.
@@ -58,6 +70,11 @@ class Context:
         self.verbose = False
         self.track_exchanges = False
         self.regions = regions.All
+        self.startdate = startdate
+        # Number of timesteps is determined by the number of demand rows.
+        self.hours = demand.shape[1] / 2
+        # Estimate the number of years from the number of sim.  hours.
+        self.years = self.hours / (365.25 * 24)
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
         self.generators = default_generation_mix()
@@ -69,7 +86,20 @@ class Context:
         self.unserved_percent = 0
         # System non-synchronous penetration limit
         self.nsp_limit = 1.0
-        self.exchanges = np.zeros((hours, regions.numregions, regions.numregions))
+        self.exchanges = np.zeros((self.hours, regions.numregions, regions.numregions))
+
+    def format_date(self, x, pos=None):
+        """Pretty printer for dates/times.
+
+        >>> c = Context()
+        >>> c.startdate = datetime.datetime(2008, 1, 1)
+        >>> c.format_date(0)
+        '2008-01-01'
+        """
+        # pylint: disable=unused-argument
+        delta = datetime.timedelta(hours=x)
+        t = self.startdate + delta
+        return t.strftime('%Y-%m-%d')
 
     def __str__(self):
         """A human-readable representation of the context.
@@ -119,8 +149,8 @@ def _sim(context, starthour, endhour):
         g.reset()
 
     context.exchanges.fill(0)
-    context.generation = np.zeros((len(context.generators), hours))
-    context.spill = np.zeros((len(context.generators), hours))
+    context.generation = np.zeros((len(context.generators), context.hours))
+    context.spill = np.zeros((len(context.generators), context.hours))
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region in context.regions]
@@ -239,8 +269,8 @@ def plot(context, spills=False, filename=None, xlimit=None):
 
     fig = plt.figure()
     plt.ylabel('MW')
-    plt.xlabel('Hour')
-    title = 'NEM supply/demand for 2010\nRegions: %s' % str(context.regions)
+    plt.xlabel('Date')
+    title = 'NEM supply/demand\nRegions: %s' % context.regions
     plt.suptitle(title)
     plt.xlim(0, context.timesteps)
     ymax = (spill.max() + demand.max()) * 1.05 if spills else demand.max() * 1.05
@@ -270,8 +300,10 @@ def plot(context, spills=False, filename=None, xlimit=None):
                       'upper right')
     plt.setp(f.get_texts(), fontsize='small')
 
+    # Put an x-tick at the noon position every two days
+    plt.xticks(np.arange(12, context.hours, 48))
     ax = fig.add_subplot(111)
-    ax.xaxis.set_major_formatter(ticker.FuncFormatter(_format_date))
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(context.format_date))
     fig.autofmt_xdate()
 
     # Plot demand first.
@@ -347,16 +379,3 @@ def run(context, starthour=0, endhour=None):
     else:
         context.shortfalls = (round(min(shortfall)), round(max(shortfall)))
     return context
-
-
-def _format_date(x, pos=None):
-    """Pretty printer for dates/times.
-
-    >>> _format_date(0)
-    'Jan 01 00h'
-    """
-    # pylint: disable=unused-argument
-    import datetime
-    delta = datetime.timedelta(hours=x)
-    t = datetime.datetime(2010, 1, 1) + delta
-    return t.strftime('%b %d %Hh')
