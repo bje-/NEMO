@@ -74,7 +74,10 @@ class Context:
         # Number of timesteps is determined by the number of demand rows.
         self.hours = demand.shape[1] / 2
         # Estimate the number of years from the number of sim.  hours.
-        self.years = self.hours / (365.25 * 24)
+        if self.hours == 8760 or self.hours == 8784:
+            self.years = 1
+        else:
+            self.years = self.hours / (365.25 * 24)
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
         self.generators = default_generation_mix()

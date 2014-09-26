@@ -49,15 +49,15 @@ parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='dis
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
-parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on annual energy from bioenergy (TWh) [default: 20]')
+parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on annual energy from bioenergy (TWh/y) [default: 20]')
 parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
 parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
 parser.add_argument("--costs", type=str, default='AETA2013-in2030-mid', help='cost scenario [default: AETA2013-in2030-mid]')
-parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (Mt) [default: None]')
+parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (Mt/y) [default: None]')
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
-parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh) [default: 12]')
+parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--nsp-limit", type=float, default=0.8, help='system non-synchronous penetration limit [default: 0.8]')
 parser.add_argument("--spills", action="store_true", help='Plot spills [default: False]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
@@ -121,7 +121,7 @@ def cost(ctx, transmission_p):
                 # not all generators have an intensity attribute
                 pass
         # exceedance in tonnes CO2-e
-        emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6))
+        emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
         score += pow(emissions_exceedance, 3)
 
     ### Penalty: limit fossil to fraction of annual demand
@@ -134,7 +134,7 @@ def cost(ctx, transmission_p):
                g.__class__ is generators.CCGT_CCS or \
                g.__class__ is generators.Black_Coal:
                 fossil_energy += sum(g.hourly_power.values())
-        fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit)
+        fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
         score += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
@@ -142,7 +142,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is generators.Biofuel:
             biofuel_energy += sum(g.hourly_power.values())
-    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh)
+    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
     score += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
@@ -150,7 +150,7 @@ def cost(ctx, transmission_p):
     for g in ctx.generators:
         if g.__class__ is generators.Hydro or g.__class__ is generators.PumpedHydro:
             hydro_energy += sum(g.hourly_power.values())
-    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh)
+    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
     score += pow(hydro_exceedance, 3)
 
     if transmission_p:
