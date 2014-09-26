@@ -8,7 +8,7 @@
 
 """Site-specific data (eg, filenames)."""
 
-cst_data = 'data/cst-data.csv'
-wind_data = 'data/wind-data.csv'
-pv1axis_data = 'data/pv1axis-data.csv'
-demand_data = 'data/demand.data'
+cst_data = 'data/cst2010.csv'
+wind_data = 'data/wind2010.csv'
+pv1axis_data = 'data/pv2010.csv'
+demand_data = 'data/demand2010.data'
