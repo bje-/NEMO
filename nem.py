@@ -9,10 +9,10 @@
 """A National Electricity Market (NEM) simulation."""
 
 import re
-import datetime
+import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+import matplotlib.dates as mdates
 from matplotlib.patches import Patch
 
 import consts
@@ -38,7 +38,7 @@ for line in f:
         continue
     cols = line.split()
     year, month, day = cols[0].split('/')
-    startdate = datetime.datetime(int(year), int(month), int(day))
+    startdate = dt.datetime(int(year), int(month), int(day))
     assert cols[1] == '00:30:00', 'demand data must start at midnight'
     break
 f.close()
@@ -73,7 +73,7 @@ class Context:
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
         self.hours = demand.shape[1] / 2
-        # Estimate the number of years from the number of sim.  hours.
+        # Estimate the number of years from the number of sim. hours.
         if self.hours == 8760 or self.hours == 8784:
             self.years = 1
         else:
@@ -95,12 +95,12 @@ class Context:
         """Pretty printer for dates/times.
 
         >>> c = Context()
-        >>> c.startdate = datetime.datetime(2008, 1, 1)
+        >>> c.startdate = dt.datetime(2008, 1, 1)
         >>> c.format_date(0)
         '2008-01-01'
         """
         # pylint: disable=unused-argument
-        delta = datetime.timedelta(hours=x)
+        delta = dt.timedelta(hours=x)
         t = self.startdate + delta
         return t.strftime('%Y-%m-%d')
 
@@ -264,23 +264,18 @@ def _generator_list(context):
     return [g for g in context.generators if g.region in context.regions and g.capacity > 0]
 
 
-def plot(context, spills=False, filename=None, xlimit=None):
+def plot(context, spills=False, filename=None):
     """Produce a pretty plot of supply and demand."""
     spill = context.spill
     # aggregate demand
     demand = context.demand.sum(axis=0)
 
-    fig = plt.figure()
     plt.ylabel('MW')
     plt.xlabel('Date')
     title = 'NEM supply/demand\nRegions: %s' % context.regions
     plt.suptitle(title)
-    plt.xlim(0, context.timesteps)
     ymax = (spill.max() + demand.max()) * 1.05 if spills else demand.max() * 1.05
     plt.ylim(0, ymax)
-
-    if xlimit is not None:
-        plt.xlim(xlimit)
 
     # The ::-1 slicing reverses the 'gens' list so that the legend
     # appears in "merit order".
@@ -302,15 +297,11 @@ def plot(context, spills=False, filename=None, xlimit=None):
                       ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000) for g in gen_list],
                       'upper right')
     plt.setp(f.get_texts(), fontsize='small')
-
-    # Put an x-tick at the noon position every two days
-    plt.xticks(np.arange(12, context.hours, 48))
-    ax = fig.add_subplot(111)
-    ax.xaxis.set_major_formatter(ticker.FuncFormatter(context.format_date))
-    fig.autofmt_xdate()
+    xdata = mdates.drange(context.startdate,
+                          context.startdate + dt.timedelta(hours=context.hours),
+                          dt.timedelta(hours=1))
 
     # Plot demand first.
-    xdata = np.arange(context.timesteps)
     plt.plot(xdata, demand, color='black', linewidth=2)
     if spills:
         peakdemand = np.empty_like(demand)
@@ -339,8 +330,13 @@ def plot(context, spills=False, filename=None, xlimit=None):
             plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
 
-    for h in np.argwhere(context.unserved):
-        plt.plot([h[0]], [ymax], "yv", markersize=15, color='red')
+    plt.gca().xaxis_date()
+    plt.gcf().autofmt_xdate()
+
+    for hr in np.argwhere(context.unserved):
+        unserved_dt = context.startdate + dt.timedelta(hours=hr[0])
+        xvalue = mdates.date2num(unserved_dt)
+        plt.plot([xvalue], [ymax], "yv", markersize=15, color='red')
 
     if not filename:
         plt.show()  # pragma: no cover
