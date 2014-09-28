@@ -261,8 +261,6 @@ def plot(context, spills=False, filename=None):
     plt.xlabel('Date')
     title = 'NEM supply/demand\nRegions: %s' % context.regions
     plt.suptitle(title)
-    ymax = (spill.max() + demand.max()) * 1.05 if spills else demand.max() * 1.05
-    plt.ylim(0, ymax)
 
     # The ::-1 slicing reverses the 'gens' list so that the legend
     # appears in "merit order".
@@ -323,7 +321,8 @@ def plot(context, spills=False, filename=None):
     for hr in np.argwhere(context.unserved):
         unserved_dt = context.startdate + dt.timedelta(hours=hr[0])
         xvalue = mdates.date2num(unserved_dt)
-        plt.plot([xvalue], [ymax], "yv", markersize=15, color='red')
+        _, ymax = plt.gca().get_ylim()
+        plt.plot([xvalue], [ymax - 200], "yv", markersize=15, color='red')
 
     if not filename:
         plt.show()  # pragma: no cover
