@@ -91,19 +91,6 @@ class Context:
         self.nsp_limit = 1.0
         self.exchanges = np.zeros((self.hours, regions.numregions, regions.numregions))
 
-    def format_date(self, x, pos=None):
-        """Pretty printer for dates/times.
-
-        >>> c = Context()
-        >>> c.startdate = dt.datetime(2008, 1, 1)
-        >>> c.format_date(0)
-        '2008-01-01'
-        """
-        # pylint: disable=unused-argument
-        delta = dt.timedelta(hours=x)
-        t = self.startdate + delta
-        return t.strftime('%Y-%m-%d')
-
     def __str__(self):
         """A human-readable representation of the context.
 
