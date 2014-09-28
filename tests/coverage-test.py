@@ -23,7 +23,7 @@ class TestCoverage(unittest.TestCase):
         nem.run(c)
         nem.plot(c, filename='foo.png')
         os.unlink('foo.png')
-        nem.plot(c, filename='foo.png', spills=True, xlimit=[0, 100])
+        nem.plot(c, filename='foo.png', spills=True)
         os.unlink('foo.png')
 
     def test_003(self):
