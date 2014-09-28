@@ -88,7 +88,7 @@ class Context:
         self.unserved_hours = 0
         self.unserved_percent = 0
         # System non-synchronous penetration limit
-        self.nsp_limit = 1.0
+        self.nsp_limit = consts.nsp_limit
         self.exchanges = np.zeros((self.hours, regions.numregions, regions.numregions))
 
     def __str__(self):
@@ -257,8 +257,7 @@ def plot(context, spills=False, filename=None):
     # aggregate demand
     demand = context.demand.sum(axis=0)
 
-    plt.ylabel('MW')
-    plt.xlabel('Date')
+    plt.ylabel('Power (MW)')
     title = 'NEM supply/demand\nRegions: %s' % context.regions
     plt.suptitle(title)
 

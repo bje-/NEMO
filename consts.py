@@ -9,3 +9,6 @@
 
 # Conversion factor between MWh and TWh.
 twh = pow(10, 6)
+
+# Default non-synchronous penetration limit.
+nsp_limit = 0.75
