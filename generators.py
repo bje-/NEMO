@@ -97,7 +97,7 @@ class Wind(Generator):
         if Wind.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            Wind.csvdata = np.genfromtxt(filename, delimiter=delimiter)
+            Wind.csvdata = np.genfromtxt(filename, comments='#', delimiter=delimiter)
             Wind.csvdata = np.maximum(0, Wind.csvdata)
             Wind.csvfilename = filename
         self.generation = Wind.csvdata[::, column]
@@ -221,7 +221,7 @@ class PV(Generator):
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         if PV.csvfilename != filename:
-            PV.csvdata = np.genfromtxt(filename, delimiter=',')
+            PV.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
             PV.csvdata = np.maximum(0, PV.csvdata)
             PV.csvfilename = filename
         self.generation = PV.csvdata[::, column]
@@ -257,7 +257,7 @@ class CST(Generator):
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.sm = sm
         if CST.csvfilename != filename:
-            CST.csvdata = np.genfromtxt(filename, delimiter=',')
+            CST.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
             CST.csvfilename = filename
         self.generation = CST.csvdata[::, column]
         self.shours = shours
