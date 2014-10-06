@@ -176,10 +176,11 @@ def re100(context):
             result.append(Hydro(regions.vic, 960, label=regions.vic.id + ' hydro'))
         elif g == Biofuel:
             # 24 GW biofuelled gas turbines (fixed)
-            # distribute 24GW of biofuelled turbines across all regions
+            # distribute 24GW of biofuelled turbines across chosen regions
             # the region list is in order of approximate demand
-            for r in regions.All:
-                result.append(Biofuel(r, 24000 / regions.numregions, label=r.id + ' GT'))
+            rgns = [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]
+            for r in rgns:
+                result.append(Biofuel(r, 24000 / len(rgns), label=r.id + ' GT'))
         elif g == PV1Axis:
             # Hand chosen polygons with high capacity factors
             for poly in [14, 21, 13, 37]:

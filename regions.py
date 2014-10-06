@@ -54,9 +54,10 @@ class Region:
 nsw = Region(0, 'NSW1', 'New South Wales', (-32.1633, 147.0166))
 qld = Region(1, 'QLD1', 'Queensland', (-22.4869, 144.4316))
 sa = Region(2, 'SA1', 'South Australia', (-30.0583, 135.7633))
-tas = Region(3, 'TAS1', 'Tasmania', (-42.0213, 146.5933))
-vic = Region(4, 'VIC1', 'Victoria', (-36.8541, 144.2811))
-All = [nsw, qld, sa, tas, vic]
+snowy = Region(3, 'SNOWY1', 'Snowy Mountains', (-36.2200, 148.1269))
+tas = Region(4, 'TAS1', 'Tasmania', (-42.0213, 146.5933))
+vic = Region(5, 'VIC1', 'Victoria', (-36.8541, 144.2811))
+All = [nsw, qld, sa, snowy, tas, vic]
 numregions = len(All)
 
 
