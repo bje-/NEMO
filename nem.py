@@ -18,11 +18,11 @@ from matplotlib.patches import Patch
 import consts
 import regions
 import generators
-import siteinfo
+import configfile
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
-demand = np.genfromtxt(siteinfo.demand_data, comments='#')
+demand = np.genfromtxt(configfile.demand_data, comments='#')
 demand = demand.transpose()
 
 # Check for date, time and 2*n demand+price columns (n regions).
@@ -32,7 +32,7 @@ assert demand.shape[0] == 2 + regions.numregions * 2
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
 
 # Find the start date of the demand data.
-f = open(siteinfo.demand_data)
+f = open(configfile.demand_data)
 for line in f:
     if re.search(r'^\s*#', line):
         continue
