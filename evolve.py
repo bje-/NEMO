@@ -105,7 +105,7 @@ def cost(ctx, transmission_p):
     score = 0
 
     for g in ctx.generators:
-        score += g.capcost(ctx.costs) + g.opcost(ctx.costs)
+        score += (g.capcost(ctx.costs) * ctx.years) + g.opcost(ctx.costs)
 
     ### Penalty: unserved energy
     minuse = ctx.demand.sum() * (ctx.relstd / 100)
