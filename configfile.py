@@ -12,7 +12,8 @@ import ConfigParser
 
 def load(filename):
     """Load a configuration file (or files)."""
-    config.read(filename)
+    result = config.read(filename)
+    assert result != [], "config file %s not found" % filename
     # Verify
     config.get('generation', 'cst-trace')
     config.get('generation', 'wind-trace')
