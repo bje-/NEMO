@@ -187,7 +187,8 @@ def re100(context):
                 rgn = polygons.region_table[poly]
                 # Put 25% PV capacity in each region.
                 result.append(g(rgn, capacity * 0.25,
-                                configfile.pv1axis_data, poly - 1,
+                                configfile.get('generation', 'pv1axis-trace'),
+                                poly - 1,
                                 build_limit=polygons.pv_limit[poly],
                                 label=rgn.id + ' 1-axis PV'))
         elif g == CentralReceiver:
@@ -196,7 +197,8 @@ def re100(context):
             for poly in polys:
                 rgn = polygons.region_table[poly]
                 result.append(g(rgn, capacity, 2, 6,
-                                configfile.cst_data, poly - 1,
+                                configfile.get('generation', 'cst-trace'),
+                                poly - 1,
                                 build_limit=polygons.cst_limit[poly],
                                 label=rgn.id + ' CST'))
         elif g == Wind:
@@ -205,7 +207,8 @@ def re100(context):
                 rgn = polygons.region_table[poly]
                 # Put 20% wind capacity in each region.
                 result.append(g(rgn, capacity * 0.2,
-                                configfile.wind_data, poly - 1,
+                                configfile.get('generation', 'wind-trace'),
+                                poly - 1,
                                 delimiter=',',
                                 build_limit=polygons.wind_limit[poly],
                                 label=rgn.id + ' wind'))

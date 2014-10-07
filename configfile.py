@@ -9,10 +9,20 @@
 
 import ConfigParser
 
-config = ConfigParser.ConfigParser()
-config.read('default.cfg')
 
-cst_data = config.get('generation', 'cst-trace')
-wind_data = config.get('generation', 'wind-trace')
-pv1axis_data = config.get('generation', 'pv1axis-trace')
-demand_data = config.get('demand', 'demand-trace')
+def load(filename):
+    """Load a configuration file (or files)."""
+    config.read(filename)
+    # Verify
+    config.get('generation', 'cst-trace')
+    config.get('generation', 'wind-trace')
+    config.get('generation', 'pv1axis-trace')
+    config.get('demand', 'demand-trace')
+
+
+def get(section, keyword):
+    """A wrapper around ConfigParser.get."""
+    return config.get(section, keyword)
+
+config = ConfigParser.ConfigParser()
+load('default.cfg')
