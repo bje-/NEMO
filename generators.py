@@ -300,6 +300,7 @@ class CST(Generator):
         return Generator.summary(self, costs) + \
             ', solar mult %.2f' % self.sm + ', %dh storage' % self.shours
 
+
 class ParabolicTrough(CST):
 
     """Parabolic trough CST generator.
