@@ -7,7 +7,6 @@
 
 BEGIN {
     PROCINFO["sorted_in"] = "@ind_num_asc"
-    baseline_demand = 204.4
     merit[0] = "geoth"
     merit[1] = "PV"
     merit[2] = "wind"
@@ -39,6 +38,7 @@ BEGIN {
 /supplied.*TWh/		{ energy[last] += $2 }
 /spilled.*TWh/		{ spilled += $5 }
 /Score:/		{ cost = $2 }
+/Timesteps:/		{ timesteps = $2 }
 
 /Demand energy:/ {
     i++
@@ -57,7 +57,7 @@ BEGIN {
 	    printf ("%s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
 		    caps[c], (float) caps[c] / total_capacity, \
 		    energy[c], (float) energy[c] / total_demand, \
-		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * 8760) : 0)
+		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
     if (spilled > 0)
 	printf ("spilled\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", spilled, spilled / total_demand)
