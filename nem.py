@@ -116,6 +116,7 @@ class Context:
                     s += '\n\t   ' + g.summary(self.costs) + '\n'
                 else:
                     s += '\n'
+        s += 'Timesteps: %d h\n' % self.hours
         s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / consts.twh)
         s += 'Spilled energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
 
