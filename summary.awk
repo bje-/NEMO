@@ -48,7 +48,8 @@ BEGIN {
     	total_capacity += caps[c]
     }
     printf ("# scenario %d\n", i)
-    printf ("# score %.2f\n", cost)
+    printf ("# demand %.2f TWh\n", total_demand)
+    printf ("# score %.2f $/MWh\n", cost)
     printf ("# tech\t  GW\tshare\t  TWh\tshare\tCF\n")
     for (m in merit) {
 	c = merit[m]
