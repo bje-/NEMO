@@ -9,6 +9,7 @@
 
 import ConfigParser
 import consts
+import os
 
 
 def load(filename):
@@ -27,4 +28,9 @@ def get(section, keyword):
     return config.get(section, keyword)
 
 config = ConfigParser.ConfigParser()
-load(consts.config_filename)
+
+# If $NEMORC is set, use that as the config filename.
+if os.getenv('NEMORC') is not None:
+    load(os.getenv('NEMORC'))
+else:
+    load(consts.config_filename)
