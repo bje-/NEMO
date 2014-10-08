@@ -8,6 +8,7 @@
 """Configuration file processing (eg, filenames)."""
 
 import ConfigParser
+import consts
 
 
 def load(filename):
@@ -26,4 +27,4 @@ def get(section, keyword):
     return config.get(section, keyword)
 
 config = ConfigParser.ConfigParser()
-load('default.cfg')
+load(consts.config_filename)
