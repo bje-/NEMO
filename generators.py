@@ -660,6 +660,7 @@ class DemandResponse(Generator):
         Generator.__init__(self, region, capacity, label)
         self.setters = []
         self.runhours = 0
+        self.maxresponse = 0
         self.cost_per_mwh = cost_per_mwh
 
     def step(self, hr, demand):
@@ -672,6 +673,7 @@ class DemandResponse(Generator):
         1
         """
         power = min(self.capacity, demand)
+        self.maxresponse = max(self.maxresponse, power)
         self.hourly_power[hr] = power
         self.hourly_spilled[hr] = 0
         if power > 0:
@@ -681,10 +683,12 @@ class DemandResponse(Generator):
     def reset(self):
         Generator.reset(self)
         self.runhours = 0
+        self.maxresponse = 0
 
     def opcost(self, costs):
         return sum(self.hourly_power.values()) * self.cost_per_mwh
 
     def summary(self, costs):
-        return Generator.summary(self, costs) + ', ran %s hours' \
-            % locale.format('%d', self.runhours, grouping=True)
+        return Generator.summary(self, costs) + \
+            ', max response %d MW' % self.maxresponse + \
+            ', ran %s hours' % locale.format('%d', self.runhours, grouping=True)
