@@ -36,7 +36,7 @@ BEGIN {
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
-/spilled.*TWh/		{ spilled += $5 }
+/spilled.*TWh/		{ surplus += $5 }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
 
@@ -59,10 +59,10 @@ BEGIN {
 		    energy[c], (float) energy[c] / total_demand, \
 		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
-    if (spilled > 0)
-	printf ("spilled\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", spilled, spilled / total_demand)
+    if (surplus > 0)
+	printf ("surplus\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", surplus, surplus / total_demand)
 
-    spilled = 0
+    surplus = 0
     delete caps
     delete energy
     printf ("\n\n")
