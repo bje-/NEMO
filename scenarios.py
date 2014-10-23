@@ -311,7 +311,7 @@ def re100_geothermal(context):
     re100(context)
     g = context.generators
     geo = generators.Geothermal(regions.sa, 0, 'HSA geoth.')
-    context.generators = [geo] + g + _demand_response()
+    context.generators = [geo] + g
 
 
 def theworks(context):
