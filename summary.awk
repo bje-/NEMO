@@ -20,6 +20,8 @@ BEGIN {
     merit[10] = "GT"
     merit[11] = "OCGT"
     merit[12] = "DR"
+    # assume 8760 timesteps unless specified in the simulation output
+    timesteps = 8760
 }
 
 /geoth.*GW.?$/		{ caps["geoth"] += $(NF-1); last="geoth" }
