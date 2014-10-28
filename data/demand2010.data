@@ -1,3 +1,6 @@
+# Demand data for 2010
+# Copyright (C) 2014 Australian Energy Market Operator Limited
+#
 #Date       Time      NSW1      NSW1-RRP  QLD1     QLD1-RRP  SA1      SA1-RRP  SNOWY1  SNOWY1-RRP  TAS1     TAS1-RRP  VIC1     VIC1-RRP
 2010/01/01  00:30:00  7809.31   21.5      5422.25  20.67     1385.23  20.37    0.0     0.0         947.59   22.32     5111.02  20.11
 2010/01/01  01:00:00  7483.69   20.98     5315.98  20.15     1338.53  19.95    0.0     0.0         926.52   22.31     4960.03  19.4
