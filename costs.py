@@ -302,4 +302,4 @@ cost_scenarios = {'null': NullCosts,
                   'AETA2012-in2030-high': AETA2012_2030High,
                   'AETA2013-in2030-low': AETA2013_2030Low,
                   'AETA2013-in2030-mid': AETA2013_2030Mid,
-                  'AETA2013-in2030-high': AETA2013_2030Low}
+                  'AETA2013-in2030-high': AETA2013_2030High}
