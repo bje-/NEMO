@@ -49,7 +49,7 @@ parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='dis
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
-parser.add_argument("--bioenergy-limit", type=int, default=20, help='Limit on annual energy from bioenergy (TWh/y) [default: 20]')
+parser.add_argument("--bioenergy-limit", type=float, default=20, help='Limit on annual energy from bioenergy (TWh/y) [default: 20.0]')
 parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
 parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
 parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
