@@ -263,7 +263,9 @@ class AETA2013_2030Mid (AETA2012_2030):
         low = AETA2013_2030Low(discount, coal_price, gas_price, ccs_storage_costs)
         high = AETA2013_2030High(discount, coal_price, gas_price, ccs_storage_costs)
         assert low.opcost_per_mwh == high.opcost_per_mwh
+        self.opcost_per_mwh = low.opcost_per_mwh
         assert low.fixed_om_costs == high.fixed_om_costs
+        self.fixed_om_costs = low.fixed_om_costs
 
         table = self.capcost_per_kw_per_yr
         lowtable = low.capcost_per_kw_per_yr
