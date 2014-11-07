@@ -638,12 +638,20 @@ class Geothermal(Generator):
     """Hot dry rocks geothermal power plant."""
 
     patch = Patch(facecolor='brown')
+    csvfilename = None
+    csvdata = None
 
-    def __init__(self, region, capacity, label='geothermal'):
+    def __init__(self, region, capacity, filename, column, label='geothermal'):
         Generator.__init__(self, region, capacity, label)
+        if Geothermal.csvfilename != filename:
+            Geothermal.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
+            Geothermal.csvdata = np.maximum(0, Geothermal.csvdata)
+            Geothermal.csvfilename = filename
+        self.generation = Geothermal.csvdata[::, column]
 
     def step(self, hr, demand):
-        power = min(self.capacity, demand)
+        generation = self.generation[hr] * self.capacity
+        power = min(generation, demand)
         self.hourly_power[hr] = power
         self.hourly_spilled[hr] = 0
         return power, 0

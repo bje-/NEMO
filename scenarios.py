@@ -310,7 +310,10 @@ def re100_geothermal(context):
     """
     re100(context)
     g = context.generators
-    geo = generators.Geothermal(regions.sa, 0, 'HSA geoth.')
+    geo = generators.Geothermal(regions.vic, 0,
+                                configfile.get('generation', 'hsa-geothermal-trace'),
+                                38,  # (polygon 38)
+                                'HSA geoth.')
     context.generators = [geo] + g
 
 
