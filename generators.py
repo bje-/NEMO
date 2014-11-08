@@ -659,8 +659,18 @@ class Geothermal(Generator):
 
 class Geothermal_HSA(Geothermal):
 
-        def __init__(self, region, capacity, filename, column, label='HSA'):
-            Geothermal.__init__(self, region, capacity, filename, column, label)
+    """Hot sedimentary aquifer (HSA) geothermal model."""
+
+    def __init__(self, region, capacity, filename, column, label='HSA'):
+        Geothermal.__init__(self, region, capacity, filename, column, label)
+
+
+class Geothermal_EGS(Geothermal):
+
+    """Enhanced geothermal systems (EGS) geothermal model."""
+
+    def __init__(self, region, capacity, filename, column, label='HSA'):
+        Geothermal.__init__(self, region, capacity, filename, column, label)
 
 
 class DemandResponse(Generator):

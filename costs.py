@@ -30,8 +30,8 @@ class NullCosts:
                   tech.CCGT_CCS, tech.ParabolicTrough,
                   tech.CentralReceiver, tech.Coal_CCS,
                   tech.DemandResponse, tech.Geothermal_HSA,
-                  tech.Hydro, tech.OCGT, tech.PV, tech.PumpedHydro,
-                  tech.Wind, ]:
+                  tech.Geothermal_EGS, tech.Hydro, tech.OCGT, tech.PV,
+                  tech.PumpedHydro, tech.Wind, ]:
             self.capcost_per_kw_per_yr[t] = 0
             self.opcost_per_mwh[t] = 0
             self.fixed_om_costs[t] = 0
@@ -80,6 +80,7 @@ class AETA2012_2030:
         table[tech.Coal_CCS] = 15 * self.escalation
         table[tech.Black_Coal] = 7 * self.escalation
         table[tech.Geothermal_HSA] = 0
+        table[tech.Geothermal_EGS] = 0
 
         # Fixed O&M (FOM) costs
         table = self.fixed_om_costs
@@ -98,6 +99,7 @@ class AETA2012_2030:
         table[tech.Coal_CCS] = 73.2 * self.escalation
         table[tech.Black_Coal] = 50.5 * self.escalation
         table[tech.Geothermal_HSA] = 200 * self.escalation
+        table[tech.Geothermal_EGS] = 170 * self.escalation
 
 
 class AETA2012_2030Low (AETA2012_2030):
@@ -127,6 +129,7 @@ class AETA2012_2030Low (AETA2012_2030):
         table[tech.Coal_CCS] = 4453 / af + fom[tech.Coal_CCS]
         table[tech.Black_Coal] = 2947 / af + fom[tech.Black_Coal]
         table[tech.Geothermal_HSA] = 6645 / af + fom[tech.Geothermal_HSA]
+        table[tech.Geothermal_EGS] = 10331 / af + fom[tech.Geothermal_EGS]
 
 
 class AETA2012_2030High (AETA2012_2030):
@@ -156,6 +159,7 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Coal_CCS] = 4727 / af + fom[tech.Coal_CCS]
         table[tech.Black_Coal] = 3128 / af + fom[tech.Black_Coal]
         table[tech.Geothermal_HSA] = 7822 / af + fom[tech.Geothermal_HSA]
+        table[tech.Geothermal_EGS] = 11811 / af + fom[tech.Geothermal_EGS]
 
 
 class AETA2012_2030Mid (AETA2012_2030):

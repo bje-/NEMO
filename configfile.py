@@ -18,6 +18,7 @@ def load(filename):
     assert result != [], "config file %s not found" % filename
     # Verify
     config.get('generation', 'cst-trace')
+    config.get('generation', 'egs-geothermal-trace')
     config.get('generation', 'hsa-geothermal-trace')
     config.get('generation', 'wind-trace')
     config.get('generation', 'pv1axis-trace')
