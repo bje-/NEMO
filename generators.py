@@ -641,7 +641,7 @@ class Geothermal(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, label='geothermal'):
+    def __init__(self, region, capacity, filename, column, label):
         Generator.__init__(self, region, capacity, label)
         if Geothermal.csvfilename != filename:
             Geothermal.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
@@ -655,6 +655,12 @@ class Geothermal(Generator):
         self.hourly_power[hr] = power
         self.hourly_spilled[hr] = 0
         return power, 0
+
+
+class Geothermal_HSA(Geothermal):
+
+        def __init__(self, region, capacity, filename, column, label='HSA'):
+            Geothermal.__init__(self, region, capacity, filename, column, label)
 
 
 class DemandResponse(Generator):

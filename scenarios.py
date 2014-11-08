@@ -310,10 +310,10 @@ def re100_geothermal(context):
     """
     re100(context)
     g = context.generators
-    geo = generators.Geothermal(regions.vic, 0,
-                                configfile.get('generation', 'hsa-geothermal-trace'),
-                                38,  # (polygon 38)
-                                'HSA geoth.')
+    geo = generators.Geothermal_HSA(regions.vic, 0,
+                                    configfile.get('generation', 'hsa-geothermal-trace'),
+                                    38,  # (polygon 38)
+                                    'HSA geoth.')
     context.generators = [geo] + g
 
 
@@ -329,7 +329,7 @@ def theworks(context):
     """
     re100(context)
     # pylint: disable=redefined-outer-name
-    geo = generators.Geothermal(regions.nsw, 0)
+    geo = generators.Geothermal_HSA(regions.nsw, 0)
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
