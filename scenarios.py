@@ -294,7 +294,7 @@ def re100_dsp(context):
     context.generators = g + _demand_response()
 
 
-def re100_geothermal(context):
+def re100_geothermal_hsa(context):
     """100% renewables plus geothermal.
 
     >>> class C: pass
@@ -313,7 +313,7 @@ def re100_geothermal(context):
     geo = generators.Geothermal_HSA(regions.vic, 0,
                                     configfile.get('generation', 'hsa-geothermal-trace'),
                                     38,  # (polygon 38)
-                                    'HSA geoth.')
+                                    'HSA geothermal')
     context.generators = [geo] + g
 
 
@@ -348,7 +348,7 @@ supply_scenarios = {'re100': re100,
                     're100+batteries': re100_batteries,
                     'replacement': replacement,
                     're100+dsp': re100_dsp,
-                    're100+geoth': re100_geothermal,
+                    're100+hsa': re100_geothermal_hsa,
                     're+fossil': re_plus_fossil,
                     're+ccs': re_plus_ccs,
                     'theworks': theworks,
