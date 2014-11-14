@@ -669,7 +669,7 @@ class Geothermal_EGS(Geothermal):
 
     """Enhanced geothermal systems (EGS) geothermal model."""
 
-    def __init__(self, region, capacity, filename, column, label='HSA'):
+    def __init__(self, region, capacity, filename, column, label='EGS'):
         Geothermal.__init__(self, region, capacity, filename, column, label)
 
 
