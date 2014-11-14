@@ -300,9 +300,7 @@ def re100_geothermal_egs(context):
     >>> class C: pass
     >>> c = C()
     >>> c.generators = []
-    >>> re100_geothermal(c)
-    >>> len(c.generators)
-    26
+    >>> re100_geothermal_egs(c)
     >>> isinstance(c.generators[0], generators.Geothermal)
     True
     """
@@ -321,9 +319,7 @@ def re100_geothermal_hsa(context):
     >>> class C: pass
     >>> c = C()
     >>> c.generators = []
-    >>> re100_geothermal(c)
-    >>> len(c.generators)
-    26
+    >>> re100_geothermal_hsa(c)
     >>> isinstance(c.generators[0], generators.Geothermal_HSA)
     True
     """
@@ -348,7 +344,9 @@ def theworks(context):
     """
     re100(context)
     # pylint: disable=redefined-outer-name
-    geo = generators.Geothermal_HSA(regions.nsw, 0)
+    # use polygon 38
+    geo = generators.Geothermal_HSA(regions.nsw, 0,
+                                    configfile.get('generation', 'hsa-geothermal-trace'), 38)
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
