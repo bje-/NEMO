@@ -41,6 +41,7 @@ BEGIN {
 /spilled.*TWh/		{ surplus += $5 }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
+/^{.*}/			{ params = $0 }
 
 /Demand energy:/ {
     i++
@@ -50,6 +51,8 @@ BEGIN {
     	total_capacity += caps[c]
     }
     printf ("# scenario %d\n", i)
+    if (params != "")
+       printf ("# options %s\n", params)
     printf ("# demand %.2f TWh\n", total_demand)
     printf ("# score %.2f $/MWh\n", cost)
     printf ("# tech\t  GW\tshare\t  TWh\tshare\tCF\n")
@@ -65,6 +68,7 @@ BEGIN {
 	printf ("surplus\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", surplus, surplus / total_demand)
 
     surplus = 0
+    params = null
     delete caps
     delete energy
     printf ("\n\n")
