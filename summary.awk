@@ -7,24 +7,26 @@
 
 BEGIN {
     PROCINFO["sorted_in"] = "@ind_num_asc"
-    merit[0] = "geoth"
-    merit[1] = "PV"
-    merit[2] = "wind"
-    merit[3] = "CST"
-    merit[4] = "Coal"
-    merit[5] = "Coal-CCS"
-    merit[6] = "CCGT"
-    merit[7] = "CCGT-CCS"
-    merit[8] = "hydro"
-    merit[9] = "PSH"
-    merit[10] = "GT"
-    merit[11] = "OCGT"
-    merit[12] = "DR"
+    merit[0] = "HSA"
+    merit[1] = "EGS"
+    merit[2] = "PV"
+    merit[3] = "wind"
+    merit[4] = "CST"
+    merit[5] = "Coal"
+    merit[6] = "Coal-CCS"
+    merit[7] = "CCGT"
+    merit[8] = "CCGT-CCS"
+    merit[9] = "hydro"
+    merit[10] = "PSH"
+    merit[11] = "GT"
+    merit[12] = "OCGT"
+    merit[13] = "DR"
     # assume 8760 timesteps unless specified in the simulation output
     timesteps = 8760
 }
 
-/geoth.*GW.?$/		{ caps["geoth"] += $(NF-1); last="geoth" }
+/HSA.*GW.?$/		{ caps["HSA"] += $(NF-1); last="HSA" }
+/EGS.*GW.?$/		{ caps["EGS"] += $(NF-1); last="EGS" }
 /PV.*GW.?$/		{ caps["PV"] += $(NF-1); last="PV" }
 /wind.*GW.?$/		{ caps["wind"] += $(NF-1); last="wind" }
 / S?CST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
