@@ -60,7 +60,6 @@ parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/
 parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
-parser.add_argument("--spills", action="store_true", help='Plot spills [default: False]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
