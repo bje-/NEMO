@@ -25,10 +25,3 @@ class TestCoverage(unittest.TestCase):
         os.unlink('foo.png')
         nem.plot(c, filename='foo.png', spills=True)
         os.unlink('foo.png')
-
-    def test_003(self):
-        c = nem.Context()
-        for g in c.generators:
-            if isinstance(g, generators.CST):
-                g.dispHour = 16
-        nem.run(c)
