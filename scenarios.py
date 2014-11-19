@@ -217,7 +217,7 @@ def re100(context):
 
     # You can't modify these capacities.
     for g in result:
-        if g.__class__ is Hydro or g.__class__ is PumpedHydro:
+        if isinstance(g, Hydro):
             g.setters = []
     context.generators = result
 
