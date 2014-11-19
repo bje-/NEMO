@@ -378,7 +378,7 @@ def re100_nocst(context):
     >>> c = C()
     >>> c.generators = []
     >>> re100_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.CST)    
+    >>> for g in c.generators: assert not isinstance(g, generators.CST)
     """
     re100(context)
     newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
