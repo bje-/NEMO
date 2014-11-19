@@ -351,6 +351,8 @@ def re100_geothermal_both(context):
     # Prepend it to the EGS geothermal scenario.
     re100_geothermal_egs(context)
     context.generators = [hsa] + context.generators
+
+
 def theworks(context):
     """All technologies.
 
