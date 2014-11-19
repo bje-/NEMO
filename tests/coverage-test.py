@@ -29,6 +29,6 @@ class TestCoverage(unittest.TestCase):
     def test_003(self):
         c = nem.Context()
         for g in c.generators:
-            if g.__class__ is generators.CST:
+            if isinstance(g, generators.CST):
                 g.dispHour = 16
         nem.run(c)
