@@ -128,11 +128,7 @@ def cost(ctx, transmission_p):
     if args.fossil_limit is not None:
         fossil_energy = 0
         for g in ctx.generators:
-            if g.__class__ is generators.CCGT or \
-               g.__class__ is generators.OCGT or \
-               g.__class__ is generators.Coal_CCS or \
-               g.__class__ is generators.CCGT_CCS or \
-               g.__class__ is generators.Black_Coal:
+            if isinstance(g, generators.Fossil):
                 fossil_energy += sum(g.hourly_power.values())
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
         score += pow(fossil_exceedance, 3)
