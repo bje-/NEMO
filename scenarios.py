@@ -332,6 +332,25 @@ def re100_geothermal_hsa(context):
     context.generators = [geo] + g
 
 
+def re100_geothermal_both(context):
+    """100% renewables plus both HSA and EGS geothermal.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = []
+    >>> re100_geothermal_both(c)
+    >>> isinstance(c.generators[0], generators.Geothermal_HSA)
+    True
+    >>> isinstance(c.generators[1], generators.Geothermal_EGS)
+    True
+    """
+    # Grab the HSA generator.
+    re100_geothermal_hsa(context)
+    hsa = context.generators[0]
+
+    # Prepend it to the EGS geothermal scenario.
+    re100_geothermal_egs(context)
+    context.generators = [hsa] + context.generators
 def theworks(context):
     """All technologies.
 
@@ -367,6 +386,7 @@ supply_scenarios = {'re100': re100,
                     're100+dsp': re100_dsp,
                     're100+egs': re100_geothermal_egs,
                     're100+hsa': re100_geothermal_hsa,
+                    're100+geo': re100_geothermal_both,
                     're+fossil': re_plus_fossil,
                     're+ccs': re_plus_ccs,
                     'theworks': theworks,
