@@ -354,7 +354,14 @@ def re100_geothermal_both(context):
 
 
 def re100_nocst(context):
-    """100% renewables, but no CST."""
+    """100% renewables, but no CST.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = []
+    >>> re100_nocst(c)
+    >>> for g in c.generators: assert g.__class__ is not generators.CST
+    """
     re100(context)
     newlist = [g for g in context.generators if g.__class__ is not generators.CST]
     context.generators = newlist
