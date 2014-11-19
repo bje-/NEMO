@@ -136,7 +136,7 @@ def cost(ctx, transmission_p):
     ### Penalty: limit biofuel use
     biofuel_energy = 0
     for g in ctx.generators:
-        if g.__class__ is generators.Biofuel:
+        if isinstance(g, generators.Biofuel):
             biofuel_energy += sum(g.hourly_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
     score += pow(biofuel_exceedance, 3)
@@ -144,7 +144,7 @@ def cost(ctx, transmission_p):
     ### Penalty: limit hydro use
     hydro_energy = 0
     for g in ctx.generators:
-        if g.__class__ is generators.Hydro or g.__class__ is generators.PumpedHydro:
+        if isinstance(g, generators.Hydro):
             hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
     score += pow(hydro_exceedance, 3)
