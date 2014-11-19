@@ -353,6 +353,13 @@ def re100_geothermal_both(context):
     context.generators = [hsa] + context.generators
 
 
+def re100_nocst(context):
+    """100% renewables, but no CST."""
+    re100(context)
+    newlist = [g for g in context.generators if g.__class__ is not generators.CST]
+    context.generators = newlist
+
+
 def theworks(context):
     """All technologies.
 
@@ -389,6 +396,7 @@ supply_scenarios = {'re100': re100,
                     're100+egs': re100_geothermal_egs,
                     're100+hsa': re100_geothermal_hsa,
                     're100+geo': re100_geothermal_both,
+                    're100-nocst': re100_nocst,
                     're+fossil': re_plus_fossil,
                     're+ccs': re_plus_ccs,
                     'theworks': theworks,
