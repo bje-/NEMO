@@ -12,7 +12,8 @@ import pyevolve
 import os
 
 if __name__ == '__main__':
-    pyevolve.logEnable(os.getenv('HOME') + '/pyevolve.log')
+    # pyevolve.logEnable(os.getenv('HOME') + '/pyevolve.log')
+    pass
 
 from pyevolve import Consts
 from pyevolve import G1DList
