@@ -1,7 +1,6 @@
 """A stub for profiling tools to run one basic simulation."""
 
 import os
-import generators
 import nem
 import regions
 import unittest
