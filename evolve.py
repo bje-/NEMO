@@ -17,6 +17,7 @@ from pyevolve import Migration
 from pyevolve import Crossovers
 from pyevolve import Selectors
 
+import csv
 import numpy as np
 import argparse
 import nem
@@ -54,6 +55,7 @@ parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/
 parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
+parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
@@ -178,6 +180,11 @@ def eval_func(chromosome):
     set_generators(chromosome)
     nem.run(context)
     score = cost(context, transmission_p=args.transmission)
+    if args.trace_file is not None:
+        # write the score and individual to the trace file
+        with open(args.trace_file, 'a') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([score] + list(chromosome))
     return score
 
 
