@@ -14,6 +14,7 @@ from pyevolve import GAllele
 from pyevolve import GSimpleGA
 from pyevolve import Initializators
 from pyevolve import Migration
+from pyevolve import Mutators
 from pyevolve import Crossovers
 from pyevolve import Selectors
 
@@ -25,7 +26,6 @@ import generators
 import scenarios
 import costs
 import consts
-import mutator
 import transmission
 
 from mpi4py import MPI
@@ -205,7 +205,7 @@ def run():
     genome.evaluator.set(eval_func)
     genome.setParams(allele=alleles)
     genome.initializator.set(Initializators.G1DListInitializatorAllele)
-    genome.mutator.set(mutator.gaussian_mutator)
+    genome.mutator.set(Mutators.G1DListMutatorAlleleGaussian)
     genome.crossover.set(Crossovers.G1DListCrossoverUniform)
 
     ga = GSimpleGA.GSimpleGA(genome)
