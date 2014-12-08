@@ -182,7 +182,7 @@ def eval_func(chromosome):
     score = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
         # write the score and individual to the trace file
-        with open(args.trace_file, 'a') as csvfile:
+        with open(args.trace_file, 'w') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([score] + list(chromosome))
     return score
