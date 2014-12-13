@@ -109,9 +109,13 @@ def cost(ctx, transmission_p):
         score += (g.capcost(ctx.costs) * ctx.years) + g.opcost(ctx.costs)
 
     penalty = 0
+    reason = 0
+
     ### Penalty: unserved energy
     minuse = ctx.demand.sum() * (ctx.relstd / 100)
     use = max(0, ctx.unserved_energy - minuse)
+    if use > 0:
+        reason |= 1
     penalty += pow(use, 3)
 
     ### Penalty: total emissions
@@ -125,6 +129,8 @@ def cost(ctx, transmission_p):
                 pass
         # exceedance in tonnes CO2-e
         emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
+        if emissions_exceedance > 0:
+            reason |= 2
         penalty += pow(emissions_exceedance, 3)
 
     ### Penalty: limit fossil to fraction of annual demand
@@ -134,6 +140,8 @@ def cost(ctx, transmission_p):
             if isinstance(g, generators.Fossil):
                 fossil_energy += sum(g.hourly_power.values())
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
+        if fossil_exceedance > 0:
+            reason |= 4
         penalty += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
@@ -142,6 +150,8 @@ def cost(ctx, transmission_p):
         if isinstance(g, generators.Biofuel):
             biofuel_energy += sum(g.hourly_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
+    if biofuel_exceedance > 0:
+        reason |= 8
     penalty += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
@@ -150,6 +160,8 @@ def cost(ctx, transmission_p):
         if isinstance(g, generators.Hydro):
             hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
+    if hydro_exceedance > 0:
+        reason |= 16
     penalty += pow(hydro_exceedance, 3)
 
     if transmission_p:
@@ -168,7 +180,7 @@ def cost(ctx, transmission_p):
         score += txscore
 
     # Express $/yr as an average $/MWh over the period
-    return score / ctx.demand.sum(), penalty / ctx.demand.sum()
+    return score / ctx.demand.sum(), penalty / ctx.demand.sum(), reason
 
 
 def set_generators(chromosome):
@@ -186,12 +198,12 @@ def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
     set_generators(chromosome)
     nem.run(context)
-    score, penalty = cost(context, transmission_p=args.transmission)
+    score, penalty, reason = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
         # write the score and individual to the trace file
         with open(args.trace_file, 'a') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([score, penalty] + list(chromosome))
+            writer.writerow([score, penalty, reason] + list(chromosome))
     return score + penalty
 
 
