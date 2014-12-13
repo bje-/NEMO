@@ -122,7 +122,7 @@ def cost(ctx, transmission_p):
                 pass
         # exceedance in tonnes CO2-e
         emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
-        score += pow(emissions_exceedance, 3)
+        penalty += pow(emissions_exceedance, 3)
 
     ### Penalty: limit fossil to fraction of annual demand
     if args.fossil_limit is not None:
@@ -131,7 +131,7 @@ def cost(ctx, transmission_p):
             if isinstance(g, generators.Fossil):
                 fossil_energy += sum(g.hourly_power.values())
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
-        score += pow(fossil_exceedance, 3)
+        penalty += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
     biofuel_energy = 0
@@ -139,7 +139,7 @@ def cost(ctx, transmission_p):
         if isinstance(g, generators.Biofuel):
             biofuel_energy += sum(g.hourly_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
-    score += pow(biofuel_exceedance, 3)
+    penalty += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
     hydro_energy = 0
@@ -147,7 +147,7 @@ def cost(ctx, transmission_p):
         if isinstance(g, generators.Hydro):
             hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
-    score += pow(hydro_exceedance, 3)
+    penalty += pow(hydro_exceedance, 3)
 
     if transmission_p:
         maxexchanges = ctx.exchanges.max(axis=0)
@@ -165,7 +165,7 @@ def cost(ctx, transmission_p):
         score += txscore
 
     # Express $/yr as an average $/MWh over the period
-    return score / ctx.demand.sum()
+    return score / ctx.demand.sum(), penalty / ctx.demand.sum()
 
 
 def set_generators(chromosome):
@@ -183,13 +183,13 @@ def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
     set_generators(chromosome)
     nem.run(context)
-    score = cost(context, transmission_p=args.transmission)
+    score, penalty = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
         # write the score and individual to the trace file
         with open(args.trace_file, 'a') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([score] + list(chromosome))
-    return score
+            writer.writerow([score, penalty] + list(chromosome))
+    return score + penalty
 
 
 def run():
