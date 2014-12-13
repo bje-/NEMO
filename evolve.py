@@ -18,6 +18,7 @@ from pyevolve import Mutators
 from pyevolve import Crossovers
 from pyevolve import Selectors
 
+import os
 import csv
 import numpy as np
 import argparse
@@ -94,18 +95,21 @@ if args.verbose and rank == 0:
     print "supply scenario: %s (%s)" % (args.supply_scenario, docstring)
     print context.generators
 
+if args.trace_file is not None:
+    os.unlink(args.trace_file)
+
 
 def cost(ctx, transmission_p):
     """Sum up the costs."""
     score = 0
-
     for g in ctx.generators:
         score += (g.capcost(ctx.costs) * ctx.years) + g.opcost(ctx.costs)
 
+    penalty = 0
     ### Penalty: unserved energy
     minuse = ctx.demand.sum() * (ctx.relstd / 100)
     use = max(0, ctx.unserved_energy - minuse)
-    score += pow(use, 3)
+    penalty += pow(use, 3)
 
     ### Penalty: total emissions
     if args.emissions_limit is not None:
