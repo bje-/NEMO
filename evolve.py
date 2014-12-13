@@ -96,7 +96,10 @@ if args.verbose and rank == 0:
     print context.generators
 
 if args.trace_file is not None:
-    os.unlink(args.trace_file)
+    try:
+        os.unlink(args.trace_file)
+    except OSError:
+        pass
 
 
 def cost(ctx, transmission_p):
