@@ -90,7 +90,7 @@ class Wind(Generator):
     def __init__(self, region, capacity, filename, column, delimiter=None, build_limit=None, label='wind'):
         Generator.__init__(self, region, capacity, label)
         if build_limit is not None:
-            # Override maximum generator capacity with build_limit
+            # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.non_synchronous_p = True
@@ -217,7 +217,7 @@ class PV(Generator):
         Generator.__init__(self, region, capacity, label)
         self.non_synchronous_p = True
         if build_limit is not None:
-            # Override maximum generator capacity with build_limit
+            # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         if PV.csvfilename != filename:
@@ -252,7 +252,7 @@ class CST(Generator):
     def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
         Generator.__init__(self, region, capacity, label)
         if build_limit is not None:
-            # Override maximum generator capacity with build_limit
+            # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.sm = sm
