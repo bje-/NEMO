@@ -31,7 +31,7 @@ html:
 	python-coverage html
 
 html-upload:
-	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo-coverage
+	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo/coverage
 
 replay.data:
 	echo "# comment line" >> $@
