@@ -134,9 +134,6 @@ class Context:
                 s += 'WARNING: NEM reliability standard exceeded\n'
             s += 'Unserved total hours: ' + str(self.unserved_hours) + '\n'
             s += 'min, max shortfalls: ' + str(self.shortfalls)
-
-        if self.spill.sum() > 0:
-            s += '\n' + 'spilled hours = ' + str((self.spill.sum(axis=0) > 0).sum())
         return s
 
 
