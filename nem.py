@@ -366,4 +366,3 @@ def run(context, starthour=0, endhour=None):
         context.shortfalls = (None, None)
     else:
         context.shortfalls = (round(min(shortfall)), round(max(shortfall)))
-    return context
