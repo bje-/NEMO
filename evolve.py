@@ -241,10 +241,7 @@ def run():
         np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("avg", np.mean)
-    stats.register("std", np.std)
     stats.register("min", np.min)
-    stats.register("max", np.max)
 
     algorithms.eaGenerateUpdate(toolbox, ngen=args.generations, stats=stats,
                                 halloffame=hof, verbose=True)
