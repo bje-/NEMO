@@ -47,6 +47,7 @@ parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual
 parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='CMA-ES lambda value [default: 4+3*log(N)]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
+parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
@@ -233,7 +234,8 @@ def run():
     if args.verbose and __name__ == '__main__':
         print "objective: minimise", eval_func.__doc__
 
-    np.random.seed(128)
+    if args.seed is not None:
+        np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", np.mean)
