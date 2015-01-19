@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -8,18 +8,16 @@
 
 """Evolutionary programming applied to NEM optimisations."""
 
-from pyevolve import Consts
-from pyevolve import G1DList
-from pyevolve import GAllele
-from pyevolve import GSimpleGA
-from pyevolve import Initializators
-from pyevolve import Migration
-from pyevolve import Mutators
-from pyevolve import Crossovers
-from pyevolve import Selectors
+from deap import algorithms
+from deap import base
+from deap import creator
+from deap import tools
+from deap import cma
+from scoop import futures
 
 import os
 import csv
+import math
 import numpy as np
 import argparse
 import nem
@@ -29,18 +27,10 @@ import costs
 import consts
 import transmission
 
-from mpi4py import MPI
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-c", "--carbon-price", type=int, default=25, help='carbon price ($/t) [default: 25]')
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
-parser.add_argument("-f", "--frequency", type=int, default=10, help='frequency of stats output [default: 10]')
 parser.add_argument("-g", "--generations", type=int, default=100, help='generations [default: 100]')
-parser.add_argument("-j", "--jobs", type=int, default=1, help='number of worker processes [default: 1]')
-parser.add_argument("-m", "--mutation-rate", type=float, default=0.02, help='mutation rate [default: 0.02]')
-parser.add_argument("-p", "--population", type=int, default=100, help='population size [default: 100]')
 parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
@@ -54,13 +44,15 @@ parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_argument("--hydro-limit", type=int, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
+parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='CMA-ES lambda value [default: 4+3*log(N)]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
+parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
-if rank == 0:
+if __name__ == '__main__':
     print vars(args)
 
 np.set_printoptions(precision=5)
@@ -87,7 +79,7 @@ if args.demand_modifier is not None:
     for arg in args.demand_modifier:
         scenarios.demand_switch(arg)(context)
 
-if args.verbose and rank == 0:
+if args.verbose and __name__ == '__main__':
     docstring = scenarios.supply_switch(args.supply_scenario).__doc__
     assert docstring is not None
     # Prune off any doctest test from the docstring.
@@ -187,8 +179,11 @@ def set_generators(chromosome):
     """Set the generator list from the GA chromosome."""
     i = 0
     for gen in context.generators:
-        for (setter, _, _) in gen.setters:
-            setter(chromosome[i])
+        newval = chromosome[i]
+        for (setter, min_cap, max_cap) in gen.setters:
+            if newval < min_cap or newval > max_cap:
+                raise ValueError('capacity out of range')
+            setter(newval)
             i += 1
     # Check every parameter has been set.
     assert i == len(chromosome), '%d != %d' % (i, len(chromosome))
@@ -196,7 +191,13 @@ def set_generators(chromosome):
 
 def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
-    set_generators(chromosome)
+    try:
+        set_generators(chromosome)
+    except ValueError:
+        return 1000,
+    if sum([True for x in chromosome if x < 0]) > 0:
+        # Are there any negative capacities in the chromosome?
+        return 1000,
     nem.run(context)
     score, penalty, reason = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
@@ -204,63 +205,56 @@ def eval_func(chromosome):
         with open(args.trace_file, 'a') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([score, penalty, reason] + list(chromosome))
-    return score + penalty
+    return score + penalty,
+
+
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
+toolbox = base.Toolbox()
+toolbox.register("map", futures.map)
+
+numparams = sum([len(g.setters) for g in context.generators])
+if args.lambda_ is None:
+    # Use default DEAP CMA-ES lambda value.
+    lam = int(4 + 3 * math.log(numparams))
+else:
+    lam = args.lambda_
+
+strategy = cma.Strategy(centroid=[10] * numparams, sigma=args.sigma,
+                        lambda_=lam)
+
+toolbox.register("generate", strategy.generate, creator.Individual)
+toolbox.register("update", strategy.update)
+toolbox.register("evaluate", eval_func)
 
 
 def run():
     """Run the GA."""
-    if args.verbose and rank == 0:
+    if args.verbose and __name__ == '__main__':
         print "objective: minimise", eval_func.__doc__
 
-    numparams = sum([len(g.setters) for g in context.generators])
-    genome = G1DList.G1DList(numparams)
+    np.random.seed(128)
+    hof = tools.HallOfFame(1)
+    stats = tools.Statistics(lambda ind: ind.fitness.values)
+    stats.register("avg", np.mean)
+    stats.register("std", np.std)
+    stats.register("min", np.min)
+    stats.register("max", np.max)
 
-    alleles = GAllele.GAlleles()
-    for g in context.generators:
-        for (_, rangemin, rangemax) in g.setters:
-            a = GAllele.GAlleleRange(rangemin, rangemax, real=True)
-            alleles.add(a)
+    algorithms.eaGenerateUpdate(toolbox, ngen=args.generations, stats=stats,
+                                halloffame=hof, verbose=True)
 
-    genome.evaluator.set(eval_func)
-    genome.setParams(allele=alleles)
-    genome.initializator.set(Initializators.G1DListInitializatorAllele)
-    genome.mutator.set(Mutators.G1DListMutatorAlleleGaussian)
-    genome.crossover.set(Crossovers.G1DListCrossoverUniform)
+    (score,) = hof[0].fitness.values
+    print 'Score: %.2f $/MWh' % score
+    print 'List:', hof[0]
 
-    ga = GSimpleGA.GSimpleGA(genome)
-    mig = Migration.MPIMigration()
-    mig.setMigrationRate(10)
-    ga.setMigrationAdapter(mig)
-    ga.setPopulationSize(args.population)
-    ga.selector.set(Selectors.GTournamentSelector)
-    ga.setElitism(True)
-    ga.setGenerations(args.generations)
-    ga.setMutationRate(args.mutation_rate)
-    if args.jobs > 1:
-        ga.setMultiProcessing(True, max_processes=args.jobs)
-    ga.setMinimax(Consts.minimaxType["minimize"])
-    ga.evolve(freq_stats=args.frequency)
+    set_generators(hof[0])
+    nem.run(context)
+    context.verbose = True
+    print context
+    if args.transmission:
+        print context.exchanges.max(axis=0)
 
-    mig.selector.set(Selectors.GRankSelector)
-    mig.gather_bests()
-
-    if rank == 0:
-        if mig.all_stars is not None:
-            best = min(mig.all_stars, key=lambda(x): x.score)
-        else:
-            best = ga.bestIndividual()
-        if args.verbose:
-            print best
-        else:
-            print 'Score: %.2f $/MWh' % best.score
-            print 'List:', best.getInternalList()
-
-        set_generators(best.getInternalList())
-        nem.run(context)
-        context.verbose = True
-        print context
-        if args.transmission:
-            print context.exchanges.max(axis=0)
 
 if __name__ == '__main__':
     run()
