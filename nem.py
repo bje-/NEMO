@@ -121,7 +121,7 @@ class Context:
         try:
             s += 'Spilled energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
             if self.spill.sum() > 0:
-                s += 'Spilled hours: %d' % (self.spill.sum(axis=0) > 0).sum()
+                s += 'Spilled hours: %d\n' % (self.spill.sum(axis=0) > 0).sum()
         except AttributeError:
             # there may be no 'spill' attribute yet
             pass
