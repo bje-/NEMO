@@ -182,8 +182,10 @@ def set_generators(chromosome):
     for gen in context.generators:
         newval = chromosome[i]
         for (setter, min_cap, max_cap) in gen.setters:
-            if newval < min_cap or newval > max_cap:
-                raise ValueError('capacity out of range')
+            if newval < min_cap:
+                raise ValueError(min_cap - newval, 'capacity too low')
+            if newval > max_cap:
+                raise ValueError(newval - max_cap, 'capacity too high')
             setter(newval)
             i += 1
     # Check every parameter has been set.
@@ -194,11 +196,12 @@ def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
     try:
         set_generators(chromosome)
-    except ValueError:
-        return 1000,
-    if sum([True for x in chromosome if x < 0]) > 0:
-        # Are there any negative capacities in the chromosome?
-        return 1000,
+    except ValueError, (delta, msg):
+        return 1000 + delta * 1000,
+    negativeCount = sum([True for x in chromosome if x < 0])
+    if negativeCount > 0:
+        # Penalise negative capacities in the chromosome
+        return pow(negativeCount, 2) * 1000,
     nem.run(context)
     score, penalty, reason = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
