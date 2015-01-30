@@ -46,7 +46,10 @@ class Generator:
 
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""
-        return sum(self.hourly_power.values()) * costs.opcost_per_mwh[self.__class__]
+        return sum(self.hourly_power.values()) * self.opcost_per_mwh(costs)
+
+    def opcost_per_mwh(self, costs):
+        return costs.opcost_per_mwh[self.__class__]
 
     def reset(self):
         """Reset the generator."""
@@ -334,11 +337,10 @@ class Biofuel(Fuelled):
             self.runhours += 1
         return power, 0
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.bioenergy_price_per_mwh
-        total_opcost = vom + fuel_cost
-        return sum(self.hourly_power.values()) * total_opcost
+        return vom + fuel_cost
 
     def reset(self):
         Fuelled.reset(self)
@@ -369,11 +371,11 @@ class Black_Coal(Fossil):
     def __init__(self, region, capacity, intensity=0.773, label='coal'):
         Fossil.__init__(self, region, capacity, intensity, label)
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.coal_price_per_gj * 8.57
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return sum(self.hourly_power.values()) * total_opcost
+        return total_opcost
 
 
 class OCGT(Fossil):
@@ -385,11 +387,11 @@ class OCGT(Fossil):
     def __init__(self, region, capacity, intensity=0.7, label='OCGT'):
         Fossil.__init__(self, region, capacity, intensity, label)
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.gas_price_per_gj * 11.61
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return sum(self.hourly_power.values()) * total_opcost
+        return total_opcost
 
 
 class CCGT(Fossil):
@@ -401,11 +403,11 @@ class CCGT(Fossil):
     def __init__(self, region, capacity, intensity=0.4, label='CCGT'):
         Fossil.__init__(self, region, capacity, intensity, label)
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         fuel_cost = costs.gas_price_per_gj * 6.92
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return sum(self.hourly_power.values()) * total_opcost
+        return total_opcost
 
 
 class CCS(Fossil):
@@ -429,7 +431,7 @@ class Coal_CCS(CCS):
     def __init__(self, region, capacity, intensity=0.8, capture=0.85, label='Coal-CCS'):
         CCS.__init__(self, region, capacity, intensity, capture, label)
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         # thermal efficiency 31.4% (AETA 2012)
         fuel_cost = costs.coal_price_per_gj * (3.6 / 0.314)
@@ -438,7 +440,7 @@ class Coal_CCS(CCS):
         total_opcost = vom + fuel_cost + \
             (emissions_rate * costs.carbon) + \
             (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return sum(self.hourly_power.values()) * total_opcost
+        return total_opcost
 
 
 class CCGT_CCS(CCS):
@@ -448,14 +450,14 @@ class CCGT_CCS(CCS):
     def __init__(self, region, capacity, intensity=0.4, capture=0.85, label='CCGT-CCS'):
         CCS.__init__(self, region, capacity, intensity, capture, label)
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
         # thermal efficiency 43.1% (AETA 2012)
         fuel_cost = costs.gas_price_per_gj * (3.6 / 0.431)
         total_opcost = vom + fuel_cost + \
             (self.intensity * (1 - self.capture) * costs.carbon) + \
             (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return sum(self.hourly_power.values()) * total_opcost
+        return total_opcost
 
 
 class Battery(Generator):
@@ -533,7 +535,7 @@ class Battery(Generator):
         fom = 28 * self.capacity * 1000
         return (power + energy) / costs.annuityf + fom
 
-    def opcost(self, costs):
+    def opcost_per_mwh(self, costs):
         # per-kWh costs for batteries are included in capital costs
         return 0
 
@@ -620,8 +622,8 @@ class DemandResponse(Generator):
         self.runhours = 0
         self.maxresponse = 0
 
-    def opcost(self, costs):
-        return sum(self.hourly_power.values()) * self.cost_per_mwh
+    def opcost_per_mwh(self, costs):
+        return self.cost_per_mwh
 
     def summary(self, costs):
         return Generator.summary(self, costs) + \
