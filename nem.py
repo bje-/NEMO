@@ -144,6 +144,7 @@ def _sim(context, starthour, endhour):
 
     context.exchanges.fill(0)
     context.generation = np.zeros((len(context.generators), context.hours))
+    context.lowest_merit_generator = np.zeros(context.hours, dtype=object)
     context.spill = np.zeros((len(context.generators), context.hours))
 
     # Extract generators in the regions of interest.
@@ -192,6 +193,10 @@ def _sim(context, starthour, endhour):
                 async_demand -= gen
                 assert async_demand > -0.1
                 async_demand = max(0, async_demand)
+
+            # This assumes a generator's opcosts are the same year
+            # round, but OK for now.
+            context.lowest_merit_generator[hr] = g
 
             residual_hour_demand -= gen
             # residual can go below zero due to rounding
@@ -366,3 +371,17 @@ def run(context, starthour=0, endhour=None):
         context.shortfalls = (None, None)
     else:
         context.shortfalls = (round(min(shortfall)), round(max(shortfall)))
+
+
+def bids(context):
+    """Show the bids for each time step."""
+    return [g.opcost_per_mwh(context.costs) for g in
+            context.lowest_merit_generator]
+
+
+def revenue(context):
+    """Total the revenue."""
+    hourly_generation = context.generation.sum(axis=0)
+    pairs = zip(hourly_generation, bids(context))
+    result = reduce(lambda a, b: a + b, [g * b for g, b in pairs])
+    return int(result)
