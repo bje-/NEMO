@@ -185,7 +185,7 @@ def _sim(context, starthour, endhour):
             assert gen <= residual_hour_demand, \
                 "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
             context.generation[gidx, hr] = gen
-            if not gen:
+            if gen == 0:
                 continue
 
             if g.non_synchronous_p:
