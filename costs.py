@@ -51,6 +51,8 @@ class AETA2012_2030:
         """Construct a cost object given discount rate, coal, gas and CCS costs."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
+        # bioenergy costs are supplied by us, not BREE
+        self.bioenergy_price_per_mwh = 80
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.capcost_per_kw_per_yr = {}
@@ -73,7 +75,6 @@ class AETA2012_2030:
         table[tech.ParabolicTrough] = 20 * self.escalation
         table[tech.PV] = 0
         table[tech.PV1Axis] = 0
-        table[tech.Biofuel] = 10 * self.escalation + 80  # (fuel)
         table[tech.CCGT] = 4 * self.escalation
         table[tech.OCGT] = 10 * self.escalation
         table[tech.CCGT_CCS] = 9 * self.escalation
@@ -81,6 +82,7 @@ class AETA2012_2030:
         table[tech.Black_Coal] = 7 * self.escalation
         table[tech.Geothermal_HSA] = 0
         table[tech.Geothermal_EGS] = 0
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
         # Fixed O&M (FOM) costs
         table = self.fixed_om_costs
@@ -92,7 +94,6 @@ class AETA2012_2030:
         table[tech.ParabolicTrough] = 65 * self.escalation
         table[tech.PV] = 25 * self.escalation
         table[tech.PV1Axis] = 38 * self.escalation
-        table[tech.Biofuel] = 4 * self.escalation
         table[tech.CCGT] = 10 * self.escalation
         table[tech.OCGT] = 4 * self.escalation
         table[tech.CCGT_CCS] = 17 * self.escalation
@@ -100,6 +101,7 @@ class AETA2012_2030:
         table[tech.Black_Coal] = 50.5 * self.escalation
         table[tech.Geothermal_HSA] = 200 * self.escalation
         table[tech.Geothermal_EGS] = 170 * self.escalation
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030Low (AETA2012_2030):
@@ -122,7 +124,6 @@ class AETA2012_2030Low (AETA2012_2030):
         table[tech.ParabolicTrough] = 4563 / af + fom[tech.ParabolicTrough]
         table[tech.PV] = 1482 / af + fom[tech.PV]
         table[tech.PV1Axis] = 2013 / af + fom[tech.PV1Axis]
-        table[tech.Biofuel] = 694 / af + fom[tech.Biofuel]
         table[tech.CCGT] = 1015 / af + fom[tech.CCGT]
         table[tech.OCGT] = 694 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2095 / af + fom[tech.CCGT_CCS]
@@ -130,6 +131,7 @@ class AETA2012_2030Low (AETA2012_2030):
         table[tech.Black_Coal] = 2947 / af + fom[tech.Black_Coal]
         table[tech.Geothermal_HSA] = 6645 / af + fom[tech.Geothermal_HSA]
         table[tech.Geothermal_EGS] = 10331 / af + fom[tech.Geothermal_EGS]
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030High (AETA2012_2030):
@@ -152,7 +154,6 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.ParabolicTrough] = 5659 / af + fom[tech.ParabolicTrough]
         table[tech.PV] = 1871 / af + fom[tech.PV]
         table[tech.PV1Axis] = 2542 / af + fom[tech.PV1Axis]
-        table[tech.Biofuel] = 809 / af + fom[tech.Biofuel]
         table[tech.CCGT] = 1221 / af + fom[tech.CCGT]
         table[tech.OCGT] = 809 / af + fom[tech.OCGT]
         table[tech.CCGT_CCS] = 2405 / af + fom[tech.CCGT_CCS]
@@ -160,6 +161,7 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Black_Coal] = 3128 / af + fom[tech.Black_Coal]
         table[tech.Geothermal_HSA] = 7822 / af + fom[tech.Geothermal_HSA]
         table[tech.Geothermal_EGS] = 11811 / af + fom[tech.Geothermal_EGS]
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030Mid (AETA2012_2030):

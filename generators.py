@@ -334,6 +334,12 @@ class Biofuel(Fuelled):
             self.runhours += 1
         return power, 0
 
+    def opcost(self, costs):
+        vom = costs.opcost_per_mwh[self.__class__]
+        fuel_cost = costs.bioenergy_price_per_mwh
+        total_opcost = vom + fuel_cost
+        return sum(self.hourly_power.values()) * total_opcost
+
     def reset(self):
         Fuelled.reset(self)
 
