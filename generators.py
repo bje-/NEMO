@@ -12,7 +12,6 @@ import numpy as np
 from matplotlib.patches import Patch
 
 import consts
-import simplesys
 
 import locale
 # Needed for currency formatting.
@@ -109,100 +108,6 @@ class Wind(Generator):
         self.hourly_power[hr] = power
         self.hourly_spilled[hr] = spilled
         return power, spilled
-
-
-class SCST(Generator):
-
-    """A CST power station based on SIMPLESYS."""
-
-    patch = Patch(facecolor='yellow')
-
-    def __init__(self, region, capacity, solarmult, tes, filename, locn, label='CST', dispHour=0):
-        Generator.__init__(self, region, capacity, label)
-        self.turbine_effcy = 0.40
-        self.capacity_th = capacity / self.turbine_effcy
-        self.solarmult = solarmult
-        self.tes = tes
-        self.collectorseries = np.genfromtxt(filename, delimiter=',', comments='#', usecols=(locn))
-        self.s = simplesys.Context(ep=0.2, qf=0.1, sl=0.03, sm=self.capacity_th * tes)
-        self.dispHour = dispHour
-        self.still_running_p = False
-
-        # The collector data is for a field with SM=1.
-        # Then we can scale it here to anything we like.
-        self.s.COLLECTOR = self.collectorseries * self.capacity * self.solarmult
-
-        self.hourly_dumped = {}
-        self.hourly_stored = {}
-        self.hourly_storage_level = {}
-        self.storage_p = True
-
-    def step(self, hr, demand):
-        demand_th = demand / self.turbine_effcy
-        Qload = min(demand_th, self.capacity_th)
-        if hr % 24 > 7 and hr % 24 < self.dispHour:
-            Qload = 0
-        elif not self.still_running_p and hr % 24 < self.dispHour:
-            Qload = 0
-        result = self.s.nexthour(Qload)
-        # energy served = load minus auxiliary energy
-        served = (result['QL'] - result['QA']) * self.turbine_effcy
-        self.hourly_power[hr] = served
-        self.hourly_dumped[hr] = result['QD']
-        self.hourly_storage_level[hr] = result['ES']
-
-        if served == 0:
-            self.still_running_p = False
-        elif served > 0:
-            self.still_running_p = True
-
-        if served > demand:
-            # This can happen due to rounding errors.
-            served = demand
-        return served, 0
-
-    def store(self, hr, power):
-        """Accept spilled energy by heating the storage medium (unity efficiency)."""
-        # Only accept partial energy if storage is near full, reject the rest.
-        rejected = self.s.storageInput(power)
-        power -= rejected
-        self.hourly_stored[hr] = power
-        return power
-
-    def set_capacity(self, cap):
-        self.capacity = cap * 1000
-        self.capacity_th = self.capacity / self.turbine_effcy
-        self.s.COLLECTOR = self.collectorseries * self.capacity * self.solarmult
-        self.s.SM = self.capacity_th * self.tes
-
-    def reset(self):
-        Generator.reset(self)
-        self.hourly_dumped.clear()
-        self.hourly_stored.clear()
-        self.hourly_storage_level.clear()
-        self.s.reset()
-
-    def capcost(self, costs):
-        fom = costs.fixed_om_costs[self.__class__]
-        af = costs.annuityf
-        anncost = costs.capcost_per_kw_per_yr[self.__class__]
-
-        # Reverse engineer the capital cost
-        capcost = (anncost - fom) * af
-        cost = capcost * 0.57
-        # Solar field is 33% of costs
-        cost += capcost * 0.33 * (self.solarmult / 2.)
-        # Storage is 10% of costs
-        cost += capcost * 0.10 * (self.tes / 6.)
-
-        # Put back in annualised terms
-        anncost = cost / af + fom
-        return anncost * self.capacity * 1000
-
-    def summary(self, costs):
-        return Generator.summary(self, costs) + ', stored %d MWh' % sum(self.hourly_stored.values()) + \
-            ', dumped %d MWh-t' % sum(self.hourly_dumped.values()) + \
-            ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.tes
 
 
 class PV(Generator):
