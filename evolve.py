@@ -150,7 +150,8 @@ def cost(ctx, transmission_p):
     ### Penalty: limit hydro use
     hydro_energy = 0
     for g in ctx.generators:
-        if isinstance(g, generators.Hydro):
+        if isinstance(g, generators.Hydro) and \
+           not isinstance(g, generators.PumpedHydro):
             hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
     if hydro_exceedance > 0:
