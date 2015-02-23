@@ -68,8 +68,7 @@ def _hydro():
                                   label='QLD1 pumped-hydro')
     psh2 = generators.PumpedHydro(regions.nsw, 1740, 15000,
                                   label='NSW1 pumped-hydro')
-    hydros = [hydro1, hydro2, hydro3, psh1, psh2]
-    return hydros
+    return [hydro1, hydro2, hydro3, psh1, psh2]
 
 
 def replacement(context):
