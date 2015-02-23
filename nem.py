@@ -285,11 +285,11 @@ def plot(context, spills=False, filename=None):
                 keep.append(g)
         gen_list = keep
 
-    f = plt.figlegend([Patch('black', 'red')] +
-                      [g.patch for g in gen_list],
-                      ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000) for g in gen_list],
-                      'upper right')
-    plt.setp(f.get_texts(), fontsize='small')
+    legend = plt.figlegend([Patch('black', 'red')] +
+                           [g.patch for g in gen_list],
+                           ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000) for g in gen_list],
+                           'upper right')
+    plt.setp(legend.get_texts(), fontsize='small')
     xdata = mdates.drange(context.startdate,
                           context.startdate + dt.timedelta(hours=context.hours),
                           dt.timedelta(hours=1))

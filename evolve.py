@@ -208,8 +208,8 @@ def eval_func(chromosome):
 
 def repair_func(func):
     """Decorator to repair constraint-violating individuals."""
-    def wrapper(*args, **kargs):
-        indivs = func(*args, **kargs)
+    def wrapper(*argums, **kargs):
+        indivs = func(*argums, **kargs)
         for indiv in indivs:
             i = 0
             for gen in context.generators:

@@ -243,7 +243,9 @@ def re_plus_ccs(context):
     """
     re100(context)
     coal = generators.Black_Coal(regions.nsw, 0)
+    # pylint: disable=redefined-outer-name
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
+    # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT(regions.nsw, 0)
     ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
