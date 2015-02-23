@@ -183,10 +183,10 @@ def set_generators(chromosome):
     for gen in context.generators:
         newval = chromosome[i]
         for (setter, min_cap, max_cap) in gen.setters:
-            if newval < min_cap:
-                raise ValueError(min_cap - newval, 'capacity too low')
-            if newval > max_cap:
-                raise ValueError(newval - max_cap, 'capacity too high')
+            assert newval >= min_cap, \
+                'capacity under %.3f GW min. build' % min_cap
+            assert newval <= max_cap, \
+                'capacity over %.3f GW max. build' % max_cap
             setter(newval)
             i += 1
     # Check every parameter has been set.
@@ -195,14 +195,7 @@ def set_generators(chromosome):
 
 def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
-    try:
-        set_generators(chromosome)
-    except ValueError, (delta, msg):
-        return 1000 + delta * 1000,
-    negativeCount = sum([True for x in chromosome if x < 0])
-    if negativeCount > 0:
-        # Penalise negative capacities in the chromosome
-        return pow(negativeCount, 2) * 1000,
+    set_generators(chromosome)
     nem.run(context)
     score, penalty, reason = cost(context, transmission_p=args.transmission)
     if args.trace_file is not None:
@@ -211,6 +204,21 @@ def eval_func(chromosome):
             writer = csv.writer(csvfile)
             writer.writerow([score, penalty, reason] + list(chromosome))
     return score + penalty,
+
+
+def repair_func(func):
+    """Decorator to repair constraint-violating individuals."""
+    def wrapper(*args, **kargs):
+        indivs = func(*args, **kargs)
+        for indiv in indivs:
+            i = 0
+            for gen in context.generators:
+                for (_, min_cap, max_cap) in gen.setters:
+                    # enforce the range (min_cap, max_cap)
+                    indiv[i] = max(min(indiv[i], max_cap), min_cap)
+                    i += 1
+        return indivs
+    return wrapper
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -229,6 +237,7 @@ strategy = cma.Strategy(centroid=[10] * numparams, sigma=args.sigma,
                         lambda_=lam)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
+toolbox.decorate("generate", repair_func)
 toolbox.register("update", strategy.update)
 toolbox.register("evaluate", eval_func)
 
