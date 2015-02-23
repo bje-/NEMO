@@ -274,7 +274,7 @@ class PumpedHydro(Hydro):
     patch = Patch(facecolor='powderblue')
 
     def __init__(self, region, capacity, maxstorage, rte=0.8, label='pumped-hydro'):
-        Fuelled.__init__(self, region, capacity, label)
+        Hydro.__init__(self, region, capacity, label)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
         self.stored = self.maxstorage * .5
