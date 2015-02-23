@@ -265,6 +265,8 @@ class Hydro(Fuelled):
 
     def __init__(self, region, capacity, label='hydro'):
         Fuelled.__init__(self, region, capacity, label)
+        # capacity is in MW, but build limit is in GW
+        self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
 
 class PumpedHydro(Hydro):

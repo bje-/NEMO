@@ -69,8 +69,6 @@ def _hydro():
     psh2 = generators.PumpedHydro(regions.nsw, 1740, 15000,
                                   label='NSW1 pumped-hydro')
     hydros = [hydro1, hydro2, hydro3, psh1, psh2]
-    for h in hydros:
-        h.setters = []
     return hydros
 
 
@@ -215,10 +213,6 @@ def re100(context):
         else:  # pragma: no cover
             raise(ValueError)
 
-    # You can't modify these capacities.
-    for g in result:
-        if isinstance(g, Hydro):
-            g.setters = []
     context.generators = result
 
 
