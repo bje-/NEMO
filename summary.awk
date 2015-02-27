@@ -67,7 +67,7 @@ BEGIN {
 		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
     if (surplus > 0)
-	printf ("%12s\t%5s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
+	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
     surplus = 0
     params = null
