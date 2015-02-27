@@ -57,17 +57,17 @@ BEGIN {
        printf ("# options %s\n", params)
     printf ("# demand %.2f TWh\n", total_demand)
     printf ("# score %.2f $/MWh\n", cost)
-    printf ("# tech\t  GW\tshare\t  TWh\tshare\tCF\n")
+    printf ("# %10s\t  GW\tshare\t  TWh\tshare\tCF\n", "tech")
     for (m in merit) {
 	c = merit[m]
 	if (caps[c] != "")
-	    printf ("%s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
+	    printf ("%12s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
 		    caps[c], (float) caps[c] / total_capacity, \
 		    energy[c], (float) energy[c] / total_demand, \
 		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
     if (surplus > 0)
-	printf ("surplus\t%5s\t%5s\t%5.1f\t%.3f\n", "N/A", "N/A", surplus, surplus / total_demand)
+	printf ("%12s\t%5s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
     surplus = 0
     params = null
