@@ -297,7 +297,7 @@ class PumpedHydro(Hydro):
         0
         """
         if self.last_run == hr:
-            # Can't pump in the same hour as the turbine.
+            # Can't pump and generate in the same hour.
             return 0
         power = min(power, self.capacity)
         energy = power * self.rte
