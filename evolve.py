@@ -17,7 +17,6 @@ from scoop import futures
 
 import os
 import csv
-import math
 import numpy as np
 import argparse
 import nem
