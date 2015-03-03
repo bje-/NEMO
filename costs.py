@@ -51,8 +51,8 @@ class AETA2012_2030:
         """Construct a cost object given discount rate, coal, gas and CCS costs."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
-        # bioenergy costs are supplied by us, not BREE
-        self.bioenergy_price_per_mwh = 80
+        # bioenergy costs are taken from the CSIRO energy storage report for AEMO
+        self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.capcost_per_kw_per_yr = {}

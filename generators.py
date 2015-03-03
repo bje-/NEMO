@@ -341,7 +341,7 @@ class Biofuel(Fuelled):
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
-        fuel_cost = costs.bioenergy_price_per_mwh
+        fuel_cost = costs.bioenergy_price_per_gj * (3.6 / .31)  # 31% heat rate
         return vom + fuel_cost
 
     def reset(self):
