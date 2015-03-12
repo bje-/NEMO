@@ -41,6 +41,8 @@ BEGIN {
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
 /spilled.*TWh/		{ surplus += $5 }
+/Mt CO2$/ 		{ co2 += $(NF-2) }
+/Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
 /^{.*}/			{ params = $0 }
@@ -56,6 +58,7 @@ BEGIN {
     if (params != "")
        printf ("# options %s\n", params)
     printf ("# demand %.2f TWh\n", total_demand)
+    printf ("# emissions %.2f Mt\n", co2)
     printf ("# score %.2f $/MWh\n", cost)
     printf ("# %10s\t  GW\tshare\t  TWh\tshare\tCF\n", "tech")
     for (m in merit) {
@@ -70,6 +73,7 @@ BEGIN {
 	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
     surplus = 0
+    co2 = 0
     params = null
     delete caps
     delete energy
