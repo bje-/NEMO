@@ -158,7 +158,7 @@ def re100(context):
 
     result = []
     # The following list is in merit order.
-    for g in [PV1Axis, Wind, CentralReceiver, Hydro, PumpedHydro, Biofuel]:
+    for g in [PV1Axis, Wind, PumpedHydro, Hydro, CentralReceiver, Biofuel]:
         if capfactor[g] is not None:
             capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
         if g == PumpedHydro:
