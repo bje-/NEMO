@@ -294,7 +294,6 @@ def re100_geothermal_egs(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = []
     >>> re100_geothermal_egs(c)
     >>> isinstance(c.generators[0], generators.Geothermal)
     True
@@ -313,7 +312,6 @@ def re100_geothermal_hsa(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = []
     >>> re100_geothermal_hsa(c)
     >>> isinstance(c.generators[0], generators.Geothermal_HSA)
     True
@@ -332,7 +330,6 @@ def re100_geothermal_both(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = []
     >>> re100_geothermal_both(c)
     >>> isinstance(c.generators[0], generators.Geothermal_HSA)
     True
@@ -353,16 +350,50 @@ def re100_geothermal_both_nocst(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = []
     >>> re100_geothermal_both_nocst(c)
-    >>> isinstance(c.generators[0], generators.Geothermal_HSA)
-    True
-    >>> isinstance(c.generators[1], generators.Geothermal_EGS)
-    True
     >>> for g in c.generators: assert not isinstance(g, generators.CST)
     """
     re100_geothermal_both(context)
     newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
+    context.generators = newlist
+
+
+def re100_geothermal_both_nopv(context):
+    """100% renewables plus geothermal, but no CST.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100_geothermal_both_nopv(c)
+    >>> for g in c.generators: assert not isinstance(g, generators.PV)
+    """
+    re100_geothermal_both(context)
+    newlist = [g for g in context.generators if not isinstance(g, generators.PV)]
+    context.generators = newlist
+
+
+def re100_geothermal_both_nowind(context):
+    """100% renewables plus geothermal, but no CST.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100_geothermal_both_nowind(c)
+    >>> for g in c.generators: assert not isinstance(g, generators.Wind)
+    """
+    re100_geothermal_both(context)
+    newlist = [g for g in context.generators if not isinstance(g, generators.Wind)]
+    context.generators = newlist
+
+
+def re100_geothermal_both_novre(context):
+    """100% renewables plus geothermal, but no variable renewable energy (VRE).
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100_geothermal_both_novre(c)
+    >>> for g in c.generators: assert not isinstance(g, generators.Wind) and not isinstance(g, generators.PV)
+    """
+    re100_geothermal_both(context)
+    newlist = [g for g in context.generators if not isinstance(g, generators.Wind) and not isinstance(g, generators.PV)]
     context.generators = newlist
 
 
@@ -371,11 +402,36 @@ def re100_nocst(context):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.generators = []
     >>> re100_nocst(c)
     >>> for g in c.generators: assert not isinstance(g, generators.CST)
     """
     re100(context)
+    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
+    context.generators = newlist
+
+
+def re100_egs_nocst(context):
+    """100% renewables with EGS geothermal but no CST.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100_egs_nocst(c)
+    >>> for g in c.generators: assert not isinstance(g, generators.CST)
+    """
+    re100_geothermal_egs(context)
+    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
+    context.generators = newlist
+
+
+def re100_hsa_nocst(context):
+    """100% renewables with HSA geothermal, but no CST.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> re100_hsa_nocst(c)
+    >>> for g in c.generators: assert not isinstance(g, generators.CST)
+    """
+    re100_geothermal_hsa(context)
     newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
     context.generators = newlist
 
@@ -414,8 +470,13 @@ supply_scenarios = {'re100': re100,
                     'replacement': replacement,
                     're100+dsp': re100_dsp,
                     're100+egs': re100_geothermal_egs,
+                    're100+egs-nocst': re100_egs_nocst,
                     're100+hsa': re100_geothermal_hsa,
+                    're100+hsa-nocst': re100_hsa_nocst,
                     're100+geo': re100_geothermal_both,
+                    're100+geo-nopv': re100_geothermal_both_nopv,
+                    're100+geo-nowind': re100_geothermal_both_nowind,
+                    're100+geo-novre': re100_geothermal_both_novre,
                     're100-nocst': re100_nocst,
                     're100+geo-nocst': re100_geothermal_both_nocst,
                     're+fossil': re_plus_fossil,
