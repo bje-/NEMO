@@ -27,6 +27,22 @@ for num in [40, 41, 42, 43]:
 for num in [37, 38, 39]:
     region_table[num] = regions.vic
 
+
+def in_region(r):
+    """
+    Return all polygons in region R.
+
+    >>> import regions
+    >>> in_region(regions.tas)
+    [40, 41, 42, 43]
+    """
+    polys = []
+    for i, rgn in enumerate(region_table):
+        if r is rgn:
+            polys.append(i)
+    return polys
+
+
 wind_limit = [None, 80.3, 0, 36.9, 6.5, 15.6, 1.5, 6.9, 2.6, 0, 4.1,
               1.5, 2.1, 0.9, 30.3, 0, 0, 40.5, 0.2, 0, 49.1, 2.3, 0,
               1.7, 116.3, 3.3, 71.9, 128.3, 11.7, 0.5, 0.6, 52.5,
