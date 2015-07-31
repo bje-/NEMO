@@ -49,8 +49,8 @@ f.close()
 
 # For hourly demand, average half-hours n and n+1.
 # Demand is in every second column from columns 2 onwards.
-regional_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
-assert regional_demand.shape[0] == regions.numregions
+hourly_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
+assert hourly_demand.shape[0] == regions.numregions
 
 
 def default_generation_mix():
@@ -85,7 +85,7 @@ class Context:
         # NEM standard: 0.002% unserved energy
         self.relstd = 0.002
         self.generators = default_generation_mix()
-        self.demand = regional_demand.copy()
+        self.demand = hourly_demand.copy()
         self.timesteps = self.demand.shape[1]
         self.unserved = []
         self.unserved_energy = 0
