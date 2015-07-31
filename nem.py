@@ -7,18 +7,19 @@
 # (at your option) any later version.
 
 """A National Electricity Market (NEM) simulation."""
-
 import re
+
 import datetime as dt
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import Patch
 
-import consts
-import regions
-import generators
 import configfile
+import consts
+import generators
+import regions
+
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
