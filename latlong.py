@@ -19,7 +19,6 @@ maxcols = 839
 maxrows = 679
 
 
-
 class LatLong:
 
     """A point of latitude and logitude."""
