@@ -7,15 +7,15 @@
 # (at your option) any later version.
 
 """Supply and demand side scenarios."""
-
 import heapq
+
 import numpy as np
 
+import configfile
 import consts
 import generators
 import polygons
 import regions
-import configfile
 
 
 def supply_switch(label):

@@ -7,13 +7,14 @@
 # (at your option) any later version.
 
 """Simulated generators for the NEMO framework."""
+import locale
 
 import numpy as np
 from matplotlib.patches import Patch
 
 import consts
 
-import locale
+
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
 

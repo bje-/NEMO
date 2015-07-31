@@ -6,7 +6,6 @@
 # (at your option) any later version.
 
 """Transmission model details."""
-
 import regions
 from costs import annuity_factor
 

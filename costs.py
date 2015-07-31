@@ -7,7 +7,6 @@
 # (at your option) any later version.
 
 """Generation technology costs."""
-
 import generators as tech
 
 

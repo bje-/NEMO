@@ -7,14 +7,15 @@
 # (at your option) any later version.
 
 """Replay NEM runs from a text file of generators."""
-
 import argparse
-import costs
-import consts
-import scenarios
-import nem
-import sys
 import re
+import sys
+
+import consts
+import costs
+import nem
+import scenarios
+
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-f", type=str, help='replay file', required=True)

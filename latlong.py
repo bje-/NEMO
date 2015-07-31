@@ -9,6 +9,8 @@
 # (at your option) any later version.
 
 """Latitude and longitude support for the BoM solar irradiance grids."""
+import math
+
 
 cellsize = 0.05
 xllcorner = 112.025
@@ -16,7 +18,6 @@ yllcorner = -43.925
 maxcols = 839
 maxrows = 679
 
-import math
 
 
 class LatLong:

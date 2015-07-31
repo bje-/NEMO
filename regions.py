@@ -7,10 +7,11 @@
 # (at your option) any later version.
 
 """NEM regions and interconnections."""
-
 import string
-from latlong import LatLong
+
 import numpy as np
+
+from latlong import LatLong
 
 
 class Region:
