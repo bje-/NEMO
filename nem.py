@@ -20,14 +20,18 @@ import consts
 import generators
 import regions
 
-
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
-demand = np.genfromtxt(configfile.get('demand', 'demand-trace'), comments='#')
+
+# Generate a list of column numbers from [2, 4, .., 2*n]
+# (ignore RRP columns)
+columns = [(elt * 2) + 2 for elt in range(regions.numregions)]
+cols = (0, 1) + tuple(columns)
+demand = np.genfromtxt(configfile.get('demand', 'demand-trace'), comments='#', usecols=cols)
 demand = demand.transpose()
 
-# Check for date, time and 2*n demand+price columns (n regions).
-assert demand.shape[0] == 2 + regions.numregions * 2
+# Check for date, time and n demand columns (for n regions).
+assert demand.shape[0] == 2 + regions.numregions, demand.shape[0]
 
 # The number of rows must be even.
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
@@ -46,7 +50,7 @@ f.close()
 
 # For hourly demand, average half-hours n and n+1.
 # Demand is in every second column from columns 2 onwards.
-regional_demand = (demand[2::2, ::2] + demand[2::2, 1::2]) / 2
+regional_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
 assert regional_demand.shape[0] == regions.numregions
 
 
