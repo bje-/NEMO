@@ -32,7 +32,6 @@ demand = demand.transpose()
 
 # Check for date, time and n demand columns (for n regions).
 assert demand.shape[0] == 2 + regions.numregions, demand.shape[0]
-
 # The number of rows must be even.
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
 
@@ -78,7 +77,7 @@ class Context:
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
         self.hours = demand.shape[1] / 2
-        # Estimate the number of years from the number of sim. hours.
+        # Estimate the number of years from the number of simulation hours.
         if self.hours == 8760 or self.hours == 8784:
             self.years = 1
         else:
