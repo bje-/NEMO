@@ -167,11 +167,13 @@ def _sim(context, starthour, endhour):
         connections[r].sort(key=len)
 
     assert context.demand.shape == (regions.numregions, context.timesteps)
-    demand_copy = context.demand.copy()
 
     # Zero out regions we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
-        demand_copy[rgn] = 0
+        context.demand[rgn] = 0
+
+    # We are free to scribble all over demand_copy.
+    demand_copy = context.demand.copy()
 
     for hr in xrange(starthour, endhour):
         hour_demand = demand_copy[::, hr]
