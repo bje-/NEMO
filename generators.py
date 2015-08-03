@@ -74,7 +74,7 @@ class Generator:
 
     def __str__(self):
         """A short string representation of the generator."""
-        return '%s (%s), %.1f GW' \
+        return '%s (%s), %.2f GW' \
             % (self.label, self.region, self.capacity / 1000.)
 
     def __repr__(self):
