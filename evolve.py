@@ -19,7 +19,6 @@ import os
 import csv
 import numpy as np
 import argparse
-import itertools
 import nem
 import generators
 import scenarios
