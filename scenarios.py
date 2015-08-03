@@ -489,6 +489,18 @@ def re100_hsa_nocst(context):
     context.generators = newlist
 
 
+def re100_nsw(context):
+    """100% renewables in New South Wales only.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = []
+    >>> re100_nsw(c)
+    >>> for g in c.generators: assert g.region is regions.nsw
+    """
+    re100_one_region(context, regions.nsw)
+
+
 def re100_south_aus(context):
     """100% renewables in South Australia only.
 
@@ -534,6 +546,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're+ccs': re_plus_ccs,
                     're+fossil': re_plus_fossil,
                     're100': re100,
+                    're100-nsw': re100_nsw,
                     're100-sa': re100_south_aus,
                     're100+batteries': re100_batteries,
                     're100+dsp': re100_dsp,
