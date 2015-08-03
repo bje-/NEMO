@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -229,6 +229,59 @@ def re100_batteries(context):
     nsw_battery = generators.Battery(regions.nsw, 0, 0)
     g = context.generators
     context.generators = g[0:9] + [nsw_battery] + g[9:]
+
+
+def _one_per_poly(region):
+    """Return three lists of wind, PV and CST generators, one per polygon.
+
+    >>> import regions
+    >>> wind, pv, cst = _one_per_poly(regions.tas)
+    >>> len(wind), len(pv), len(cst)
+    (4, 4, 4)
+    """
+    pv = []
+    wind = []
+    cst = []
+
+    for poly in polygons.in_region(region):
+        wind.append(generators.Wind(region, 0,
+                                    configfile.get('generation', 'wind-trace'),
+                                    poly - 1,
+                                    delimiter=',',
+                                    build_limit=polygons.wind_limit[poly],
+                                    label='poly %d wind' % poly))
+        pv.append(generators.PV1Axis(region, 0,
+                                     configfile.get('generation', 'pv1axis-trace'),
+                                     poly - 1,
+                                     build_limit=polygons.pv_limit[poly],
+                                     label='poly %d PV' % poly))
+        cst.append(generators.CentralReceiver(region, 0, 2, 6,
+                                              configfile.get('generation', 'cst-trace'),
+                                              poly - 1,
+                                              build_limit=polygons.cst_limit[poly],
+                                              label='poly %d CST' % poly))
+    return wind, pv, cst
+
+
+def re100_one_region(context, region):
+    """100% renewables in one region only.
+
+    >>> import regions
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = []
+    >>> re100_one_region(c, regions.tas)
+    >>> for g in c.generators: assert g.region is regions.tas
+    """
+    re100(context)
+    context.regions = [region]
+    wind, pv, cst = _one_per_poly(region)
+    newlist = wind
+    newlist += pv
+    newlist += [g for g in context.generators if isinstance(g, generators.Hydro) and g.region is region]
+    newlist += cst
+    newlist += [g for g in context.generators if isinstance(g, generators.Biofuel) and g.region is region]
+    context.generators = newlist
 
 
 def re_plus_ccs(context):
