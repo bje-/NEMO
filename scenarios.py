@@ -527,7 +527,7 @@ def theworks(context):
     context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
                          [ocgt, batt, dem]
 
-supply_scenarios = {'__one_ccgt__': _one_ccgt  # nb. for testing only
+supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
                     'ccgt-ccs': ccgt_ccs,
                     'coal-ccs': coal_ccs,
@@ -548,7 +548,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt  # nb. for testing only
                     're100+hsa-nocst': re100_hsa_nocst,
                     're100-nocst': re100_nocst,
                     'replacement': replacement,
-                    'theworks': theworks,
+                    'theworks': theworks
                     }
 
 
