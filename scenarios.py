@@ -515,27 +515,27 @@ def theworks(context):
     context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
                          [ocgt, batt, dem]
 
-supply_scenarios = {'re100': re100,
+supply_scenarios = {'__one_ccgt__': _one_ccgt  # nb. for testing only
                     'ccgt': ccgt,
                     'ccgt-ccs': ccgt_ccs,
                     'coal-ccs': coal_ccs,
+                    're+ccs': re_plus_ccs,
+                    're+fossil': re_plus_fossil,
+                    're100': re100,
                     're100+batteries': re100_batteries,
-                    'replacement': replacement,
                     're100+dsp': re100_dsp,
                     're100+egs': re100_geothermal_egs,
                     're100+egs-nocst': re100_egs_nocst,
+                    're100+geo': re100_geothermal_both,
+                    're100+geo-nocst': re100_geothermal_both_nocst,
+                    're100+geo-nopv': re100_geothermal_both_nopv,
+                    're100+geo-novre': re100_geothermal_both_novre,
+                    're100+geo-nowind': re100_geothermal_both_nowind,
                     're100+hsa': re100_geothermal_hsa,
                     're100+hsa-nocst': re100_hsa_nocst,
-                    're100+geo': re100_geothermal_both,
-                    're100+geo-nopv': re100_geothermal_both_nopv,
-                    're100+geo-nowind': re100_geothermal_both_nowind,
-                    're100+geo-novre': re100_geothermal_both_novre,
                     're100-nocst': re100_nocst,
-                    're100+geo-nocst': re100_geothermal_both_nocst,
-                    're+fossil': re_plus_fossil,
-                    're+ccs': re_plus_ccs,
+                    'replacement': replacement,
                     'theworks': theworks,
-                    '__one_ccgt__': _one_ccgt  # for testing only
                     }
 
 
