@@ -501,6 +501,18 @@ def re100_nsw(context):
     re100_one_region(context, regions.nsw)
 
 
+def re100_qld(context):
+    """100% renewables in Queensland only.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.generators = []
+    >>> re100_qld(c)
+    >>> for g in c.generators: assert g.region is regions.qld
+    """
+    re100_one_region(context, regions.qld)
+
+
 def re100_south_aus(context):
     """100% renewables in South Australia only.
 
@@ -546,6 +558,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're+ccs': re_plus_ccs,
                     're+fossil': re_plus_fossil,
                     're100': re100,
+                    're100-qld': re100_qld,
                     're100-nsw': re100_nsw,
                     're100-sa': re100_south_aus,
                     're100+batteries': re100_batteries,
