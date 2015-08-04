@@ -16,6 +16,7 @@ from deap import cma
 from scoop import futures
 
 import os
+import sys
 import csv
 import numpy as np
 import argparse
@@ -44,6 +45,7 @@ parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from 
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_argument("--hydro-limit", type=float, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='CMA-ES lambda value [default: 10*N]')
+parser.add_argument("--list-scenarios", action="store_true")
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
 parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
@@ -52,6 +54,14 @@ parser.add_argument("--trace-file", type=str, default=None, help='Filename for e
 parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
+
+if __name__ == '__main__' and args.list_scenarios:
+    for key in sorted(scenarios.supply_scenarios):
+        descr = scenarios.supply_scenarios[key].__doc__
+        print '%20s' % key, '\t', descr.split('\n')[0]
+    print
+    sys.exit(0)
+
 if __name__ == '__main__':
     print vars(args)
 
