@@ -1,12 +1,12 @@
 # Copyright (C) 2011, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""NEM regions and interconnections."""
+"""Regions and their interconnections."""
 import string
 
 import numpy as np
@@ -16,11 +16,11 @@ from latlong import LatLong
 
 class Region:
 
-    """Each NEM region is described by a Region object."""
+    """Each region is described by a Region object."""
 
     def __init__(self, count, regionid, descr, (centreLat, centreLon)):
         """
-        Construct a Region given a count, NEM region ID, description and lat/long of the region's centre.
+        Construct a Region given a count, region ID, description and lat/long of the region's centre.
 
         >>> r = Region(0, 'cbr', 'Capital region', ((-35, 149)))
         """
