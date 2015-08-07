@@ -72,6 +72,4 @@ for line in replayfile:
     print
 
     if args.x:  # pragma: no cover
-        print 'Press Enter to start graphical browser ',
-        sys.stdin.readline()
         nem.plot(context, spills=args.spills)
