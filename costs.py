@@ -26,11 +26,11 @@ class NullCosts:
         self.annuityf = 1
 
         for t in [tech.Biofuel, tech.Black_Coal, tech.CCGT,
-                  tech.CCGT_CCS, tech.ParabolicTrough,
-                  tech.CentralReceiver, tech.Coal_CCS,
-                  tech.DemandResponse, tech.Geothermal_HSA,
-                  tech.Geothermal_EGS, tech.Hydro, tech.OCGT, tech.PV,
-                  tech.PumpedHydro, tech.Wind, ]:
+                  tech.CCGT_CCS, tech.CentralReceiver, tech.Coal_CCS,
+                  tech.Diesel, tech.DemandResponse,
+                  tech.Geothermal_EGS, tech.Geothermal_HSA,
+                  tech.Hydro, tech.OCGT, tech.ParabolicTrough,
+                  tech.PumpedHydro, tech.PV, tech.Wind, ]:
             self.capcost_per_kw_per_yr[t] = 0
             self.opcost_per_mwh[t] = 0
             self.fixed_om_costs[t] = 0
@@ -54,6 +54,7 @@ class AETA2012_2030:
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
+        self.diesel_price_per_litre = 1.50
         self.capcost_per_kw_per_yr = {}
         self.opcost_per_mwh = {}
         self.fixed_om_costs = {}
@@ -63,12 +64,14 @@ class AETA2012_2030:
         table = self.capcost_per_kw_per_yr
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
+        table[tech.Diesel] = 0
         table[tech.DemandResponse] = 0
 
         # Variable O&M (VOM) costs
         table = self.opcost_per_mwh
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
+        table[tech.Diesel] = 0
         table[tech.Wind] = 12 * self.escalation
         table[tech.CentralReceiver] = 15 * self.escalation
         table[tech.ParabolicTrough] = 20 * self.escalation
@@ -86,6 +89,7 @@ class AETA2012_2030:
         # Fixed O&M (FOM) costs
         table = self.fixed_om_costs
         table[tech.DemandResponse] = 0
+        table[tech.Diesel] = 0
         table[tech.Hydro] = 0
         table[tech.PumpedHydro] = 0
         table[tech.Wind] = 40 * self.escalation

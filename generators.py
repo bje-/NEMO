@@ -463,6 +463,24 @@ class CCGT_CCS(CCS):
         return total_opcost
 
 
+class Diesel(Fossil):
+
+    """Diesel genset model."""
+
+    patch = Patch(facecolor='dimgrey')
+
+    def __init__(self, region, capacity, intensity=1.0, label='diesel'):
+        Fossil.__init__(self, region, capacity, intensity, label)
+
+    def opcost_per_mwh(self, costs):
+        vom = costs.opcost_per_mwh[self.__class__]
+        # 3.3 kWh per litre
+        litres_per_mwh = (1 / 3.3) * 1000
+        fuel_cost = costs.diesel_price_per_litre * litres_per_mwh
+        total_opcost = vom + fuel_cost + self.intensity * costs.carbon
+        return total_opcost
+
+
 class Battery(Generator):
 
     """Battery storage (of any type)."""
