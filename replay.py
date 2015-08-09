@@ -9,7 +9,6 @@
 """Replay NEM runs from a text file of generators."""
 import argparse
 import re
-import sys
 
 import consts
 import costs
