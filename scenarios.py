@@ -169,8 +169,8 @@ def re100(context):
         elif g == Hydro:
             # Ignore the one small hydro plant in SA.
             result.append(Hydro(regions.tas, 2740, label=regions.tas.id + ' hydro'))
-            result.append(Hydro(regions.nsw, 1160, label=regions.nsw.id + ' hydro'))
-            result.append(Hydro(regions.vic, 960, label=regions.vic.id + ' hydro'))
+            result.append(Hydro(regions.nsw, 910, label=regions.nsw.id + ' hydro'))
+            result.append(Hydro(regions.vic, 2237, label=regions.vic.id + ' hydro'))
         elif g == Biofuel:
             # 24 GW biofuelled gas turbines (fixed)
             # distribute 24GW of biofuelled turbines across chosen regions
