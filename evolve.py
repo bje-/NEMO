@@ -187,7 +187,7 @@ def cost(ctx, transmission_p):
 
 
 def set_generators(chromosome):
-    """Set the generator list from the GA chromosome."""
+    """Set the generator list from the chromosome."""
     i = 0
     for gen in context.generators:
         newval = chromosome[i]
@@ -253,7 +253,7 @@ toolbox.register("evaluate", eval_func)
 
 
 def run():
-    """Run the GA."""
+    """Run the evolution."""
     if args.verbose and __name__ == '__main__':
         print "objective: minimise", eval_func.__doc__
 
