@@ -469,12 +469,13 @@ class Diesel(Fossil):
 
     patch = Patch(facecolor='dimgrey')
 
-    def __init__(self, region, capacity, intensity=1.0, kwh_per_litres=3.3, label='diesel'):
+    def __init__(self, region, capacity, intensity=1.0, kwh_per_litre=3.3, label='diesel'):
         Fossil.__init__(self, region, capacity, intensity, label)
+        self.kwh_per_litre = kwh_per_litre
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
-        litres_per_mwh = (1 / kwh_per_litres) * 1000
+        litres_per_mwh = (1 / self.kwh_per_litre) * 1000
         fuel_cost = costs.diesel_price_per_litre * litres_per_mwh
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
         return total_opcost
