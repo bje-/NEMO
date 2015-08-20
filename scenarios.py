@@ -59,7 +59,7 @@ def _hydro():
     5
     """
     # Ignore the one small hydro plant in SA.
-    hydro1 = generators.Hydro(regions.tas, 2740,
+    hydro1 = generators.Hydro(regions.tas, 2255,
                               label=regions.tas.id + ' hydro')
     hydro2 = generators.Hydro(regions.nsw, 910,
                               label=regions.nsw.id + ' hydro')
