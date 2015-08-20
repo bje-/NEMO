@@ -58,17 +58,20 @@ def _hydro():
     >>> len(h)
     5
     """
+    # Ignore the one small hydro plant in SA.
     hydro1 = generators.Hydro(regions.tas, 2740,
                               label=regions.tas.id + ' hydro')
-    hydro2 = generators.Hydro(regions.nsw, 1160,
+    hydro2 = generators.Hydro(regions.nsw, 910,
                               label=regions.nsw.id + ' hydro')
-    hydro3 = generators.Hydro(regions.vic, 960,
+    hydro3 = generators.Hydro(regions.vic, 2237,
                               label=regions.vic.id + ' hydro')
+    # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
     psh1 = generators.PumpedHydro(regions.qld, 500, 5000,
                                   label='QLD1 pumped-hydro')
+    # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
     psh2 = generators.PumpedHydro(regions.nsw, 1740, 15000,
                                   label='NSW1 pumped-hydro')
-    return [hydro1, hydro2, hydro3, psh1, psh2]
+    return [psh1, psh2, hydro1, hydro2, hydro3]
 
 
 def replacement(context):
@@ -162,15 +165,9 @@ def re100(context):
         if capfactor[g] is not None:
             capacity = 204.4 * consts.twh * energy_fraction[g] / (capfactor[g] * 8760)
         if g == PumpedHydro:
-            # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-            result.append(PumpedHydro(regions.qld, 500, 5000, label='QLD1 pumped-hydro'))
-            # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-            result.append(PumpedHydro(regions.nsw, 1740, 15000, label='NSW1 pumped-hydro'))
+            result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
         elif g == Hydro:
-            # Ignore the one small hydro plant in SA.
-            result.append(Hydro(regions.tas, 2740, label=regions.tas.id + ' hydro'))
-            result.append(Hydro(regions.nsw, 910, label=regions.nsw.id + ' hydro'))
-            result.append(Hydro(regions.vic, 2237, label=regions.vic.id + ' hydro'))
+            result += [h for h in _hydro() if isinstance(h, Hydro) and not isinstance(h, PumpedHydro)]
         elif g == Biofuel:
             # 24 GW biofuelled gas turbines (fixed)
             # distribute 24GW of biofuelled turbines across chosen regions
