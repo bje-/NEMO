@@ -46,6 +46,8 @@ parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/
 parser.add_argument("--hydro-limit", type=float, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='CMA-ES lambda value [default: 10*N]')
 parser.add_argument("--list-scenarios", action="store_true")
+parser.add_argument("--min-regional-generation", type=float, default=None,
+                    help='minimum share of energy generated intra-region [default: None]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
 parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
@@ -71,6 +73,12 @@ context = nem.Context()
 context.nsp_limit = args.nsp_limit
 assert 0 <= context.nsp_limit <= 1, \
     "NSP limit must be in the interval [0,1]"
+
+# Likewise for the minimum share of regional generation.
+context.min_regional_generation = args.min_regional_generation
+assert context.min_regional_generation is None or \
+    (0 <= context.min_regional_generation <= 1), \
+    "Minimum regional generation must be in the interval [0,1]"
 
 cost_class = costs.cost_switch(args.costs)
 context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
@@ -118,6 +126,18 @@ def cost(ctx, transmission_p):
     if use > 0:
         reason |= 1
     penalty += pow(use, 3)
+
+    ### Penalty: minimum share of regional generation
+    if ctx.min_regional_generation is not None:
+        regional_generation_shortfall = 0
+        for rgn in ctx.regions:
+            regional_generation = 0
+            for g in ctx.generators:
+                if g.region is rgn:
+                    regional_generation += sum(g.hourly_power.values())
+            min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
+            regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
+        penalty += pow(regional_generation_shortfall, 3)
 
     ### Penalty: total emissions
     if args.emissions_limit is not None:
