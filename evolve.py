@@ -69,7 +69,7 @@ context = nem.Context()
 
 # Set the system non-synchronous penetration limit.
 context.nsp_limit = args.nsp_limit
-assert context.nsp_limit >= 0 and context.nsp_limit <= 1, \
+assert 0 <= context.nsp_limit <= 1, \
     "NSP limit must be in the interval [0,1]"
 
 cost_class = costs.cost_switch(args.costs)
