@@ -3,7 +3,7 @@ all:
 COVRUN=python-coverage run -a --source .
 
 check:  replay.data
-	nosetests -I '(browse|evolve|replay).py' --with-doctest --with-coverage --cover-package=.
+	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 	$(COVRUN) evolve.py -f0 -p2 -g1 > /dev/null
 	$(COVRUN) evolve.py -f0 -p2 -g1 -s __one_ccgt__ > /dev/null
 	NEMORC=default.cfg $(COVRUN) evolve.py -f0 -p2 -g1 -s __one_ccgt__ > /dev/null
