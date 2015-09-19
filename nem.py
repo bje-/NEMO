@@ -14,6 +14,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
+from itertools import groupby
 
 import configfile
 import consts
@@ -137,6 +138,8 @@ class Context:
             if self.unserved_percent > self.relstd:
                 s += 'WARNING: NEM reliability standard exceeded\n'
             s += 'Unserved total hours: ' + str(self.unserved_hours) + '\n'
+            unserved_events = [g for g, v in groupby(self.unserved, lambda x: bool(x) is True) if g]
+            s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             s += 'min, max shortfalls: ' + str(self.shortfalls)
         return s
 
