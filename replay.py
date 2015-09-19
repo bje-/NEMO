@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.ed
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-v", action="store_true", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
-parser.add_argument("-s", "--supply-scenario", type=str, help='scenario name', default='re100')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
 parser.add_argument("--spills", action="store_true", help='plot spills')
@@ -52,7 +51,6 @@ context = nem.Context()
 context.nsp_limit = args.nsp_limit
 assert context.nsp_limit >= 0 and context.nsp_limit <= 1, \
     "NSP limit must be in the interval [0,1]"
-scenarios.supply_switch(args.supply_scenario)(context)
 capacities = []
 replayfile = open(args.f)
 for line in replayfile:
@@ -61,11 +59,14 @@ for line in replayfile:
     if re.search(r'^\s*#', line):
         print line,
         continue
-    if not re.search(r'^\s*List:\s*\[.*\]\s*.?$', line):
+    if not re.search(r'^\s*\w+:\s*\[.*\]\s*.?$', line):
         print 'skipping malformed input:', line
         continue
-    m = re.match(r'^\s*List:\s*\[(.*)\]\s*.?$', line)
-    capacities = m.group(1).split(',')
+    m = re.match(r'^\s*(\w+):\s*\[(.*)\]\s*.?$', line)
+    scenario = m.group(1)
+    print 'scenario', scenario
+    capacities = m.group(2).split(',')
+    scenarios.supply_switch(scenario)(context)
     capacities = [float(elt) for elt in capacities]  # str -> float
     run_one(capacities)
     print
