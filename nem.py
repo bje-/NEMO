@@ -273,7 +273,7 @@ def plot(context, spills=False, filename=None):
     demand = context.demand.sum(axis=0)
 
     plt.ylabel('Power (MW)')
-    title = 'NEM supply/demand\nRegions: %s' % context.regions
+    title = 'Supply/demand balance\nRegions: %s' % context.regions
     plt.suptitle(title)
 
     # The ::-1 slicing reverses the 'gens' list so that the legend
