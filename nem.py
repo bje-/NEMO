@@ -293,7 +293,7 @@ def plot(context, spills=False, filename=None):
 
     legend = plt.figlegend([Patch('black', 'red')] +
                            [g.patch for g in gen_list],
-                           ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000) for g in gen_list],
+                           ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000.) for g in gen_list],
                            'upper right')
     plt.setp(legend.get_texts(), fontsize='small')
     xdata = mdates.drange(context.startdate,
