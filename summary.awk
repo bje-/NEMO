@@ -20,7 +20,8 @@ BEGIN {
     merit[10] = "PSH"
     merit[11] = "GT"
     merit[12] = "OCGT"
-    merit[13] = "DR"
+    merit[13] = "diesel"
+    merit[14] = "DR"
     # assume 8760 timesteps unless specified in the simulation output
     timesteps = 8760
 }
@@ -38,6 +39,7 @@ BEGIN {
 /coal.*GW.?$/		{ caps["Coal"] += $(NF-1); last="Coal" }
 /Coal-CCS.*GW.?$/	{ caps["Coal-CCS"] += $(NF-1); last="Coal-CCS" }
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
+/diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
 /spilled.*TWh/		{ surplus += $5 }
