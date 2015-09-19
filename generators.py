@@ -595,7 +595,7 @@ class Geothermal_HSA(Geothermal):
 
     """Hot sedimentary aquifer (HSA) geothermal model."""
 
-    def __init__(self, region, capacity, filename, column, label='HSA'):
+    def __init__(self, region, capacity, filename, column, label='HSA geothermal'):
         Geothermal.__init__(self, region, capacity, filename, column, label)
 
 
@@ -603,7 +603,7 @@ class Geothermal_EGS(Geothermal):
 
     """Enhanced geothermal systems (EGS) geothermal model."""
 
-    def __init__(self, region, capacity, filename, column, label='EGS'):
+    def __init__(self, region, capacity, filename, column, label='EGS geothermal'):
         Geothermal.__init__(self, region, capacity, filename, column, label)
 
 
