@@ -103,6 +103,7 @@ class Context:
         >>> import types
         >>> def foo(self, costs): return None
         >>> c = Context()
+        >>> c.regions = regions.nsw
         >>> c.costs = costs.NullCosts()
         >>> c.verbose=1
         >>> f = types.MethodType(foo, c.generators[-1], Context)
