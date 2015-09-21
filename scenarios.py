@@ -530,13 +530,15 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    27
+    28
     """
     re100(context)
     # pylint: disable=redefined-outer-name
     # use polygon 38
     geo = generators.Geothermal_HSA(regions.nsw, 0,
                                     configfile.get('generation', 'hsa-geothermal-trace'), 38)
+    pt = generators.ParabolicTrough(regions.nsw, 0, 2, 6,
+                                    configfile.get('generation', 'cst-trace'), 12)
     coal = generators.Black_Coal(regions.nsw, 0)
     coal_ccs = generators.Coal_CCS(regions.nsw, 0)
     ccgt = generators.CCGT(regions.nsw, 0)
@@ -546,8 +548,8 @@ def theworks(context):
     diesel = generators.Diesel(regions.nsw, 0)
     dem = generators.DemandResponse(regions.nsw, 0, 300)
     g = context.generators
-    context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
-                         [ocgt, diesel, batt, dem]
+    context.generators = [geo, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
+                         g[:-4] + [ocgt, diesel, batt, dem]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
