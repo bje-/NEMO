@@ -351,7 +351,7 @@ def run(context, starthour=0, endhour=None):
     """Run the simulation (without a plot).
 
     >>> c = Context()
-    >>> c.regions = (1,2)
+    >>> c.regions = None
     >>> run(c)
     Traceback (most recent call last):
       ...
