@@ -50,7 +50,7 @@ parser.add_argument("--min-regional-generation", type=float, default=None,
                     help='minimum share of energy generated intra-region [default: None]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
-parser.add_argument("--reliability-std", type=float, default=None, help='reliability standard (% unserved)')
+parser.add_argument("--reliability-std", type=float, default=None, help='reliability standard (%% unserved)')
 parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
