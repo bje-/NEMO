@@ -28,3 +28,14 @@ class TestCoverage(unittest.TestCase):
         os.unlink('foo.png')
         nem.plot(c, filename='foo.png', spills=True)
         os.unlink('foo.png')
+
+    def test_003(self):
+        c = nem.Context()
+        # Add 25 DR generators so that the abbreviated legend is used.
+        for i in range(25):
+            dr = nem.generators.DemandResponse(regions.nsw, 100, 0)
+            c.generators += [dr]
+        print len(c.generators)
+        nem.run(c)
+        nem.plot(c, filename='foo.png')
+        os.unlink('foo.png')
