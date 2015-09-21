@@ -516,8 +516,10 @@ class Battery(Generator):
         >>> b = Battery(regions.nsw, 400, 1000, rte=1.0)
         >>> b.store(hr=0, power=400)
         400
-        >>> b.store(hr=0, power=700)
+        >>> b.store(hr=1, power=700)
         400
+        >>> b.store(hr=2, power=400)
+        200.0
         """
         power = min(power, self.capacity)
         energy = power * self.rte
@@ -527,7 +529,7 @@ class Battery(Generator):
         else:
             self.chargehours += 1
             self.stored += energy
-        return int(power)
+        return power
 
     def step(self, hr, demand):
         """
