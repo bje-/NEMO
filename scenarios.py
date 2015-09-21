@@ -184,7 +184,7 @@ def re100(context):
                                 configfile.get('generation', 'pv1axis-trace'),
                                 poly - 1,
                                 build_limit=polygons.pv_limit[poly],
-                                label=rgn.id + ' 1-axis PV'))
+                                label='polygon %d PV' % poly))
         elif g == CentralReceiver:
             polys = [14, 20, 21]
             capacity /= len(polys)
@@ -194,7 +194,7 @@ def re100(context):
                                 configfile.get('generation', 'cst-trace'),
                                 poly - 1,
                                 build_limit=polygons.cst_limit[poly],
-                                label=rgn.id + ' CST'))
+                                label='polygon %d CST' % poly))
         elif g == Wind:
             # Hand chosen polygons with high capacity factors
             for poly in [1, 20, 24, 39, 43]:
@@ -205,7 +205,7 @@ def re100(context):
                                 poly - 1,
                                 delimiter=',',
                                 build_limit=polygons.wind_limit[poly],
-                                label=rgn.id + ' wind'))
+                                label='polygon %d wind' % poly))
         else:  # pragma: no cover
             raise(ValueError)
 
