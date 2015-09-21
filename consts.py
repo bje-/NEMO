@@ -8,7 +8,7 @@
 """Constants."""
 
 # Conversion factor between MWh and TWh.
-twh = float(pow(10, 6))
+twh = pow(10., 6)
 
 # Default non-synchronous penetration limit.
 nsp_limit = 0.75
