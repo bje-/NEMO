@@ -97,20 +97,7 @@ class Context:
         self.exchanges = np.zeros((self.hours, regions.numregions, regions.numregions))
 
     def __str__(self):
-        """A human-readable representation of the context.
-
-        >>> import costs
-        >>> import types
-        >>> def foo(self, costs): return None
-        >>> c = Context()
-        >>> c.regions = regions.nsw
-        >>> c.costs = costs.NullCosts()
-        >>> c.verbose=1
-        >>> f = types.MethodType(foo, c.generators[-1], Context)
-        >>> c.generators[-1].summary = f
-        >>> c.generators[-1].summary(None) is None
-        True
-        """
+        """A human-readable representation of the context."""
         s = ""
         if self.regions != regions.All:
             s += 'Regions: ' + str(self.regions) + '\n'
