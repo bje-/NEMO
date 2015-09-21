@@ -530,7 +530,7 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    26
+    27
     """
     re100(context)
     # pylint: disable=redefined-outer-name
@@ -543,10 +543,11 @@ def theworks(context):
     ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
     ocgt = generators.OCGT(regions.nsw, 0)
     batt = generators.Battery(regions.nsw, 0, 0)
+    diesel = generators.Diesel(regions.nsw, 0)
     dem = generators.DemandResponse(regions.nsw, 0, 300)
     g = context.generators
     context.generators = [geo, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
-                         [ocgt, batt, dem]
+                         [ocgt, diesel, batt, dem]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
