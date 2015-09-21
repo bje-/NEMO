@@ -124,22 +124,26 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_010(self):
         """Running in one region only produces no interstate exchanges."""
-        self.context.track_exchanges = True
-        self.context.generators = [generators.OCGT(regions.nsw, 100),
-                                   generators.OCGT(regions.qld, 100),
-                                   generators.OCGT(regions.sa, 100),
-                                   generators.OCGT(regions.tas, 100),
-                                   generators.OCGT(regions.vic, 100)]
         for rgn in regions.All:
+            if rgn is regions.snowy:
+                continue
+            self.context = nem.Context()
+            self.context.track_exchanges = True
+            self.context.track_exchanges = True
+            print rgn
             self.context.regions = [rgn]
             self.context.generators = [generators.OCGT(regions.nsw, 100),
                                        generators.OCGT(regions.qld, 100),
                                        generators.OCGT(regions.sa, 100),
                                        generators.OCGT(regions.tas, 100),
                                        generators.OCGT(regions.vic, 100)]
-            nem.run(self.context, endhour=1)
-            self.assertEqual((self.context.exchanges[0] > 0).sum(), 1)
-            self.assertTrue(self.context.exchanges[0, rgn, rgn] > 0, 'Only one exchange > 0')
+            print self.context.regions
+            print self.context.generators
+            nem.run(self.context, endhour=100)
+            print self.context.exchanges[0]
+            print (self.context.exchanges[0] > 0).sum()
+            self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
+            self.assertTrue(self.context.exchanges[0, rgn, rgn] > 0, 'Only rgn->rgn is > 0')
 
     def test_011(self):
         """Running in two regions only produces limited interstate exchanges."""
