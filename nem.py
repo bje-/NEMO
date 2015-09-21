@@ -372,7 +372,11 @@ def run(context, starthour=0, endhour=None):
     context.unserved_energy = max(0, round(context.unserved_energy, 0))
     context.unserved = (agg_demand - context.accum) > 0.1
     context.unserved_hours = context.unserved.sum()
-    context.unserved_percent = float(context.unserved_energy / agg_demand.sum()) * 100
+    total_demand = agg_demand.sum()
+    if total_demand > 0:
+        context.unserved_percent = context.unserved_energy / agg_demand.sum() * 100
+    else:
+        context.unserved_percent = 0.
 
     shortfall = [agg_demand[hr] - context.accum[hr]
                  for hr in np.argwhere(context.unserved)]
