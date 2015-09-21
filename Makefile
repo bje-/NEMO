@@ -5,9 +5,10 @@ COVRUN=python-coverage run -a --source .
 check:  replay.data
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
-	$(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
+	$(COVRUN) evolve.py --lambda 5 -g1 -s theworks -d scale:10 > /dev/null
 	NEMORC=default.cfg $(COVRUN) evolve.py --lambda 2 -g1 -s __one_ccgt__ > /dev/null
-	$(COVRUN) evolve.py -v --lambda 2 -g1 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --emissions-limit=100 --fossil-limit=1.0 -t --costs=AETA2013-in2030-high --coal-ccs-costs=20 -d unchanged > /dev/null
+	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 > /dev/null
+	$(COVRUN) evolve.py -v --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --emissions-limit=100 --fossil-limit=1.0 --bioenergy-limit=0.1 -t --costs=AETA2013-in2030-high --coal-ccs-costs=20 -d unchanged > /dev/null
 	$(COVRUN) replay.py -f replay.data -v > /dev/null
 	rm replay.data
 	make html
