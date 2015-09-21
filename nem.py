@@ -385,17 +385,3 @@ def run(context, starthour=0, endhour=None):
         context.shortfalls = (None, None)
     else:
         context.shortfalls = (round(min(shortfall)), round(max(shortfall)))
-
-
-def bids(context):
-    """Show the bids for each time step."""
-    return [g.opcost_per_mwh(context.costs) for g in
-            context.lowest_merit_generator]
-
-
-def revenue(context):
-    """Total the revenue."""
-    hourly_generation = context.generation.sum(axis=0)
-    pairs = zip(hourly_generation, bids(context))
-    result = reduce(lambda a, b: a + b, [g * b for g, b in pairs])
-    return int(result)
