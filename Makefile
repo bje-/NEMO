@@ -12,6 +12,12 @@ check:  replay.data
 	rm replay.data
 	make html
 
+replay.data:
+	echo "# comment line" >> $@
+	echo "malformed line" >> $@
+	echo >> $@
+	echo "__one_ccgt__: [1]" >> $@
+
 nem.prof:
 	python -m cProfile -o $@ profile.py
 
@@ -32,12 +38,6 @@ html:
 
 html-upload:
 	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo/coverage
-
-replay.data:
-	echo "# comment line" >> $@
-	echo "malformed line" >> $@
-	echo >> $@
-	echo "__one_ccgt__: [1]" >> $@
 
 clean:
 	rm -rf .coverage htmlcov replay.data
