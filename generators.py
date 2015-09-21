@@ -289,13 +289,19 @@ class PumpedHydro(Hydro):
         """Pump water uphill for one hour.
 
         >>> import regions
-        >>> psh = PumpedHydro(regions.nsw, 100, 1000)
+        >>> psh = PumpedHydro(regions.nsw, 250, 1000, rte=1.0)
         >>> psh.step(hr=0, demand=100)
         (100, 0)
 
         Cannot pump and generate at the same time.
-        >>> psh.store(hr=0, power=100)
+        >>> psh.store(hr=0, power=250)
         0
+
+        Test filling the store.
+        >>> for hour in range(1, 4): psh.store(hr=hour, power=250)
+        250
+        250
+        100.0
         """
         if self.last_run == hr:
             # Can't pump and generate in the same hour.
