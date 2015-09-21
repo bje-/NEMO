@@ -549,7 +549,7 @@ def theworks(context):
     dem = generators.DemandResponse(regions.nsw, 0, 300)
     g = context.generators
     context.generators = [geo, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
-                         g[:-4] + [ocgt, diesel, batt, dem]
+        g[:-4] + [ocgt, diesel, batt, dem]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
