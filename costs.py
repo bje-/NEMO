@@ -24,6 +24,12 @@ class NullCosts:
         self.fixed_om_costs = {}
         self.opcost_per_mwh = {}
         self.annuityf = 1
+        self.ccs_storage_per_t = 0
+        self.bioenergy_price_per_gj = 0
+        self.coal_price_per_gj = 0
+        self.gas_price_per_gj = 0
+        self.diesel_price_per_litre = 0
+        self.carbon = 0
 
         for t in [tech.Biofuel, tech.Black_Coal, tech.CCGT,
                   tech.CCGT_CCS, tech.CentralReceiver, tech.Coal_CCS,
