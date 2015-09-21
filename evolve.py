@@ -215,8 +215,8 @@ def set_generators(chromosome):
     """Set the generator list from the chromosome."""
     i = 0
     for gen in context.generators:
-        newval = chromosome[i]
         for (setter, min_cap, max_cap) in gen.setters:
+            newval = chromosome[i]
             assert newval >= min_cap, \
                 'capacity under %.3f GW min. build' % min_cap
             assert newval <= max_cap, \
