@@ -19,6 +19,10 @@ class TestCoverage(unittest.TestCase):
 
     def test_002(self):
         c = nem.Context()
+        # Make sure there is unserved energy by setting 2nd and
+        # subsequent generator capacity to 0.
+        for g in c.generators[1:]:
+            g.set_capacity(0)
         nem.run(c)
         nem.plot(c, filename='foo.png')
         os.unlink('foo.png')
