@@ -10,7 +10,7 @@ check:  replay.data
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 > /dev/null
 	-rm trace.out
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high --coal-ccs-costs=20 -d unchanged -v > /dev/null
-	$(COVRUN) replay.py -f replay.data -v > /dev/null
+	$(COVRUN) replay.py -d unchanged -f replay.data -v > /dev/null
 	rm replay.data
 	make html
 
