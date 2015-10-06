@@ -61,7 +61,7 @@ class Generator:
         """Return a summary of the generator activity."""
         s = 'supplied %.4g TWh' % (sum(self.hourly_power.values()) / consts.twh)
         if sum(self.hourly_spilled.values()) > 0:
-            s += ', spilled %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
+            s += ', surplus %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:

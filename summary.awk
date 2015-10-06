@@ -43,7 +43,8 @@ BEGIN {
 /diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 /supplied.*TWh/		{ energy[last] += $2 }
-/spilled.*TWh/		{ surplus += $5 }
+/spilled.*TWh/		{ surplus += $5 }	# may be "spilled" in old log files
+/surplus.*TWh/		{ surplus += $5 }	# now it's "surplus"
 /Mt CO2$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
 /Score:/		{ cost = $2 }
