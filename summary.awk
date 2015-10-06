@@ -33,6 +33,7 @@ BEGIN {
 / S?CST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
 / hydro.*GW.?$/		{ caps["hydro"] += $(NF-1); last="hydro" }
 /pumped-hydro.*GW.?$/	{ caps["PSH"] += $(NF-1); last="PSH" }
+/PSH.*GW.?$/		{ caps["PSH"] += $(NF-1); last="PSH" }
 / GT.*GW.?$/		{ caps["GT"] += $(NF-1); last="GT" }
 /CCGT-CCS.*GW.?$/	{ caps["CCGT-CCS"] += $(NF-1); last="CCGT-CCS" }
 /CCGT .*GW.?$/		{ caps["CCGT"] += $(NF-1); last="CCGT" }
