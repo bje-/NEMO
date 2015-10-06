@@ -112,9 +112,9 @@ class Context:
         s += 'Timesteps: %d h\n' % self.hours
         s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / consts.twh)
         try:
-            s += 'Spilled energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
+            s += 'Unused surplus energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
             if self.spill.sum() > 0:
-                s += 'Spilled hours: %d\n' % (self.spill.sum(axis=0) > 0).sum()
+                s += 'Timesteps with unused surplus energy: %d\n' % (self.spill.sum(axis=0) > 0).sum()
         except AttributeError:
             # there may be no 'spill' attribute yet
             pass
