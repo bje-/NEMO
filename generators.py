@@ -577,7 +577,7 @@ class Battery(Generator):
 
 class Geothermal(Generator):
 
-    """Hot dry rocks geothermal power plant."""
+    """Geothermal power plant."""
 
     patch = Patch(facecolor='brown')
     csvfilename = None
