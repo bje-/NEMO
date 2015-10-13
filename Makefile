@@ -43,4 +43,4 @@ html-upload:
 
 clean:
 	rm -rf .coverage htmlcov replay.data
-	rm *.pyc nem.prof profile.py.lprof
+	rm *.pyc tests/*.pyc nem.prof profile.py.lprof
