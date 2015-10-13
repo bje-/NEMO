@@ -61,56 +61,55 @@ class AETA2012_2030:
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.capcost_per_kw_per_yr = {}
-        self.opcost_per_mwh = {}
-        self.fixed_om_costs = {}
         self.annuityf = annuity_factor(self.lifetime, discount)
 
         # Common capital costs
-        table = self.capcost_per_kw_per_yr
-        table[tech.Hydro] = 0
-        table[tech.PumpedHydro] = 0
-        table[tech.Diesel] = 0
-        table[tech.DemandResponse] = 0
+        self.capcost_per_kw_per_yr = {
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Diesel: 0,
+            tech.DemandResponse: 0}
 
         # Variable O&M (VOM) costs
-        table = self.opcost_per_mwh
-        table[tech.Hydro] = 0
-        table[tech.PumpedHydro] = 0
-        table[tech.Diesel] = 0
-        table[tech.Wind] = 12 * self.escalation
-        table[tech.CentralReceiver] = 15 * self.escalation
-        table[tech.ParabolicTrough] = 20 * self.escalation
-        table[tech.PV] = 0
-        table[tech.PV1Axis] = 0
-        table[tech.CCGT] = 4 * self.escalation
-        table[tech.OCGT] = 10 * self.escalation
-        table[tech.CCGT_CCS] = 9 * self.escalation
-        table[tech.Coal_CCS] = 15 * self.escalation
-        table[tech.Black_Coal] = 7 * self.escalation
-        table[tech.Geothermal_HSA] = 0
-        table[tech.Geothermal_EGS] = 0
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
+        self.opcost_per_mwh = {
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Diesel: 0,
+            tech.Wind: 12 * self.escalation,
+            tech.CentralReceiver: 15 * self.escalation,
+            tech.ParabolicTrough: 20 * self.escalation,
+            tech.PV: 0,
+            tech.PV1Axis: 0,
+            tech.CCGT: 4 * self.escalation,
+            tech.OCGT: 10 * self.escalation,
+            tech.CCGT_CCS: 9 * self.escalation,
+            tech.Coal_CCS: 15 * self.escalation,
+            tech.Black_Coal: 7 * self.escalation,
+            tech.Geothermal_HSA: 0,
+            tech.Geothermal_EGS: 0}
+        # same as OCGT
+        self.opcost_per_mwh[tech.Biofuel] = self.opcost_per_mwh[tech.OCGT]
 
         # Fixed O&M (FOM) costs
-        table = self.fixed_om_costs
-        table[tech.DemandResponse] = 0
-        table[tech.Diesel] = 0
-        table[tech.Hydro] = 0
-        table[tech.PumpedHydro] = 0
-        table[tech.Wind] = 40 * self.escalation
-        table[tech.CentralReceiver] = 60 * self.escalation
-        table[tech.ParabolicTrough] = 65 * self.escalation
-        table[tech.PV] = 25 * self.escalation
-        table[tech.PV1Axis] = 38 * self.escalation
-        table[tech.CCGT] = 10 * self.escalation
-        table[tech.OCGT] = 4 * self.escalation
-        table[tech.CCGT_CCS] = 17 * self.escalation
-        table[tech.Coal_CCS] = 73.2 * self.escalation
-        table[tech.Black_Coal] = 50.5 * self.escalation
-        table[tech.Geothermal_HSA] = 200 * self.escalation
-        table[tech.Geothermal_EGS] = 170 * self.escalation
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
+        self.fixed_om_costs = {
+            tech.DemandResponse: 0,
+            tech.Diesel: 0,
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Wind: 40 * self.escalation,
+            tech.CentralReceiver: 60 * self.escalation,
+            tech.ParabolicTrough: 65 * self.escalation,
+            tech.PV: 25 * self.escalation,
+            tech.PV1Axis: 38 * self.escalation,
+            tech.CCGT: 10 * self.escalation,
+            tech.OCGT: 4 * self.escalation,
+            tech.CCGT_CCS: 17 * self.escalation,
+            tech.Coal_CCS: 73.2 * self.escalation,
+            tech.Black_Coal: 50.5 * self.escalation,
+            tech.Geothermal_HSA: 200 * self.escalation,
+            tech.Geothermal_EGS: 170 * self.escalation}
+        # same as OCGT
+        self.fixed_om_costs[tech.Biofuel] = self.fixed_om_costs[tech.OCGT]
 
 
 class AETA2012_2030Low (AETA2012_2030):
