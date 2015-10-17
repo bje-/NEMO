@@ -8,6 +8,7 @@
 
 """Replay NEM runs from a text file of generators."""
 import argparse
+import numpy as np
 import re
 
 import consts
@@ -15,10 +16,12 @@ import costs
 import nem
 import scenarios
 
+np.set_printoptions(precision=1)
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
+parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="store_true", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
@@ -47,6 +50,8 @@ def run_one(chromosome):
     nem.run(context)
     context.verbose = args.v
     print context
+    if args.transmission:
+        print context.exchanges.max(axis=0)
 
 context = nem.Context()
 context.nsp_limit = args.nsp_limit
