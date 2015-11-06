@@ -71,10 +71,10 @@ for line in replayfile:
     if re.search(r'^\s*#', line):
         print line,
         continue
-    if not re.search(r'^\s*\w+:\s*\[.*\]\s*.?$', line):
+    if not re.search(r'^\s*[\w-]+:\s*\[.*\]\s*.?$', line):
         print 'skipping malformed input:', line
         continue
-    m = re.match(r'^\s*(\w+):\s*\[(.*)\]\s*.?$', line)
+    m = re.match(r'^\s*([\w-]+):\s*\[(.*)\]\s*.?$', line)
     scenario = m.group(1)
     print 'scenario', scenario
     capacities = m.group(2).split(',')
