@@ -16,7 +16,7 @@ import costs
 import nem
 import scenarios
 
-np.set_printoptions(precision=1)
+np.set_printoptions(precision=3)
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-f", type=str, help='replay file', required=True)
