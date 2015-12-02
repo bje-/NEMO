@@ -50,6 +50,30 @@ class Region:
         """
         return self.num
 
+    def __copy__(self):
+        """
+        Prevent copying.
+
+        >>> import copy
+        >>> sacopy = copy.copy(sa)
+        >>> sa is sacopy
+        True
+        """
+
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        Prevent deepcopying.
+
+        >>> import copy
+        >>> sacopy = copy.deepcopy(sa)
+        >>> sa is sacopy
+        True
+
+        """
+        return self
+
 # Centres taken from:
 # http://www.ga.gov.au/education/geoscience-basics/dimensions/
 nsw = Region(0, 'NSW1', 'New South Wales', (-32.1633, 147.0166))
