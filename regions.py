@@ -41,7 +41,7 @@ class Region:
 
     def __index__(self):
         """
-        Return region numnber.
+        Return region number.
 
         >>> r = Region(1, 'QLD1', 'Queensland', ((-22, 144)))
         >>> x = [0,1,2,3,4]
