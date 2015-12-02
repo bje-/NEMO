@@ -105,8 +105,9 @@ class Context:
             s += 'Generators:' + '\n'
             for g in self.generators:
                 s += '\t' + str(g)
-                if g.summary(self.costs) is not None:
-                    s += '\n\t   ' + g.summary(self.costs) + '\n'
+                summary = g.summary(self.costs)
+                if summary is not None:
+                    s += '\n\t   ' + summary + '\n'
                 else:
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
