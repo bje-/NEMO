@@ -1,5 +1,5 @@
 # Copyright (C) 2011, 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -47,7 +47,11 @@ class Generator:
 
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""
-        return sum(self.hourly_power.values()) * self.opcost_per_mwh(costs)
+        return self.fixed_om_costs(costs) + \
+            sum(self.hourly_power.values()) * self.opcost_per_mwh(costs)
+
+    def fixed_om_costs(self, costs):
+        return costs.fixed_om_costs[self.__class__] * self.capacity * 1000
 
     def opcost_per_mwh(self, costs):
         return costs.opcost_per_mwh[self.__class__]

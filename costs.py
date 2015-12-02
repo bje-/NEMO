@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -126,19 +126,18 @@ class AETA2012_2030Low (AETA2012_2030):
         af = self.annuityf
         # capital costs in $/kW
         table = self.capcost_per_kw_per_yr
-        fom = self.fixed_om_costs
-        table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CentralReceiver] = 4203 / af + fom[tech.CentralReceiver]
-        table[tech.ParabolicTrough] = 4563 / af + fom[tech.ParabolicTrough]
-        table[tech.PV] = 1482 / af + fom[tech.PV]
-        table[tech.PV1Axis] = 2013 / af + fom[tech.PV1Axis]
-        table[tech.CCGT] = 1015 / af + fom[tech.CCGT]
-        table[tech.OCGT] = 694 / af + fom[tech.OCGT]
-        table[tech.CCGT_CCS] = 2095 / af + fom[tech.CCGT_CCS]
-        table[tech.Coal_CCS] = 4453 / af + fom[tech.Coal_CCS]
-        table[tech.Black_Coal] = 2947 / af + fom[tech.Black_Coal]
-        table[tech.Geothermal_HSA] = 6645 / af + fom[tech.Geothermal_HSA]
-        table[tech.Geothermal_EGS] = 10331 / af + fom[tech.Geothermal_EGS]
+        table[tech.Wind] = 1701 / af
+        table[tech.CentralReceiver] = 4203 / af
+        table[tech.ParabolicTrough] = 4563 / af
+        table[tech.PV] = 1482 / af
+        table[tech.PV1Axis] = 2013 / af
+        table[tech.CCGT] = 1015 / af
+        table[tech.OCGT] = 694 / af
+        table[tech.CCGT_CCS] = 2095 / af
+        table[tech.Coal_CCS] = 4453 / af
+        table[tech.Black_Coal] = 2947 / af
+        table[tech.Geothermal_HSA] = 6645 / af
+        table[tech.Geothermal_EGS] = 10331 / af
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
@@ -156,19 +155,18 @@ class AETA2012_2030High (AETA2012_2030):
         af = self.annuityf
         # capital costs in $/kW
         table = self.capcost_per_kw_per_yr
-        fom = self.fixed_om_costs
-        table[tech.Wind] = 1917 / af + fom[tech.Wind]
-        table[tech.CentralReceiver] = 5253 / af + fom[tech.CentralReceiver]
-        table[tech.ParabolicTrough] = 5659 / af + fom[tech.ParabolicTrough]
-        table[tech.PV] = 1871 / af + fom[tech.PV]
-        table[tech.PV1Axis] = 2542 / af + fom[tech.PV1Axis]
-        table[tech.CCGT] = 1221 / af + fom[tech.CCGT]
-        table[tech.OCGT] = 809 / af + fom[tech.OCGT]
-        table[tech.CCGT_CCS] = 2405 / af + fom[tech.CCGT_CCS]
-        table[tech.Coal_CCS] = 4727 / af + fom[tech.Coal_CCS]
-        table[tech.Black_Coal] = 3128 / af + fom[tech.Black_Coal]
-        table[tech.Geothermal_HSA] = 7822 / af + fom[tech.Geothermal_HSA]
-        table[tech.Geothermal_EGS] = 11811 / af + fom[tech.Geothermal_EGS]
+        table[tech.Wind] = 1917 / af
+        table[tech.CentralReceiver] = 5253 / af
+        table[tech.ParabolicTrough] = 5659 / af
+        table[tech.PV] = 1871 / af
+        table[tech.PV1Axis] = 2542 / af
+        table[tech.CCGT] = 1221 / af
+        table[tech.OCGT] = 809 / af
+        table[tech.CCGT_CCS] = 2405 / af
+        table[tech.Coal_CCS] = 4727 / af
+        table[tech.Black_Coal] = 3128 / af
+        table[tech.Geothermal_HSA] = 7822 / af
+        table[tech.Geothermal_EGS] = 11811 / af
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
@@ -193,11 +191,6 @@ class AETA2012_2030Mid (AETA2012_2030):
         lowtable = low.capcost_per_kw_per_yr
         hightable = high.capcost_per_kw_per_yr
         for t in lowtable:
-            # The capital cost tables include fixed O&M (f), but
-            # this averaging calculation is safe because:
-            #   (low + f) / 2 + (high + f) / 2
-            # is equivalent to:
-            #   (low + high) / 2 + f
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
@@ -227,9 +220,9 @@ class AETA2013_2030Low (AETA2012_2030Low):
         af = self.annuityf
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
-        table[tech.Wind] = 1701 / af + fom[tech.Wind]
-        table[tech.CentralReceiver] = 4203 / af + fom[tech.CentralReceiver]
-        table[tech.ParabolicTrough] = 4563 / af + fom[tech.ParabolicTrough]
+        table[tech.Wind] = 1701 / af
+        table[tech.CentralReceiver] = 4203 / af
+        table[tech.ParabolicTrough] = 4563 / af
 
 
 class AETA2013_2030High (AETA2012_2030High):
@@ -258,9 +251,9 @@ class AETA2013_2030High (AETA2012_2030High):
         af = self.annuityf
         table = self.capcost_per_kw_per_yr
         fom = self.fixed_om_costs
-        table[tech.Wind] = 1917 / af + fom[tech.Wind]
-        table[tech.CentralReceiver] = 5253 / af + fom[tech.CentralReceiver]
-        table[tech.ParabolicTrough] = 5659 / af + fom[tech.ParabolicTrough]
+        table[tech.Wind] = 1917 / af
+        table[tech.CentralReceiver] = 5253 / af
+        table[tech.ParabolicTrough] = 5659 / af
 
 
 class AETA2013_2030Mid (AETA2012_2030):
@@ -286,7 +279,6 @@ class AETA2013_2030Mid (AETA2012_2030):
         lowtable = low.capcost_per_kw_per_yr
         hightable = high.capcost_per_kw_per_yr
         for t in lowtable:
-            # See comment in AETA2012_2030Mid.
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
