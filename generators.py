@@ -564,9 +564,12 @@ class Battery(Generator):
         # $400/kW and $400/kWh respectively
         power = 400 * self.capacity * 1000
         energy = 400 * self.maxstorage * 1000
+        return (power + energy) / costs.annuityf
+
+    def fixed_om_costs(self, costs):
         # fixed O&M of $28/kW/yr
         fom = 28 * self.capacity * 1000
-        return (power + energy) / costs.annuityf + fom
+        return fom
 
     def opcost_per_mwh(self, costs):
         # per-kWh costs for batteries are included in capital costs
