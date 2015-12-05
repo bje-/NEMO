@@ -589,6 +589,8 @@ def demand_switch(label):
     <function <lambda> at ...>
     >>> demand_switch('scale:5')    # doctest: +ELLIPSIS
     <function <lambda> at ...>
+    >>> demand_switch('scalex:0:100:5')    # doctest: +ELLIPSIS
+    <function <lambda> at ...>
     >>> demand_switch('shift:100:10:12') # doctest: +ELLIPSIS
     <function <lambda> at ...>
     >>> demand_switch('shift:100:-2:12')
@@ -615,10 +617,19 @@ def demand_switch(label):
             return lambda context: roll_demand(context, posns)
 
         elif label.startswith('scale:'):
-            # label form: "scale:X" scales the load by X%
+            # label form: "scale:X" scales all of the load by X%
             _, factor = label.split(':')
             factor = 1 + int(factor) / 100.
             return lambda context: scale_demand(context, factor)
+
+        elif label.startswith('scalex:'):
+            # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
+            _, h1, h2, factor = label.split(':')
+            fromHour = int(h1)
+            toHour = int(h2)
+            factor = 1 + int(factor) / 100.
+            return lambda context: scale_range_demand(context,
+                                                      fromHour, toHour, factor)
 
         elif label.startswith('shift:'):
             # label form: "shift:N:H1:H2" load shifts N MW every day
@@ -674,6 +685,21 @@ def roll_demand(context, posns):
     [2 0 1]
     """
     context.demand = np.roll(context.demand, posns)
+
+
+def scale_range_demand(context, fromHour, toHour, factor):
+    """
+    Scale demand between fromHour and toHour by factor%.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.zeros((1,10))
+    >>> c.demand[:] = np.arange(10)
+    >>> scale_range_demand(c, 0, 4, 1.2)
+    >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
+    [[ 0.  1.2  2.4  3.6  4.  5.  6.  7.  8.  9. ]]
+    """
+    context.demand[:, fromHour:toHour] *= factor
 
 
 def scale_demand(context, factor):
