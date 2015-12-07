@@ -24,10 +24,8 @@ import regions
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
 
-# Generate a list of column numbers from [2, 4, .., 2*n]
-# (ignore RRP columns)
-columns = [(elt * 2) + 2 for elt in range(regions.numregions)]
-cols = (0, 1) + tuple(columns)
+# Generate a list of column numbers
+cols = tuple(range(regions.numregions + 2))
 demand = np.genfromtxt(configfile.get('demand', 'demand-trace'), comments='#', usecols=cols)
 demand = demand.transpose()
 
