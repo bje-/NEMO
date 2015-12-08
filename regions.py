@@ -7,8 +7,6 @@
 # (at your option) any later version.
 
 """Regions and their interconnections."""
-import string
-
 import numpy as np
 
 from latlong import LatLong
@@ -74,7 +72,7 @@ class Region:
         """
         return self
 
-# Centres taken from:
+# Centroids taken from:
 # http://www.ga.gov.au/education/geoscience-basics/dimensions/
 nsw = Region(0, 'NSW1', 'New South Wales', (-32.1633, 147.0166))
 qld = Region(1, 'QLD1', 'Queensland', (-22.4869, 144.4316))
@@ -85,22 +83,6 @@ vic = Region(5, 'VIC1', 'Victoria', (-36.8541, 144.2811))
 All = [nsw, qld, sa, snowy, tas, vic]
 numregions = len(All)
 
-
-def find(s):
-    """
-    Return the first region object matching the substring s.
-
-    >>> find('NS')
-    NSW1
-    >>> find('QP')
-    Traceback (most recent call last):
-      ...
-    ValueError
-    """
-    for r in All:
-        if string.find(r.id, s) == 0:
-            return r
-    raise ValueError
 
 # Node connectivity is expressed using a 2-D list.
 connections = {}
