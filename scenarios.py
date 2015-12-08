@@ -240,7 +240,7 @@ def _one_per_poly(region):
     wind = []
     cst = []
 
-    for poly in polygons.in_region(region):
+    for poly in region.polygons:
         wind.append(generators.Wind(region, 0,
                                     configfile.get('generation', 'wind-trace'),
                                     poly - 1,

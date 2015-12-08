@@ -26,6 +26,7 @@ class Region:
         self.descr = descr
         self.centre = LatLong(centreLat, centreLon)
         self.num = count
+        self.polygons = None
 
     def __repr__(self):
         """

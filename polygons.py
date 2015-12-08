@@ -9,34 +9,17 @@
 
 import regions
 
+regions.nsw.polygons = range(21, 25) + range(28, 32) + range(33, 37)
+regions.qld.polygons = range(1, 12) + range(14, 18)
+regions.sa.polygons = [12, 13, 18, 19, 20, 25, 26, 27, 32]
+regions.tas.polygons = [40, 41, 42, 43]
+regions.vic.polygons = [37, 38, 39]
+
 # Table mapping polygon number to NEM region.
 region_table = [None] * 44
-
-for num in range(21, 25) + range(28, 32) + range(33, 37):
-    region_table[num] = regions.nsw
-
-for num in range(1, 12) + range(14, 18):
-    region_table[num] = regions.qld
-
-for num in [12, 13, 18, 19, 20, 25, 26, 27, 32]:
-    region_table[num] = regions.sa
-
-for num in [40, 41, 42, 43]:
-    region_table[num] = regions.tas
-
-for num in [37, 38, 39]:
-    region_table[num] = regions.vic
-
-
-def in_region(rgn):
-    """
-    Return all polygons in region R.
-
-    >>> import regions
-    >>> in_region(regions.tas)
-    [40, 41, 42, 43]
-    """
-    return [i for i, r in enumerate(region_table) if r is rgn]
+for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
+    for poly in rgn.polygons:
+        region_table[poly] = rgn
 
 
 wind_limit = [None, 80.3, 0, 36.9, 6.5, 15.6, 1.5, 6.9, 2.6, 0, 4.1,
