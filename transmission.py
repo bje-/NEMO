@@ -6,7 +6,7 @@
 # (at your option) any later version.
 
 """Transmission model details."""
-import regions
+import polygons
 from costs import annuity_factor
 
 
@@ -20,4 +20,4 @@ class Transmission:
     >>> t = Transmission(30, 0.05)
     """
         af = annuity_factor(lifetime, discount)
-        self.cost_matrix = regions.distances * cost_per_mw_km / af
+        self.cost_matrix = polygons.distances * cost_per_mw_km / af

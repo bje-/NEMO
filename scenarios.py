@@ -44,9 +44,9 @@ def _demand_response():
     >>> len(dr)
     3
     """
-    dr1 = generators.DemandResponse(regions.nsw, 1000, 100, "DR100")
-    dr2 = generators.DemandResponse(regions.nsw, 1000, 500, "DR500")
-    dr3 = generators.DemandResponse(regions.nsw, 1000, 1000, "DR1000")
+    dr1 = generators.DemandResponse(polygons.wildcard, 1000, 100, "DR100")
+    dr2 = generators.DemandResponse(polygons.wildcard, 1000, 500, "DR500")
+    dr3 = generators.DemandResponse(polygons.wildcard, 1000, 1000, "DR1000")
     return [dr1, dr2, dr3]
 
 
@@ -58,18 +58,23 @@ def _hydro():
     >>> len(h)
     5
     """
+    nswpoly = regions.nsw.polygons[0]
+    taspoly = regions.tas.polygons[0]
+    qldpoly = regions.qld.polygons[0]
+    vicpoly = regions.vic.polygons[0]
+
     # Ignore the one small hydro plant in SA.
-    hydro1 = generators.Hydro(regions.tas, 2255,
+    hydro1 = generators.Hydro(taspoly, 2255,
                               label=regions.tas.id + ' hydro')
-    hydro2 = generators.Hydro(regions.nsw, 910,
+    hydro2 = generators.Hydro(nswpoly, 910,
                               label=regions.nsw.id + ' hydro')
-    hydro3 = generators.Hydro(regions.vic, 2237,
+    hydro3 = generators.Hydro(vicpoly, 2237,
                               label=regions.vic.id + ' hydro')
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    psh1 = generators.PumpedHydro(regions.qld, 500, 5000,
+    psh1 = generators.PumpedHydro(qldpoly, 500, 5000,
                                   label='QLD1 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh2 = generators.PumpedHydro(regions.nsw, 1740, 15000,
+    psh2 = generators.PumpedHydro(nswpoly, 1740, 15000,
                                   label='NSW1 pumped-hydro')
     return [psh1, psh2, hydro1, hydro2, hydro3]
 
@@ -83,8 +88,8 @@ def replacement(context):
     >>> len(c.generators)
     7
     """
-    coal = generators.Black_Coal(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    coal = generators.Black_Coal(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -97,7 +102,7 @@ def _one_ccgt(context):
     >>> len(c.generators)
     1
     """
-    context.generators = [generators.CCGT(regions.nsw, 0)]
+    context.generators = [generators.CCGT(polygons.wildcard, 0)]
 
 
 def ccgt(context):
@@ -110,8 +115,8 @@ def ccgt(context):
     7
     """
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    ccgt = generators.CCGT(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
@@ -125,8 +130,8 @@ def ccgt_ccs(context):
     7
     """
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT_CCS(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    ccgt = generators.CCGT_CCS(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
@@ -139,8 +144,8 @@ def coal_ccs(context):
     >>> len(c.generators)
     7
     """
-    coal = generators.Coal_CCS(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    coal = generators.Coal_CCS(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -173,14 +178,15 @@ def re100(context):
             # distribute 24GW of biofuelled turbines across chosen regions
             # the region list is in order of approximate demand
             rgns = [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]
-            for r in rgns:
-                result.append(Biofuel(r, 24000 / len(rgns), label=r.id + ' GT'))
+            # take the first polygon in each region
+            polys = [r.polygons[0] for r in rgns]
+            for p, r in zip(polys, rgns):
+                result.append(Biofuel(p, 24000 / len(rgns), label=r.id + ' GT'))
         elif g == PV1Axis:
             # Hand chosen polygons with high capacity factors
             for poly in [14, 21, 13, 37]:
-                rgn = polygons.region_table[poly]
                 # Put 25% PV capacity in each region.
-                result.append(g(rgn, capacity * 0.25,
+                result.append(g(poly, capacity * 0.25,
                                 configfile.get('generation', 'pv1axis-trace'),
                                 poly - 1,
                                 build_limit=polygons.pv_limit[poly],
@@ -189,8 +195,7 @@ def re100(context):
             polys = [14, 20, 21]
             capacity /= len(polys)
             for poly in polys:
-                rgn = polygons.region_table[poly]
-                result.append(g(rgn, capacity, 2, 6,
+                result.append(g(poly, capacity, 2, 6,
                                 configfile.get('generation', 'cst-trace'),
                                 poly - 1,
                                 build_limit=polygons.cst_limit[poly],
@@ -198,9 +203,8 @@ def re100(context):
         elif g == Wind:
             # Hand chosen polygons with high capacity factors
             for poly in [1, 20, 24, 39, 43]:
-                rgn = polygons.region_table[poly]
                 # Put 20% wind capacity in each region.
-                result.append(g(rgn, capacity * 0.2,
+                result.append(g(poly, capacity * 0.2,
                                 configfile.get('generation', 'wind-trace'),
                                 poly - 1,
                                 delimiter=',',
@@ -223,9 +227,9 @@ def re100_batteries(context):
     23
     """
     re100(context)
-    nsw_battery = generators.Battery(regions.nsw, 0, 0)
+    battery = generators.Battery(polygons.wildcard, 0, 0)
     g = context.generators
-    context.generators = g[0:9] + [nsw_battery] + g[9:]
+    context.generators = g[0:9] + [battery] + g[9:]
 
 
 def _one_per_poly(region):
@@ -241,18 +245,18 @@ def _one_per_poly(region):
     cst = []
 
     for poly in region.polygons:
-        wind.append(generators.Wind(region, 0,
+        wind.append(generators.Wind(poly, 0,
                                     configfile.get('generation', 'wind-trace'),
                                     poly - 1,
                                     delimiter=',',
                                     build_limit=polygons.wind_limit[poly],
                                     label='poly %d wind' % poly))
-        pv.append(generators.PV1Axis(region, 0,
+        pv.append(generators.PV1Axis(poly, 0,
                                      configfile.get('generation', 'pv1axis-trace'),
                                      poly - 1,
                                      build_limit=polygons.pv_limit[poly],
                                      label='poly %d PV' % poly))
-        cst.append(generators.CentralReceiver(region, 0, 2, 6,
+        cst.append(generators.CentralReceiver(poly, 0, 2, 6,
                                               configfile.get('generation', 'cst-trace'),
                                               poly - 1,
                                               build_limit=polygons.cst_limit[poly],
@@ -268,16 +272,16 @@ def re100_one_region(context, region):
     >>> c = C()
     >>> c.generators = []
     >>> re100_one_region(c, regions.tas)
-    >>> for g in c.generators: assert g.region is regions.tas
+    >>> for g in c.generators: assert g.region() is regions.tas
     """
     re100(context)
     context.regions = [region]
     wind, pv, cst = _one_per_poly(region)
     newlist = wind
     newlist += pv
-    newlist += [g for g in context.generators if isinstance(g, generators.Hydro) and g.region is region]
+    newlist += [g for g in context.generators if isinstance(g, generators.Hydro) and g.region() is region]
     newlist += cst
-    newlist += [g for g in context.generators if isinstance(g, generators.Biofuel) and g.region is region]
+    newlist += [g for g in context.generators if isinstance(g, generators.Biofuel) and g.region() is region]
     context.generators = newlist
 
 
@@ -292,13 +296,13 @@ def re_plus_ccs(context):
     23
     """
     re100(context)
-    coal = generators.Black_Coal(regions.nsw, 0)
+    coal = generators.Black_Coal(polygons.wildcard, 0)
     # pylint: disable=redefined-outer-name
-    coal_ccs = generators.Coal_CCS(regions.nsw, 0)
+    coal_ccs = generators.Coal_CCS(polygons.wildcard, 0)
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(regions.nsw, 0)
-    ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    ccgt = generators.CCGT(polygons.wildcard, 0)
+    ccgt_ccs = generators.CCGT_CCS(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     g = context.generators
     context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
 
@@ -315,9 +319,9 @@ def re_plus_fossil(context):
     """
     re100(context)
     # pylint: disable=redefined-outer-name
-    coal = generators.Black_Coal(regions.nsw, 0)
-    ccgt = generators.CCGT(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
+    coal = generators.Black_Coal(polygons.wildcard, 0)
+    ccgt = generators.CCGT(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
     g = context.generators
     context.generators = [coal, ccgt] + g[:-4] + [ocgt]
 
@@ -350,9 +354,10 @@ def re100_geothermal_egs(context):
     """
     re100(context)
     g = context.generators
-    geo = generators.Geothermal_EGS(regions.qld, 0,
-                                    configfile.get('generation', 'egs-geothermal-trace'),
-                                    14,  # (polygon 14)
+    poly = 14
+    geo = generators.Geothermal_EGS(poly, 0,
+                                    configfile.get('generation',
+                                                   'egs-geothermal-trace'), poly,
                                     'EGS geothermal')
     context.generators = [geo] + g
 
@@ -368,9 +373,10 @@ def re100_geothermal_hsa(context):
     """
     re100(context)
     g = context.generators
-    geo = generators.Geothermal_HSA(regions.vic, 0,
-                                    configfile.get('generation', 'hsa-geothermal-trace'),
-                                    38,  # (polygon 38)
+    poly = 38
+    geo = generators.Geothermal_HSA(poly, 0,
+                                    configfile.get('generation',
+                                                   'hsa-geothermal-trace'), poly,
                                     'HSA geothermal')
     context.generators = [geo] + g
 
@@ -493,7 +499,7 @@ def re100_nsw(context):
     >>> c = C()
     >>> c.generators = []
     >>> re100_nsw(c)
-    >>> for g in c.generators: assert g.region is regions.nsw
+    >>> for g in c.generators: assert g.region() is regions.nsw
     """
     re100_one_region(context, regions.nsw)
 
@@ -505,7 +511,7 @@ def re100_qld(context):
     >>> c = C()
     >>> c.generators = []
     >>> re100_qld(c)
-    >>> for g in c.generators: assert g.region is regions.qld
+    >>> for g in c.generators: assert g.region() is regions.qld
     """
     re100_one_region(context, regions.qld)
 
@@ -517,7 +523,7 @@ def re100_south_aus(context):
     >>> c = C()
     >>> c.generators = []
     >>> re100_south_aus(c)
-    >>> for g in c.generators: assert g.region is regions.sa
+    >>> for g in c.generators: assert g.region() is regions.sa
     """
     re100_one_region(context, regions.sa)
 
@@ -534,19 +540,18 @@ def theworks(context):
     """
     re100(context)
     # pylint: disable=redefined-outer-name
-    # use polygon 38
-    geo = generators.Geothermal_HSA(regions.nsw, 0,
+    geo = generators.Geothermal_HSA(polygons.wildcard, 0,
                                     configfile.get('generation', 'hsa-geothermal-trace'), 38)
-    pt = generators.ParabolicTrough(regions.nsw, 0, 2, 6,
+    pt = generators.ParabolicTrough(polygons.wildcard, 0, 2, 6,
                                     configfile.get('generation', 'cst-trace'), 12)
-    coal = generators.Black_Coal(regions.nsw, 0)
-    coal_ccs = generators.Coal_CCS(regions.nsw, 0)
-    ccgt = generators.CCGT(regions.nsw, 0)
-    ccgt_ccs = generators.CCGT_CCS(regions.nsw, 0)
-    ocgt = generators.OCGT(regions.nsw, 0)
-    batt = generators.Battery(regions.nsw, 0, 0)
-    diesel = generators.Diesel(regions.nsw, 0)
-    dem = generators.DemandResponse(regions.nsw, 0, 300)
+    coal = generators.Black_Coal(polygons.wildcard, 0)
+    coal_ccs = generators.Coal_CCS(polygons.wildcard, 0)
+    ccgt = generators.CCGT(polygons.wildcard, 0)
+    ccgt_ccs = generators.CCGT_CCS(polygons.wildcard, 0)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
+    batt = generators.Battery(polygons.wildcard, 0, 0)
+    diesel = generators.Diesel(polygons.wildcard, 0)
+    dem = generators.DemandResponse(polygons.wildcard, 0, 300)
     g = context.generators
     context.generators = [geo, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
         g[:-4] + [ocgt, diesel, batt, dem]

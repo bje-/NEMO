@@ -1,5 +1,5 @@
 # Copyright (C) 2011, 2012, 2014 Ben Elliston
-# Copyright (C) 2014 The University of New South Wales
+# Copyright (C) 2014, 2015 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import configfile
 import consts
 import generators
 import regions
+import polygons
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
@@ -59,8 +60,8 @@ def default_generation_mix():
     >>> len(g)
     2
     """
-    return [generators.CCGT(regions.nsw, 20000),
-            generators.OCGT(regions.nsw, 20000)]
+    return [generators.CCGT(polygons.wildcard, 20000),
+            generators.OCGT(polygons.wildcard, 20000)]
 
 
 # Context objects are used throughout this module.
@@ -92,7 +93,12 @@ class Context:
         self.unserved_percent = 0
         # System non-synchronous penetration limit
         self.nsp_limit = consts.nsp_limit
-        self.exchanges = np.zeros((self.hours, regions.numregions, regions.numregions))
+        self.exchanges = np.zeros((self.hours, polygons.numpolygons + 1, polygons.numpolygons + 1))
+
+        # Polygons are numbered from zero so invalidate row 0 and
+        # column 0 to catch any erroneous operations on these elements
+        self.exchanges[0] = np.nan
+        self.exchanges[:, 0] = np.nan
 
     def __str__(self):
         """A human-readable representation of the context."""
@@ -142,18 +148,29 @@ def _sim(context, starthour, endhour):
     context.spill = np.zeros((len(context.generators), context.hours))
 
     # Extract generators in the regions of interest.
-    gens = [g for g in context.generators if g.region in context.regions]
+    gens = [g for g in context.generators if g.region() in context.regions]
     # And storage-capable generators.
     storages = [g for g in gens if g.storage_p]
 
-    connections = {}
-    c = regions.connections
-    for r in context.regions:
-        connections[r] = []
-        for (src, dest), path in zip(c.keys(), c.values()):
-            if src is r and dest in context.regions and regions.in_regions_p(path, context.regions):
-                connections[r].append(path)
-        connections[r].sort(key=len)
+    if context.track_exchanges:
+        for g in gens:
+            # every generator must be in a polygon when tracking exchanges
+            assert g.polygon is not None, 'every generator must be in an assigned polygon'
+
+        selected_polygons = []
+        for r in context.regions:
+            if r.polygons is not None:
+                selected_polygons += r.polygons
+
+        loads = [r.loadcentre for r in context.regions]
+        connections = {}
+        for poly in range(1, polygons.numpolygons + 1):
+            # use a list comprehension to filter the connections down to bits of interest
+            connections[poly] = [path for (src, dest), path in
+                                 polygons.connections.iteritems() if src is poly and
+                                 dest in loads and
+                                 polygons.subset(path, selected_polygons)]
+            connections[poly].sort(key=len)
 
     assert context.demand.shape == (regions.numregions, context.timesteps)
 
@@ -205,29 +222,30 @@ def _sim(context, starthour, endhour):
             # distribute the generation across the regions (local region first)
 
             if context.track_exchanges:
-                paths = connections[g.region]
+                paths = connections[g.polygon]
                 if context.verbose:
                     print 'PATHS:', paths
                 for path in paths:
                     if not gen:
                         break
 
-                    rgn = g.region if len(path) is 0 else path[-1][-1]
+                    poly = g.polygon if len(path) is 0 else path[-1][-1]
+                    rgn = polygons.region(poly)
                     rgnidx = rgn.num
                     transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
 
                     if transfer > 0:
                         if context.verbose:
-                            print 'dispatch', int(transfer), 'to', rgn
-                        if rgn is g.region:
-                            context.exchanges[hr, rgnidx, rgnidx] += transfer
+                            print 'dispatch', int(transfer), 'to', poly
+                        if poly is g.polygon:
+                            context.exchanges[hr, poly, poly] += transfer
                         else:
                             # dispatch to another region
                             for src, dest in path:
                                 context.exchanges[hr, src, dest] += transfer
                                 if context.verbose:
                                     print src, '->', dest, '(%d)' % transfer
-                                    assert regions.direct_p(src, dest)
+                                    assert polygons.direct_p(src, dest)
                         hour_demand[rgnidx] -= transfer
                         gen -= transfer
 
@@ -239,8 +257,8 @@ def _sim(context, starthour, endhour):
 
                     # show the energy transferred, not stored (this is where the loss is handled)
                     if context.verbose:
-                        print 'STORE:', g.region, '->', other.region, '(%.1f)' % stored
-                    for src, dest in regions.path(g.region, other.region):
+                        print 'STORE:', g.polyon, '->', other.polygon, '(%.1f)' % stored
+                    for src, dest in polygons.path(g.polygon, other.polygon):
                         context.exchanges[hr, src, dest] += stored
             context.spill[gidx, hr] = spl
 
@@ -252,7 +270,7 @@ def _sim(context, starthour, endhour):
 
 def _generator_list(context):
     """Return a list of the generators of interest in this run."""
-    return [g for g in context.generators if g.region in context.regions and g.capacity > 0]
+    return [g for g in context.generators if g.region() in context.regions and g.capacity > 0]
 
 
 def plot(context, spills=False, filename=None):
@@ -311,7 +329,7 @@ def plot(context, spills=False, filename=None):
 
     if spills:
         prev = demand.copy()
-        for g in [g for g in context.generators if g.region in context.regions]:
+        for g in [g for g in context.generators if g.region() in context.regions]:
             idx = context.generators.index(g)
             accum += spill[idx]
             plt.plot(xdata, accum, color='black')

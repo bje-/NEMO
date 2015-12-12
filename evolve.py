@@ -139,7 +139,7 @@ def cost(ctx, transmission_p):
         for rgn in ctx.regions:
             regional_generation = 0
             for g in ctx.generators:
-                if g.region is rgn:
+                if g.region() is rgn:
                     regional_generation += sum(g.hourly_power.values())
             min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
             regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
@@ -194,17 +194,15 @@ def cost(ctx, transmission_p):
 
     if transmission_p:
         maxexchanges = ctx.exchanges.max(axis=0)
-        for i in range(5):
-            # zero the diagonal entries
-            maxexchanges[i, i] = 0
-
-        for i in range(5):
+        np.fill_diagonal(maxexchanges, 0)
+        for i in range(1, maxexchanges.shape[0]):
             # then put the max (upper, lower) into lower
             # and zero the upper entries
             for j in range(i):
                 maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
                 maxexchanges[j, i] = 0
-        txscore = (maxexchanges * ctx.costs.transmission.cost_matrix).sum()
+        # ignore row 0 and column 0 of maxexchanges
+        txscore = (maxexchanges[1:, 1:] * ctx.costs.transmission.cost_matrix[1:, 1:]).sum()
         score += txscore
 
     # Express $/yr as an average $/MWh over the period
@@ -300,7 +298,9 @@ def run():
     context.verbose = True
     print context
     if args.transmission:
-        print context.exchanges.max(axis=0)
+        x = context.exchanges.max(axis=0)
+        print np.array_str(x, precision=1, suppress_small=True)
+        np.savetxt('exchanges.csv', x, fmt='%.1f', delimiter=',')
 
 
 if __name__ == '__main__':

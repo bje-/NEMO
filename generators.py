@@ -13,6 +13,7 @@ import numpy as np
 from matplotlib.patches import Patch
 
 import consts
+import polygons
 
 
 # Needed for currency formatting.
@@ -23,16 +24,20 @@ class Generator:
 
     """Base generator class."""
 
-    def __init__(self, region, capacity, label):
+    def __init__(self, polygon, capacity, label):
         """Base class constructor.
 
-        Arguments: installed region, installed capacity, descriptive label.
+        Arguments: installed polygon, installed capacity, descriptive label.
         """
         self.setters = [(self.set_capacity, 0, 40)]
         self.storage_p = False
         self.label = label
         self.capacity = capacity
-        self.region = region
+        self.polygon = polygon
+
+        # Sanity check polygon argument.
+        assert not isinstance(polygon, polygons.regions.Region)
+        assert polygon >= 1 and polygon <= polygons.numpolygons, polygon
 
         # Is the generator a rotating machine?
         self.non_synchronous_p = False
@@ -40,6 +45,10 @@ class Generator:
         # Time series of dispatched power and spills
         self.hourly_power = {}
         self.hourly_spilled = {}
+
+    def region(self):
+        """Return the region the generator is in."""
+        return polygons.region(self.polygon)
 
     def capcost(self, costs):
         """Return the annual capital cost."""
@@ -78,8 +87,10 @@ class Generator:
 
     def __str__(self):
         """A short string representation of the generator."""
-        return '%s (%s), %.2f GW' \
-            % (self.label, self.region, self.capacity / 1000.)
+        return '%s (%s:%d), %.2f GW' \
+            % (self.label, self.region(),
+               0 if self.polygon is None else self.polygon,
+               self.capacity / 1000.)
 
     def __repr__(self):
         """A representation of the generator."""
@@ -94,8 +105,8 @@ class Wind(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, delimiter=None, build_limit=None, label='wind'):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, filename, column, delimiter=None, build_limit=None, label='wind'):
+        Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
@@ -126,8 +137,8 @@ class PV(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, build_limit=None, label='PV'):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV'):
+        Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -151,8 +162,8 @@ class PV(Generator):
 class PV1Axis(PV):
     """Single-axis tracking PV."""
 
-    def __init__(self, region, capacity, filename, column, build_limit=None, label='PV 1-axis'):
-        PV.__init__(self, region, capacity, filename, column, build_limit, label)
+    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV 1-axis'):
+        PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
 
 
 class CST(Generator):
@@ -162,8 +173,8 @@ class CST(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
@@ -222,8 +233,8 @@ class ParabolicTrough(CST):
     """
     patch = Patch(facecolor='yellow')
 
-    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
-        CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
+    def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
 
 class CentralReceiver(CST):
@@ -234,16 +245,16 @@ class CentralReceiver(CST):
     """
     patch = Patch(facecolor='orange')
 
-    def __init__(self, region, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
-        CST.__init__(self, region, capacity, sm, shours, filename, column, build_limit, label)
+    def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
 
 class Fuelled(Generator):
 
     """The class of generators that consume fuel."""
 
-    def __init__(self, region, capacity, label):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, label):
+        Generator.__init__(self, polygon, capacity, label)
         self.runhours = 0
 
     def reset(self):
@@ -268,8 +279,8 @@ class Hydro(Fuelled):
 
     patch = Patch(facecolor='lightskyblue')
 
-    def __init__(self, region, capacity, label='hydro'):
-        Fuelled.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, label='hydro'):
+        Fuelled.__init__(self, polygon, capacity, label)
         # capacity is in MW, but build limit is in GW
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
@@ -280,8 +291,8 @@ class PumpedHydro(Hydro):
 
     patch = Patch(facecolor='powderblue')
 
-    def __init__(self, region, capacity, maxstorage, rte=0.8, label='pumped-hydro'):
-        Hydro.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, maxstorage, rte=0.8, label='pumped-hydro'):
+        Hydro.__init__(self, polygon, capacity, label)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
         self.stored = self.maxstorage * .5
@@ -292,8 +303,7 @@ class PumpedHydro(Hydro):
     def store(self, hr, power):
         """Pump water uphill for one hour.
 
-        >>> import regions
-        >>> psh = PumpedHydro(regions.nsw, 250, 1000, rte=1.0)
+        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
         >>> psh.step(hr=0, demand=100)
         (100, 0)
 
@@ -340,8 +350,8 @@ class Biofuel(Fuelled):
 
     patch = Patch(facecolor='wheat')
 
-    def __init__(self, region, capacity, label='biofuel'):
-        Fuelled.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, label='biofuel'):
+        Fuelled.__init__(self, polygon, capacity, label)
 
     def step(self, hr, demand):
         power = min(self.capacity, demand)
@@ -365,9 +375,9 @@ class Fossil(Fuelled):
 
     patch = Patch(facecolor='brown')
 
-    def __init__(self, region, capacity, intensity, label='fossil'):
+    def __init__(self, polygon, capacity, intensity, label='fossil'):
         # Greenhouse gas intensity in tonnes per MWh
-        Fuelled.__init__(self, region, capacity, label)
+        Fuelled.__init__(self, polygon, capacity, label)
         self.intensity = intensity
 
     def summary(self, costs):
@@ -381,8 +391,8 @@ class Black_Coal(Fossil):
 
     patch = Patch(facecolor='black')
 
-    def __init__(self, region, capacity, intensity=0.773, label='coal'):
-        Fossil.__init__(self, region, capacity, intensity, label)
+    def __init__(self, polygon, capacity, intensity=0.773, label='coal'):
+        Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
@@ -397,8 +407,8 @@ class OCGT(Fossil):
 
     patch = Patch(facecolor='brown')
 
-    def __init__(self, region, capacity, intensity=0.7, label='OCGT'):
-        Fossil.__init__(self, region, capacity, intensity, label)
+    def __init__(self, polygon, capacity, intensity=0.7, label='OCGT'):
+        Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
@@ -413,8 +423,8 @@ class CCGT(Fossil):
 
     patch = Patch(facecolor='brown')
 
-    def __init__(self, region, capacity, intensity=0.4, label='CCGT'):
-        Fossil.__init__(self, region, capacity, intensity, label)
+    def __init__(self, polygon, capacity, intensity=0.4, label='CCGT'):
+        Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
@@ -427,8 +437,8 @@ class CCS(Fossil):
 
     """Base class of carbon capture and storage (CCS)."""
 
-    def __init__(self, region, capacity, intensity, capture, label='CCS'):
-        Fossil.__init__(self, region, capacity, intensity, label)
+    def __init__(self, polygon, capacity, intensity, capture, label='CCS'):
+        Fossil.__init__(self, polygon, capacity, intensity, label)
         # capture fraction ranges from 0 to 1
         self.capture = capture
 
@@ -441,8 +451,8 @@ class Coal_CCS(CCS):
 
     """Coal with CCS."""
 
-    def __init__(self, region, capacity, intensity=0.8, capture=0.85, label='Coal-CCS'):
-        CCS.__init__(self, region, capacity, intensity, capture, label)
+    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label='Coal-CCS'):
+        CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
@@ -460,8 +470,8 @@ class CCGT_CCS(CCS):
 
     """CCGT with CCS."""
 
-    def __init__(self, region, capacity, intensity=0.4, capture=0.85, label='CCGT-CCS'):
-        CCS.__init__(self, region, capacity, intensity, capture, label)
+    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label='CCGT-CCS'):
+        CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[self.__class__]
@@ -479,8 +489,8 @@ class Diesel(Fossil):
 
     patch = Patch(facecolor='dimgrey')
 
-    def __init__(self, region, capacity, intensity=1.0, kwh_per_litre=3.3, label='diesel'):
-        Fossil.__init__(self, region, capacity, intensity, label)
+    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3, label='diesel'):
+        Fossil.__init__(self, polygon, capacity, intensity, label)
         self.kwh_per_litre = kwh_per_litre
 
     def opcost_per_mwh(self, costs):
@@ -497,8 +507,8 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, region, capacity, maxstorage, rte=0.95, label='battery'):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, maxstorage, rte=0.95, label='battery'):
+        Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
@@ -516,8 +526,7 @@ class Battery(Generator):
     def store(self, hr, power):
         """Store power.
 
-        >>> import regions
-        >>> b = Battery(regions.nsw, 400, 1000, rte=1.0)
+        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
         >>> b.store(hr=0, power=400)
         400
         >>> b.store(hr=1, power=700)
@@ -537,8 +546,7 @@ class Battery(Generator):
 
     def step(self, hr, demand):
         """
-        >>> import regions
-        >>> b = Battery(regions.nsw, 400, 1000, rte=1.0)
+        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
         >>> b.step(hr=0, demand=200)
         (0, 0)
         >>> b.store(hr=0, power=400)
@@ -590,8 +598,8 @@ class Geothermal(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, region, capacity, filename, column, label):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, filename, column, label):
+        Generator.__init__(self, polygon, capacity, label)
         if Geothermal.csvfilename != filename:
             Geothermal.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
             Geothermal.csvdata = np.maximum(0, Geothermal.csvdata)
@@ -610,16 +618,16 @@ class Geothermal_HSA(Geothermal):
 
     """Hot sedimentary aquifer (HSA) geothermal model."""
 
-    def __init__(self, region, capacity, filename, column, label='HSA geothermal'):
-        Geothermal.__init__(self, region, capacity, filename, column, label)
+    def __init__(self, polygon, capacity, filename, column, label='HSA geothermal'):
+        Geothermal.__init__(self, polygon, capacity, filename, column, label)
 
 
 class Geothermal_EGS(Geothermal):
 
     """Enhanced geothermal systems (EGS) geothermal model."""
 
-    def __init__(self, region, capacity, filename, column, label='EGS geothermal'):
-        Geothermal.__init__(self, region, capacity, filename, column, label)
+    def __init__(self, polygon, capacity, filename, column, label='EGS geothermal'):
+        Geothermal.__init__(self, polygon, capacity, filename, column, label)
 
 
 class DemandResponse(Generator):
@@ -629,8 +637,8 @@ class DemandResponse(Generator):
     patch = Patch(facecolor='white')
 
     # pylint: disable=unused-argument
-    def __init__(self, region, capacity, cost_per_mwh, label='demand-response'):
-        Generator.__init__(self, region, capacity, label)
+    def __init__(self, polygon, capacity, cost_per_mwh, label='demand-response'):
+        Generator.__init__(self, polygon, capacity, label)
         self.setters = []
         self.runhours = 0
         self.maxresponse = 0
@@ -638,8 +646,7 @@ class DemandResponse(Generator):
 
     def step(self, hr, demand):
         """
-        >>> import regions
-        >>> dr = DemandResponse(regions.nsw, 500, 1500)
+        >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
         >>> dr.step(hr=0, demand=200)
         (200, 0)
         >>> dr.runhours

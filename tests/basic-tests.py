@@ -12,6 +12,7 @@
 import math
 import nem
 import regions
+import polygons
 import generators
 import unittest
 
@@ -22,7 +23,7 @@ class SuperGenerator(generators.Generator):
 
     def __init__(self, capacity):
         """Create a super generator."""
-        generators.Generator.__init__(self, regions.nsw, capacity, 'super')
+        generators.Generator.__init__(self, polygons.wildcard, capacity, 'super')
         self.energy = 0
         self.runhours = 0
 
@@ -72,7 +73,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_004(self):
         """100 MW fossil plant generates exactly 876,000 MWh."""
-        ccgt = generators.CCGT(regions.nsw, 100)
+        ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
         self.assertEqual(sum(ccgt.hourly_power.values()), self.context.timesteps * 100)
@@ -130,14 +131,21 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context = nem.Context()
             self.context.track_exchanges = True
             self.context.regions = [rgn]
-            self.context.generators = [generators.OCGT(regions.nsw, 100),
-                                       generators.OCGT(regions.qld, 100),
-                                       generators.OCGT(regions.sa, 100),
-                                       generators.OCGT(regions.tas, 100),
-                                       generators.OCGT(regions.vic, 100)]
+            loadpoly = rgn.loadcentre
+            nswpoly = regions.nsw.loadcentre
+            vicpoly = regions.vic.loadcentre
+            qldpoly = regions.qld.loadcentre
+            sapoly = regions.sa.loadcentre
+            taspoly = regions.tas.loadcentre
+
+            self.context.generators = [generators.OCGT(nswpoly, 100),
+                                       generators.OCGT(qldpoly, 100),
+                                       generators.OCGT(sapoly, 100),
+                                       generators.OCGT(taspoly, 100),
+                                       generators.OCGT(vicpoly, 100)]
             nem.run(self.context, endhour=100)
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
-            self.assertTrue(self.context.exchanges[0, rgn, rgn] > 0, 'Only rgn->rgn is > 0')
+            self.assertTrue(self.context.exchanges[0, loadpoly, loadpoly] > 0, 'Only rgn->rgn is > 0')
 
     def test_011(self):
         """Running in two regions only produces limited interstate exchanges."""
@@ -170,7 +178,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_013(self):
         """Fossil plant records power generation history."""
-        ccgt = generators.CCGT(regions.nsw, 100)
+        ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
         self.assertTrue(len(self.context.generators[0].hourly_power) > 0)

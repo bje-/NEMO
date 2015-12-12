@@ -3,6 +3,7 @@
 import os
 import nem
 import regions
+import polygons
 import unittest
 
 
@@ -33,7 +34,7 @@ class TestCoverage(unittest.TestCase):
         c = nem.Context()
         # Add 25 DR generators so that the abbreviated legend is used.
         for i in range(25):
-            dr = nem.generators.DemandResponse(regions.nsw, 100, 0)
+            dr = nem.generators.DemandResponse(polygons.wildcard, 100, 0)
             c.generators += [dr]
         print len(c.generators)
         nem.run(c)
