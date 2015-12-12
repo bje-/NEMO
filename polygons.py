@@ -90,7 +90,7 @@ def region(poly):
     >>> region(40)
     TAS1
     """
-    return regions.Any if poly is None else _region_table[poly]
+    return _region_table[poly]
 
 
 wind_limit = [None, 80.3, 0, 36.9, 6.5, 15.6, 1.5, 6.9, 2.6, 0, 4.1,

@@ -87,9 +87,8 @@ class Generator:
 
     def __str__(self):
         """A short string representation of the generator."""
-        return '%s (%s:%d), %.2f GW' \
-            % (self.label, self.region(),
-               0 if self.polygon is None else self.polygon,
+        return '%s (%s:%s), %.2f GW' \
+            % (self.label, self.region(), self.polygon,
                self.capacity / 1000.)
 
     def __repr__(self):

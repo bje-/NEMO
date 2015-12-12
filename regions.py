@@ -78,13 +78,3 @@ tas = Region(4, 'TAS1', 'Tasmania')
 vic = Region(5, 'VIC1', 'Victoria')
 All = [nsw, qld, sa, snowy, tas, vic]
 numregions = len(All)
-
-
-class AnyRegion(Region):
-    def __init__(self):
-        Region.__init__(self, 0, 'ANY', 'Any region')
-
-    def __cmp__(self, other):
-        return 0 if isinstance(other, Region) else 1
-
-Any = AnyRegion()
