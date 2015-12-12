@@ -153,7 +153,6 @@ def _sim(context, starthour, endhour):
         for (src, dest), path in zip(c.keys(), c.values()):
             if src is r and dest in context.regions and regions.in_regions_p(path, context.regions):
                 connections[r].append(path)
-        connections[r].sort()
         connections[r].sort(key=len)
 
     assert context.demand.shape == (regions.numregions, context.timesteps)
