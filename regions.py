@@ -105,8 +105,6 @@ connections[(qld, tas)] = [(qld, nsw), (nsw, vic), (vic, tas)]
 connections[(sa, nsw)] = [(sa, vic), (vic, nsw)]
 connections[(sa, tas)] = [(sa, vic), (vic, tas)]
 connections[(tas, nsw)] = [(tas, vic), (vic, nsw)]
-connections[(qld, sa)] = [(qld, sa)]
-connections[(sa, nsw)] = [(sa, nsw)]
 
 # And the reverse direction.
 for (src, dest) in [(qld, sa), (qld, vic), (qld, tas), (sa, nsw),
