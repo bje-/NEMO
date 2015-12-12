@@ -7,7 +7,6 @@
 
 """Configuration file processing (eg, filenames)."""
 
-from ast import literal_eval
 import ConfigParser
 import consts
 import os
@@ -30,13 +29,6 @@ def get(section, keyword):
     """A wrapper around ConfigParser.get."""
     return config.get(section, keyword)
 
-
-def items(section):
-    """Return all items (in native types) in a dictionary."""
-    result = {}
-    for (key, value) in config.items(section):
-        result[key] = literal_eval(value)
-    return result
 
 config = ConfigParser.ConfigParser()
 
