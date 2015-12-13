@@ -93,7 +93,7 @@ context.costs.transmission = transmission.Transmission(args.tx_costs, args.disco
 if args.coal_ccs_costs is not None:
     fom = context.costs.fixed_om_costs[generators.Coal_CCS]
     af = costs.annuity_factor(context.costs.lifetime, args.discount_rate)
-    context.costs.capcost_per_kw_per_yr[generators.Coal_CCS] = args.coal_ccs_costs / af + fom
+    context.costs.capcost_per_kw_per_yr[generators.Coal_CCS] = args.coal_ccs_costs / af
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
