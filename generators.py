@@ -52,7 +52,7 @@ class Generator:
 
     def capcost(self, costs):
         """Return the annual capital cost."""
-        return costs.capcost_per_kw_per_yr[self.__class__] * self.capacity * 1000
+        return costs.capcost_per_kw[self.__class__] * self.capacity * 1000
 
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""

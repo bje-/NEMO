@@ -91,9 +91,7 @@ context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, 
 context.costs.carbon = args.carbon_price
 context.costs.transmission = transmission.Transmission(args.tx_costs, args.discount_rate)
 if args.coal_ccs_costs is not None:
-    fom = context.costs.fixed_om_costs[generators.Coal_CCS]
-    af = costs.annuity_factor(context.costs.lifetime, args.discount_rate)
-    context.costs.capcost_per_kw_per_yr[generators.Coal_CCS] = args.coal_ccs_costs / af
+    context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
@@ -121,7 +119,8 @@ def cost(ctx, transmission_p):
     """Sum up the costs."""
     score = 0
     for g in ctx.generators:
-        score += (g.capcost(ctx.costs) * ctx.years) + g.opcost(ctx.costs)
+        score += (g.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
+                 + g.opcost(ctx.costs)
 
     penalty = 0
     reason = 0

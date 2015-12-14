@@ -20,7 +20,7 @@ class NullCosts:
     """All costs are zero. Useful for debugging."""
 
     def __init__(self):
-        self.capcost_per_kw_per_yr = {}
+        self.capcost_per_kw = {}
         self.fixed_om_costs = {}
         self.opcost_per_mwh = {}
         self.annuityf = 1
@@ -37,7 +37,7 @@ class NullCosts:
                   tech.Geothermal_EGS, tech.Geothermal_HSA,
                   tech.Hydro, tech.OCGT, tech.ParabolicTrough,
                   tech.PumpedHydro, tech.PV, tech.Wind, ]:
-            self.capcost_per_kw_per_yr[t] = 0
+            self.capcost_per_kw[t] = 0
             self.opcost_per_mwh[t] = 0
             self.fixed_om_costs[t] = 0
 
@@ -64,7 +64,7 @@ class AETA2012_2030:
         self.annuityf = annuity_factor(self.lifetime, discount)
 
         # Common capital costs
-        self.capcost_per_kw_per_yr = {
+        self.capcost_per_kw = {
             tech.Hydro: 0,
             tech.PumpedHydro: 0,
             tech.Diesel: 0,
@@ -123,21 +123,20 @@ class AETA2012_2030Low (AETA2012_2030):
         """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
-        af = self.annuityf
         # capital costs in $/kW
-        table = self.capcost_per_kw_per_yr
-        table[tech.Wind] = 1701 / af
-        table[tech.CentralReceiver] = 4203 / af
-        table[tech.ParabolicTrough] = 4563 / af
-        table[tech.PV] = 1482 / af
-        table[tech.PV1Axis] = 2013 / af
-        table[tech.CCGT] = 1015 / af
-        table[tech.OCGT] = 694 / af
-        table[tech.CCGT_CCS] = 2095 / af
-        table[tech.Coal_CCS] = 4453 / af
-        table[tech.Black_Coal] = 2947 / af
-        table[tech.Geothermal_HSA] = 6645 / af
-        table[tech.Geothermal_EGS] = 10331 / af
+        table = self.capcost_per_kw
+        table[tech.Wind] = 1701
+        table[tech.CentralReceiver] = 4203
+        table[tech.ParabolicTrough] = 4563
+        table[tech.PV] = 1482
+        table[tech.PV1Axis] = 2013
+        table[tech.CCGT] = 1015
+        table[tech.OCGT] = 694
+        table[tech.CCGT_CCS] = 2095
+        table[tech.Coal_CCS] = 4453
+        table[tech.Black_Coal] = 2947
+        table[tech.Geothermal_HSA] = 6645
+        table[tech.Geothermal_EGS] = 10331
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
@@ -152,21 +151,20 @@ class AETA2012_2030High (AETA2012_2030):
         """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
-        af = self.annuityf
         # capital costs in $/kW
-        table = self.capcost_per_kw_per_yr
-        table[tech.Wind] = 1917 / af
-        table[tech.CentralReceiver] = 5253 / af
-        table[tech.ParabolicTrough] = 5659 / af
-        table[tech.PV] = 1871 / af
-        table[tech.PV1Axis] = 2542 / af
-        table[tech.CCGT] = 1221 / af
-        table[tech.OCGT] = 809 / af
-        table[tech.CCGT_CCS] = 2405 / af
-        table[tech.Coal_CCS] = 4727 / af
-        table[tech.Black_Coal] = 3128 / af
-        table[tech.Geothermal_HSA] = 7822 / af
-        table[tech.Geothermal_EGS] = 11811 / af
+        table = self.capcost_per_kw
+        table[tech.Wind] = 1917
+        table[tech.CentralReceiver] = 5253
+        table[tech.ParabolicTrough] = 5659
+        table[tech.PV] = 1871
+        table[tech.PV1Axis] = 2542
+        table[tech.CCGT] = 1221
+        table[tech.OCGT] = 809
+        table[tech.CCGT_CCS] = 2405
+        table[tech.Coal_CCS] = 4727
+        table[tech.Black_Coal] = 3128
+        table[tech.Geothermal_HSA] = 7822
+        table[tech.Geothermal_EGS] = 11811
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
@@ -187,9 +185,9 @@ class AETA2012_2030Mid (AETA2012_2030):
         assert low.opcost_per_mwh == high.opcost_per_mwh
         assert low.fixed_om_costs == high.fixed_om_costs
 
-        table = self.capcost_per_kw_per_yr
-        lowtable = low.capcost_per_kw_per_yr
-        hightable = high.capcost_per_kw_per_yr
+        table = self.capcost_per_kw
+        lowtable = low.capcost_per_kw
+        hightable = high.capcost_per_kw
         for t in lowtable:
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
@@ -216,14 +214,6 @@ class AETA2013_2030Low (AETA2012_2030Low):
         vom[tech.CentralReceiver] = 5.65 * self.escalation
         vom[tech.ParabolicTrough] = 11.39 * self.escalation
 
-        # Re-calculate annual capital costs for wind and CST.
-        af = self.annuityf
-        table = self.capcost_per_kw_per_yr
-        fom = self.fixed_om_costs
-        table[tech.Wind] = 1701 / af
-        table[tech.CentralReceiver] = 4203 / af
-        table[tech.ParabolicTrough] = 4563 / af
-
 
 class AETA2013_2030High (AETA2012_2030High):
     """AETA (2013 update) costs for 2030, high end of the range."""
@@ -247,14 +237,6 @@ class AETA2013_2030High (AETA2012_2030High):
         vom[tech.CentralReceiver] = 5.65 * self.escalation
         vom[tech.ParabolicTrough] = 11.39 * self.escalation
 
-        # Re-calculate annual capital costs for wind and CST.
-        af = self.annuityf
-        table = self.capcost_per_kw_per_yr
-        fom = self.fixed_om_costs
-        table[tech.Wind] = 1917 / af
-        table[tech.CentralReceiver] = 5253 / af
-        table[tech.ParabolicTrough] = 5659 / af
-
 
 class AETA2013_2030Mid (AETA2012_2030):
 
@@ -275,9 +257,9 @@ class AETA2013_2030Mid (AETA2012_2030):
         assert low.fixed_om_costs == high.fixed_om_costs
         self.fixed_om_costs = low.fixed_om_costs
 
-        table = self.capcost_per_kw_per_yr
-        lowtable = low.capcost_per_kw_per_yr
-        hightable = high.capcost_per_kw_per_yr
+        table = self.capcost_per_kw
+        lowtable = low.capcost_per_kw
+        hightable = high.capcost_per_kw
         for t in lowtable:
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
