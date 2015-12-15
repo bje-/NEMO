@@ -187,7 +187,7 @@ def _sim(context, starthour, endhour):
         async_demand = residual_hour_demand * context.nsp_limit
 
         if context.verbose:
-            print 'hour', hr, 'demand:', hour_demand
+            print 'HOUR:', hr, 'demand', hour_demand
 
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
@@ -237,7 +237,7 @@ def _sim(context, starthour, endhour):
 
                     if transfer > 0:
                         if context.verbose:
-                            print 'dispatch', int(transfer), 'MW to', poly
+                            print 'TRANSFER:', int(transfer), 'to polygon', poly
                         if poly is g.polygon:
                             context.exchanges[hr, poly, poly] += transfer
                         else:
@@ -245,7 +245,7 @@ def _sim(context, starthour, endhour):
                             for src, dest in path:
                                 context.exchanges[hr, src, dest] += transfer
                                 if context.verbose:
-                                    print 'FLOW:', src, '->', dest, '(%d)' % transfer
+                                    print 'FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer
                                     assert polygons.direct_p(src, dest)
                         hour_demand[rgnidx] -= transfer
                         gen -= transfer
