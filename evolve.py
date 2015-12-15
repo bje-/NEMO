@@ -120,7 +120,7 @@ def cost(ctx, transmission_p):
     score = 0
     for g in ctx.generators:
         score += (g.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
-                 + g.opcost(ctx.costs)
+            + g.opcost(ctx.costs)
 
     penalty = 0
     reason = 0

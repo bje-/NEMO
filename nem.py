@@ -216,7 +216,7 @@ def _sim(context, starthour, endhour):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print 'GENERATOR: %s,' %g, 'generation: %.1f' % context.generation[gidx, hr], \
+                print 'GENERATOR: %s,' % g, 'generation: %.1f' % context.generation[gidx, hr], \
                     'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
                     'async-demand: %.1f' % async_demand
 
