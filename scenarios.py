@@ -60,10 +60,8 @@ def _hydro():
     """
     nswpoly = regions.nsw.polygons[0]
     taspoly = regions.tas.polygons[0]
-    qldpoly = regions.qld.polygons[0]
     vicpoly = regions.vic.polygons[0]
 
-    # Ignore the one small hydro plant in SA.
     hydro1 = generators.Hydro(taspoly, 2255,
                               label=regions.tas.id + ' hydro')
     hydro2 = generators.Hydro(nswpoly, 910,
@@ -71,7 +69,8 @@ def _hydro():
     hydro3 = generators.Hydro(vicpoly, 2237,
                               label=regions.vic.id + ' hydro')
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    psh1 = generators.PumpedHydro(qldpoly, 500, 5000,
+    # (polygon 17)
+    psh1 = generators.PumpedHydro(17, 500, 5000,
                                   label='QLD1 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
     psh2 = generators.PumpedHydro(nswpoly, 1740, 15000,
