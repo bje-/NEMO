@@ -53,7 +53,7 @@ def run_one(chromosome):
     context.verbose = args.v > 0
     print context
     if args.transmission:
-        x = context.exchanges.max(axis=0)
+        x = context.exchanges.max(axis=0)[1:, 1:]
         if args.v > 0:
             print np.array_str(x, precision=1, suppress_small=True)
         np.savetxt('exchanges.csv', x, fmt='%.1f', delimiter=',')
