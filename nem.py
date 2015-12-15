@@ -257,7 +257,7 @@ def _sim(context, starthour, endhour):
 
                     # show the energy transferred, not stored (this is where the loss is handled)
                     if context.verbose:
-                        print 'STORE:', g.polyon, '->', other.polygon, '(%.1f)' % stored
+                        print 'STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored
                     for src, dest in polygons.path(g.polygon, other.polygon):
                         context.exchanges[hr, src, dest] += stored
             context.spill[gidx, hr] = spl
