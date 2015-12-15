@@ -47,6 +47,8 @@ def run_one(chromosome):
     context.costs.carbon = 0
     set_generators(chromosome)
     context.verbose = args.v > 1
+    if args.transmission:
+        context.track_exchanges = 1
     nem.run(context)
     context.verbose = args.v > 0
     print context
