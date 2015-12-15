@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.ed
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
-parser.add_argument("-v", action="store_true", help='verbose mode')
+parser.add_argument("-v", action="count", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
@@ -46,9 +46,9 @@ def run_one(chromosome):
     context.costs = costs.AETA2013_2030Mid(0.05, 1.86, 11, 27)
     context.costs.carbon = 0
     set_generators(chromosome)
-    context.verbose = 0
+    context.verbose = args.v > 1
     nem.run(context)
-    context.verbose = args.v
+    context.verbose = args.v > 0
     print context
     if args.transmission:
         print context.exchanges.max(axis=0)
