@@ -216,8 +216,9 @@ def _sim(context, starthour, endhour):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print 'GENERATOR:', g, 'generation =', context.generation[gidx, hr], 'spill =', \
-                    spl, 'residual demand =', residual_hour_demand, 'async demand =', async_demand
+                print 'GENERATOR: %s,' %g, 'generation: %.1f' % context.generation[gidx, hr], \
+                    'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
+                    'async-demand: %.1f' % async_demand
 
             # distribute the generation across the regions (local region first)
 
@@ -236,7 +237,7 @@ def _sim(context, starthour, endhour):
 
                     if transfer > 0:
                         if context.verbose:
-                            print 'dispatch', int(transfer), 'to', poly
+                            print 'dispatch', int(transfer), 'MW to', poly
                         if poly is g.polygon:
                             context.exchanges[hr, poly, poly] += transfer
                         else:
@@ -244,7 +245,7 @@ def _sim(context, starthour, endhour):
                             for src, dest in path:
                                 context.exchanges[hr, src, dest] += transfer
                                 if context.verbose:
-                                    print src, '->', dest, '(%d)' % transfer
+                                    print 'FLOW:', src, '->', dest, '(%d)' % transfer
                                     assert polygons.direct_p(src, dest)
                         hour_demand[rgnidx] -= transfer
                         gen -= transfer
