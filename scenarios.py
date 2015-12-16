@@ -177,8 +177,8 @@ def re100(context):
             # distribute 24GW of biofuelled turbines across chosen regions
             # the region list is in order of approximate demand
             rgns = [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]
-            # take the first polygon in each region
-            polys = [r.polygons[0] for r in rgns]
+            # suitable polygon for each region respectively
+            polys = [26, 11, 27, 43, 37]
             for p, r in zip(polys, rgns):
                 result.append(Biofuel(p, 24000 / len(rgns), label=r.id + ' GT'))
         elif g == PV1Axis:
