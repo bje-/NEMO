@@ -73,7 +73,7 @@ def _hydro():
     psh1 = generators.PumpedHydro(17, 500, 5000,
                                   label='QLD1 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh2 = generators.PumpedHydro(nswpoly, 1740, 15000,
+    psh2 = generators.PumpedHydro(36, 1740, 15000,
                                   label='NSW1 pumped-hydro')
     return [psh1, psh2, hydro1, hydro2, hydro3]
 
