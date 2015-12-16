@@ -235,9 +235,9 @@ distances = np.empty((numpolygons + 1, numpolygons + 1))
 distances[0] = np.nan
 # likewise, column 0 is unused
 distances[::, 0] = np.nan
-for poly1 in range(1, distances.shape[0]):
-    for poly2 in range(1, distances.shape[0]):
-        distances[poly1, poly2] = dist(poly1, poly2)
+for p1 in range(1, distances.shape[0]):
+    for p2 in range(1, distances.shape[0]):
+        distances[p1, p2] = dist(p1, p2)
 
 connections = {}
 connections[(1, 1)] = []
