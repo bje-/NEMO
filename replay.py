@@ -8,6 +8,7 @@
 
 """Replay NEM runs from a text file of generators."""
 import argparse
+import json
 import numpy as np
 import re
 
@@ -53,10 +54,12 @@ def run_one(chromosome):
     context.verbose = args.v > 0
     print context
     if args.transmission:
-        x = context.exchanges.max(axis=0)[1:, 1:]
-        if args.v > 0:
-            print np.array_str(x, precision=1, suppress_small=True)
+        x = context.exchanges.max(axis=0)
         np.savetxt('exchanges.csv', x, fmt='%.1f', delimiter=',')
+        f = open('exchanges.json', 'w')
+        json.dump(x.tolist(), f)
+        f.close()
+
 
 context = nem.Context()
 context.nsp_limit = args.nsp_limit

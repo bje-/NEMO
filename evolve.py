@@ -18,6 +18,7 @@ from scoop import futures
 import os
 import sys
 import csv
+import json
 import numpy as np
 import argparse
 import nem
@@ -300,6 +301,9 @@ def run():
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
         np.savetxt('exchanges.csv', x, fmt='%.1f', delimiter=',')
+        f = open('exchanges.json', 'w')
+        json.dump(x.tolist(), f)
+        f.close()
 
 
 if __name__ == '__main__':
