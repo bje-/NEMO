@@ -230,7 +230,7 @@ net = {1: {2: dist(1, 2), 3: dist(1, 3), 4: dist(1, 4)},
        42: {40: dist(42, 40), 43: dist(42, 43)},
        43: {41: dist(43, 41), 42: dist(43, 42)}}
 
-distances = np.empty((numpolygons + 1, numpolygons + 1))
+distances = np.zeros((numpolygons + 1, numpolygons + 1))
 # mark row 0 as unused (there is no polygon #0)
 distances[0] = np.nan
 # likewise, column 0 is unused
