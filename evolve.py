@@ -201,6 +201,13 @@ def cost(ctx, transmission_p):
             for j in range(i):
                 maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
                 maxexchanges[j, i] = 0
+        try:
+            # existing transmission is "free"
+            maxexchanges = np.maximum(0, maxexchanges - nem.polyons.existing_net)
+        except AttributeError:
+            # skip if not present
+            pass
+
         # ignore row 0 and column 0 of maxexchanges
         txscore = (maxexchanges[1:, 1:] * ctx.costs.transmission.cost_matrix[1:, 1:]).sum()
         score += txscore

@@ -231,13 +231,26 @@ net = {1: {2: dist(1, 2), 3: dist(1, 3), 4: dist(1, 4)},
        43: {41: dist(43, 41), 42: dist(43, 42)}}
 
 distances = np.zeros((numpolygons + 1, numpolygons + 1))
-# mark row 0 as unused (there is no polygon #0)
+# mark row 0 and column 0 as unused (there is no polygon #0)
 distances[0] = np.nan
-# likewise, column 0 is unused
 distances[::, 0] = np.nan
 for p1 in range(1, distances.shape[0]):
     for p2 in range(1, distances.shape[0]):
         distances[p1, p2] = dist(p1, p2)
+
+existing_net = np.zeros((numpolygons + 1, numpolygons + 1))
+# mark row 0 and column 0 as unused (there is no polygon #0)
+existing_net[0] = np.nan
+existing_net[::, 0] = np.nan
+for (p1, p2, limit) in [(4, 7, 400), (7, 11, 400), (11, 17, 400),
+                        (16, 17, 3000), (17, 24, 1000), (24, 31, 1000),
+                        (31, 36, 500), (36, 38, 500), (38, 39, 500),
+                        (39, 40, 500), (39, 37, 600), (37, 32, 600),
+                        (32, 26, 200), (26, 19, 200)]:
+    assert p2 in net[p1].keys() and p1 in net[p2].keys()
+    existing_net[p1, p2] = limit
+    existing_net[p2, p1] = limit
+
 
 connections = {}
 connections[(1, 1)] = []
