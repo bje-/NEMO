@@ -22,10 +22,9 @@ labels[39] = 'Melbourne'
 def width(x):
     return int(x) / 1000.
 
-print 'digraph {'
-f = open('exchanges.json', 'r')
-arr = json.load(f)
+arr = json.load(open('exchanges.json'))
 
+print 'digraph {'
 for i in range(1, len(arr)):
     for j in range(1, len(arr[i])):
         flow = arr[i][j]
