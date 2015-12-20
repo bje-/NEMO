@@ -23,16 +23,12 @@ def width(x):
     return int(x) / 1000.
 
 print 'digraph {'
-arr = np.genfromtxt('exchanges.csv', delimiter=',')
+f = open('exchanges.json', 'r')
+arr = json.load(f)
 
-# Step 1, write the file back out in JSON
-f = open('exchanges.json', 'w')
-json.dump(arr.tolist(), f)
-f.close()
-
-for i in range(1, arr.shape[0]):
-    for j in range(1, arr.shape[1]):
-        flow = arr[i, j]
+for i in range(1, len(arr)):
+    for j in range(1, len(arr[i])):
+        flow = arr[i][j]
         if int(flow) > 0:
             print '  %s -> %s [label="%d" penwidth=%.2f]' % \
                 (labels[i], labels[j], flow, width(flow))
