@@ -173,7 +173,7 @@ def direct_p(poly1, poly2):
     return len(path(poly1, poly2)) <= 1
 
 
-def dist(i, j):
+def dist(poly1, poly2):
     """Return the distance between two polygon centroids.
 
     >>> dist(1,1)
@@ -183,7 +183,7 @@ def dist(i, j):
     >>> dist(1,43) == distances[1,43]
     True
     """
-    return int(centroids[i].distance(centroids[j]))
+    return int(centroids[poly1].distance(centroids[poly2]))
 
 
 def pathlen(path):
