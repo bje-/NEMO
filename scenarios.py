@@ -149,7 +149,6 @@ def coal_ccs(context):
 
 
 def re100(context):
-    # pylint: disable=unused-argument
     """100% renewable electricity.
 
     >>> class C: pass

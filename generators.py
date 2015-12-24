@@ -635,7 +635,6 @@ class DemandResponse(Generator):
 
     patch = Patch(facecolor='white')
 
-    # pylint: disable=unused-argument
     def __init__(self, polygon, capacity, cost_per_mwh, label='demand-response'):
         Generator.__init__(self, polygon, capacity, label)
         self.setters = []
