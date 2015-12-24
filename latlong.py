@@ -76,7 +76,7 @@ class LatLong:
         143.4
         """
         # Code adapted from Chris Veness
-        R = 6371  # km
+        r = 6371  # km
         dlat = math.radians(another.lat - self.lat)
         dlon = math.radians(another.lon - self.lon)
         lat1 = math.radians(self.lat)
@@ -84,7 +84,7 @@ class LatLong:
         a = math.sin(dlat / 2) * math.sin(dlat / 2) + \
             math.sin(dlon / 2) * math.sin(dlon / 2) * math.cos(lat1) * math.cos(lat2)
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        return R * c
+        return r * c
 
     def __repr__(self):
         """
