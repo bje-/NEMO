@@ -17,7 +17,7 @@ class Transmission:
     def __init__(self, cost_per_mw_km, discount, lifetime=50):
         """Construct transmission costs given cost per MW/km, discount rate and lifetime.
 
-    >>> t = Transmission(30, 0.05)
-    """
+        >>> t = Transmission(30, 0.05)
+        """
         af = annuity_factor(lifetime, discount)
         self.cost_matrix = polygons.distances * cost_per_mw_km / af
