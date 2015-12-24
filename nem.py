@@ -82,8 +82,8 @@ class Context:
             self.years = 1
         else:
             self.years = self.hours / (365.25 * 24)
-        # NEM standard: 0.002% unserved energy
-        self.relstd = 0.002
+
+        self.relstd = 0.002  # 0.002% unserved energy
         self.generators = default_generation_mix()
         self.demand = hourly_demand.copy()
         self.timesteps = self.demand.shape[1]
