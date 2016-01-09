@@ -2107,8 +2107,8 @@ connections[(43, 43)] = []
 # Run this code to generate the list of shortest paths from each polygon to each demand centre.
 if __name__ == '__main__':
     import dijkstra  					# pragma: no cover
-    for src in range(1, numpolygons + 1):		# pragma: no cover
-        for dest in range(1, numpolygons + 1):
+    for dest in range(1, numpolygons + 1):		# pragma: no cover
+        for src in range(1, numpolygons + 1):
             shortest = [n for n in dijkstra.shortestPath(net, src, dest)]
             pairs = []
             for i in range(len(shortest) - 1):
