@@ -71,11 +71,6 @@ def shortestPath(G,start,end):
 	return Path
 
 # example, CLR p.528
-G = {'s': {'u':10, 'x':5},
-	'u': {'v':1, 'x':2},
-	'v': {'y':4},
-	'x':{'u':3,'v':9,'y':2},
-	'y':{'s':7,'v':6}}
-
-print Dijkstra(G,'s')
-print shortestPath(G,'s','v')
+# G = {'s': {'u':10, 'x':5}, 'u': {'v':1, 'x':2}, 'v': {'y':4}, 'x':{'u':3,'v':9,'y':2}, 'y':{'s':7,'v':6}}
+# print Dijkstra(G,'s')
+# print shortestPath(G,'s','v')
