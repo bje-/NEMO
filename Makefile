@@ -37,7 +37,7 @@ lint:	flake8
 	pylint *.py
 
 html:
-	python-coverage html
+	python-coverage html --omit=dijkstra.py,priodict.py
 
 html-upload:
 	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo/coverage
