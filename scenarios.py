@@ -583,7 +583,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     }
 
 
-### Demand modifiers
+# Demand modifiers
 
 def demand_switch(label):
     """Return a callback function to modify the demand.

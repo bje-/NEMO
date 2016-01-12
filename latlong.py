@@ -23,7 +23,7 @@ class LatLong:
 
     """A point of latitude and logitude."""
 
-    def __init__(self, arg1, arg2, isXY=False):
+    def __init__(self, arg1, arg2, is_xy=False):
         """Initialise a lat/long object.
 
         >>> obj = LatLong(-35, 149)
@@ -38,7 +38,7 @@ class LatLong:
         >>> obj
         (-34.925, 148.975)
         """
-        if isXY:
+        if is_xy:
             if arg1 > maxrows or arg2 > maxcols:
                 raise ValueError
             self.lat = yllcorner + cellsize * (maxrows - arg1)
