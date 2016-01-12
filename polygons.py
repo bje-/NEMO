@@ -12,17 +12,24 @@ from latlong import LatLong
 import regions
 import numpy as np
 
-regions.nsw.polygons = range(21, 25) + range(28, 32) + range(33, 37)
-regions.qld.polygons = range(1, 12) + range(14, 18)
-regions.sa.polygons = [12, 13, 18, 19, 20, 25, 26, 27, 32]
-regions.tas.polygons = [40, 41, 42, 43]
-regions.vic.polygons = [37, 38, 39]
+regions.nsw.polygons = {n: 0 for n in range(21, 25) + range(28, 32) + range(33, 37)}
+regions.qld.polygons = {n: 0 for n in range(1, 12) + range(14, 18)}
+regions.sa.polygons = {n: 0 for n in [12, 13, 18, 19, 20, 25, 26, 27, 32]}
+regions.snowy.polygons = {}
+regions.tas.polygons = {n: 0 for n in [40, 41, 42, 43]}
+regions.vic.polygons = {n: 0 for n in [37, 38, 39]}
 
-regions.qld.loadcentre = 17
-regions.nsw.loadcentre = 31
-regions.sa.loadcentre = 32
-regions.tas.loadcentre = 43
-regions.vic.loadcentre = 39
+# indicate where the loads are
+regions.qld.polygons[17] = 1.0
+regions.nsw.polygons[31] = 1.0
+regions.sa.polygons[32] = 1.0
+regions.tas.polygons[43] = 1.0
+regions.vic.polygons[39] = 1.0
+
+# Ensure all weights sum to one.
+for r in regions.All:
+    if len(r.polygons) > 0:
+        assert sum(r.polygons.values()) == 1
 
 # Useful for testing
 wildcard = 31

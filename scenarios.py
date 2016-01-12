@@ -58,9 +58,9 @@ def _hydro():
     >>> len(h)
     5
     """
-    nswpoly = regions.nsw.polygons[0]
-    taspoly = regions.tas.polygons[0]
-    vicpoly = regions.vic.polygons[0]
+    nswpoly = min(regions.nsw.polygons)
+    taspoly = min(regions.tas.polygons)
+    vicpoly = min(regions.vic.polygons)
 
     hydro1 = generators.Hydro(taspoly, 2255,
                               label=regions.tas.id + ' hydro')

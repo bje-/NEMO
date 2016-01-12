@@ -23,7 +23,6 @@ class Region:
         self.descr = descr
         self.num = count
         self.polygons = None
-        self.loadcentre = None
 
     def __repr__(self):
         """
