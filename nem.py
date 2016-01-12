@@ -163,7 +163,7 @@ def _sim(context, starthour, endhour):
                 selected_polygons += r.polygons
 
         # pull out the polygons with all of the load in each region
-        loads = [k for r in context.regions for (k, v) in r.polygons.iteritems() if v == 1]
+        loads = [k for r in context.regions for (k, v) in r.polygons.iteritems() if v > 0]
         connections = {}
         for poly in range(1, polygons.numpolygons + 1):
             # use a list comprehension to filter the connections down to bits of interest
