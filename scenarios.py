@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014, 2015 The University of New South Wales
+# Copyright (C) 2014, 2015, 2016 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -225,9 +225,11 @@ def re100_batteries(context):
     23
     """
     re100(context)
-    battery = generators.Battery(polygons.wildcard, 0, 0)
+    # discharge between 6pm and 6am daily
+    hrs = range(0, 7) + range(18, 24)
+    battery = generators.Battery(polygons.wildcard, 0, 0, dischargeHours=hrs)
     g = context.generators
-    context.generators = g[0:9] + [battery] + g[9:]
+    context.generators = [battery] + g
 
 
 def _one_per_poly(region):

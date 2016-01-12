@@ -1,5 +1,5 @@
 # Copyright (C) 2011, 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014, 2015 The University of New South Wales
+# Copyright (C) 2014, 2015, 2016 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -506,20 +506,23 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, dischargeHours=range(24), rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
+        self.dischargeHours = dischargeHours
         self.rte = rte
         self.storage_p = True
+        self.last_run = None
         self.runhours = 0
         self.chargehours = 0
 
     def set_storage(self, maxstorage):
         """Vary the storage capacity (GWh)."""
         self.maxstorage = maxstorage * 1000
+        self.stored = 0
 
     # pylint: disable=unused-argument
     def store(self, hr, power):
@@ -533,6 +536,9 @@ class Battery(Generator):
         >>> b.store(hr=2, power=400)
         200.0
         """
+        if self.last_run == hr:
+            # Can't charge and discharge in the same hour.
+            return 0
         power = min(power, self.capacity)
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
@@ -553,11 +559,14 @@ class Battery(Generator):
         >>> b.step(hr=2, demand=200)
         (200, 0)
         """
+        if hr % 24 not in self.dischargeHours:
+            return 0, 0
         power = min(self.stored, min(self.capacity, demand))
         self.hourly_power[hr] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
+            self.last_run = hr
         return power, 0
 
     def reset(self):
@@ -565,6 +574,7 @@ class Battery(Generator):
         self.runhours = 0
         self.chargehours = 0
         self.stored = 0
+        self.last_run = None
 
     def capcost(self, costs):
         # capital cost of batteries has power and energy components
