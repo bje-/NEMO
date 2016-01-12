@@ -52,6 +52,7 @@ parser.add_argument("--min-regional-generation", type=float, default=None,
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
 parser.add_argument("--reliability-std", type=float, default=None, help='reliability standard (%% unserved)')
+parser.add_argument("--reserves", type=int, default=0, help='minimum operating reserves (MW)')
 parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
@@ -132,6 +133,27 @@ def cost(ctx, transmission_p):
     if use > 0:
         reason |= 1
     penalty += pow(use, 3)
+
+    ### Penalty: minimum reserves
+    if args.reserves > 0:
+        for i in range(ctx.timesteps):
+            reserve, spilled = 0, 0
+            for g in context.generators:
+                try:
+                    spilled += g.hourly_spilled[i]
+                except KeyError:
+                    # non-variable generators may not have spill data
+                    pass
+
+            # Calculate headroom for each generator, except pumped hydro and
+            # CST -- tricky to calculate capacity
+            if isinstance(g, nem.generators.Fuelled) and not \
+               isinstance(g, nem.generators.PumpedHydro) and not \
+               isinstance(g, nem.generators.CST):
+                reserve += g.capacity - g.hourly_power[i]
+
+            if reserve + spilled < args.reserves:
+                penalty += pow(args.reserves - reserve + spilled, 3)
 
     ### Penalty: minimum share of regional generation
     if ctx.min_regional_generation is not None:
