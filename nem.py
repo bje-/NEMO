@@ -185,6 +185,10 @@ def _sim(context, starthour, endhour):
     for hr in xrange(starthour, endhour):
         hour_demand = demand_copy[::, hr]
         residual_hour_demand = hour_demand.sum()
+        # async_demand is the maximum amount of the demand in this
+        # hour that can be met from non-synchronous
+        # generation. Non-synchronous generation in excess of this
+        # value must be spilled.
         async_demand = residual_hour_demand * context.nsp_limit
 
         if context.verbose:
