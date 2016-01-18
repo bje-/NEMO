@@ -264,6 +264,25 @@ class AETA2013_2030Mid (AETA2012_2030):
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
+class CEEM2016_2030 (AETA2012_2030Mid):
+
+    """Custom costs produced by CEEM -- AETA (2013) mid costs with CO2CRC
+    Power Generation Technology Report 2030 capital costs for
+    utility-scale PV."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
+        """Construct a cost object given discount rate, coal, gas and CCS costs.
+
+        >>> obj = CEEM2016_2030(0.05, 1.00, 9.00, 30)
+        """
+        AETA2012_2030Mid.__init__(self, discount, coal_price, gas_price,
+                                  ccs_storage_costs)
+
+        # CO2CRC Power Generation Technology Report (p. 253) gives a
+        # narrow range of $1,108 to $1,218 per kW. Meet half-way.
+        self.capcost_per_kw[tech.PV] = 1118
+
+
 def cost_switch(label):
     """
     Return a class for a given cost scenario.
