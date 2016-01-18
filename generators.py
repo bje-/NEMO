@@ -303,10 +303,10 @@ class PumpedHydro(Hydro):
         """Pump water uphill for one hour.
 
         >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
-        >>> psh.step(hr=0, demand=100)
-        (100, 0)
 
         Cannot pump and generate at the same time.
+        >>> psh.step(hr=0, demand=100)
+        (100, 0)
         >>> psh.store(hr=0, power=250)
         0
 
@@ -326,10 +326,24 @@ class PumpedHydro(Hydro):
             self.stored = self.maxstorage
         else:
             self.stored += energy
+        if power > 0:
+            self.last_run = hr
         return power
 
     def step(self, hr, demand):
+        """
+        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+
+        Cannot pump and generate at the same time.
+        >>> psh.store(hr=0, power=250)
+        250
+        >>> psh.step(hr=0, demand=100)
+        (0, 0)
+        """
         power = min(self.stored, min(self.capacity, demand))
+        if self.last_run == hr:
+            # Can't pump and generate in the same hour.
+            return 0, 0
         self.hourly_power[hr] = power
         self.stored -= power
         if power > 0:
@@ -547,20 +561,30 @@ class Battery(Generator):
         else:
             self.chargehours += 1
             self.stored += energy
+        if power > 0:
+            self.last_run = hr
         return power
 
     def step(self, hr, demand):
         """
         >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
+        >>> b.stored = 400
+
+        Cannot pump and generate at the same time.
         >>> b.step(hr=0, demand=200)
-        (0, 0)
+        (200, 0)
         >>> b.store(hr=0, power=400)
-        400
-        >>> b.step(hr=2, demand=200)
+        0
+        >>> b.step(hr=1, demand=200)
         (200, 0)
         """
         if hr % 24 not in self.dischargeHours:
             return 0, 0
+
+        if hr == self.last_run:
+            # Can't charge and discharge in the same hour.
+            return 0, 0
+
         power = min(self.stored, min(self.capacity, demand))
         self.hourly_power[hr] = power
         self.stored -= power
