@@ -144,7 +144,6 @@ def _sim(context, starthour, endhour):
 
     context.exchanges.fill(0)
     context.generation = np.zeros((len(context.generators), context.hours))
-    context.lowest_merit_generator = np.zeros(context.hours, dtype=object)
     context.spill = np.zeros((len(context.generators), context.hours))
 
     # Extract generators in the regions of interest.
@@ -203,17 +202,11 @@ def _sim(context, starthour, endhour):
             assert gen <= residual_hour_demand, \
                 "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
             context.generation[gidx, hr] = gen
-            if gen == 0:
-                continue
 
             if g.non_synchronous_p:
                 async_demand -= gen
                 assert async_demand > -0.1
                 async_demand = max(0, async_demand)
-
-            # This assumes a generator's opcosts are the same year
-            # round, but OK for now.
-            context.lowest_merit_generator[hr] = g
 
             residual_hour_demand -= gen
             # residual can go below zero due to rounding
