@@ -280,7 +280,7 @@ class CEEM2016_2030 (AETA2012_2030Mid):
 
         # CO2CRC Power Generation Technology Report (p. 253) gives a
         # narrow range of $1,108 to $1,218 per kW. Meet half-way.
-        self.capcost_per_kw[tech.PV1Axis] = 1118
+        self.capcost_per_kw[tech.PV1Axis] = 1255
 
 
 def cost_switch(label):
