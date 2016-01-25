@@ -91,7 +91,7 @@ assert context.min_regional_generation is None or \
 cost_class = costs.cost_switch(args.costs)
 context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
 context.costs.carbon = args.carbon_price
-context.costs.transmission = transmission.Transmission(args.tx_costs, args.discount_rate)
+context.costs.transmission = transmission.Transmission(lambda x: args.tx_costs, args.discount_rate)
 if args.coal_ccs_costs is not None:
     context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
 
@@ -230,9 +230,9 @@ def cost(ctx, transmission_p):
             # skip if not present
             pass
 
-        # ignore row 0 and column 0 of maxexchanges
-        txscore = (maxexchanges[1:, 1:] * ctx.costs.transmission.cost_matrix[1:, 1:]).sum()
-        score += txscore
+        costmat = ctx.costs.transmission.cost_matrix(maxexchanges)
+        # ignore row 0 and column 0 of the cost matrix (nan)
+        score += costmat[1:, 1:].sum()
 
     # Express $/yr as an average $/MWh over the period
     return score / ctx.demand.sum(), penalty / ctx.demand.sum(), reason
