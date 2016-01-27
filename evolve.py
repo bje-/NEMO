@@ -117,7 +117,7 @@ if args.trace_file is not None:
         pass
 
 
-def cost(ctx, transmission_p):
+def cost(ctx):
     """Sum up the costs."""
     score = 0
     for g in ctx.generators:
@@ -214,7 +214,7 @@ def cost(ctx, transmission_p):
         reason |= 16
     penalty += pow(hydro_exceedance, 3)
 
-    if transmission_p:
+    if args.transmission:
         maxexchanges = ctx.exchanges.max(axis=0)
         np.fill_diagonal(maxexchanges, 0)
         for i in range(1, maxexchanges.shape[0]):
@@ -258,7 +258,7 @@ def eval_func(chromosome):
     """Annual cost of the system (in billion $)."""
     set_generators(chromosome)
     nem.run(context)
-    score, penalty, reason = cost(context, transmission_p=args.transmission)
+    score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
         with open(args.trace_file, 'a') as csvfile:
