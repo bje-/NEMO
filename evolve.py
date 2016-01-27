@@ -230,7 +230,7 @@ def cost(ctx):
             # skip if not present
             pass
 
-        costmat = ctx.costs.transmission.cost_matrix(maxexchanges)
+        costmat = ctx.costs.transmission.cost_matrix(maxexchanges) * ctx.years
         # ignore row 0 and column 0 of the cost matrix (nan)
         score += costmat[1:, 1:].sum()
 
