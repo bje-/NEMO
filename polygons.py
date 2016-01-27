@@ -250,19 +250,19 @@ existing_net = np.zeros((numpolygons + 1, numpolygons + 1))
 # mark row 0 and column 0 as unused (there is no polygon #0)
 existing_net[0] = np.nan
 existing_net[::, 0] = np.nan
-for (p1, p2, limit) in [(1, 4, 350), (4, 7, 1300), (7, 11, 1600),
-                        (11, 17, 1600), (16, 17, 4500), (17, 24, 1250),
-                        (24, 31, 1000), (31, 36, 500), (36, 38, 500),
-                        (38, 39, 500), (39, 40, 500), (39, 37, 600),
-                        (37, 32, 600), (32, 27, 200)]:
-    assert p2 in net[p1].keys() and p1 in net[p2].keys()
-    existing_net[p1, p2] = limit
-    existing_net[p2, p1] = limit
+# for (p1, p2, limit) in [(1, 4, 350), (4, 7, 1300), (7, 11, 1600),
+#                         (11, 17, 1600), (16, 17, 4500), (17, 24, 1250),
+#                         (24, 31, 1000), (31, 36, 500), (36, 38, 500),
+#                         (38, 39, 500), (39, 40, 500), (39, 37, 600),
+#                         (37, 32, 600), (32, 27, 200)]:
+#     assert p2 in net[p1].keys() and p1 in net[p2].keys()
+#     existing_net[p1, p2] = limit
+#     existing_net[p2, p1] = limit
 
-# override with some asymmetric links
-existing_net[24, 17] = 300
-existing_net[17, 11] = 1100
-existing_net[11, 7] = 1100
+# # override with some asymmetric links
+# existing_net[24, 17] = 300
+# existing_net[17, 11] = 1100
+# existing_net[11, 7] = 1100
 
 connections = {}
 for dest in range(1, numpolygons + 1):
