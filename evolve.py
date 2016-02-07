@@ -92,6 +92,7 @@ cost_class = costs.cost_switch(args.costs)
 context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
 context.costs.carbon = args.carbon_price
 context.costs.transmission = transmission.Transmission(lambda x: args.tx_costs, args.discount_rate)
+context.track_exchanges = args.transmission
 if args.coal_ccs_costs is not None:
     context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
 
