@@ -55,7 +55,7 @@ def run_one(chromosome):
     print context
     if args.transmission:
         x = context.exchanges.max(axis=0)
-	print np.array_str(x, precision=1, suppress_small=True)
+        print np.array_str(x, precision=1, suppress_small=True)
         np.savetxt('exchanges.csv', x, fmt='%.1f', delimiter=',')
         f = open('exchanges.json', 'w')
         json.dump(x.tolist(), f)
