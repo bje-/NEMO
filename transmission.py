@@ -18,7 +18,7 @@ class Transmission:
     def __init__(self, costfn, discount, lifetime=50):
         """Construct transmission costs given a cost function, discount rate and lifetime.
 
-        >>> t = Transmission(30, 0.05)
+        >>> t = Transmission(0.05, 30)
         """
         # Vectorise the cost function so that we can call it with a matrix argument.
         self.costfn = np.vectorize(costfn)
