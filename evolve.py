@@ -45,7 +45,6 @@ parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_argument("--hydro-limit", type=float, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
-parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='CMA-ES lambda value [default: 10*N]')
 parser.add_argument("--list-scenarios", action="store_true")
 parser.add_argument("--min-regional-generation", type=float, default=None,
                     help='minimum share of energy generated intra-region [default: None]')
@@ -290,14 +289,11 @@ creator.create("Individual", list, fitness=creator.FitnessMin)
 toolbox = base.Toolbox()
 toolbox.register("map", futures.map)
 
+# See:
+# https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
+# for additional parameters that can be passed to cma.Strategy.
 numparams = sum([len(g.setters) for g in context.generators])
-if args.lambda_ is None:
-    lam = 10 * numparams
-else:
-    lam = args.lambda_
-
-strategy = cma.Strategy(centroid=[10] * numparams, sigma=args.sigma,
-                        lambda_=lam)
+strategy = cma.Strategy(centroid=[10] * numparams, args.sigma)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
 toolbox.decorate("generate", repair_func())
