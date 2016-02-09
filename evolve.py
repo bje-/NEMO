@@ -293,7 +293,7 @@ toolbox.register("map", futures.map)
 # https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
 # for additional parameters that can be passed to cma.Strategy.
 numparams = sum([len(g.setters) for g in context.generators])
-strategy = cma.Strategy(centroid=[10] * numparams, args.sigma)
+strategy = cma.Strategy([0] * numparams, args.sigma)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
 toolbox.decorate("generate", repair_func())
