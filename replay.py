@@ -22,6 +22,7 @@ np.set_printoptions(precision=3)
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
+parser.add_argument("--no-legend", action="store_false", help="hide legend")
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="count", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
@@ -93,4 +94,4 @@ for line in replayfile:
     print
 
     if args.x:  # pragma: no cover
-        nem.plot(context, spills=args.spills)
+        nem.plot(context, spills=args.spills, showlegend=args.no_legend)

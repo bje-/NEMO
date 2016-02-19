@@ -272,7 +272,7 @@ def _generator_list(context):
     return [g for g in context.generators if g.region() in context.regions and g.capacity > 0]
 
 
-def plot(context, spills=False, filename=None):
+def plot(context, spills=False, filename=None, showlegend=True):
     """Produce a pretty plot of supply and demand."""
     spill = context.spill
     # aggregate demand
@@ -297,11 +297,12 @@ def plot(context, spills=False, filename=None):
                 keep.append(g)
         gen_list = keep
 
-    legend = plt.figlegend([Patch('black', 'red')] +
-                           [g.patch for g in gen_list],
-                           ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000.) for g in gen_list],
-                           'upper right')
-    plt.setp(legend.get_texts(), fontsize='small')
+    if showlegend:
+        legend = plt.figlegend([Patch('black', 'red')] +
+                               [g.patch for g in gen_list],
+                               ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000.) for g in gen_list],
+                               'upper right')
+        plt.setp(legend.get_texts(), fontsize='small')
     xdata = mdates.drange(context.startdate,
                           context.startdate + dt.timedelta(hours=context.hours),
                           dt.timedelta(hours=1))
