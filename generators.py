@@ -605,7 +605,7 @@ class Battery(Generator):
         # $400/kW and $400/kWh respectively
         power = 400 * self.capacity * 1000
         energy = 400 * self.maxstorage * 1000
-        return (power + energy) / costs.annuityf
+        return power + energy
 
     def fixed_om_costs(self, costs):
         # fixed O&M of $28/kW/yr
