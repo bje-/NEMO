@@ -29,7 +29,7 @@ regions.vic.polygons[39] = 1.0
 # Ensure all weights sum to one.
 for r in regions.All:
     if len(r.polygons) > 0:
-        assert sum(r.polygons.values()) == 1
+        assert round(sum(r.polygons.values())) == 1
 
 # Useful for testing
 wildcard = 31
