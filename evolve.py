@@ -1,5 +1,5 @@
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
-# Copyright (C) 2014, 2015 The University of New South Wales
+# Copyright (C) 2014, 2015, 2016 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -332,8 +332,8 @@ def run():
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
         f = open('results.json', 'w')
-        obj = {'exchanges': x.tolist()}
-        json.dump(obj, f)
+        obj = {'exchanges': x.tolist(), 'generators': context}
+        json.dump(obj, f, cls=nem.Context.JSONEncoder)
         f.close()
 
 

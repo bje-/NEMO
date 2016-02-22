@@ -1,5 +1,5 @@
 # Copyright (C) 2011, 2012, 2014 Ben Elliston
-# Copyright (C) 2014, 2015 The University of New South Wales
+# Copyright (C) 2014, 2015, 2016 The University of New South Wales
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -10,6 +10,7 @@
 import re
 
 import datetime as dt
+import json
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
@@ -144,6 +145,20 @@ class Context:
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             s += 'min, max shortfalls: ' + str(self.shortfalls)
         return s
+
+    class JSONEncoder(json.JSONEncoder):
+        """A custom encoder for Context objects."""
+        def default(self, obj):
+            if isinstance(obj, Context):
+                result = []
+                for g in obj.generators:
+                    tech = str(g.__class__).split('.')[1]
+                    result += [{'label': g.label, 'polygon': g.polygon,
+                                'capacity': g.capacity, 'technology': tech}]
+                return result
+            else:
+                # Let the base class default method raise any TypeError
+                return json.JSONEncoder.default(self, obj)
 
 
 def _sim(context, starthour, endhour):
