@@ -170,7 +170,7 @@ def _sim(context, starthour, endhour):
                                  polygons.connections.iteritems() if src is poly and
                                  dest in loads and
                                  polygons.subset(path, selected_polygons)]
-            connections[poly].sort(key=len)
+            connections[poly].sort(key=polygons.pathlen)
 
     assert context.demand.shape == (regions.numregions, context.timesteps)
 

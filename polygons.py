@@ -192,6 +192,22 @@ def dist(i, j):
     return int(centroids[i].distance(centroids[j]))
 
 
+def pathlen(path):
+    """Return the total length of a path.
+
+    >>> pathlen([])
+    0
+    >>> x = dist(1,4)
+    >>> assert pathlen([(1, 4)]) == x
+    >>> y = dist(4,7)
+    >>> assert pathlen([(1, 4), (4, 7)]) == x + y
+    """
+    total = 0
+    for poly1, poly2 in path:
+        total += dist(poly1, poly2)
+    return total
+
+
 # A proposed transmission network.
 
 net = {1: {2: dist(1, 2), 3: dist(1, 3), 4: dist(1, 4)},
