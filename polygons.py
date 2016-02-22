@@ -12,19 +12,13 @@ from latlong import LatLong
 import regions
 import numpy as np
 
-regions.nsw.polygons = {n: 0 for n in range(21, 25) + range(28, 32) + range(33, 37)}
-regions.qld.polygons = {n: 0 for n in range(1, 12) + range(14, 18)}
-regions.sa.polygons = {n: 0 for n in [12, 13, 18, 19, 20, 25, 26, 27, 32]}
+# The fraction of a region's load in each polygon.
+regions.nsw.polygons = {21: 0, 22: 0, 23: 0, 24: .05, 28: 0, 29: 0, 30: 0, 31: .8, 33: 0, 34: 0, 35: .05, 36: .1}
+regions.qld.polygons = {1: .04, 2: 0, 3: 0, 4: .11, 5: 0, 6: 0, 7: .27, 8: 0, 9: 0, 10: 0, 11: .02, 14: 0, 15: 0, 16: .14, 17: .42}
+regions.sa.polygons = {12: 0, 13: 0, 18: 0, 19: 0, 20: 0, 25: 0, 26: 0, 27: .1, 32: .9}
 regions.snowy.polygons = {}
-regions.tas.polygons = {n: 0 for n in [40, 41, 42, 43]}
-regions.vic.polygons = {n: 0 for n in [37, 38, 39]}
-
-# indicate where the loads are
-regions.qld.polygons[17] = 1.0
-regions.nsw.polygons[31] = 1.0
-regions.sa.polygons[32] = 1.0
-regions.tas.polygons[43] = 1.0
-regions.vic.polygons[39] = 1.0
+regions.tas.polygons = {40: .2, 41: .2, 42: 0, 43: .6}
+regions.vic.polygons = {37: .2, 38: .1, 39: .7}
 
 # Ensure all weights sum to one.
 for r in regions.All:

@@ -48,9 +48,18 @@ for line in f:
 f.close()
 
 # For hourly demand, average half-hours n and n+1.
-# Demand is in every second column from columns 2 onwards.
-hourly_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
-assert hourly_demand.shape[0] == regions.numregions
+# Demand figures appear in column 2 onwards.
+hourly_regional_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
+assert hourly_regional_demand.shape[0] == regions.numregions
+
+# Now put the demand into polygon resolution according to the load
+# apportioning figures given by in each region's polygons field.
+numsteps = hourly_regional_demand.shape[1]
+hourly_demand = np.zeros((polygons.numpolygons, numsteps))
+rgns = [r.polygons for r in regions.All]
+for i, weights in enumerate(rgns):
+    for polygon, share in zip(weights.keys(), weights.values()):
+        hourly_demand[polygon - 1] = hourly_regional_demand[i] * share
 
 
 def default_generation_mix():
@@ -172,11 +181,12 @@ def _sim(context, starthour, endhour):
                                  polygons.subset(path, selected_polygons)]
             connections[poly].sort(key=polygons.pathlen)
 
-    assert context.demand.shape == (regions.numregions, context.timesteps)
+    assert context.demand.shape == (polygons.numpolygons, context.timesteps)
 
-    # Zero out regions we don't care about.
+    # Zero out polygon demands we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
-        context.demand[rgn] = 0
+        for poly in rgn.polygons.keys():
+            context.demand[poly - 1] = 0
 
     # We are free to scribble all over demand_copy.
     demand_copy = context.demand.copy()
@@ -229,9 +239,8 @@ def _sim(context, starthour, endhour):
                         break
 
                     poly = g.polygon if len(path) is 0 else path[-1][-1]
-                    rgn = polygons.region(poly)
-                    rgnidx = rgn.num
-                    transfer = gen if gen < hour_demand[rgnidx] else hour_demand[rgnidx]
+                    polyidx = poly - 1
+                    transfer = gen if gen < hour_demand[polyidx] else hour_demand[polyidx]
 
                     if transfer > 0:
                         if context.verbose:
@@ -245,7 +254,7 @@ def _sim(context, starthour, endhour):
                                 if context.verbose:
                                     print 'FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer
                                     assert polygons.direct_p(src, dest)
-                        hour_demand[rgnidx] -= transfer
+                        hour_demand[polyidx] -= transfer
                         gen -= transfer
 
             if spl > 0:

@@ -131,12 +131,12 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context = nem.Context()
             self.context.track_exchanges = True
             self.context.regions = [rgn]
-            loadpoly = [k for k, v in rgn.polygons.items() if v == 1][0]
-            nswpoly = [k for k, v in regions.nsw.polygons.items() if v == 1][0]
-            qldpoly = [k for k, v in regions.qld.polygons.items() if v == 1][0]
-            sapoly = [k for k, v in regions.sa.polygons.items() if v == 1][0]
-            taspoly = [k for k, v in regions.tas.polygons.items() if v == 1][0]
-            vicpoly = [k for k, v in regions.vic.polygons.items() if v == 1][0]
+            loadpoly = [k for k, v in rgn.polygons.items() if v > 0][0]
+            nswpoly = [k for k, v in regions.nsw.polygons.items() if v > 0][0]
+            qldpoly = [k for k, v in regions.qld.polygons.items() if v > 0][0]
+            sapoly = [k for k, v in regions.sa.polygons.items() if v > 0][0]
+            taspoly = [k for k, v in regions.tas.polygons.items() if v > 0][0]
+            vicpoly = [k for k, v in regions.vic.polygons.items() if v > 0][0]
 
             self.context.generators = [generators.OCGT(nswpoly, 100),
                                        generators.OCGT(qldpoly, 100),
