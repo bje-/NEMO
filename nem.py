@@ -235,7 +235,7 @@ def _sim(context, starthour, endhour):
 
                     if transfer > 0:
                         if context.verbose:
-                            print 'TRANSFER:', int(transfer), 'to polygon', poly
+                            print 'DISPATCH:', int(transfer), 'to polygon', poly
                         if poly is g.polygon:
                             context.exchanges[hr, poly, poly] += transfer
                         else:
