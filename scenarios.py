@@ -179,7 +179,7 @@ def re100(context):
             # suitable polygon for each region respectively
             polys = [31, 39, 17, 32, 43]
             for p, r in zip(polys, rgns):
-		r = polygons.region(p)
+                r = polygons.region(p)
                 result.append(Biofuel(p, 24000 / len(polys), label=r.id + ' GT'))
         elif g == PV1Axis:
             # Hand chosen polygons with high capacity factors
