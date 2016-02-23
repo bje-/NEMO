@@ -177,9 +177,10 @@ def re100(context):
             # the region list is in order of approximate demand
             rgns = [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]
             # suitable polygon for each region respectively
-            polys = [30, 11, 27, 43, 37]
+            polys = [31, 39, 17, 32, 43]
             for p, r in zip(polys, rgns):
-                result.append(Biofuel(p, 24000 / len(rgns), label=r.id + ' GT'))
+		r = polygons.region(p)
+                result.append(Biofuel(p, 24000 / len(polys), label=r.id + ' GT'))
         elif g == PV1Axis:
             # Hand chosen polygons with high capacity factors
             for poly in [14, 21, 13, 37]:
