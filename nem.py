@@ -185,7 +185,7 @@ def _sim(context, starthour, endhour):
             if r.polygons is not None:
                 selected_polygons += r.polygons
 
-        # pull out the polygons with all of the load in each region
+        # pull out the polygons with non-zero load in each region
         loads = [k for r in context.regions for (k, v) in r.polygons.iteritems() if v > 0]
         connections = {}
         for poly in range(1, polygons.numpolygons + 1):
