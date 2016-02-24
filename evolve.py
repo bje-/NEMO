@@ -317,8 +317,12 @@ def run():
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("min", np.min)
 
-    algorithms.eaGenerateUpdate(toolbox, ngen=args.generations, stats=stats,
-                                halloffame=hof, verbose=True)
+    try:
+        algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
+                                    stats=stats, halloffame=hof, verbose=True)
+    except KeyboardInterrupt:
+	print 'user terminated early'
+        pass
 
     (score,) = hof[0].fitness.values
     print 'Score: %.2f $/MWh' % score
