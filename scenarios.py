@@ -172,38 +172,25 @@ def re100(context):
         elif g == Hydro:
             result += [h for h in _hydro() if isinstance(h, Hydro) and not isinstance(h, PumpedHydro)]
         elif g == Biofuel:
-            # 24 GW biofuelled gas turbines (fixed)
-            # distribute 24GW of biofuelled turbines across chosen regions
-            # the region list is in order of approximate demand
-            rgns = [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]
-            # suitable polygon for each region respectively
-            polys = [31, 39, 17, 32, 43]
-            for p, r in zip(polys, rgns):
-                r = polygons.region(p)
-                result.append(Biofuel(p, 24000 / len(polys), label=r.id + ' GT'))
+            for poly in range(1, 44):
+                result.append(g(poly, 0, label='polygon %d GT' % poly))
         elif g == PV1Axis:
-            # Hand chosen polygons with high capacity factors
-            for poly in [14, 21, 13, 37]:
-                # Put 25% PV capacity in each region.
-                result.append(g(poly, capacity * 0.25,
+            for poly in range(1, 44):
+                result.append(g(poly, 0,
                                 configfile.get('generation', 'pv1axis-trace'),
                                 poly - 1,
                                 build_limit=polygons.pv_limit[poly],
                                 label='polygon %d PV' % poly))
         elif g == CentralReceiver:
-            polys = [14, 20, 21]
-            capacity /= len(polys)
-            for poly in polys:
-                result.append(g(poly, capacity, 2, 6,
+            for poly in range(1, 44):
+                result.append(g(poly, 0, 2, 6,
                                 configfile.get('generation', 'cst-trace'),
                                 poly - 1,
                                 build_limit=polygons.cst_limit[poly],
                                 label='polygon %d CST' % poly))
         elif g == Wind:
-            # Hand chosen polygons with high capacity factors
-            for poly in [1, 20, 24, 39, 43]:
-                # Put 20% wind capacity in each region.
-                result.append(g(poly, capacity * 0.2,
+            for poly in range(1, 44):
+                result.append(g(poly, 0,
                                 configfile.get('generation', 'wind-trace'),
                                 poly - 1,
                                 delimiter=',',
