@@ -13,7 +13,10 @@ from deap import base
 from deap import creator
 from deap import tools
 from deap import cma
-from scoop import futures
+try:
+    from scoop2 import futures
+except ImportError:
+    print 'WARNING: scoop not loaded'
 
 import os
 import sys
@@ -288,7 +291,10 @@ def repair_func():
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 toolbox = base.Toolbox()
-toolbox.register("map", futures.map)
+try:
+    toolbox.register("map", futures.map)
+except NameError:
+    pass
 
 # See:
 # https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
