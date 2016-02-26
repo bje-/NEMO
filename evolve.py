@@ -14,7 +14,7 @@ from deap import creator
 from deap import tools
 from deap import cma
 try:
-    from scoop2 import futures
+    from scoop import futures
 except ImportError:
     print 'WARNING: scoop not loaded'
 
