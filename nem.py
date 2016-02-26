@@ -119,7 +119,7 @@ class Context:
             s += 'Generators:' + '\n'
             for g in self.generators:
                 s += '\t' + str(g)
-                summary = g.summary(self.costs)
+                summary = g.summary(self)
                 if summary is not None:
                     s += '\n\t   ' + summary + '\n'
                 else:

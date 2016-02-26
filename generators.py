@@ -70,8 +70,9 @@ class Generator:
         self.hourly_power.clear()
         self.hourly_spilled.clear()
 
-    def summary(self, costs):
+    def summary(self, context):
         """Return a summary of the generator activity."""
+        costs = context.costs
         supplied = sum(self.hourly_power.values()) / consts.twh
         s = 'supplied %.4g TWh' % supplied
         if self.capacity > 0:
@@ -224,8 +225,8 @@ class CST(Generator):
         Generator.reset(self)
         self.stored = 0.5 * self.maxstorage
 
-    def summary(self, costs):
-        return Generator.summary(self, costs) + \
+    def summary(self, context):
+        return Generator.summary(self, context) + \
             ', solar mult %.2f' % self.sm + ', %dh storage' % self.shours
 
 
@@ -272,8 +273,8 @@ class Fuelled(Generator):
         self.hourly_power[hr] = power
         return power, 0
 
-    def summary(self, costs):
-        return Generator.summary(self, costs) + ', ran %s hours' \
+    def summary(self, context):
+        return Generator.summary(self, context) + ', ran %s hours' \
             % locale.format('%d', self.runhours, grouping=True)
 
 
@@ -398,8 +399,8 @@ class Fossil(Fuelled):
         Fuelled.__init__(self, polygon, capacity, label)
         self.intensity = intensity
 
-    def summary(self, costs):
-        return Fuelled.summary(self, costs) + ', %.1f Mt CO2' \
+    def summary(self, context):
+        return Fuelled.summary(self, context) + ', %.1f Mt CO2' \
             % (sum(self.hourly_power.values()) * self.intensity / 1000000.)
 
 
@@ -460,8 +461,8 @@ class CCS(Fossil):
         # capture fraction ranges from 0 to 1
         self.capture = capture
 
-    def summary(self, costs):
-        return Fossil.summary(self, costs) + ', %.1f Mt captured' \
+    def summary(self, context):
+        return Fossil.summary(self, context) + ', %.1f Mt captured' \
             % (sum(self.hourly_power.values()) * self.intensity / 1000000. * self.capture)
 
 
@@ -621,8 +622,8 @@ class Battery(Generator):
         # per-kWh costs for batteries are included in capital costs
         return 0
 
-    def summary(self, costs):
-        return Generator.summary(self, costs) + \
+    def summary(self, context):
+        return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
             ', charged %s hours' % locale.format('%d', self.chargehours, grouping=True) + \
             ', %.2f GWh storage' % (self.maxstorage / 1000.)
@@ -705,7 +706,7 @@ class DemandResponse(Generator):
     def opcost_per_mwh(self, costs):
         return self.cost_per_mwh
 
-    def summary(self, costs):
-        return Generator.summary(self, costs) + \
+    def summary(self, context):
+        return Generator.summary(self, context) + \
             ', max response %d MW' % self.maxresponse + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True)
