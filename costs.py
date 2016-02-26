@@ -36,7 +36,7 @@ class NullCosts:
                   tech.Diesel, tech.DemandResponse,
                   tech.Geothermal_EGS, tech.Geothermal_HSA,
                   tech.Hydro, tech.OCGT, tech.ParabolicTrough,
-                  tech.PumpedHydro, tech.PV, tech.Wind, ]:
+                  tech.PumpedHydro, tech.PV, tech.PV1Axis, tech.Wind]:
             self.capcost_per_kw[t] = 0
             self.opcost_per_mwh[t] = 0
             self.fixed_om_costs[t] = 0
