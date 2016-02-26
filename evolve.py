@@ -332,7 +332,7 @@ def run():
 
     (score,) = hof[0].fitness.values
     print 'Score: %.2f $/MWh' % score
-    print 'List:', hof[0]
+    print 'List:', [max(0, param) for param in hof[0]]
 
     set_generators(hof[0])
     nem.run(context)
