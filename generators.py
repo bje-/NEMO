@@ -74,9 +74,10 @@ class Generator:
         """Return a summary of the generator activity."""
         supplied = sum(self.hourly_power.values()) / consts.twh
         s = 'supplied %.4g TWh' % supplied
-        capfactor = supplied / self.capacity * 8760 / 10.
-        if capfactor > 0:
-            s += ', CF %.1f%%' % capfactor
+        if self.capacity > 0:
+     	    capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
+            if capfactor > 0:
+                s += ', CF %.1f%%' % capfactor
         if sum(self.hourly_spilled.values()) > 0:
             s += ', surplus %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
         if self.capcost(costs) > 0:
