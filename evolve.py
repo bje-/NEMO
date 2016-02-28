@@ -328,7 +328,6 @@ def run():
                                     stats=stats, halloffame=hof, verbose=True)
     except KeyboardInterrupt:
         print 'user terminated early'
-        pass
 
     (score,) = hof[0].fitness.values
     print 'Score: %.2f $/MWh' % score
