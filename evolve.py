@@ -327,7 +327,7 @@ def run():
         algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
                                     stats=stats, halloffame=hof, verbose=True)
     except KeyboardInterrupt:
-	print 'user terminated early'
+        print 'user terminated early'
         pass
 
     (score,) = hof[0].fitness.values
