@@ -153,7 +153,7 @@ def re100(context):
     >>> c = C()
     >>> re100(c)
     >>> len(c.generators)
-    22
+    177
     """
     from generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
@@ -203,7 +203,7 @@ def re100_batteries(context):
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
-    23
+    178
     """
     re100(context)
     # discharge between 6pm and 6am daily
@@ -274,7 +274,7 @@ def re_plus_ccs(context):
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
-    23
+    178
     """
     re100(context)
     coal = generators.Black_Coal(polygons.wildcard, 0)
@@ -296,7 +296,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    21
+    176
     """
     re100(context)
     # pylint: disable=redefined-outer-name
@@ -315,7 +315,7 @@ def re100_dsp(context):
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    25
+    180
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
@@ -517,7 +517,7 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    28
+    183
     """
     re100(context)
     # pylint: disable=redefined-outer-name
