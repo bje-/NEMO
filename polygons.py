@@ -179,7 +179,7 @@ def dist(i, j):
     >>> dist(1,1)
     0
     >>> dist(1,43)
-    2347
+    2910
     >>> dist(1,43) == distances[1,43]
     True
     """
