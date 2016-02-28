@@ -28,7 +28,7 @@ class Transmission:
         """Return the cost matrix given a lambda function and capacity matrix.
 
         >>> t = Transmission(lambda x: 800, 0.05, 30)
-        >>> caps = np.empty(distances.shape)
+        >>> caps = np.empty_like(distances)
         >>> caps.fill(100)
         >>> costmat = t.cost_matrix(caps)
         >>> costmat[1:, 1:].min()
