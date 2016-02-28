@@ -5,8 +5,8 @@ COVRUN=python-coverage run -a --source .
 check:  replay.data
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
-	$(COVRUN) evolve.py --lambda 10 -g1 -s theworks -d scale:10 > /dev/null
-	$(COVRUN) evolve.py --lambda 10 -g1 -s theworks -d scalex:0:100:10 > /dev/null
+	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks -d scale:10 > /dev/null
+	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks -d scalex:0:100:10 > /dev/null
 	NEMORC=default.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 > /dev/null
 	-rm trace.out
