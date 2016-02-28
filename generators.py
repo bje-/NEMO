@@ -76,7 +76,7 @@ class Generator:
         supplied = sum(self.hourly_power.values()) / consts.twh
         s = 'supplied %.4g TWh' % supplied
         if self.capacity > 0:
-     	    capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
+            capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
             if capfactor > 0:
                 s += ', CF %.1f%%' % capfactor
         if sum(self.hourly_spilled.values()) > 0:
@@ -85,6 +85,11 @@ class Generator:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
             s += ', opcost $%s' % locale.format('%d', self.opcost(costs), grouping=True)
+        if supplied > 0:
+            total_cost = self.capcost(costs) / costs.annuityf * context.years \
+                + self.opcost(costs)
+            cost_per_mwh = total_cost / (supplied * consts.twh)
+            s += ', LCOE $%d' % int(cost_per_mwh)
         return s
 
     def set_capacity(self, cap):
