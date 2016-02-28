@@ -252,11 +252,8 @@ def set_generators(chromosome):
     i = 0
     for gen in context.generators:
         for (setter, min_cap, max_cap) in gen.setters:
-            newval = chromosome[i]
-            assert newval >= min_cap, \
-                'capacity under %.3f GW min. build' % min_cap
-            assert newval <= max_cap, \
-                'capacity over %.3f GW max. build' % max_cap
+            # keep parameters within bounds
+            newval = max(min(chromosome[i], max_cap), min_cap)
             setter(newval)
             i += 1
     # Check every parameter has been set.
@@ -274,23 +271,6 @@ def eval_func(chromosome):
             writer = csv.writer(csvfile)
             writer.writerow([score, penalty, reason] + list(chromosome))
     return score + penalty,
-
-
-def repair_func():
-    """Decorator to repair constraint-violating individuals."""
-    def decorator(func):
-        def wrapper(*argums, **kargs):
-            indivs = func(*argums, **kargs)
-            for indiv in indivs:
-                i = 0
-                for gen in context.generators:
-                    for (_, min_cap, max_cap) in gen.setters:
-                        # enforce the range (min_cap, max_cap)
-                        indiv[i] = max(min(indiv[i], max_cap), min_cap)
-                        i += 1
-            return indivs
-        return wrapper
-    return decorator
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -312,7 +292,6 @@ else:
     strategy = cma.Strategy(centroid=[0.1] * numparams, sigma=args.sigma, lambda_=args.lambda_)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
-toolbox.decorate("generate", repair_func())
 toolbox.register("update", strategy.update)
 toolbox.register("evaluate", eval_func)
 
