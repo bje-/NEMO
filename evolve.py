@@ -94,10 +94,15 @@ assert context.min_regional_generation is None or \
 cost_class = costs.cost_switch(args.costs)
 context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
 context.costs.carbon = args.carbon_price
-context.costs.transmission = transmission.Transmission(lambda x: args.tx_costs, args.discount_rate)
-context.track_exchanges = args.transmission
 if args.coal_ccs_costs is not None:
     context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
+
+def txcost(x):
+    """Transmission cost expression."""
+    return 0 if x == 0 else 965 if x > 5000 else 16319 * pow(x, -0.332)
+
+context.costs.transmission = transmission.Transmission(txcost, args.discount_rate)
+context.track_exchanges = args.transmission
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
