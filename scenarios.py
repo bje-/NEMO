@@ -54,26 +54,27 @@ def _hydro():
 
     >>> h = _hydro()
     >>> len(h)
-    5
+    12
     """
-    nswpoly = min(regions.nsw.polygons)
-    taspoly = min(regions.tas.polygons)
-    vicpoly = min(regions.vic.polygons)
+    hydro24 = generators.Hydro(24, 42.5, label='poly 24 hydro')
+    hydro31 = generators.Hydro(31, 43, label='poly 31 hydro')
+    hydro35 = generators.Hydro(35, 71, label='poly 35 hydro')
+    hydro36 = generators.Hydro(36, 2513.9, label='poly 36 hydro')
+    hydro38 = generators.Hydro(38, 450, label='poly 38 hydro')
+    hydro39 = generators.Hydro(39, 13.8, label='poly 39 hydro')
+    hydro40 = generators.Hydro(40, 586.6, label='poly 40 hydro')
+    hydro41 = generators.Hydro(41, 280, label='poly 41 hydro')
+    hydro42 = generators.Hydro(42, 590.4, label='poly 42 hydro')
+    hydro43 = generators.Hydro(43, 462.5, label='poly 43 hydro')
 
-    hydro1 = generators.Hydro(taspoly, 2255,
-                              label=regions.tas.id + ' hydro')
-    hydro2 = generators.Hydro(nswpoly, 910,
-                              label=regions.nsw.id + ' hydro')
-    hydro3 = generators.Hydro(vicpoly, 2237,
-                              label=regions.vic.id + ' hydro')
+    # Pumped hydro
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    # (polygon 17)
-    psh1 = generators.PumpedHydro(17, 500, 5000,
-                                  label='QLD1 pumped-hydro')
+    psh17 = generators.PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh2 = generators.PumpedHydro(36, 1740, 15000,
-                                  label='NSW1 pumped-hydro')
-    return [psh1, psh2, hydro1, hydro2, hydro3]
+    psh36 = generators.PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
+    return [psh17, psh36] + \
+        [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39] + \
+        [hydro40, hydro41, hydro42, hydro43]
 
 
 def replacement(context):
@@ -83,7 +84,7 @@ def replacement(context):
     >>> c = C()
     >>> replacement(c)
     >>> len(c.generators)
-    7
+    14
     """
     coal = generators.Black_Coal(polygons.wildcard, 0)
     ocgt = generators.OCGT(polygons.wildcard, 0)
@@ -109,7 +110,7 @@ def ccgt(context):
     >>> c = C()
     >>> ccgt(c)
     >>> len(c.generators)
-    7
+    14
     """
     # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT(polygons.wildcard, 0)
@@ -124,7 +125,7 @@ def ccgt_ccs(context):
     >>> c = C()
     >>> ccgt_ccs(c)
     >>> len(c.generators)
-    7
+    14
     """
     # pylint: disable=redefined-outer-name
     ccgt = generators.CCGT_CCS(polygons.wildcard, 0)
@@ -139,7 +140,7 @@ def coal_ccs(context):
     >>> c = C()
     >>> coal_ccs(c)
     >>> len(c.generators)
-    7
+    14
     """
     coal = generators.Coal_CCS(polygons.wildcard, 0)
     ocgt = generators.OCGT(polygons.wildcard, 0)
@@ -153,7 +154,7 @@ def re100(context):
     >>> c = C()
     >>> re100(c)
     >>> len(c.generators)
-    177
+    184
     """
     from generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
@@ -203,7 +204,7 @@ def re100_batteries(context):
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
-    178
+    185
     """
     re100(context)
     # discharge between 6pm and 6am daily
@@ -274,7 +275,7 @@ def re_plus_ccs(context):
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
-    178
+    185
     """
     re100(context)
     coal = generators.Black_Coal(polygons.wildcard, 0)
@@ -296,7 +297,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    176
+    190
     """
     re100(context)
     # pylint: disable=redefined-outer-name
@@ -315,7 +316,7 @@ def re100_dsp(context):
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    180
+    187
     >>> isinstance(c.generators[-1], generators.DemandResponse)
     True
     """
@@ -517,7 +518,7 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    183
+    190
     """
     re100(context)
     # pylint: disable=redefined-outer-name
