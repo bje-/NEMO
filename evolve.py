@@ -97,6 +97,7 @@ context.costs.carbon = args.carbon_price
 if args.coal_ccs_costs is not None:
     context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
 
+
 def txcost(x):
     """Transmission cost expression."""
     return 0 if x == 0 else 965 if x > 5000 else 16319 * pow(x, -0.332)
