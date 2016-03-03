@@ -59,7 +59,6 @@ parser.add_argument("--reserves", type=int, default=0, help='minimum operating r
 parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
-parser.add_argument("--tx-costs", type=int, default=800, help='transmission costs ($/MW.km) [default: 800]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
 
