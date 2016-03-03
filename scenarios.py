@@ -297,7 +297,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    190
+    183
     """
     re100(context)
     # pylint: disable=redefined-outer-name
