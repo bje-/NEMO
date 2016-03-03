@@ -31,6 +31,10 @@ class Transmission:
         >>> caps = np.empty_like(distances)
         >>> caps.fill(100)
         >>> costmat = t.cost_matrix(caps)
+        >>> import polygons
+        >>> d = polygons.dist(1, 2)
+        >>> expected_value = (800 * 100 * d) / t.af
+        >>> assert int(costmat[1, 2]) == int(expected_value)
         >>> costmat[1:, 1:].min()
         0.0
         >>> costmat[1:, 1:].max().round()
