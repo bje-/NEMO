@@ -296,6 +296,33 @@ def _generator_list(context):
     return [g for g in context.generators if g.region() in context.regions and g.capacity > 0]
 
 
+def _legend(context):
+    """Draw the legend."""
+
+    # ::-1 slicing reverses the list so that the legend appears in "merit order".
+    gens = _generator_list(context)[::-1]
+    labels = []
+    patches = []
+
+    if len(gens) > 20:
+        unique = []
+        for g in gens:
+            if g.__class__ not in unique:
+                unique.append(g.__class__)
+                # Replace the generator label with its class.
+                labels.append(str(g.__class__).strip('<>').split()[0].split('.')[1])
+                patches.append(g.patch)
+    else:
+        for g in gens:
+            labels.append(g.label + ' (%.1f GW)' % (g.capacity / 1000.))
+            patches.append(g.patch)
+
+    legend = plt.figlegend([Patch('black', 'red')] + patches,
+                           ['unserved'] + labels,
+                           'upper right')
+    plt.setp(legend.get_texts(), fontsize='small')
+
+
 def plot(context, spills=False, filename=None, showlegend=True):
     """Produce a pretty plot of supply and demand."""
     spill = context.spill
@@ -306,27 +333,8 @@ def plot(context, spills=False, filename=None, showlegend=True):
     title = 'Supply/demand balance\nRegions: %s' % context.regions
     plt.suptitle(title)
 
-    # The ::-1 slicing reverses the 'gens' list so that the legend
-    # appears in "merit order".
-    gen_list = _generator_list(context)[::-1]
-
-    if len(gen_list) > 25:
-        unique = []
-        keep = []
-        for g in gen_list:
-            if g.__class__ not in unique:
-                unique.append(g.__class__)
-                # Replace the generator label with its class type.
-                g.label = str(g.__class__).strip('<>').split()[0].split('.')[1]
-                keep.append(g)
-        gen_list = keep
-
     if showlegend:
-        legend = plt.figlegend([Patch('black', 'red')] +
-                               [g.patch for g in gen_list],
-                               ['unserved'] + [g.label + ' (%.1f GW)' % (g.capacity / 1000.) for g in gen_list],
-                               'upper right')
-        plt.setp(legend.get_texts(), fontsize='small')
+        _legend(context)
     xdata = mdates.drange(context.startdate,
                           context.startdate + dt.timedelta(hours=context.hours),
                           dt.timedelta(hours=1))
