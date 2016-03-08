@@ -33,11 +33,13 @@ args = parser.parse_args()
 
 
 def set_generators(chromosome):
-    """Set the generator list from the GA chromosome."""
+    """Set the generator list from the chromosome."""
     i = 0
     for gen in context.generators:
-        for (setter, _, _) in gen.setters:
-            setter(chromosome[i])
+        for (setter, min_cap, max_cap) in gen.setters:
+            # keep parameters within bounds
+            newval = max(min(chromosome[i], max_cap), min_cap)
+            setter(newval)
             i += 1
     # Check every parameter has been set.
     assert i == len(chromosome), '%d != %d' % (i, len(chromosome))
