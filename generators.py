@@ -74,8 +74,8 @@ class Generator:
         """Capacity factor of this generator (in %)."""
         if self.capacity == 0:
             raise ValueError('zero capacity')
-        supplied = sum(self.hourly_power.values()) / consts.twh
-        capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
+        supplied = sum(self.hourly_power.values())
+        capfactor = supplied / (self.capacity * 8760) * 100
         return capfactor
 
     def summary(self, context):
