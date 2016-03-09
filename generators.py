@@ -78,6 +78,14 @@ class Generator:
         capfactor = supplied / (self.capacity * 8760) * 100
         return capfactor
 
+    def lcoe(self, costs, years):
+        """Calculate the LCOE in $/MWh."""
+        total_cost = self.capcost(costs) / costs.annuityf * years \
+                     + self.opcost(costs)
+        supplied = sum(self.hourly_power.values())
+        cost_per_mwh = total_cost / supplied
+        return int(cost_per_mwh)
+
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
@@ -94,10 +102,7 @@ class Generator:
         if self.opcost(costs) > 0:
             s += ', opcost $%s' % locale.format('%d', self.opcost(costs), grouping=True)
         if supplied > 0:
-            total_cost = self.capcost(costs) / costs.annuityf * context.years \
-                + self.opcost(costs)
-            cost_per_mwh = total_cost / (supplied * consts.twh)
-            s += ', LCOE $%d' % int(cost_per_mwh)
+            s += ', LCOE $%d' % self.lcoe(costs, context.years)
         return s
 
     def set_capacity(self, cap):
