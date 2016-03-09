@@ -70,15 +70,23 @@ class Generator:
         self.hourly_power.clear()
         self.hourly_spilled.clear()
 
+    def capfactor(self):
+        """Capacity factor of this generator (in %)."""
+        if self.capacity == 0:
+            raise ValueError('zero capacity')
+        supplied = sum(self.hourly_power.values()) / consts.twh
+        capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
+        return capfactor
+
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
         supplied = sum(self.hourly_power.values()) / consts.twh
         s = 'supplied %.4g TWh' % supplied
         if self.capacity > 0:
-            capfactor = supplied / (self.capacity * 8760 / consts.twh) * 100
-            if capfactor > 0:
-                s += ', CF %.1f%%' % capfactor
+            cf = self.capfactor()
+            if cf > 0:
+                s += ', CF %.1f%%' % cf
         if sum(self.hourly_spilled.values()) > 0:
             s += ', surplus %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
         if self.capcost(costs) > 0:
