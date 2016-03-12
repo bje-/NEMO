@@ -81,7 +81,7 @@ class Generator:
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
         total_cost = self.capcost(costs) / costs.annuityf * years \
-                     + self.opcost(costs)
+            + self.opcost(costs)
         supplied = sum(self.hourly_power.values())
         cost_per_mwh = total_cost / supplied
         return int(cost_per_mwh)
