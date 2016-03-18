@@ -47,7 +47,7 @@ BEGIN {
 /supplied.*TWh/		{ energy[last] += $2 }
 /spilled.*TWh/		{ surplus += $5 }	# may be "spilled" in old log files
 /surplus.*TWh/		{ surplus += $7 }	# now it's "surplus"
-/Mt CO2$/ 		{ co2 += $(NF-2) }
+/Mt CO2.?$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
