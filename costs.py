@@ -112,6 +112,29 @@ class APGTR2015:
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
+class APGTR2030(APGTR2015):
+
+    """Australian Power Generation Technology Report (2015) costs in 2030.
+
+    Source: CO2CRC Australian Power Generation Technology Report (2015)
+    """
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        APGTR2015.__init__(discount, coal_price, gas_price, ccs_price)
+
+        # Modify the capital costs in APGTR2015 by specified learning rates.
+        # Fixed and variable O&M remain the same as in 2015.
+        table = self.capcost_per_kw
+        table[tech.Wind] *= 0.8
+        table[tech.CentralReceiver] *= 0.8
+        table[tech.PV] *= 0.5
+        table[tech.PV1Axis] *= 0.5
+        table[tech.CCGT] *= 0.9
+        table[tech.OCGT] *= 1.1
+        table[tech.Black_Coal] *= 0.9
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
+
+
 class AETA2012_2030:
 
     """Australian Energy Technology Assessment (2012) costs for 2030.
@@ -382,4 +405,5 @@ cost_scenarios = {'null': NullCosts,
                   'AETA2013-in2030-mid': AETA2013_2030Mid,
                   'AETA2013-in2030-high': AETA2013_2030High,
                   'CEEM2016-in2030': CEEM2016_2030,
-                  'CO2CRC': APGTR2015}
+                  'PGTR2015': APGTR2015,
+                  'PGTR2030': APGTR2030}
