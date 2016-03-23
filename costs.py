@@ -120,7 +120,7 @@ class APGTR2030(APGTR2015):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        APGTR2015.__init__(discount, coal_price, gas_price, ccs_price)
+        APGTR2015.__init__(self, discount, coal_price, gas_price, ccs_price)
 
         # Modify the capital costs in APGTR2015 by specified learning rates.
         # Fixed and variable O&M remain the same as in 2015.
