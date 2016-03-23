@@ -186,6 +186,7 @@ class PV1Axis(PV):
     """Single-axis tracking PV."""
 
     patch = Patch(facecolor='darkblue')
+
     def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV 1-axis'):
         PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
 
