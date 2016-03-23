@@ -42,6 +42,76 @@ class NullCosts:
             self.fixed_om_costs[t] = 0
 
 
+class APGTR2015:
+
+    """Australian Power Generation Technology Report (2012) costs in 2015.
+
+    Source: CO2CRC Australian Power Generation Technology ReportAPGTR report (2015)
+    """
+
+    lifetime = 30
+    escalation = 1.0
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        self.discount_rate = discount
+        self.ccs_storage_per_t = ccs_price
+        # bioenergy costs are taken from the CSIRO energy storage report for AEMO
+        self.bioenergy_price_per_gj = 12
+        self.coal_price_per_gj = coal_price
+        self.gas_price_per_gj = gas_price
+        self.diesel_price_per_litre = 1.50
+        self.annuityf = annuity_factor(self.lifetime, discount)
+
+        # Common capital costs
+        self.capcost_per_kw = {
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Diesel: 0,
+            tech.DemandResponse: 0}
+
+        # Variable O&M (VOM) costs
+        self.opcost_per_mwh = {
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Diesel: 0,
+            tech.Wind: 0,
+            tech.CentralReceiver: 4,
+            tech.PV: 0,
+            tech.PV1Axis: 0,
+            tech.CCGT: 1.5,
+            tech.OCGT: 12,
+            tech.Black_Coal: 2.5}
+        # same as OCGT
+        self.opcost_per_mwh[tech.Biofuel] = self.opcost_per_mwh[tech.OCGT]
+
+        # Fixed O&M (FOM) costs
+        self.fixed_om_costs = {
+            tech.DemandResponse: 0,
+            tech.Diesel: 0,
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+            tech.Wind: 55,
+            tech.CentralReceiver: 65,
+            tech.PV: 30,
+            tech.PV1Axis: 35,
+            tech.CCGT: 20,
+            tech.OCGT: 8,
+            tech.Black_Coal: 45}
+        # same as OCGT
+        self.fixed_om_costs[tech.Biofuel] = self.fixed_om_costs[tech.OCGT]
+
+        table = self.capcost_per_kw
+        table[tech.Wind] = 2450
+        table[tech.CentralReceiver] = 8500
+        table[tech.PV] = 2100
+        table[tech.PV1Axis] = 2700
+        table[tech.CCGT] = 1450
+        table[tech.OCGT] = 1000
+        table[tech.Black_Coal] = 3000
+        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
+
+
 class AETA2012_2030:
 
     """Australian Energy Technology Assessment (2012) costs for 2030.
@@ -311,4 +381,5 @@ cost_scenarios = {'null': NullCosts,
                   'AETA2013-in2030-low': AETA2013_2030Low,
                   'AETA2013-in2030-mid': AETA2013_2030Mid,
                   'AETA2013-in2030-high': AETA2013_2030High,
-                  'CEEM2016-in2030': CEEM2016_2030}
+                  'CEEM2016-in2030': CEEM2016_2030,
+                  'CO2CRC': APGTR2015}
