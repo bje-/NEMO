@@ -44,9 +44,9 @@ class NullCosts:
 
 class APGTR2015:
 
-    """Australian Power Generation Technology Report (2012) costs in 2015.
+    """Australian Power Generation Technology Report costs in 2015.
 
-    Source: CO2CRC Australian Power Generation Technology ReportAPGTR report (2015)
+    Source: CO2CRC Australian Power Generation Technology Report (2015)
     """
 
     lifetime = 30
