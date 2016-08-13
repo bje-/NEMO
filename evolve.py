@@ -323,7 +323,7 @@ def run():
     print context
     if args.transmission:
         x = context.exchanges.max(axis=0)
-        print np.array_str(x, precision=1, suppress_small=True)
+        print np.array_str(x[1:, 1:], precision=1, suppress_small=True)
         f = open('results.json', 'w')
         obj = {'exchanges': x.tolist(), 'generators': context}
         json.dump(obj, f, cls=nem.Context.JSONEncoder)
