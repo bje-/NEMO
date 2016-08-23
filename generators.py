@@ -101,8 +101,9 @@ class Generator:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
             s += ', opcost $%s' % locale.format('%d', self.opcost(costs), grouping=True)
-        if supplied > 0:
-            s += ', LCOE $%d' % self.lcoe(costs, context.years)
+        lcoe = self.lcoe(costs, context.years)
+        if supplied > 0 and lcoe > 0:
+            s += ', LCOE $%d' % lcoe
         return s
 
     def set_capacity(self, cap):
