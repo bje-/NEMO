@@ -31,7 +31,7 @@ lineprof:
 	kernprof.py -v -l profile.py
 
 flake8:
-	flake8 --ignore=E266,E501,N801,N803,N806 --exclude=priodict.py,dijkstra.py *.py tests/*.py
+	python -m flake8 --ignore=E266,E501,N801,N803,N806 --exclude=priodict.py,dijkstra.py *.py tests/*.py
 
 lint:	flake8
 	pylint *.py
