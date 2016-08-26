@@ -46,7 +46,6 @@ def set_generators(chromosome):
 
 
 def run_one(chromosome):
-    """Annual cost of the system (in billion $)."""
     context.costs = costs.AETA2013_2030Mid(0.05, 1.86, 11, 27)
     context.costs.carbon = 0
     set_generators(chromosome)

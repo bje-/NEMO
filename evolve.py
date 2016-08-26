@@ -261,7 +261,7 @@ def set_generators(chromosome):
 
 
 def eval_func(chromosome):
-    """Annual cost of the system (in billion $)."""
+    """Average cost of energy (in $/MWh)."""
     set_generators(chromosome)
     nem.run(context)
     score, penalty, reason = cost(context)
