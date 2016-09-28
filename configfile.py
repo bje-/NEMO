@@ -8,8 +8,8 @@
 """Configuration file processing (eg, filenames)."""
 
 import ConfigParser
-import consts
 import os
+import consts
 
 
 def load(filename):
