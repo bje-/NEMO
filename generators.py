@@ -399,20 +399,10 @@ class Biofuel(Fuelled):
     def __init__(self, polygon, capacity, label='biofuel'):
         Fuelled.__init__(self, polygon, capacity, label)
 
-    def step(self, hr, demand):
-        power = min(self.capacity, demand)
-        self.hourly_power[hr] = power
-        if power > 0:
-            self.runhours += 1
-        return power, 0
-
     def opcost_per_mwh(self, costs):
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.bioenergy_price_per_gj * (3.6 / .31)  # 31% heat rate
         return vom + fuel_cost
-
-    def reset(self):
-        Fuelled.reset(self)
 
 
 class Fossil(Fuelled):
