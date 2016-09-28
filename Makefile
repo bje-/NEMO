@@ -34,7 +34,7 @@ flake8:
 	python -m flake8 --ignore=E266,E501,N801,N803,N806 --exclude=priodict.py,dijkstra.py *.py tests/*.py
 
 lint:	flake8
-	pylint *.py
+	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
 
 html:
 	python-coverage html --omit=dijkstra.py,priodict.py
