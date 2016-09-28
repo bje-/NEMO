@@ -617,6 +617,12 @@ def demand_switch(label):
             return lambda context: scale_range_demand(context,
                                                       fromHour, toHour, factor)
 
+        elif label.startswith('scaleto:'):
+            # label form: "scaleto:N" scales demand to N TWh
+            _, n = label.split(':')
+            new_demand = float(n)
+            return lambda context: scale_demand_to(context, new_demand)
+
         elif label.startswith('shift:'):
             # label form: "shift:N:H1:H2" load shifts N MW every day
             _, demand, h1, h2 = label.split(':')
@@ -686,6 +692,22 @@ def scale_range_demand(context, fromHour, toHour, factor):
     [[ 0.  1.2  2.4  3.6  4.  5.  6.  7.  8.  9. ]]
     """
     context.demand[:, fromHour:toHour] *= factor
+
+
+def scale_demand_to(context, new_demand):
+    """
+    Scale demand to new_demand TWh.
+
+    >>> class C: pass
+    >>> c = C()
+    >>> c.demand = np.ones((100))
+    >>> scale_demand_to(c, 0.0002)
+    >>> print c.demand[0]
+    2.0
+    """
+    total_demand = context.demand.sum()
+    new_demand *= pow(10, 6)
+    context.demand *= new_demand / total_demand
 
 
 def scale_demand_by(context, factor):
