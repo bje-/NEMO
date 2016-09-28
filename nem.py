@@ -76,7 +76,7 @@ def default_generation_mix():
 
 
 # Context objects are used throughout this module.
-class Context:
+class Context(object):
 
     """All state is kept in a Context object."""
 

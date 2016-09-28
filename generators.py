@@ -20,7 +20,7 @@ import polygons
 locale.setlocale(locale.LC_ALL, '')
 
 
-class Generator:
+class Generator(object):
 
     """Base generator class."""
 
@@ -60,9 +60,11 @@ class Generator:
             sum(self.hourly_power.values()) * self.opcost_per_mwh(costs)
 
     def fixed_om_costs(self, costs):
+        """Return the fixed O&M costs."""
         return costs.fixed_om_costs[self.__class__] * self.capacity * 1000
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         return costs.opcost_per_mwh[self.__class__]
 
     def reset(self):
@@ -145,6 +147,7 @@ class Wind(Generator):
         self.generation = Wind.csvdata[::, column]
 
     def step(self, hr, demand):
+        """Step method for wind generators."""
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
@@ -175,6 +178,7 @@ class PV(Generator):
         self.generation = PV.csvdata[::, column]
 
     def step(self, hr, demand):
+        """Step method for PV generators."""
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
@@ -219,6 +223,7 @@ class CST(Generator):
         self.maxstorage = cap * 1000 * self.shours
 
     def step(self, hr, demand):
+        """Step method for CST generators."""
         generation = self.generation[hr] * self.capacity * self.sm
         remainder = min(self.capacity, demand)
         if generation > remainder:
@@ -288,6 +293,7 @@ class Fuelled(Generator):
         self.runhours = 0
 
     def step(self, hr, demand):
+        """Step method for fuelled generators."""
         power = min(self.capacity, demand)
         if power > 0:
             self.runhours += 1
@@ -565,7 +571,6 @@ class Battery(Generator):
         self.maxstorage = maxstorage * 1000
         self.stored = 0
 
-    # pylint: disable=unused-argument
     def store(self, hr, power):
         """Store power.
 
@@ -667,6 +672,7 @@ class Geothermal(Generator):
         self.generation = Geothermal.csvdata[::, column]
 
     def step(self, hr, demand):
+        """Step method for geothermal generators."""
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         self.hourly_power[hr] = power
