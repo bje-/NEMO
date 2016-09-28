@@ -606,7 +606,7 @@ def demand_switch(label):
             # label form: "scale:X" scales all of the load by X%
             _, factor = label.split(':')
             factor = 1 + int(factor) / 100.
-            return lambda context: scale_demand(context, factor)
+            return lambda context: scale_demand_by(context, factor)
 
         elif label.startswith('scalex:'):
             # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
@@ -688,14 +688,14 @@ def scale_range_demand(context, fromHour, toHour, factor):
     context.demand[:, fromHour:toHour] *= factor
 
 
-def scale_demand(context, factor):
+def scale_demand_by(context, factor):
     """
     Scale demand by factor%.
 
     >>> class C: pass
     >>> c = C()
     >>> c.demand = np.arange(3)
-    >>> scale_demand(c, 1.2)
+    >>> scale_demand_by(c, 1.2)
     >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
     [ 0. 1.2 2.4]
     """
