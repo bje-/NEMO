@@ -313,7 +313,8 @@ def _legend(context):
             if g.__class__ not in unique:
                 unique.append(g.__class__)
                 # Replace the generator label with its class.
-                labels.append(str(g.__class__).strip('<>').split()[0].split('.')[1])
+                genclass = str(g.__class__).strip('<>').replace("'", "")
+                labels.append(genclass.split()[1].split('.')[1])
                 patches.append(g.patch)
     else:
         for g in gens:

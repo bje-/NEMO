@@ -129,7 +129,7 @@ def _centroid(vertices):
     return (vsum[0] * z, vsum[1] * z)
 
 centroids = {}
-for i, vertices in zip(_polygons.keys(), _polygons.values()):
+for i, vertices in zip(_polygons, _polygons.values()):
     a, b = _centroid(vertices)
     centroids[i] = LatLong(b, a)
 

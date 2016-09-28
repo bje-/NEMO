@@ -191,7 +191,7 @@ def re100(context):
                                 build_limit=polygons.wind_limit[poly],
                                 label='polygon %d wind' % poly))
         else:  # pragma: no cover
-            raise(ValueError)
+            raise ValueError
 
     context.generators = result
 
