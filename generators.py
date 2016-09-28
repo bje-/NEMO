@@ -405,6 +405,22 @@ class Biofuel(Fuelled):
         return vom + fuel_cost
 
 
+class Biomass(Fuelled):
+
+    """Model of steam turbine burning solid biomass."""
+
+    patch = Patch(facecolor='greenyellow')
+
+    def __init__(self, polygon, capacity, label='biomass', heatrate=0.3):
+        Fuelled.__init__(self, polygon, capacity, label)
+        self.heatrate = heatrate
+
+    def opcost_per_mwh(self, costs):
+        vom = costs.opcost_per_mwh[type(self)]
+        fuel_cost = costs.bioenergy_price_per_gj * (3.6 / self.heatrate)
+        return vom + fuel_cost
+
+
 class Fossil(Fuelled):
 
     """Base class for GHG emitting power stations."""
