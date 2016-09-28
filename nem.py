@@ -19,7 +19,6 @@ import numpy as np
 
 import configfile
 import consts
-import costs
 import generators
 import regions
 import polygons
@@ -94,7 +93,6 @@ class Context(object):
         else:
             self.years = self.hours / (365.25 * 24)
 
-        self.costs = costs.NullCosts()
         self.relstd = 0.002  # 0.002% unserved energy
         self.generators = default_generation_mix()
         self.demand = hourly_demand.copy()
