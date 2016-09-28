@@ -8,6 +8,13 @@
 
 """Evolutionary programming applied to NEM optimisations."""
 
+import os
+import sys
+import csv
+import json
+import argparse
+import numpy as np
+
 from deap import algorithms
 from deap import base
 from deap import creator
@@ -18,12 +25,6 @@ try:
 except ImportError:
     print 'WARNING: scoop not loaded'
 
-import os
-import sys
-import csv
-import json
-import numpy as np
-import argparse
 import nem
 import generators
 import scenarios
