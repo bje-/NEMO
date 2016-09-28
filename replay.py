@@ -9,8 +9,8 @@
 """Replay NEM runs from a text file of generators."""
 import argparse
 import json
-import numpy as np
 import re
+import numpy as np
 
 import consts
 import costs
@@ -46,6 +46,7 @@ def set_generators(chromosome):
 
 
 def run_one(chromosome):
+    """Run a single simulation."""
     context.costs = costs.AETA2013_2030Mid(0.05, 1.86, 11, 27)
     context.costs.carbon = 0
     set_generators(chromosome)
