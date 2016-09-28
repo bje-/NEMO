@@ -117,15 +117,15 @@ def _centroid(vertices):
 
     # Ensure the polygon is closed
     assert vertices[0] == vertices[-1]
-    sum = 0
+    thesum = 0
     vsum = (0, 0)
     for i in range(len(vertices) - 1):
         v1 = vertices[i]
         v2 = vertices[i + 1]
         cross = v1[0] * v2[1] - v1[1] * v2[0]
-        sum += cross
+        thesum += cross
         vsum = (((v1[0] + v2[0]) * cross) + vsum[0], ((v1[1] + v2[1]) * cross) + vsum[1])
-        z = 1. / (3. * sum)
+        z = 1. / (3. * thesum)
     return (vsum[0] * z, vsum[1] * z)
 
 centroids = {}
