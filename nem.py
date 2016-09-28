@@ -11,11 +11,11 @@ import re
 
 import datetime as dt
 import json
+from itertools import groupby
+from matplotlib.patches import Patch
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import Patch
-from itertools import groupby
 
 import configfile
 import consts
