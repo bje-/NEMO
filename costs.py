@@ -381,7 +381,7 @@ def cost_switch(label):
     Return a class for a given cost scenario.
 
     >>> cost_switch('AETA2013-in2030-low') # doctest: +ELLIPSIS
-    <class costs.AETA2013_2030Low at 0x...>
+    <class 'costs.AETA2013_2030Low'>
     >>> cost_switch('foo')
     Traceback (most recent call last):
       ...
