@@ -11,7 +11,7 @@ from polygons import distances
 from costs import annuity_factor
 
 
-class Transmission:
+class Transmission(object):
 
     """An encapsulating class for transmission specific bits."""
 
