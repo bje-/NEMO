@@ -52,7 +52,7 @@ class Generator(object):
 
     def capcost(self, costs):
         """Return the annual capital cost."""
-        return costs.capcost_per_kw[self.__class__] * self.capacity * 1000
+        return costs.capcost_per_kw[type(self)] * self.capacity * 1000
 
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""
@@ -61,11 +61,11 @@ class Generator(object):
 
     def fixed_om_costs(self, costs):
         """Return the fixed O&M costs."""
-        return costs.fixed_om_costs[self.__class__] * self.capacity * 1000
+        return costs.fixed_om_costs[type(self)] * self.capacity * 1000
 
     def opcost_per_mwh(self, costs):
         """Return the variable O&M costs."""
-        return costs.opcost_per_mwh[self.__class__]
+        return costs.opcost_per_mwh[type(self)]
 
     def reset(self):
         """Reset the generator."""
@@ -407,7 +407,7 @@ class Biofuel(Fuelled):
         return power, 0
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.bioenergy_price_per_gj * (3.6 / .31)  # 31% heat rate
         return vom + fuel_cost
 
@@ -441,7 +441,7 @@ class Black_Coal(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.coal_price_per_gj * 8.57
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
         return total_opcost
@@ -457,7 +457,7 @@ class OCGT(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 11.61
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
         return total_opcost
@@ -473,7 +473,7 @@ class CCGT(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 6.92
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
         return total_opcost
@@ -501,7 +501,7 @@ class Coal_CCS(CCS):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         # thermal efficiency 31.4% (AETA 2012)
         fuel_cost = costs.coal_price_per_gj * (3.6 / 0.314)
         # t CO2/MWh
@@ -520,7 +520,7 @@ class CCGT_CCS(CCS):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         # thermal efficiency 43.1% (AETA 2012)
         fuel_cost = costs.gas_price_per_gj * (3.6 / 0.431)
         total_opcost = vom + fuel_cost + \
@@ -540,7 +540,7 @@ class Diesel(Fossil):
         self.kwh_per_litre = kwh_per_litre
 
     def opcost_per_mwh(self, costs):
-        vom = costs.opcost_per_mwh[self.__class__]
+        vom = costs.opcost_per_mwh[type(self)]
         litres_per_mwh = (1 / self.kwh_per_litre) * 1000
         fuel_cost = costs.diesel_price_per_litre * litres_per_mwh
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon

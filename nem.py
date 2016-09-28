@@ -154,7 +154,7 @@ class Context(object):
             if isinstance(obj, Context):
                 result = []
                 for g in obj.generators:
-                    tech = str(g.__class__).split('.')[1]
+                    tech = str(type(g)).split('.')[1]
                     result += [{'label': g.label, 'polygon': g.polygon,
                                 'capacity': g.capacity, 'technology': tech}]
                 return result
@@ -310,10 +310,10 @@ def _legend(context):
     if len(gens) > 20:
         unique = []
         for g in gens:
-            if g.__class__ not in unique:
-                unique.append(g.__class__)
+            if type(g) not in unique:
+                unique.append(type(g))
                 # Replace the generator label with its class.
-                genclass = str(g.__class__).strip('<>').replace("'", "")
+                genclass = str(type(g)).strip('<>').replace("'", "")
                 labels.append(genclass.split()[1].split('.')[1])
                 patches.append(g.patch)
     else:
