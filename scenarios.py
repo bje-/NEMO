@@ -561,8 +561,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're100+hsa-nocst': re100_hsa_nocst,
                     're100-nocst': re100_nocst,
                     'replacement': replacement,
-                    'theworks': theworks
-                    }
+                    'theworks': theworks}
 
 
 # Demand modifiers
