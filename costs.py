@@ -15,7 +15,7 @@ def annuity_factor(t, r):
     return (1 - (1 / pow(1 + r, t))) / r
 
 
-class NullCosts:
+class NullCosts(object):
 
     """All costs are zero. Useful for debugging."""
 
@@ -42,7 +42,7 @@ class NullCosts:
             self.fixed_om_costs[t] = 0
 
 
-class APGTR2015:
+class APGTR2015(object):
 
     """Australian Power Generation Technology Report costs in 2015.
 
@@ -135,7 +135,7 @@ class APGTR2030(APGTR2015):
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
-class AETA2012_2030:
+class AETA2012_2030(object):
 
     """Australian Energy Technology Assessment (2012) costs for 2030.
 
@@ -205,7 +205,7 @@ class AETA2012_2030:
         self.fixed_om_costs[tech.Biofuel] = self.fixed_om_costs[tech.OCGT]
 
 
-class AETA2012_2030Low (AETA2012_2030):
+class AETA2012_2030Low(AETA2012_2030):
 
     """AETA (2012) costs for 2030, low end of the range."""
 
@@ -233,7 +233,7 @@ class AETA2012_2030Low (AETA2012_2030):
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
-class AETA2012_2030High (AETA2012_2030):
+class AETA2012_2030High(AETA2012_2030):
 
     """AETA (2012) costs for 2030, high end of the range."""
 
@@ -261,7 +261,7 @@ class AETA2012_2030High (AETA2012_2030):
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
-class AETA2012_2030Mid (AETA2012_2030):
+class AETA2012_2030Mid(AETA2012_2030):
 
     """AETA (2012) costs for 2030, middle of the range."""
 
@@ -285,7 +285,7 @@ class AETA2012_2030Mid (AETA2012_2030):
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
-class AETA2013_2030Low (AETA2012_2030Low):
+class AETA2013_2030Low(AETA2012_2030Low):
     """AETA (2013 update) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -308,7 +308,7 @@ class AETA2013_2030Low (AETA2012_2030Low):
         vom[tech.ParabolicTrough] = 11.39 * self.escalation
 
 
-class AETA2013_2030High (AETA2012_2030High):
+class AETA2013_2030High(AETA2012_2030High):
     """AETA (2013 update) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -331,7 +331,7 @@ class AETA2013_2030High (AETA2012_2030High):
         vom[tech.ParabolicTrough] = 11.39 * self.escalation
 
 
-class AETA2013_2030Mid (AETA2012_2030):
+class AETA2013_2030Mid(AETA2012_2030):
 
     """AETA (2013) costs for 2030, middle of the range."""
 
@@ -357,7 +357,7 @@ class AETA2013_2030Mid (AETA2012_2030):
             table[t] = lowtable[t] / 2 + hightable[t] / 2
 
 
-class CEEM2016_2030 (AETA2012_2030Mid):
+class CEEM2016_2030(AETA2012_2030Mid):
 
     """Custom costs produced by CEEM -- AETA (2013) mid costs with CO2CRC
     Power Generation Technology Report 2030 capital costs for
