@@ -199,7 +199,7 @@ def _sim(context, starthour, endhour):
 
     # Zero out polygon demands we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
-        for poly in rgn.polygons.keys():
+        for poly in rgn.polygons:
             context.demand[poly - 1] = 0
 
     # We are free to scribble all over demand_copy.
