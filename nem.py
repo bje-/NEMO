@@ -54,7 +54,7 @@ hourly_regional_demand = (demand[2::, ::2] + demand[2::, 1::2]) / 2
 assert hourly_regional_demand.shape[0] == regions.numregions
 
 # Now put the demand into polygon resolution according to the load
-# apportioning figures given by in each region's polygons field.
+# apportioning figures given in each region's polygons field.
 numsteps = hourly_regional_demand.shape[1]
 hourly_demand = np.zeros((polygons.numpolygons, numsteps))
 rgns = [r.polygons for r in regions.All]
