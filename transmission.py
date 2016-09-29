@@ -28,16 +28,16 @@ class Transmission(object):
         """Return the cost matrix given a capacity matrix.
 
         >>> t = Transmission(lambda x: 800, 0.05, 30)
-        >>> caps = np.empty_like(distances)
+        >>> caps = np.empty_like(distances[1:, 1:])
         >>> caps.fill(100)
         >>> costmat = t.cost_matrix(caps)
         >>> import polygons
         >>> d = polygons.dist(1, 2)
         >>> expected_value = (800 * 100 * d) / t.af
-        >>> assert int(costmat[1, 2]) == int(expected_value)
-        >>> costmat[1:, 1:].min()
+        >>> assert int(costmat[0, 1]) == int(expected_value)
+        >>> costmat.min()
         0.0
-        >>> costmat[1:, 1:].max().round()
+        >>> costmat.max().round()
         15143974.0
         """
-        return self.cost_per_mw_km(capacities) * capacities * distances / self.af
+        return self.cost_per_mw_km(capacities) * capacities * distances[1:, 1:] / self.af

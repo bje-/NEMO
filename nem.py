@@ -59,7 +59,7 @@ numsteps = hourly_regional_demand.shape[1]
 hourly_demand = np.zeros((polygons.numpolygons, numsteps))
 rgns = [r.polygons for r in regions.All]
 for i, weights in enumerate(rgns):
-    for polygon, share in zip(weights.keys(), weights.values()):
+    for polygon, share in zip(weights, weights.values()):
         hourly_demand[polygon - 1] = hourly_regional_demand[i] * share
 
 
@@ -103,12 +103,11 @@ class Context(object):
         self.unserved_percent = 0
         # System non-synchronous penetration limit
         self.nsp_limit = consts.nsp_limit
-        self.exchanges = np.zeros((self.hours, polygons.numpolygons + 1, polygons.numpolygons + 1))
+        self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
 
-        # Polygons are numbered from zero so invalidate row 0 and
-        # column 0 to catch any erroneous operations on these elements
-        self.exchanges[0] = np.nan
-        self.exchanges[:, 0] = np.nan
+    def add_exchange(self, hour, src, dest, transfer):
+        """Note energy transfer from SRC to DEST in HOUR."""
+        self.exchanges[hour, src - 1, dest - 1] += transfer
 
     def __str__(self):
         """A human-readable representation of the context."""
@@ -261,11 +260,11 @@ def _sim(context, starthour, endhour):
                         if context.verbose:
                             print 'DISPATCH:', int(transfer), 'to polygon', poly
                         if poly is g.polygon:
-                            context.exchanges[hr, poly, poly] += transfer
+                            context.add_exchange(hr, poly, poly, transfer)
                         else:
                             # dispatch to another region
                             for src, dest in path:
-                                context.exchanges[hr, src, dest] += transfer
+                                context.add_exchange(hr, src, dest, transfer)
                                 if context.verbose:
                                     print 'FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer
                                     assert polygons.direct_p(src, dest)
@@ -283,7 +282,7 @@ def _sim(context, starthour, endhour):
                         # show the energy transferred, not stored
                         print 'STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored
                     for src, dest in polygons.path(g.polygon, other.polygon):
-                        context.exchanges[hr, src, dest] += stored
+                        context.add_exchange(hr, src, dest, stored)
             context.spill[gidx, hr] = spl
 
         if context.verbose:

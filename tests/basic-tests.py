@@ -145,7 +145,8 @@ class TestSequenceFunctions(unittest.TestCase):
                                        generators.OCGT(vicpoly, 100)]
             nem.run(self.context, endhour=100)
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
-            self.assertTrue(self.context.exchanges[0, loadpoly, loadpoly] > 0, 'Only rgn->rgn is > 0')
+	    # FIXME: we need a numpy array that can be indexed from 1
+            self.assertTrue(self.context.exchanges[0, loadpoly - 1, loadpoly - 1] > 0, 'Only rgn->rgn is > 0')
 
     def test_011(self):
         """Running in two regions only produces limited interstate exchanges."""
