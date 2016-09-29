@@ -177,8 +177,8 @@ def _sim(context, starthour, endhour):
 
     if context.track_exchanges:
         for g in gens:
-            # every generator must be in a polygon when tracking exchanges
-            assert g.polygon is not None, 'every generator must be in an assigned polygon'
+            # every generator must be in a polygon
+            assert g.polygon is not None, 'every generator must be assigned a polygon'
 
         selected_polygons = []
         for r in context.regions:
