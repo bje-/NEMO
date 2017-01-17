@@ -519,7 +519,7 @@ def theworks(context):
     >>> c.generators = []
     >>> theworks(c)
     >>> len(c.generators)
-    190
+    191
     """
     re100(context)
     # pylint: disable=redefined-outer-name
@@ -535,9 +535,10 @@ def theworks(context):
     batt = generators.Battery(polygons.wildcard, 0, 0)
     diesel = generators.Diesel(polygons.wildcard, 0)
     dem = generators.DemandResponse(polygons.wildcard, 0, 300)
+    gp = generators.GreenPower(polygons.wildcard, 0)
     g = context.generators
     context.generators = [geo, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
-        g[:-4] + [ocgt, diesel, batt, dem]
+        g[:-4] + [ocgt, diesel, batt, dem, gp]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,

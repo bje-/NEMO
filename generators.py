@@ -756,3 +756,18 @@ class DemandResponse(Generator):
         return Generator.summary(self, context) + \
             ', max response %d MW' % self.maxresponse + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True)
+
+
+class GreenPower(Generator):
+    """GreenPower"""
+
+    patch = Patch(facecolor='darkgreen')
+
+    def __init__(self, polygon, capacity, label='GreenPower'):
+        Generator.__init__(self, polygon, capacity, label)
+
+    def step(self, hr, demand):
+        """Step method for GreenPower."""
+        power = min(self.capacity, demand)
+        self.hourly_power[hr] = power
+        return power, 0
