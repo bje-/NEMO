@@ -355,7 +355,8 @@ def plot(context, spills=False, filename=None, showlegend=True):
         # Ensure total generation does not exceed demand in any timestep.
         assert(np.round(accum, 6) > np.round(demand, 6)).sum() == 0
         plt.plot(xdata, accum, color='black', linewidth=0.5)
-        plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc())
+        plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc(),
+                         hatch=g.patch.get_hatch())
         prev = accum.copy()
     # Unmet demand is shaded red.
     plt.fill_between(xdata, accum, demand, facecolor='red')
