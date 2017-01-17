@@ -376,7 +376,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
         unserved_dt = context.startdate + dt.timedelta(hours=hr[0])
         xvalue = mdates.date2num(unserved_dt)
         _, ymax = plt.gca().get_ylim()
-        plt.plot([xvalue], [ymax - 200], "yv", markersize=15, color='red')
+        plt.plot([xvalue], [ymax * 0.99], "yv", markersize=15, color='red')
 
     if not filename:
         plt.show()  # pragma: no cover
