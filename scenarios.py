@@ -606,7 +606,7 @@ def demand_switch(label):
         elif label.startswith('scale:'):
             # label form: "scale:X" scales all of the load by X%
             _, factor = label.split(':')
-            factor = 1 + int(factor) / 100.
+            factor = 1 + float(factor) / 100
             return lambda context: scale_demand_by(context, factor)
 
         elif label.startswith('scalex:'):
@@ -614,7 +614,7 @@ def demand_switch(label):
             _, h1, h2, factor = label.split(':')
             fromHour = int(h1)
             toHour = int(h2)
-            factor = 1 + int(factor) / 100.
+            factor = 1 + float(factor) / 100
             return lambda context: scale_range_demand(context,
                                                       fromHour, toHour, factor)
 
@@ -639,14 +639,14 @@ def demand_switch(label):
             # by X%
             _, power, factor = label.split(':')
             power = int(power)
-            factor = 1 + int(factor) / 100.
+            factor = 1 + float(factor) / 100
             return lambda context: scale_peaks(context, power, factor)
 
         elif label.startswith('npeaks:'):
             # label form: "npeaks:N:X" adjust top N demand peaks by X%
             _, topn, factor = label.split(':')
             topn = int(topn)
-            factor = 1 + int(factor) / 100.
+            factor = 1 + float(factor) / 100
             return lambda context: scale_npeaks(context, topn, factor)
         else:
             raise ValueError
