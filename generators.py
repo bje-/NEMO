@@ -200,6 +200,15 @@ class PV1Axis(PV):
         PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
 
 
+class Behind_Meter_PV(PV):
+    """Behind the meter PV.
+
+    This stub class allows differentiated PV costs in costs.py."""
+
+    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='Behind-meter PV'):
+        PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
+
+
 class CST(Generator):
 
     """Solar thermal (CST) model."""
