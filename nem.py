@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import configfile
+from configfile import ConfigParser
 import consts
 import generators
 import regions
@@ -333,12 +334,12 @@ def plot(context, spills=False, filename=None, showlegend=True):
     plt.ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
-    except configfile.ConfigParser.NoOptionError:
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         title = 'Supply/demand balance'
     try:
         subtitle = configfile.get('plot', 'subtitle')
         title += '\n' + subtitle
-    except configfile.ConfigParser.NoOptionError:
+    except (configfile.ConfigParser.NoSectionError, configfile.ConfigParser.NoOptionError):
         pass
     plt.suptitle(title)
 
