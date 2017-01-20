@@ -331,7 +331,15 @@ def plot(context, spills=False, filename=None, showlegend=True):
     demand = context.demand.sum(axis=0)
 
     plt.ylabel('Power (MW)')
-    title = 'Supply/demand balance\nRegions: %s' % context.regions
+    try:
+        title = configfile.get('plot', 'title')
+    except configfile.ConfigParser.NoOptionError:
+        title = 'Supply/demand balance'
+    try:
+        subtitle = configfile.get('plot', 'subtitle')
+        title += '\n' + subtitle
+    except configfile.ConfigParser.NoOptionError:
+        pass
     plt.suptitle(title)
 
     if showlegend:
