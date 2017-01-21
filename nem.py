@@ -350,7 +350,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
                           dt.timedelta(hours=1))
 
     # Plot demand first.
-    plt.plot(xdata, demand, color='black', linewidth=2)
+    plt.plot(xdata, demand, color='black', linewidth=3 if spills else 2)
     if spills:
         peakdemand = np.empty_like(demand)
         peakdemand.fill(demand.max())
