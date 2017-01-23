@@ -614,6 +614,9 @@ def demand_switch(label):
             _, h1, h2, factor = label.split(':')
             fromHour = int(h1)
             toHour = int(h2)
+            assert fromHour >= 0 and fromHour <= 24
+            assert toHour >= 0 and toHour <= 24
+            assert toHour > fromHour
             factor = 1 + float(factor) / 100
             return lambda context: scale_range_demand(context,
                                                       fromHour, toHour, factor)
@@ -692,7 +695,8 @@ def scale_range_demand(context, fromHour, toHour, factor):
     >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
     [[ 0.  1.2  2.4  3.6  4.  5.  6.  7.  8.  9. ]]
     """
-    context.demand[:, fromHour:toHour] *= factor
+    for hour in range(fromHour, toHour):
+        context.demand[:, hour::24] *= factor
 
 
 def scale_demand_twh(context, new_demand):
