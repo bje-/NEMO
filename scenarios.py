@@ -742,12 +742,16 @@ def shift_demand(context, demand, fromHour, toHour):
     >>> c.demand[::,4]
     array([ 500.,  500.,  500.,  500.,  500.])
     """
-    # Shed equally in each region for simplicity
-    demand /= 5
-    context.demand[::, fromHour::24] -= demand
-    context.demand[::, toHour::24] += demand
-    # Ensure load never goes negative
-    context.demand = np.where(context.demand < 0, 0, context.demand)
+    # Shift demand within in each polygon
+    for p in range(43):
+        for r in context.regions:
+            if (p + 1) in r.polygons:
+                weight = r.polygons[p + 1]
+                if context.demand[p].sum() > 0:
+                    context.demand[p, fromHour::24] -= demand * weight
+                    context.demand[p, toHour::24] += demand * weight
+    assert np.all(context.demand >= 0), \
+        "negative load in hour %d" % fromHour
 
 
 def scale_peaks(context, power, factor):
