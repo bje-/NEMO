@@ -361,8 +361,9 @@ def plot(context, spills=False, filename=None, showlegend=True):
     for g in _generator_list(context):
         idx = context.generators.index(g)
         accum += context.generation[idx]
-        # Ensure total generation does not exceed demand in any timestep.
-        assert(np.round(accum, 6) > np.round(demand, 6)).sum() == 0
+        # Ensure accumulated generation does not exceed demand in any timestep.
+        # (Due to rounding, accum can be close to demand.)
+        assert np.all(np.logical_or(accum < demand, np.isclose(accum, demand)))
         plt.plot(xdata, accum, color='black', linewidth=0.5)
         plt.fill_between(xdata, prev, accum, facecolor=g.patch.get_fc(),
                          hatch=g.patch.get_hatch())
