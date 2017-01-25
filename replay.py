@@ -12,8 +12,8 @@ import json
 import re
 import numpy as np
 
-import consts
 import costs
+import configfile as cf
 import nem
 import scenarios
 
@@ -27,7 +27,7 @@ parser.add_argument("-t", "--transmission", action="store_true", help="show regi
 parser.add_argument("-v", action="count", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
 parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
-                    help='Non-synchronous penetration limit [default: %s]' % \
+                    help='Non-synchronous penetration limit [default: %s]' %
                     cf.get('limits', 'nonsync-penetration'))
 parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
