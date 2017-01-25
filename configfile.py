@@ -9,7 +9,6 @@
 
 import ConfigParser
 import os
-import consts
 
 
 def load(filename):
@@ -36,4 +35,4 @@ config = ConfigParser.ConfigParser()
 if os.getenv('NEMORC') is not None:
     load(os.getenv('NEMORC'))
 else:
-    load(consts.config_filename)
+    load('default.cfg')

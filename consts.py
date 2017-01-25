@@ -9,6 +9,3 @@
 
 # Conversion factor between MWh and TWh.
 twh = pow(10., 6)
-
-# Default configuration file.
-config_filename = 'default.cfg'
