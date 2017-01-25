@@ -745,7 +745,7 @@ def shift_demand(context, demand, fromHour, toHour):
     # Shift demand within in each polygon
     for p in range(43):
         for r in context.regions:
-            if (p + 1) in r.polygons:
+            if p + 1 in r.polygons:
                 weight = r.polygons[p + 1]
                 if context.demand[p].sum() > 0:
                     context.demand[p, fromHour::24] -= demand * weight
