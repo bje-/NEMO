@@ -103,7 +103,7 @@ class Context(object):
         self.unserved_hours = 0
         self.unserved_percent = 0
         # System non-synchronous penetration limit
-        self.nsp_limit = consts.nsp_limit
+        self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
 
     def add_exchange(self, hour, src, dest, transfer):
