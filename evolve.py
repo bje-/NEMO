@@ -29,13 +29,15 @@ import nem
 import generators
 import scenarios
 import costs
+import configfile as cf
 import consts
 import transmission
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
 parser.add_argument("-c", "--carbon-price", type=int, default=25, help='carbon price ($/t) [default: 25]')
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
-parser.add_argument("-g", "--generations", type=int, default=100, help='generations [default: 100]')
+parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'), \
+                    help='generations [default: %s]' % cf.get('optimiser', 'generations'))
 parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
@@ -57,8 +59,9 @@ parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
 parser.add_argument("--reliability-std", type=float, help='reliability standard (%% unserved)')
 parser.add_argument("--reserves", type=int, default=0, help='minimum operating reserves (MW)')
-parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
 parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
+parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'), \
+                    help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
 parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
