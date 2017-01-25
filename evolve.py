@@ -49,17 +49,17 @@ parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
 parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
 parser.add_argument("--hydro-limit", type=float, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
-parser.add_argument("--lambda", type=int, dest='lambda_', default=None, help='override CMA-ES lambda value')
+parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
 parser.add_argument("--list-scenarios", action="store_true")
-parser.add_argument("--min-regional-generation", type=float, default=None,
+parser.add_argument("--min-regional-generation", type=float,
                     help='minimum share of energy generated intra-region [default: None]')
 parser.add_argument("--nsp-limit", type=float, default=consts.nsp_limit,
                     help='Non-synchronous penetration limit [default: %.2f]' % consts.nsp_limit)
-parser.add_argument("--reliability-std", type=float, default=None, help='reliability standard (%% unserved)')
+parser.add_argument("--reliability-std", type=float, help='reliability standard (%% unserved)')
 parser.add_argument("--reserves", type=int, default=0, help='minimum operating reserves (MW)')
-parser.add_argument("--seed", type=int, default=None, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=2., help='CMA-ES sigma value [default: 2.0]')
-parser.add_argument("--trace-file", type=str, default=None, help='Filename for evaluation trace (comma separated) [default: None]')
+parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
+parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
 parser.add_argument('--version', action='version', version='1.0')
 args = parser.parse_args()
 
