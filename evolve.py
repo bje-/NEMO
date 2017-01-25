@@ -40,7 +40,8 @@ parser.add_argument("-c", "--carbon-price", type=int, \
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
 parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'), \
                     help='generations [default: %s]' % cf.get('optimiser', 'generations'))
-parser.add_argument("-r", "--discount-rate", type=float, default=0.05, help='discount rate [default: 0.05]')
+parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'), \
+                    help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
@@ -61,7 +62,7 @@ parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-pric
                     help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
 parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'), \
                     help='Limit on annual energy from hydro (TWh/y) [default: %s]' % \
-                    cf.get('limits', 'hydro-twh-per-year'))
+                    cf.get('limits', 'hydro-twh-per-yr'))
 parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
 parser.add_argument("--list-scenarios", action="store_true")
 parser.add_argument("--min-regional-generation", type=float,
@@ -70,7 +71,9 @@ parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync
                     help='Non-synchronous penetration limit [default: %s]' % \
                     cf.get('limits', 'nonsync-penetration'))
 parser.add_argument("--reliability-std", type=float, help='reliability standard (%% unserved)')
-parser.add_argument("--reserves", type=int, default=0, help='minimum operating reserves (MW)')
+parser.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'), \
+                    help='minimum operating reserves [default: %s MW]' % \
+                    cf.get('limits', 'minimum-reserves-mw'))
 parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
 parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'), \
                     help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
