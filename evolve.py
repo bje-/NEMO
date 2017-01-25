@@ -34,7 +34,9 @@ import consts
 import transmission
 
 parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
-parser.add_argument("-c", "--carbon-price", type=int, default=25, help='carbon price ($/t) [default: 25]')
+parser.add_argument("-c", "--carbon-price", type=int, \
+                    default=cf.get('costs', 'co2-price-per-t'), \
+                    help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
 parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
 parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'), \
                     help='generations [default: %s]' % cf.get('optimiser', 'generations'))
@@ -43,13 +45,17 @@ parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='
 parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
 parser.add_argument("--bioenergy-limit", type=float, default=20, help='Limit on annual energy from bioenergy (TWh/y) [default: 20.0]')
-parser.add_argument("--ccs-storage-costs", type=float, default=27, help='CCS storage costs ($/t) [default: 27]')
+parser.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'), \
+                    help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
 parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
-parser.add_argument("--coal-price", type=float, default=1.86, help='black coal price ($/GJ) [default: 1.86]')
-parser.add_argument("--costs", type=str, default='AETA2013-in2030-mid', help='cost scenario [default: AETA2013-in2030-mid]')
+parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'), \
+                    help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
+parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cost-class'),
+                    help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
 parser.add_argument("--emissions-limit", type=float, help='CO2 emissions limit (Mt/y) [default: None]')
 parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
-parser.add_argument("--gas-price", type=float, default=11.0, help='gas price ($/GJ) [default: 11]')
+parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'), \
+                    help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
 parser.add_argument("--hydro-limit", type=float, default=12, help='Limit on annual energy from hydro (TWh/y) [default: 12]')
 parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
 parser.add_argument("--list-scenarios", action="store_true")
