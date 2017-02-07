@@ -576,7 +576,7 @@ def demand_switch(label):
     <function <lambda> at ...>
     >>> demand_switch('scale:5')    # doctest: +ELLIPSIS
     <function <lambda> at ...>
-    >>> demand_switch('scalex:0:100:5')    # doctest: +ELLIPSIS
+    >>> demand_switch('scalex:0:10:5')    # doctest: +ELLIPSIS
     <function <lambda> at ...>
     >>> demand_switch('shift:100:10:12') # doctest: +ELLIPSIS
     <function <lambda> at ...>
@@ -614,9 +614,12 @@ def demand_switch(label):
             _, h1, h2, factor = label.split(':')
             fromHour = int(h1)
             toHour = int(h2)
-            assert fromHour >= 0 and fromHour <= 24
-            assert toHour >= 0 and toHour <= 24
-            assert toHour > fromHour
+            if fromHour < 0 or toHour < 0:
+                raise ValueError("hour < 0")
+            if fromHour >= 24 or toHour >= 24:
+                raise ValueError("hour >= 24")
+            if toHour <= fromHour:
+                raise ValueError("toHour comes before fromHour")
             factor = 1 + float(factor) / 100
             return lambda context: scale_range_demand(context,
                                                       fromHour, toHour, factor)
@@ -633,8 +636,10 @@ def demand_switch(label):
             demand = int(demand)
             fromHour = int(h1)
             toHour = int(h2)
-            if fromHour < 0 or fromHour >= 24 or toHour < 0 or toHour >= 24:
-                raise ValueError
+            if fromHour < 0 or toHour < 0:
+                raise ValueError("hour < 0")
+            if fromHour >= 24 or toHour >= 24:
+                raise ValueError("hour >= 24")
             return lambda context: shift_demand(context, demand, fromHour, toHour)
 
         elif label.startswith('peaks:'):
