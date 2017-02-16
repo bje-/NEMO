@@ -16,6 +16,7 @@ from matplotlib.patches import Patch
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
+import urllib2
 
 import configfile
 from configfile import ConfigParser
@@ -29,7 +30,8 @@ import polygons
 
 # Generate a list of column numbers
 cols = tuple(range(regions.numregions + 2))
-demand = np.genfromtxt(configfile.get('demand', 'demand-trace'), comments='#', usecols=cols)
+urlobj = urllib2.urlopen(configfile.get('demand', 'demand-trace'))
+demand = np.genfromtxt(urlobj, comments='#', usecols=cols)
 demand = demand.transpose()
 
 # Check for date, time and n demand columns (for n regions).
@@ -38,7 +40,7 @@ assert demand.shape[0] == 2 + regions.numregions, demand.shape[0]
 assert demand.shape[1] % 2 == 0, "odd number of rows in half-hourly demand data"
 
 # Find the start date of the demand data.
-f = open(configfile.get('demand', 'demand-trace'))
+f = urllib2.urlopen(configfile.get('demand', 'demand-trace'))
 for line in f:
     if re.search(r'^\s*#', line):
         continue

@@ -12,6 +12,7 @@ import locale
 
 import numpy as np
 from matplotlib.patches import Patch
+import urllib2
 
 import consts
 import polygons
@@ -145,7 +146,8 @@ class Wind(Generator):
         if Wind.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            Wind.csvdata = np.genfromtxt(filename, comments='#', delimiter=delimiter)
+            urlobj = urllib2.urlopen(filename)
+            Wind.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=delimiter)
             Wind.csvdata = np.maximum(0, Wind.csvdata)
             Wind.csvfilename = filename
         self.generation = Wind.csvdata[::, column]
@@ -176,7 +178,8 @@ class PV(Generator):
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         if PV.csvfilename != filename:
-            PV.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
+            urlobj = urllib2.urlopen(filename)
+            PV.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             PV.csvdata = np.maximum(0, PV.csvdata)
             PV.csvfilename = filename
         self.generation = PV.csvdata[::, column]
@@ -224,7 +227,8 @@ class CST(Generator):
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.sm = sm
         if CST.csvfilename != filename:
-            CST.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
+            urlobj = urllib2.urlopen(filename)
+            CST.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             CST.csvfilename = filename
         self.generation = CST.csvdata[::, column]
         self.shours = shours
@@ -685,7 +689,8 @@ class Geothermal(Generator):
     def __init__(self, polygon, capacity, filename, column, label):
         Generator.__init__(self, polygon, capacity, label)
         if Geothermal.csvfilename != filename:
-            Geothermal.csvdata = np.genfromtxt(filename, comments='#', delimiter=',')
+            urlobj = urllib2.urlopen(filename)
+            Geothermal.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             Geothermal.csvdata = np.maximum(0, Geothermal.csvdata)
             Geothermal.csvfilename = filename
         self.generation = Geothermal.csvdata[::, column]
