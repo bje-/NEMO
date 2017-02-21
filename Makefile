@@ -41,6 +41,9 @@ html:
 html-upload:
 	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo/coverage
 
+docker:
+	 docker build -t nemo .
+
 clean:
 	rm -rf .coverage htmlcov replay.data
 	rm *.pyc tests/*.pyc nem.prof profile.py.lprof
