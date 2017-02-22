@@ -10,9 +10,9 @@
 """Simulated generators for the NEMO framework."""
 import locale
 
+import urllib2
 import numpy as np
 from matplotlib.patches import Patch
-import urllib2
 
 import consts
 import polygons
