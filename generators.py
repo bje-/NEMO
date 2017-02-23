@@ -474,7 +474,7 @@ class OCGT(Fossil):
 
     """Open cycle gas turbine (OCGT) model."""
 
-    patch = Patch(facecolor='brown')
+    patch = Patch(facecolor='purple')
 
     def __init__(self, polygon, capacity, intensity=0.7, label='OCGT'):
         Fossil.__init__(self, polygon, capacity, intensity, label)
@@ -490,7 +490,7 @@ class CCGT(Fossil):
 
     """Combined cycle gas turbine (CCGT) model."""
 
-    patch = Patch(facecolor='brown')
+    patch = Patch(facecolor='purple')
 
     def __init__(self, polygon, capacity, intensity=0.4, label='CCGT'):
         Fossil.__init__(self, polygon, capacity, intensity, label)
