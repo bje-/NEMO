@@ -197,7 +197,7 @@ class PV(Generator):
 class PV1Axis(PV):
     """Single-axis tracking PV."""
 
-    patch = Patch(facecolor='darkblue')
+    patch = Patch(facecolor='lightyellow')
 
     def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV 1-axis'):
         PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
@@ -216,6 +216,7 @@ class CST(Generator):
 
     """Solar thermal (CST) model."""
 
+    patch = Patch(facecolor='yellow')
     csvfilename = None
     csvdata = None
 
@@ -279,8 +280,6 @@ class ParabolicTrough(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
-    patch = Patch(facecolor='yellow')
-
     def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
         CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
@@ -291,8 +290,6 @@ class CentralReceiver(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
-    patch = Patch(facecolor='orange')
-
     def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
         CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
