@@ -735,18 +735,7 @@ def scale_demand_by(context, factor):
 
 
 def shift_demand(context, demand, fromHour, toHour):
-    """Move N MW of demand from fromHour to toHour.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> c.demand = np.zeros ((5,10))
-    >>> c.demand[::,3] = 5000
-    >>> shift_demand(c, 2500, 3, 4)
-    >>> c.demand[::,3]
-    array([ 4500.,  4500.,  4500.,  4500.,  4500.])
-    >>> c.demand[::,4]
-    array([ 500.,  500.,  500.,  500.,  500.])
-    """
+    """Move N MW of demand from fromHour to toHour."""
     # Shift demand within in each polygon
     for p in range(43):
         for r in context.regions:
