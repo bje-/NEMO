@@ -75,7 +75,14 @@ class Generator(object):
         self.hourly_spilled.clear()
 
     def capfactor(self):
-        """Capacity factor of this generator (in %)."""
+        """Capacity factor of this generator (in %).
+
+        >>> g = Generator(1, 0, 'label')
+        >>> g.capfactor()  # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+           ...
+        ValueError: zero capacity
+        """
         if self.capacity == 0:
             raise ValueError('zero capacity')
         supplied = sum(self.hourly_power.values())

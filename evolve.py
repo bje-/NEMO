@@ -22,7 +22,7 @@ from deap import tools
 from deap import cma
 try:
     from scoop import futures
-except ImportError:
+except ImportError:  # pragma: no cover
     print 'WARNING: scoop not loaded'
 
 import nem
@@ -296,7 +296,7 @@ creator.create("Individual", list, fitness=creator.FitnessMin)
 toolbox = base.Toolbox()
 try:
     toolbox.register("map", futures.map)
-except NameError:
+except NameError:  # pragma: no cover
     pass
 
 # See:
@@ -328,7 +328,7 @@ def run():
     try:
         algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
                                     stats=stats, halloffame=hof, verbose=True)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # pragma: no cover
         print 'user terminated early'
 
     (score,) = hof[0].fitness.values
