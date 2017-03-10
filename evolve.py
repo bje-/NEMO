@@ -51,7 +51,6 @@ parser.add_argument("--bioenergy-limit", type=float, default=cf.get('limits', 'b
                     cf.get('limits', 'bioenergy-twh-per-yr'))
 parser.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'),
                     help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
-parser.add_argument("--coal-ccs-costs", type=float, help='override capital cost of coal CCS ($/kW)')
 parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
                     help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
 parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cost-class'),
@@ -112,8 +111,6 @@ assert context.min_regional_generation is None or \
 cost_class = costs.cost_switch(args.costs)
 context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
 context.costs.carbon = args.carbon_price
-if args.coal_ccs_costs is not None:
-    context.costs.capcost_per_kw[generators.Coal_CCS] = args.coal_ccs_costs
 
 
 def txcost(x):
