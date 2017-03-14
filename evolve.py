@@ -33,7 +33,7 @@ import configfile as cf
 import consts
 import transmission
 
-parser = argparse.ArgumentParser(description='Bug reports to: b.elliston@unsw.edu.au')
+parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
 parser.add_argument("-c", "--carbon-price", type=int,
                     default=cf.get('costs', 'co2-price-per-t'),
                     help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
