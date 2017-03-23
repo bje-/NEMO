@@ -63,17 +63,6 @@ for i, weights in enumerate(rgns):
         hourly_demand[polygon - 1] = hourly_regional_demand[i] * share
 
 
-def default_generation_mix():
-    """Return a default generator list.
-
-    >>> g = default_generation_mix()
-    >>> len(g)
-    2
-    """
-    return [generators.CCGT(polygons.wildcard, 20000),
-            generators.OCGT(polygons.wildcard, 20000)]
-
-
 # Context objects are used throughout this module.
 class Context(object):
 
@@ -94,7 +83,8 @@ class Context(object):
             self.years = self.hours / (365.25 * 24)
 
         self.relstd = 0.002  # 0.002% unserved energy
-        self.generators = default_generation_mix()
+        self.generators = [generators.CCGT(polygons.wildcard, 20000),
+                           generators.OCGT(polygons.wildcard, 20000)]
         self.demand = hourly_demand.copy()
         self.timesteps = self.demand.shape[1]
         self.unserved = []
@@ -104,6 +94,7 @@ class Context(object):
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
+
 
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
