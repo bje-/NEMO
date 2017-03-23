@@ -4,6 +4,7 @@ import os
 import nem
 import regions
 import polygons
+import utils
 import unittest
 
 
@@ -25,9 +26,9 @@ class TestCoverage(unittest.TestCase):
         for g in c.generators[1:]:
             g.set_capacity(0)
         nem.run(c)
-        nem.plot(c, filename='foo.png')
+        utils.plot(c, filename='foo.png')
         os.unlink('foo.png')
-        nem.plot(c, filename='foo.png', spills=True)
+        utils.plot(c, filename='foo.png', spills=True)
         os.unlink('foo.png')
 
     def test_003(self):
@@ -38,7 +39,7 @@ class TestCoverage(unittest.TestCase):
             c.generators += [dr]
         print len(c.generators)
         nem.run(c)
-        nem.plot(c, filename='foo.png')
+        utils.plot(c, filename='foo.png')
         os.unlink('foo.png')
 
     def test_004(self):

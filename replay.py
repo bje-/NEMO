@@ -16,6 +16,7 @@ import costs
 import configfile as cf
 import nem
 import scenarios
+import utils
 
 np.set_printoptions(precision=3)
 
@@ -96,4 +97,4 @@ for line in replayfile:
     print
 
     if args.x:  # pragma: no cover
-        nem.plot(context, spills=args.spills, showlegend=args.no_legend)
+        utils.plot(context, spills=args.spills, showlegend=args.no_legend)
