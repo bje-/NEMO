@@ -65,11 +65,7 @@ class TestCoverage(unittest.TestCase):
         c.regions = [regions.nsw]
         print str(c)
 
-        def foo(self, costs):
-            """A stub function that returns None."""
-            return None
-
-        f = types.MethodType(foo, c.generators[0], nem.Context)
+        f = types.MethodType(lambda self, costs: None, c.generators[0], nemo.Context)
         print f
         c.generators[0].summary = f
         print c.generators[0].summary(None)
