@@ -35,11 +35,8 @@ flake8:
 lint:	flake8
 	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
 
-html:
-	python-coverage html --omit=dijkstra.py,priodict.py
-
-html-upload:
-	rsync -az --delete htmlcov/ bilbo:~/public_html/nemo/coverage
+coverage:
+	coveralls
 
 docker:
 	 docker build -t nemo .
