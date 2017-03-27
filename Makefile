@@ -1,6 +1,6 @@
 all:
 
-COVRUN=coverage run -a --source=.
+COVRUN=coverage run -a --source=. --omit=priodict.py,dijkstra.py
 
 check:  replay.data
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
