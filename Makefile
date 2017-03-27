@@ -1,6 +1,6 @@
 all:
 
-COVRUN=python-coverage run -a --source .
+COVRUN=coverage run -a --source=.
 
 check:  replay.data
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
@@ -12,7 +12,7 @@ check:  replay.data
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -d unchanged -v > /dev/null
 	$(COVRUN) replay.py -t -d unchanged -f replay.data -v > /dev/null
 	rm replay.data
-	make html
+	coverage html
 
 replay.data:
 	echo "# comment line" >> $@
