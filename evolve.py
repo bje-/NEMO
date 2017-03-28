@@ -137,7 +137,10 @@ if args.verbose and __name__ == '__main__':
 
 if args.trace_file is not None:
     try:
-        os.unlink(args.trace_file)
+        with open(args.trace_file, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
+            csvfile.close()
     except OSError:
         pass
 
