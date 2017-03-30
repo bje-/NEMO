@@ -8,7 +8,6 @@
 
 """Evolutionary programming applied to NEM optimisations."""
 
-import os
 import sys
 import csv
 import json
