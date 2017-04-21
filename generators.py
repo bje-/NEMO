@@ -31,7 +31,7 @@ class Generator(object):
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
-        self.setters = [(self.set_capacity, 0, 80)]
+        self.setters = [(self.set_capacity, 0, 40)]
         self.storage_p = False
         self.label = label
         self.capacity = capacity
