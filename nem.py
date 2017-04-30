@@ -95,7 +95,6 @@ class Context(object):
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
 
-
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
         self.exchanges[hour, src - 1, dest - 1] += transfer

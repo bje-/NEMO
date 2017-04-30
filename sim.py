@@ -12,7 +12,6 @@ import polygons
 import regions
 
 
-
 def _sim(context, starthour, endhour):
     # reset generator internal state
     for g in context.generators:
