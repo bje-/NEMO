@@ -128,7 +128,7 @@ class Context(object):
         elif self.unserved_energy > 0:
             s += 'Unserved energy: %.3f%%' % self.unserved_percent + '\n'
             if self.unserved_percent > self.relstd:
-                s += 'WARNING: NEM reliability standard exceeded\n'
+                s += 'WARNING: reliability standard exceeded\n'
             s += 'Unserved total hours: ' + str(self.unserved_hours) + '\n'
             unserved_events = [g for g, _ in groupby(self.unserved, lambda x: bool(x) is True) if g]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
