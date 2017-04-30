@@ -6,7 +6,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""Replay NEM runs from a text file of generators."""
+"""Replay runs from a text file of generators."""
 import argparse
 import json
 import re
