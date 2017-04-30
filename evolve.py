@@ -306,9 +306,9 @@ except NameError:  # pragma: no cover
 numparams = sum([len(g.setters) for g in context.generators])
 if args.lambda_ is None:
     # let DEAP choose
-    strategy = cma.Strategy(centroid=[0.1] * numparams, sigma=args.sigma)
+    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
 else:
-    strategy = cma.Strategy(centroid=[0.1] * numparams, sigma=args.sigma, lambda_=args.lambda_)
+    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma, lambda_=args.lambda_)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
 toolbox.register("update", strategy.update)
