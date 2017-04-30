@@ -49,6 +49,7 @@ BEGIN {
 /surplus.*TWh/		{ surplus += $7 }	# now it's "surplus"
 /Mt CO2.?$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
+/Unserved energy/	{ unserved = $3 }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
 /^{.*}/			{ params = $0 }
@@ -65,6 +66,7 @@ BEGIN {
        printf ("# options %s\n", params)
     printf ("# demand %.2f TWh\n", total_demand)
     printf ("# emissions %.2f Mt\n", co2)
+    printf ("# unserved %s\n", unserved)
     printf ("# score %.2f $/MWh\n", cost)
     printf ("# %10s\t  GW\tshare\t  TWh\tshare\tCF\n", "tech")
     for (m in merit) {
