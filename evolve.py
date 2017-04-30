@@ -143,6 +143,8 @@ if args.trace_file is not None:
     except OSError:
         pass
 
+reasons = {16: 'hydro', 8: 'bioenergy', 4: 'fossil', 2: 'emissions', 1: 'unserved'}
+
 
 def cost(ctx):
     """Sum up the costs."""
@@ -338,6 +340,13 @@ def run():
     nem.run(context)
     context.verbose = True
     print context
+    _, _, reason = cost(context)
+    if reason > 0:
+        print 'Constraints violated:',
+        for code in reasons.keys():
+            if reason & code:
+                print reasons[code],
+        print
     if args.transmission:
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
