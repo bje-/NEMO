@@ -132,7 +132,7 @@ class Context(object):
             s += 'Unserved total hours: ' + str(self.unserved_hours) + '\n'
             unserved_events = [g for g, _ in groupby(self.unserved, lambda x: bool(x) is True) if g]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
-            s += 'min, max shortfalls: ' + str(self.shortfalls)
+            s += 'Shortfalls (min, max): ' + str(self.shortfalls)
         return s
 
     class JSONEncoder(json.JSONEncoder):
