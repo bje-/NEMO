@@ -143,7 +143,7 @@ if args.trace_file is not None:
     except OSError:
         pass
 
-reasons = {16: 'hydro', 8: 'bioenergy', 4: 'fossil', 2: 'emissions', 1: 'unserved'}
+reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8, 'hydro': 16}
 
 
 def cost(ctx):
@@ -208,7 +208,7 @@ def cost(ctx):
         # exceedance in tonnes CO2-e
         emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
         if emissions_exceedance > 0:
-            reason |= 2
+            reason |= reasons['emissions']
         penalty += pow(emissions_exceedance, 3)
 
     ### Penalty: limit fossil to fraction of annual demand
@@ -219,7 +219,7 @@ def cost(ctx):
                 fossil_energy += sum(g.hourly_power.values())
         fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
         if fossil_exceedance > 0:
-            reason |= 4
+            reason |= reasons['fossil']
         penalty += pow(fossil_exceedance, 3)
 
     ### Penalty: limit biofuel use
@@ -229,7 +229,7 @@ def cost(ctx):
             biofuel_energy += sum(g.hourly_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
     if biofuel_exceedance > 0:
-        reason |= 8
+        reason |= reasons['bioenergy']
     penalty += pow(biofuel_exceedance, 3)
 
     ### Penalty: limit hydro use
@@ -240,7 +240,7 @@ def cost(ctx):
             hydro_energy += sum(g.hourly_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
     if hydro_exceedance > 0:
-        reason |= 16
+        reason |= reasons['hydro']
     penalty += pow(hydro_exceedance, 3)
 
     if args.transmission:
@@ -343,9 +343,9 @@ def run():
     _, _, reason = cost(context)
     if reason > 0:
         print 'Constraints violated:',
-        for code in reasons.keys():
+        for label, code in zip(reasons, reasons.values()):
             if reason & code:
-                print reasons[code],
+                print label,
         print
     if args.transmission:
         x = context.exchanges.max(axis=0)
