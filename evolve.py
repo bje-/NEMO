@@ -143,7 +143,7 @@ if args.trace_file is not None:
     except OSError:
         pass
 
-reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8, 'hydro': 16}
+reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8, 'hydro': 16, 'reserves': 32}
 
 
 def cost(ctx):
@@ -182,6 +182,7 @@ def cost(ctx):
                 reserve += g.capacity - g.hourly_power[i]
 
             if reserve + spilled < args.reserves:
+                reason |= reasons['reserves']
                 penalty += pow(args.reserves - reserve + spilled, 3)
 
     ### Penalty: minimum share of regional generation
