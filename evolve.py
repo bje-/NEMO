@@ -143,7 +143,13 @@ if args.trace_file is not None:
     except OSError:
         pass
 
-reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8, 'hydro': 16, 'reserves': 32}
+reasons = {'unserved': 1,
+           'emissions': 2,
+           'fossil': 4,
+           'bioenergy': 8,
+           'hydro': 16,
+           'reserves': 32,
+           'min-regional-gen': 64}
 
 
 def cost(ctx):
@@ -195,6 +201,8 @@ def cost(ctx):
                     regional_generation += sum(g.hourly_power.values())
             min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
             regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
+        if regional_generation_shortfall > 0:
+            reason |= reasons['min-regional-gen']
         penalty += pow(regional_generation_shortfall, 3)
 
     ### Penalty: total emissions
