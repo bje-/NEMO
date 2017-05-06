@@ -160,7 +160,7 @@ def cost(ctx):
     minuse = ctx.demand.sum() * (ctx.relstd / 100)
     use = max(0, ctx.unserved_energy - minuse)
     if use > 0:
-        reason |= 1
+        reason |= reasons['unserved']
     penalty += pow(use, 3)
 
     ### Penalty: minimum reserves
