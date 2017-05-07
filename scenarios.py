@@ -583,7 +583,23 @@ def demand_switch(label):
     >>> demand_switch('shift:100:-2:12')
     Traceback (most recent call last):
       ...
-    ValueError: invalid scenario: shift:100:-2:12
+    ValueError: hour < 0
+    >>> demand_switch('shift:100:12:24')
+    Traceback (most recent call last):
+      ...
+    ValueError: hour >= 24
+    >>> demand_switch('scalex:-1:12:20')
+    Traceback (most recent call last):
+      ...
+    ValueError: hour < 0
+    >>> demand_switch('scalex:12:24:20')
+    Traceback (most recent call last):
+      ...
+    ValueError: hour >= 24
+    >>> demand_switch('scalex:20:8:20')
+    Traceback (most recent call last):
+      ...
+    ValueError: toHour comes before fromHour
     >>> demand_switch('peaks:10:34000') # doctest: +ELLIPSIS
     <function <lambda> at ...>
     >>> demand_switch('npeaks:10:5') # doctest: +ELLIPSIS
@@ -593,73 +609,69 @@ def demand_switch(label):
       ...
     ValueError: invalid scenario: foo
     """
-    try:
-        if label == 'unchanged':
-            return unchanged
+    if label == 'unchanged':
+        return unchanged
 
-        elif label.startswith('roll:'):
-            # label form: "roll:X" rolls the load by X timesteps
-            _, posns = label.split(':')
-            posns = int(posns)
-            return lambda context: roll_demand(context, posns)
+    elif label.startswith('roll:'):
+        # label form: "roll:X" rolls the load by X timesteps
+        _, posns = label.split(':')
+        posns = int(posns)
+        return lambda context: roll_demand(context, posns)
 
-        elif label.startswith('scale:'):
-            # label form: "scale:X" scales all of the load by X%
-            _, factor = label.split(':')
-            factor = 1 + float(factor) / 100
-            return lambda context: scale_demand_by(context, factor)
+    elif label.startswith('scale:'):
+        # label form: "scale:X" scales all of the load by X%
+        _, factor = label.split(':')
+        factor = 1 + float(factor) / 100
+        return lambda context: scale_demand_by(context, factor)
 
-        elif label.startswith('scalex:'):
-            # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
-            _, h1, h2, factor = label.split(':')
-            fromHour = int(h1)
-            toHour = int(h2)
-            if fromHour < 0 or toHour < 0:
-                raise ValueError("hour < 0")
-            if fromHour >= 24 or toHour >= 24:
-                raise ValueError("hour >= 24")
-            if toHour <= fromHour:
-                raise ValueError("toHour comes before fromHour")
-            factor = 1 + float(factor) / 100
-            return lambda context: scale_range_demand(context,
-                                                      fromHour, toHour, factor)
+    elif label.startswith('scalex:'):
+        # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
+        _, h1, h2, factor = label.split(':')
+        fromHour = int(h1)
+        toHour = int(h2)
+        if fromHour < 0 or toHour < 0:
+            raise ValueError("hour < 0")
+        if fromHour >= 24 or toHour >= 24:
+            raise ValueError("hour >= 24")
+        if toHour <= fromHour:
+            raise ValueError("toHour comes before fromHour")
+        factor = 1 + float(factor) / 100
+        return lambda context: scale_range_demand(context,
+                                                  fromHour, toHour, factor)
 
-        elif label.startswith('scaletwh:'):
-            # label form: "scaletwh:N" scales demand to N TWh
-            _, n = label.split(':')
-            new_demand = float(n)
-            return lambda context: scale_demand_twh(context, new_demand)
+    elif label.startswith('scaletwh:'):
+        # label form: "scaletwh:N" scales demand to N TWh
+        _, n = label.split(':')
+        new_demand = float(n)
+        return lambda context: scale_demand_twh(context, new_demand)
 
-        elif label.startswith('shift:'):
-            # label form: "shift:N:H1:H2" load shifts N MW every day
-            _, demand, h1, h2 = label.split(':')
-            demand = int(demand)
-            fromHour = int(h1)
-            toHour = int(h2)
-            if fromHour < 0 or toHour < 0:
-                raise ValueError("hour < 0")
-            if fromHour >= 24 or toHour >= 24:
-                raise ValueError("hour >= 24")
-            return lambda context: shift_demand(context, demand, fromHour, toHour)
+    elif label.startswith('shift:'):
+        # label form: "shift:N:H1:H2" load shifts N MW every day
+        _, demand, h1, h2 = label.split(':')
+        demand = int(demand)
+        fromHour = int(h1)
+        toHour = int(h2)
+        if fromHour < 0 or toHour < 0:
+            raise ValueError("hour < 0")
+        if fromHour >= 24 or toHour >= 24:
+            raise ValueError("hour >= 24")
+        return lambda context: shift_demand(context, demand, fromHour, toHour)
 
-        elif label.startswith('peaks:'):
-            # label form: "peaks:N:X" adjust demand peaks over N megawatts
-            # by X%
-            _, power, factor = label.split(':')
-            power = int(power)
-            factor = 1 + float(factor) / 100
-            return lambda context: scale_peaks(context, power, factor)
+    elif label.startswith('peaks:'):
+        # label form: "peaks:N:X" adjust demand peaks over N megawatts
+        # by X%
+        _, power, factor = label.split(':')
+        power = int(power)
+        factor = 1 + float(factor) / 100
+        return lambda context: scale_peaks(context, power, factor)
 
-        elif label.startswith('npeaks:'):
-            # label form: "npeaks:N:X" adjust top N demand peaks by X%
-            _, topn, factor = label.split(':')
-            topn = int(topn)
-            factor = 1 + float(factor) / 100
-            return lambda context: scale_npeaks(context, topn, factor)
-        else:
-            raise ValueError
-
-    except ValueError:
+    elif label.startswith('npeaks:'):
+        # label form: "npeaks:N:X" adjust top N demand peaks by X%
+        _, topn, factor = label.split(':')
+        topn = int(topn)
+        factor = 1 + float(factor) / 100
+        return lambda context: scale_npeaks(context, topn, factor)
+    else:
         raise ValueError('invalid scenario: %s' % label)
 
 
