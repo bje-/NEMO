@@ -40,16 +40,20 @@ BEGIN {
 
 /Unserved energy/	{ unserved = $3 }
 /Score:/		{ cost = $2 }
+/Penalty:/		{ penalty = $2 }
+/Constraints violated/	{ sub("Constraints violated: ", ""); gsub(" ", ","); constraints = $0; }
 /Timesteps:/		{ timesteps = $2 }
 /^{.*}/			{ params = $0 }
+/Demand energy:/	{ total_demand = $(NF-1) }
 
-/Demand energy:/ {
-    total_demand = $(NF-1)
+/^Done/ {
     scenario_num++
     total_capacity = 0
     for (c in caps) {
     	total_capacity += caps[c]
     }
+    if (scenario_num > 1)
+	print ""
     printf ("# scenario %d\n", scenario_num)
     if (params != "")
        printf ("# options %s\n", params)
@@ -57,6 +61,11 @@ BEGIN {
     printf ("# emissions %.2f Mt\n", co2)
     printf ("# unserved %s\n", unserved)
     printf ("# score %.2f $/MWh\n", cost)
+    if (penalty > 0)
+    {
+	printf ("# penalty %.2f $/MWh\n", penalty)
+	printf ("# constraints <%s> violated\n", constraints)
+    }
     printf ("# %10s\t  GW\tshare\t  TWh\tshare\tCF\n", "tech")
     for (m in merit) {
 	c = merit[m]
@@ -69,10 +78,11 @@ BEGIN {
     if (surplus > 0)
 	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
+    print ""
     co2 = 0
     surplus = 0
     params = null
+    constraints = null
     delete caps
     delete energy
-    printf ("\n\n")
 }
