@@ -55,13 +55,13 @@ BEGIN {
 /^{.*}/			{ params = $0 }
 
 /Demand energy:/ {
-    i++
     total_demand = $(NF-1)
+    scenario_num++
     total_capacity = 0
     for (c in caps) {
     	total_capacity += caps[c]
     }
-    printf ("# scenario %d\n", i)
+    printf ("# scenario %d\n", scenario_num)
     if (params != "")
        printf ("# options %s\n", params)
     printf ("# demand %.2f TWh\n", total_demand)
