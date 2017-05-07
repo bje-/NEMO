@@ -342,15 +342,16 @@ def run():
         print 'user terminated early'
 
     (score,) = hof[0].fitness.values
-    print 'Score: %.2f $/MWh' % score
     print 'List:', [max(0, param) for param in hof[0]]
 
     set_generators(hof[0])
     nem.run(context)
     context.verbose = True
     print context
-    _, _, reason = cost(context)
+    score, penalty, reason = cost(context)
+    print 'Score: %.2f $/MWh' % score
     if reason > 0:
+        print 'Penalty: %.2f $/MWh' % penalty
         print 'Constraints violated:',
         for label, code in zip(reasons, reasons.values()):
             if reason & code:
@@ -363,7 +364,7 @@ def run():
         obj = {'exchanges': x.tolist(), 'generators': context}
         json.dump(obj, f, cls=nem.Context.JSONEncoder)
         f.close()
-
+    print 'Done'
 
 if __name__ == '__main__':
     run()
