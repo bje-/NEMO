@@ -135,13 +135,10 @@ if args.verbose and __name__ == '__main__':
     print context.generators
 
 if args.trace_file is not None:
-    try:
-        with open(args.trace_file, 'w') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
-            csvfile.close()
-    except OSError:
-        pass
+    with open(args.trace_file, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
+        csvfile.close()
 
 reasons = {'unserved': 1,
            'emissions': 2,
