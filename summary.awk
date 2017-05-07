@@ -1,4 +1,4 @@
-# Copyright (C) 2013, 2014 Ben Elliston
+# Copyright (C) 2013, 2014, 2017 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -7,23 +7,9 @@
 
 BEGIN {
     PROCINFO["sorted_in"] = "@ind_num_asc"
-    merit[0] = "battery"
-    merit[1] = "HSA"
-    merit[2] = "EGS"
-    merit[3] = "PV"
-    merit[4] = "wind"
-    merit[5] = "CST"
-    merit[6] = "Coal"
-    merit[7] = "Coal-CCS"
-    merit[8] = "CCGT"
-    merit[9] = "CCGT-CCS"
-    merit[10] = "hydro"
-    merit[11] = "PSH"
-    merit[12] = "GT"
-    merit[13] = "OCGT"
-    merit[14] = "diesel"
-    merit[15] = "DR"
-    # assume 8760 timesteps unless specified in the simulation output
+    # merit order
+    split("battery HSA EGS PV wind CST Coal Coal-CCS CCGT CCGT-CCS hydro PSH GT OCGT diesel DR", merit)
+    # assume 8760 timesteps unless specified in the input
     timesteps = 8760
 }
 
@@ -44,11 +30,14 @@ BEGIN {
 /OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
 /diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
+
 /supplied.*TWh/		{ energy[last] += $2 }
+
 /spilled.*TWh/		{ surplus += $5 }	# may be "spilled" in old log files
 /surplus.*TWh/		{ surplus += $7 }	# now it's "surplus"
 /Mt CO2.?$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
+
 /Unserved energy/	{ unserved = $3 }
 /Score:/		{ cost = $2 }
 /Timesteps:/		{ timesteps = $2 }
@@ -80,8 +69,8 @@ BEGIN {
     if (surplus > 0)
 	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
-    surplus = 0
     co2 = 0
+    surplus = 0
     params = null
     delete caps
     delete energy
