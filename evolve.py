@@ -332,12 +332,14 @@ def run():
     if args.seed is not None:
         np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
-    stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("min", np.min)
+    stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
+    stats_hof = tools.Statistics(lambda ignored: hof[0].fitness.values)
+    mstats = tools.MultiStatistics(fitness=stats_fit, hallfame=stats_hof)
+    mstats.register("min", np.min)
 
     try:
         algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
-                                    stats=stats, halloffame=hof, verbose=True)
+                                    stats=mstats, halloffame=hof, verbose=True)
     except KeyboardInterrupt:  # pragma: no cover
         print 'user terminated early'
 
