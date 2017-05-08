@@ -626,16 +626,29 @@ class Battery(Generator):
 
     def step(self, hr, demand):
         """
-        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
+        >>> dischg = range(18, 24)
+        >>> b = Battery(polygons.wildcard, 400, 1000, dischg, rte=1.0)
         >>> b.stored = 400
 
-        Cannot pump and generate at the same time.
+        Cannot discharge outside of discharge hours.
         >>> b.step(hr=0, demand=200)
-        (200, 0)
+        (0, 0)
+
+        Normal operation.
         >>> b.store(hr=0, power=400)
-        0
-        >>> b.step(hr=1, demand=200)
+        400
+        >>> b.step(hr=18, demand=200)
         (200, 0)
+
+        Cannot generate and then store at the same time.
+        >>> b.store(hr=18, power=200)
+        0
+
+        Cannot store and then generate at the same time.
+        >>> b.store(hr=19, power=200)
+        200
+        >>> b.step(hr=19, demand=200)
+        (0, 0)
         """
         if hr % 24 not in self.dischargeHours:
             return 0, 0
