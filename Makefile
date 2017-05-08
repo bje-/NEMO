@@ -7,6 +7,7 @@ check:  replay.data
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
 	NEMORC=default.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
+	$(COVRUN) evolve.py --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -d unchanged -v > /dev/null
