@@ -62,8 +62,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
     except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         title = 'Supply/demand balance'
     try:
-        subtitle = configfile.get('plot', 'subtitle')
-        title += '\n' + subtitle
+        title += '\n' + configfile.get('plot', 'subtitle')
     except (configfile.ConfigParser.NoSectionError, configfile.ConfigParser.NoOptionError):
         pass
     plt.suptitle(title)
