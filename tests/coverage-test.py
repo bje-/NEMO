@@ -58,7 +58,7 @@ class TestCoverage(unittest.TestCase):
         import costs
         import types
         c = nem.Context()
-        c.costs = costs.NullCosts()
+        c.costs = costs.NullCosts(0, 0, 0, 0)
         print str(c)
         c.verbose = True
         print str(c)
