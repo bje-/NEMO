@@ -512,18 +512,13 @@ def re100_south_aus(context):
 
 
 def theworks(context):
-    """All technologies.
+    """All technologies."""
 
-    >>> class C: pass
-    >>> c = C()
-    >>> c.generators = []
-    >>> theworks(c)
-    >>> len(c.generators)
-    190
-    """
     re100(context)
     # pylint: disable=redefined-outer-name
-    geo = generators.Geothermal_HSA(polygons.wildcard, 0,
+    egs = generators.Geothermal_EGS(polygons.wildcard, 0,
+                                    configfile.get('generation', 'egs-geothermal-trace'), 38)
+    hsa = generators.Geothermal_HSA(polygons.wildcard, 0,
                                     configfile.get('generation', 'hsa-geothermal-trace'), 38)
     pt = generators.ParabolicTrough(polygons.wildcard, 0, 2, 6,
                                     configfile.get('generation', 'cst-trace'), 12)
@@ -535,9 +530,16 @@ def theworks(context):
     batt = generators.Battery(polygons.wildcard, 0, 0)
     diesel = generators.Diesel(polygons.wildcard, 0)
     dem = generators.DemandResponse(polygons.wildcard, 0, 300)
+    biomass = generators.Biomass(polygons.wildcard, 0)
+    greenpower = generators.GreenPower(polygons.wildcard, 0)
+    btm_pv = generators.Behind_Meter_PV(polygons.wildcard, 0,
+                                        configfile.get('generation', 'rooftop-pv-trace'),
+                                        0)
     g = context.generators
-    context.generators = [geo, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
-        g[:-4] + [ocgt, diesel, batt, dem]
+
+    context.generators = [hsa, egs, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
+    	g[:-4] + \
+        [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
