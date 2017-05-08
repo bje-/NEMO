@@ -1,6 +1,7 @@
 all:
 
-COVRUN=coverage run -a --source=. --omit=priodict.py,dijkstra.py
+OMIT=priodict.py,dijkstra.py
+COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.data
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
@@ -13,7 +14,7 @@ check:  replay.data
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -d unchanged -v > /dev/null
 	$(COVRUN) replay.py -t -d unchanged -f replay.data -v > /dev/null
 	rm replay.data
-	coverage html
+	coverage html --omit=$(OMIT)
 
 replay.data:
 	echo "# comment line" >> $@
@@ -31,7 +32,7 @@ lineprof:
 	kernprof.py -v -l profile.py
 
 flake8:
-	python -m flake8 --ignore=E266,E501,N801,N803,N806 --exclude=priodict.py,dijkstra.py *.py tests/*.py
+	python -m flake8 --ignore=E266,E501,N801,N803,N806 --exclude=$(OMIT) *.py tests/*.py
 
 lint:	flake8
 	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
