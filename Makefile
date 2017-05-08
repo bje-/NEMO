@@ -37,7 +37,7 @@ flake8:
 lint:	flake8
 	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
 
-coverage:
+coveralls:
 	coveralls
 
 docker:
