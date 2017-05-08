@@ -31,12 +31,13 @@ class NullCosts(object):
         self.diesel_price_per_litre = 0
         self.carbon = 0
 
-        for t in [tech.Biofuel, tech.Black_Coal, tech.CCGT,
-                  tech.CCGT_CCS, tech.CentralReceiver, tech.Coal_CCS,
-                  tech.Diesel, tech.DemandResponse,
-                  tech.Geothermal_EGS, tech.Geothermal_HSA,
-                  tech.Hydro, tech.OCGT, tech.ParabolicTrough,
-                  tech.PumpedHydro, tech.PV, tech.PV1Axis, tech.Wind]:
+        for t in [tech.Behind_Meter_PV, tech.Biofuel, tech.Biomass,
+                  tech.Black_Coal, tech.CCGT, tech.CCGT_CCS,
+                  tech.CentralReceiver, tech.Coal_CCS, tech.Diesel,
+                  tech.DemandResponse, tech.Geothermal_EGS,
+                  tech.Geothermal_HSA, tech.GreenPower, tech.Hydro,
+                  tech.OCGT, tech.ParabolicTrough, tech.PumpedHydro,
+                  tech.PV, tech.PV1Axis, tech.Wind]:
             self.capcost_per_kw[t] = 0
             self.opcost_per_mwh[t] = 0
             self.fixed_om_costs[t] = 0
