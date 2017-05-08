@@ -397,7 +397,7 @@ def cost_switch(label):
     return callback
 
 
-cost_scenarios = {'null': NullCosts,
+cost_scenarios = {'Null': NullCosts,
                   'AETA2012-in2030-low': AETA2012_2030Low,
                   'AETA2012-in2030-mid': AETA2012_2030Mid,
                   'AETA2012-in2030-high': AETA2012_2030High,
