@@ -145,6 +145,3 @@ class Context(object):
                     result += [{'label': g.label, 'polygon': g.polygon,
                                 'capacity': g.capacity, 'technology': tech}]
                 return result
-            else:
-                # Let the base class default method raise any TypeError
-                return json.JSONEncoder.default(self, obj)
