@@ -537,9 +537,8 @@ def theworks(context):
                                         0)
     g = context.generators
 
-    context.generators = [hsa, egs, pt, coal, coal_ccs, ccgt, ccgt_ccs] + \
-    	g[:-4] + \
-        [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
+    context.generators = [hsa, egs, pt, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
+                         [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'ccgt': ccgt,
