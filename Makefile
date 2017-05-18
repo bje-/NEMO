@@ -13,7 +13,7 @@ check:  replay.data
 	if test -f trace.out; then rm trace.out; fi
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -d unchanged -v > /dev/null
 	$(COVRUN) replay.py -t -d unchanged -f replay.data -v > /dev/null
-	rm replay.data trace.out
+	rm replay.data trace.out results.json
 	coverage html --omit=$(OMIT)
 
 replay.data:
