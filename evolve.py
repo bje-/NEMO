@@ -361,7 +361,7 @@ def run():
         print np.array_str(x, precision=1, suppress_small=True)
         f = open('results.json', 'w')
         obj = {'exchanges': x.tolist(), 'generators': context}
-        json.dump(obj, f, cls=nem.Context.JSONEncoder)
+        json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
         f.close()
     print 'Done'
 

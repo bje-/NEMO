@@ -141,7 +141,8 @@ class Context(object):
             if isinstance(obj, Context):
                 result = []
                 for g in obj.generators:
-                    tech = str(type(g)).split('.')[1]
+                    tech = re.sub(r"<class 'generators\.(.*)'>",
+                                  r'\1', str(type(g)))
                     result += [{'label': g.label, 'polygon': g.polygon,
                                 'capacity': g.capacity, 'technology': tech}]
                 return result
