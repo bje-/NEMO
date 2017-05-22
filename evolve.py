@@ -177,12 +177,12 @@ def cost(ctx):
                     # non-variable generators may not have spill data
                     pass
 
-            # Calculate headroom for each generator, except pumped hydro and
-            # CST -- tricky to calculate capacity
-            if isinstance(g, nem.generators.Fuelled) and not \
-               isinstance(g, nem.generators.PumpedHydro) and not \
-               isinstance(g, nem.generators.CST):
-                reserve += g.capacity - g.hourly_power[i]
+                # Calculate headroom for each generator, except pumped hydro and
+                # CST -- tricky to calculate capacity
+                if isinstance(g, nem.generators.Fuelled) and not \
+                   isinstance(g, nem.generators.PumpedHydro) and not \
+                   isinstance(g, nem.generators.CST):
+                    reserve += g.capacity - g.hourly_power[i]
 
             if reserve + spilled < args.reserves:
                 reason |= reasons['reserves']
