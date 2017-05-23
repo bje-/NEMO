@@ -309,7 +309,7 @@ except NameError:  # pragma: no cover
 # See:
 # https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
 # for additional parameters that can be passed to cma.Strategy.
-numparams = sum([len(g.setters) for g in context.generators])
+numparams = sum(list(len(g.setters) for g in context.generators))
 if args.lambda_ is None:
     # let DEAP choose
     strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
