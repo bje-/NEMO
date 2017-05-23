@@ -12,8 +12,8 @@ import re
 import datetime as dt
 import json
 from itertools import groupby
-import numpy as np
 import urllib2
+import numpy as np
 
 import configfile
 import consts
@@ -91,6 +91,7 @@ class Context(object):
         self.unserved_energy = 0
         self.unserved_hours = 0
         self.unserved_percent = 0
+        self.shortfalls = None
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))

@@ -221,7 +221,7 @@ class Behind_Meter_PV(PV):
 
 class CST(Generator):
 
-    """Solar thermal (CST) model."""
+    """Concentrating solar thermal (CST) model."""
 
     patch = Patch(facecolor='yellow')
     csvfilename = None
@@ -288,6 +288,18 @@ class ParabolicTrough(CST):
     This stub class allows differentiated CST costs in costs.py.
     """
     def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        """Construct a parabolic trough CST generator.
+
+        Keyword arguments:
+        polygon -- polygon location of generator
+        capacity -- capacity in MW
+        sm -- solar multiple (solar field relative to power block)
+        shours -- number of hours of thermal storage
+        filename -- filename of CST trace data
+        column -- column number for trace data
+        build_limit -- build limit in GW (default None)
+        label -- textual label (default 'CST')
+        """
         CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
 
@@ -298,6 +310,18 @@ class CentralReceiver(CST):
     This stub class allows differentiated CST costs in costs.py.
     """
     def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+        """Construct a central receiver (tower) CST generator.
+
+        Keyword arguments:
+        polygon -- polygon location of generator
+        capacity -- capacity in MW
+        sm -- solar multiple (solar field relative to power block)
+        shours -- number of hours of thermal storage
+        filename -- filename of CST trace data
+        column -- column number for trace data
+        build_limit -- build limit in GW (default None)
+        label -- textual label (default 'CST')
+        """
         CST.__init__(self, polygon, capacity, sm, shours, filename, column, build_limit, label)
 
 
