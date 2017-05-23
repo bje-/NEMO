@@ -272,22 +272,9 @@ def cost(ctx):
     return score / ctx.demand.sum(), penalty / ctx.demand.sum(), reason
 
 
-def set_generators(chromosome):
-    """Set the generator list from the chromosome."""
-    i = 0
-    for gen in context.generators:
-        for (setter, min_cap, max_cap) in gen.setters:
-            # keep parameters within bounds
-            newval = max(min(chromosome[i], max_cap), min_cap)
-            setter(newval)
-            i += 1
-    # Check every parameter has been set.
-    assert i == len(chromosome), '%d != %d' % (i, len(chromosome))
-
-
 def eval_func(chromosome):
     """Average cost of energy (in $/MWh)."""
-    set_generators(chromosome)
+    context.set_capacities(chromosome)
     nem.run(context)
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
@@ -343,7 +330,7 @@ def run():
     (score,) = hof[0].fitness.values
     print 'List:', [max(0, param) for param in hof[0]]
 
-    set_generators(hof[0])
+    context.set_capacities(hof[0])
     nem.run(context)
     context.verbose = True
     print context

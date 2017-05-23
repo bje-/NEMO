@@ -100,6 +100,18 @@ class Context(object):
         """Note energy transfer from SRC to DEST in HOUR."""
         self.exchanges[hour, src - 1, dest - 1] += transfer
 
+    def set_capacities(self, caps):
+        """Set generator capacities from a list."""
+        n = 0
+        for gen in self.generators:
+            for (setter, min_cap, max_cap) in gen.setters:
+                # keep parameters within bounds
+                newval = max(min(caps[n], max_cap), min_cap)
+                setter(newval)
+                n += 1
+        # Check every parameter has been set.
+        assert n == len(caps), '%d != %d' % (n, len(caps))
+
     def __str__(self):
         """A human-readable representation of the context."""
         s = ""

@@ -34,24 +34,11 @@ parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
 
-def set_generators(chromosome):
-    """Set the generator list from the chromosome."""
-    i = 0
-    for gen in context.generators:
-        for (setter, min_cap, max_cap) in gen.setters:
-            # keep parameters within bounds
-            newval = max(min(chromosome[i], max_cap), min_cap)
-            setter(newval)
-            i += 1
-    # Check every parameter has been set.
-    assert i == len(chromosome), '%d != %d' % (i, len(chromosome))
-
-
 def run_one(chromosome):
     """Run a single simulation."""
     context.costs = costs.AETA2013_2030Mid(0.05, 1.86, 11, 27)
     context.costs.carbon = 0
-    set_generators(chromosome)
+    context.set_capacities(chromosome)
     context.verbose = args.v > 1
     if args.transmission:
         context.track_exchanges = 1
