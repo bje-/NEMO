@@ -299,7 +299,7 @@ def eval_func(chromosome):
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMin)
+creator.create("Individual", list, fitness=creator.FitnessMin)  # pylint: disable=no-member
 toolbox = base.Toolbox()
 try:
     toolbox.register("map", futures.map)
@@ -316,7 +316,7 @@ if args.lambda_ is None:
 else:
     strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma, lambda_=args.lambda_)
 
-toolbox.register("generate", strategy.generate, creator.Individual)
+toolbox.register("generate", strategy.generate, creator.Individual)  # pylint: disable=no-member
 toolbox.register("update", strategy.update)
 toolbox.register("evaluate", eval_func)
 
