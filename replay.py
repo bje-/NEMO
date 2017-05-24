@@ -52,9 +52,8 @@ def run_one(chromosome):
         np.set_printoptions(precision=3)
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
-        f = open('results.json', 'w')
-        json.dump(x.tolist(), f)
-        f.close()
+        with open('results.json', 'w') as f:
+            json.dump(x.tolist(), f)
 
 
 with open(args.f) as replayfile:
