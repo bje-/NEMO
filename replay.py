@@ -32,6 +32,7 @@ parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
 context = nem.Context()
+context.costs = costs.NullCosts()
 assert 0 <= args.nsp_limit <= 1
 context.nsp_limit = args.nsp_limit
 # Apply each demand modifier argument (if any) in the given order.
@@ -41,10 +42,9 @@ for arg in args.demand_modifier:
 
 def run_one(chromosome):
     """Run a single simulation."""
-    context.costs = costs.NullCosts()
     context.set_capacities(chromosome)
-    context.verbose = args.v > 1
     context.track_exchanges = args.transmission
+    context.verbose = args.v > 1
     nem.run(context)
     context.verbose = args.v > 0
     print context
@@ -54,6 +54,7 @@ def run_one(chromosome):
         print np.array_str(x, precision=1, suppress_small=True)
         with open('results.json', 'w') as f:
             json.dump(x.tolist(), f)
+    print
 
 
 with open(args.f) as replayfile:
@@ -66,13 +67,12 @@ with open(args.f) as replayfile:
         if not re.search(r'^\s*[\w\-\+]+:\s*\[.*\]\s*.?$', line):
             print 'skipping malformed input:', line
             continue
-        m = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
-        scenario = m.group(1)
-        print 'scenario', scenario
+        match = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
+        scenario = match.group(1)
+        capacitylist = match.group(2)
         scenarios.supply_switch(scenario)(context)
-        capacities = m.group(2).split(',')
-        capacities = [float(elt) for elt in capacities]  # str -> float
+        capacities = [float(st) for st in capacitylist.split(',')]  # str -> float
+        print 'scenario', scenario
         run_one(capacities)
-        print
         if args.x:  # pragma: no cover
             utils.plot(context, spills=args.spills, showlegend=args.no_legend)
