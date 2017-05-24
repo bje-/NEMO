@@ -18,8 +18,6 @@ import nem
 import scenarios
 import utils
 
-np.set_printoptions(precision=3)
-
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
 parser.add_argument("-f", type=str, help='replay file', required=True)
 parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
@@ -40,12 +38,12 @@ def run_one(chromosome):
     context.costs.carbon = 0
     context.set_capacities(chromosome)
     context.verbose = args.v > 1
-    if args.transmission:
-        context.track_exchanges = 1
+    context.track_exchanges = args.transmission
     nem.run(context)
     context.verbose = args.v > 0
     print context
     if args.transmission:
+        np.set_printoptions(precision=3)
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
         f = open('results.json', 'w')
@@ -55,32 +53,28 @@ def run_one(chromosome):
 
 context = nem.Context()
 context.nsp_limit = args.nsp_limit
-assert context.nsp_limit >= 0 and context.nsp_limit <= 1, \
-    "NSP limit must be in the interval [0,1]"
-
+assert context.nsp_limit >= 0 and context.nsp_limit <= 1
 # Apply each demand modifier argument (if any) in the given order.
 for arg in args.demand_modifier:
     scenarios.demand_switch(arg)(context)
 
-capacities = []
-replayfile = open(args.f)
-for line in replayfile:
-    if re.search(r'^\s*$', line):
-        continue
-    if re.search(r'^\s*#', line):
-        print line,
-        continue
-    if not re.search(r'^\s*[\w\-\+]+:\s*\[.*\]\s*.?$', line):
-        print 'skipping malformed input:', line
-        continue
-    m = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
-    scenario = m.group(1)
-    print 'scenario', scenario
-    capacities = m.group(2).split(',')
-    scenarios.supply_switch(scenario)(context)
-    capacities = [float(elt) for elt in capacities]  # str -> float
-    run_one(capacities)
-    print
-
-    if args.x:  # pragma: no cover
-        utils.plot(context, spills=args.spills, showlegend=args.no_legend)
+with open(args.f) as replayfile:
+    for line in replayfile:
+        if re.search(r'^\s*$', line):
+            continue
+        if re.search(r'^\s*#', line):
+            print line,
+            continue
+        if not re.search(r'^\s*[\w\-\+]+:\s*\[.*\]\s*.?$', line):
+            print 'skipping malformed input:', line
+            continue
+        m = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
+        scenario = m.group(1)
+        print 'scenario', scenario
+        scenarios.supply_switch(scenario)(context)
+        capacities = m.group(2).split(',')
+        capacities = [float(elt) for elt in capacities]  # str -> float
+        run_one(capacities)
+        print
+        if args.x:  # pragma: no cover
+            utils.plot(context, spills=args.spills, showlegend=args.no_legend)
