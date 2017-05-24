@@ -23,8 +23,6 @@ def _sim(context, starthour, endhour):
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region() in context.regions]
-    # And storage-capable generators.
-    storages = [g for g in gens if g.storage_p]
 
     if context.track_exchanges:
         for g in gens:
@@ -124,7 +122,7 @@ def _sim(context, starthour, endhour):
                         gen -= transfer
 
             if spl > 0:
-                for other in storages:
+                for other in list(g for g in gens if g.storage_p):
                     stored = other.store(hr, spl)
                     spl -= stored
                     assert spl >= 0
