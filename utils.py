@@ -97,7 +97,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
 
     if spills:
         prev = demand.copy()
-        for g in [g for g in context.generators if g.region() in context.regions]:
+        for g in list(g for g in context.generators if g.region() in context.regions):
             idx = context.generators.index(g)
             accum += spill[idx]
             plt.plot(xdata, accum, color='black')
