@@ -20,7 +20,7 @@ class NullCosts(object):
     """All costs are zero. Useful for debugging."""
 
     # pylint: disable=unused-argument
-    def __init__(self, discount, coal_price, gas_price, ccs_price):
+    def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
         self.capcost_per_kw = {}
         self.fixed_om_costs = {}
         self.opcost_per_mwh = {}
