@@ -31,6 +31,13 @@ parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync
 parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
+context = nem.Context()
+assert 0 <= args.nsp_limit <= 1
+context.nsp_limit = args.nsp_limit
+# Apply each demand modifier argument (if any) in the given order.
+for arg in args.demand_modifier:
+    scenarios.demand_switch(arg)(context)
+
 
 def run_one(chromosome):
     """Run a single simulation."""
@@ -50,13 +57,6 @@ def run_one(chromosome):
         json.dump(x.tolist(), f)
         f.close()
 
-
-context = nem.Context()
-context.nsp_limit = args.nsp_limit
-assert context.nsp_limit >= 0 and context.nsp_limit <= 1
-# Apply each demand modifier argument (if any) in the given order.
-for arg in args.demand_modifier:
-    scenarios.demand_switch(arg)(context)
 
 with open(args.f) as replayfile:
     for line in replayfile:
