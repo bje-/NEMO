@@ -94,8 +94,7 @@ context = nem.Context()
 
 # Set the system non-synchronous penetration limit.
 context.nsp_limit = args.nsp_limit
-assert 0 <= context.nsp_limit <= 1, \
-    "NSP limit must be in the interval [0,1]"
+assert 0 <= context.nsp_limit <= 1
 
 # Override the reliability standard (if the user gives this option).
 if args.reliability_std is not None:
