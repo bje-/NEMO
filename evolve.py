@@ -36,7 +36,7 @@ parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.o
 parser.add_argument("-c", "--carbon-price", type=int,
                     default=cf.get('costs', 'co2-price-per-t'),
                     help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
-parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
+parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
 parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
                     help='generations [default: %s]' % cf.get('optimiser', 'generations'))
 parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
@@ -121,10 +121,9 @@ context.track_exchanges = args.transmission
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
-# Apply each demand modifier in the order given on the command line.
-if args.demand_modifier is not None:
-    for arg in args.demand_modifier:
-        scenarios.demand_switch(arg)(context)
+# Apply each demand modifier argument (if any) in the given order.
+for arg in args.demand_modifier:
+    scenarios.demand_switch(arg)(context)
 
 if args.verbose and __name__ == '__main__':
     docstring = scenarios.supply_switch(args.supply_scenario).__doc__

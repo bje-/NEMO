@@ -22,7 +22,7 @@ np.set_printoptions(precision=3)
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
 parser.add_argument("-f", type=str, help='replay file', required=True)
-parser.add_argument("-d", "--demand-modifier", type=str, action="append", help='demand modifier [default: unchanged]')
+parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
 parser.add_argument("--no-legend", action="store_false", help="hide legend")
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="count", help='verbose mode')
@@ -58,10 +58,9 @@ context.nsp_limit = args.nsp_limit
 assert context.nsp_limit >= 0 and context.nsp_limit <= 1, \
     "NSP limit must be in the interval [0,1]"
 
-# Apply each demand modifier in the order given on the command line.
-if args.demand_modifier is not None:
-    for arg in args.demand_modifier:
-        scenarios.demand_switch(arg)(context)
+# Apply each demand modifier argument (if any) in the given order.
+for arg in args.demand_modifier:
+    scenarios.demand_switch(arg)(context)
 
 capacities = []
 replayfile = open(args.f)
