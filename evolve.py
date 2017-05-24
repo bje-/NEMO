@@ -149,6 +149,114 @@ reasons = {'unserved': 1,
            'min-regional-gen': 64}
 
 
+def _penalty_unserved(ctx):
+    """Penalty: unserved energy"""
+    minuse = ctx.demand.sum() * (ctx.relstd / 100)
+    use = max(0, ctx.unserved_energy - minuse)
+    reason = reasons['unserved'] if use > 0 else 0
+    return pow(use, 3), reason
+
+
+def _penalty_reserves(ctx):
+    """Penalty: minimum reserves"""
+    pen, reas = 0, 0
+    for i in range(ctx.timesteps):
+        reserve, spilled = 0, 0
+        for g in context.generators:
+            try:
+                spilled += g.hourly_spilled[i]
+            except KeyError:
+                # non-variable generators may not have spill data
+                pass
+
+            # Calculate headroom for each generator, except pumped hydro and
+            # CST -- tricky to calculate capacity
+            if isinstance(g, nem.generators.Fuelled) and not \
+               isinstance(g, nem.generators.PumpedHydro) and not \
+               isinstance(g, nem.generators.CST):
+                reserve += g.capacity - g.hourly_power[i]
+
+        if reserve + spilled < args.reserves:
+            reas |= reasons['reserves']
+            pen += pow(args.reserves - reserve + spilled, 3)
+    return pen, reas
+
+
+def _penalty_min_regional(ctx):
+    """Penalty: minimum share of regional generation"""
+    regional_generation_shortfall = 0
+    for rgn in ctx.regions:
+        regional_generation = 0
+        for g in ctx.generators:
+            if g.region() is rgn:
+                regional_generation += sum(g.hourly_power.values())
+        min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
+        regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
+    reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
+    return pow(regional_generation_shortfall, 3), reason
+
+
+def _penalty_emissions(ctx):
+    """Penalty: total emissions"""
+    emissions = 0
+    for g in ctx.generators:
+        try:
+            emissions += sum(g.hourly_power.values()) * g.intensity
+        except AttributeError:
+            # not all generators have an intensity attribute
+            pass
+    # exceedance in tonnes CO2-e
+    emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
+    reason = reasons['emissions'] if emissions_exceedance > 0 else 0
+    return pow(emissions_exceedance, 3), reason
+
+
+def _penalty_fossil(ctx):
+    """Penalty: limit fossil to fraction of annual demand"""
+    fossil_energy = 0
+    for g in ctx.generators:
+        if isinstance(g, generators.Fossil):
+            fossil_energy += sum(g.hourly_power.values())
+    fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
+    reason = reasons['fossil'] if fossil_exceedance > 0 else 0
+    return pow(fossil_exceedance, 3), reason
+
+
+def _penalty_bioenergy(ctx):
+    """Penalty: limit biofuel use"""
+    biofuel_energy = 0
+    for g in ctx.generators:
+        if isinstance(g, generators.Biofuel):
+            biofuel_energy += sum(g.hourly_power.values())
+    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
+    reason = reasons['bioenergy'] if biofuel_exceedance > 0 else 0
+    return pow(biofuel_exceedance, 3), reason
+
+
+def _penalty_hydro(ctx):
+    """Penalty: limit hydro use"""
+    hydro_energy = 0
+    for g in ctx.generators:
+        if isinstance(g, generators.Hydro) and \
+           not isinstance(g, generators.PumpedHydro):
+            hydro_energy += sum(g.hourly_power.values())
+    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
+    reason = reasons['hydro'] if hydro_exceedance > 0 else 0
+    return pow(hydro_exceedance, 3), reason
+
+
+# Build list of penalty functions based on command line args, etc.
+penaltyfns = [_penalty_unserved, _penalty_bioenergy, _penalty_hydro]
+if args.reserves > 0:
+    penaltyfns.append(_penalty_reserves)
+if args.emissions_limit is not None:
+    penaltyfns.append(_penalty_emissions)
+if args.fossil_limit is not None:
+    penaltyfns.append(_penalty_fossil)
+if context.min_regional_generation is not None:
+    penaltyfns.append(_penalty_min_regional)
+
+
 def cost(ctx):
     """Sum up the costs."""
     score = 0
@@ -156,98 +264,12 @@ def cost(ctx):
         score += (g.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
             + g.opcost(ctx.costs)
 
-    penalty = 0
-    reason = 0
-
-    ### Penalty: unserved energy
-    minuse = ctx.demand.sum() * (ctx.relstd / 100)
-    use = max(0, ctx.unserved_energy - minuse)
-    if use > 0:
-        reason |= reasons['unserved']
-    penalty += pow(use, 3)
-
-    ### Penalty: minimum reserves
-    if args.reserves > 0:
-        for i in range(ctx.timesteps):
-            reserve, spilled = 0, 0
-            for g in context.generators:
-                try:
-                    spilled += g.hourly_spilled[i]
-                except KeyError:
-                    # non-variable generators may not have spill data
-                    pass
-
-                # Calculate headroom for each generator, except pumped hydro and
-                # CST -- tricky to calculate capacity
-                if isinstance(g, nem.generators.Fuelled) and not \
-                   isinstance(g, nem.generators.PumpedHydro) and not \
-                   isinstance(g, nem.generators.CST):
-                    reserve += g.capacity - g.hourly_power[i]
-
-            if reserve + spilled < args.reserves:
-                reason |= reasons['reserves']
-                penalty += pow(args.reserves - reserve + spilled, 3)
-
-    ### Penalty: minimum share of regional generation
-    if ctx.min_regional_generation is not None:
-        regional_generation_shortfall = 0
-        for rgn in ctx.regions:
-            regional_generation = 0
-            for g in ctx.generators:
-                if g.region() is rgn:
-                    regional_generation += sum(g.hourly_power.values())
-            min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
-            regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
-        if regional_generation_shortfall > 0:
-            reason |= reasons['min-regional-gen']
-        penalty += pow(regional_generation_shortfall, 3)
-
-    ### Penalty: total emissions
-    if args.emissions_limit is not None:
-        emissions = 0
-        for g in ctx.generators:
-            try:
-                emissions += sum(g.hourly_power.values()) * g.intensity
-            except AttributeError:
-                # not all generators have an intensity attribute
-                pass
-        # exceedance in tonnes CO2-e
-        emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
-        if emissions_exceedance > 0:
-            reason |= reasons['emissions']
-        penalty += pow(emissions_exceedance, 3)
-
-    ### Penalty: limit fossil to fraction of annual demand
-    if args.fossil_limit is not None:
-        fossil_energy = 0
-        for g in ctx.generators:
-            if isinstance(g, generators.Fossil):
-                fossil_energy += sum(g.hourly_power.values())
-        fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
-        if fossil_exceedance > 0:
-            reason |= reasons['fossil']
-        penalty += pow(fossil_exceedance, 3)
-
-    ### Penalty: limit biofuel use
-    biofuel_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Biofuel):
-            biofuel_energy += sum(g.hourly_power.values())
-    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
-    if biofuel_exceedance > 0:
-        reason |= reasons['bioenergy']
-    penalty += pow(biofuel_exceedance, 3)
-
-    ### Penalty: limit hydro use
-    hydro_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Hydro) and \
-           not isinstance(g, generators.PumpedHydro):
-            hydro_energy += sum(g.hourly_power.values())
-    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
-    if hydro_exceedance > 0:
-        reason |= reasons['hydro']
-    penalty += pow(hydro_exceedance, 3)
+    # Run through all of the penalty functions.
+    penalty, reason = 0, 0
+    for penaltyfn in penaltyfns:
+        p, r = penaltyfn(ctx)
+        penalty += p
+        reason |= r
 
     if args.transmission:
         maxexchanges = ctx.exchanges.max(axis=0)
