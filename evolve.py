@@ -332,8 +332,7 @@ def run():
     if args.verbose and __name__ == '__main__':
         print "objective: minimise", eval_func.__doc__
 
-    if args.seed is not None:
-        np.random.seed(args.seed)
+    np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
     stats_hof = tools.Statistics(lambda ignored: hof[0].fitness.values)
