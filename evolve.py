@@ -136,13 +136,8 @@ if args.trace_file is not None:
         writer = csv.writer(csvfile)
         writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
 
-reasons = {'unserved': 1,
-           'emissions': 2,
-           'fossil': 4,
-           'bioenergy': 8,
-           'hydro': 16,
-           'reserves': 32,
-           'min-regional-gen': 64}
+reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8,
+           'hydro': 16, 'reserves': 32, 'min-regional-gen': 64}
 
 
 def _penalty_unserved(ctx):
