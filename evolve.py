@@ -136,7 +136,6 @@ if args.trace_file is not None:
     with open(args.trace_file, 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
-        csvfile.close()
 
 reasons = {'unserved': 1,
            'emissions': 2,
@@ -366,10 +365,9 @@ def run():
     if args.transmission:
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
-        f = open('results.json', 'w')
         obj = {'exchanges': x.tolist(), 'generators': context}
-        json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
-        f.close()
+        with open('results.json', 'w') as f:
+            json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
     print 'Done'
 
 if __name__ == '__main__':
