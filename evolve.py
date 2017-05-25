@@ -159,7 +159,7 @@ def _penalty_reserves(ctx):
     pen, reas = 0, 0
     for i in range(ctx.timesteps):
         reserve, spilled = 0, 0
-        for g in context.generators:
+        for g in ctx.generators:
             try:
                 spilled += g.hourly_spilled[i]
             except KeyError:
@@ -187,7 +187,7 @@ def _penalty_min_regional(ctx):
         for g in ctx.generators:
             if g.region() is rgn:
                 regional_generation += sum(g.hourly_power.values())
-        min_regional_generation = sum(context.demand[rgn]) * ctx.min_regional_generation
+        min_regional_generation = sum(ctx.demand[rgn]) * ctx.min_regional_generation
         regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
     reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
     return pow(regional_generation_shortfall, 3), reason
