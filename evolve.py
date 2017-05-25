@@ -89,7 +89,6 @@ if __name__ == '__main__' and args.list_scenarios:
 if __name__ == '__main__':
     print vars(args)
 
-np.set_printoptions(precision=5)
 context = nem.Context()
 
 # Set the system non-synchronous penetration limit.
@@ -362,6 +361,7 @@ def run():
                 print label,
         print
     if args.transmission:
+        np.set_printoptions(precision=5)
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
         obj = {'exchanges': x.tolist(), 'generators': context}
