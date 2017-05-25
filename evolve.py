@@ -339,9 +339,7 @@ def run():
     except KeyboardInterrupt:  # pragma: no cover
         print 'user terminated early'
 
-    (score,) = hof[0].fitness.values
-    print 'List:', [max(0, param) for param in hof[0]]
-
+    print '%s:' % args.supply_scenario, [max(0, capacity) for capacity in hof[0]]
     context.set_capacities(hof[0])
     nem.run(context)
     context.verbose = True
