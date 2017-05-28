@@ -29,7 +29,7 @@ prof: nem.prof
 	python /usr/lib/python2.7/dist-packages/runsnakerun/runsnake.py $<
 
 lineprof:
-	kernprof.py -v -l profile.py
+	kernprof -v -l profile.py
 
 flake8:
 	python -m flake8 --ignore=E266,E501,N801,N803,N806 --exclude=$(OMIT) *.py tests/*.py
