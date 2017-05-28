@@ -135,9 +135,8 @@ def _sim(context, starthour, endhour):
                         context.add_exchange(hr, src, dest, stored)
             context.spill[gidx, hr] = spl
 
-        if context.verbose:
-            if (hour_demand > 0).any():
-                print('hour', hr, 'residual:', hour_demand)
+        if context.verbose and (hour_demand > 0).any():
+            print('hour', hr, 'residual:', hour_demand)
     return context
 
 
