@@ -397,9 +397,9 @@ def cost_switch(label):
     try:
         callback = cost_scenarios[label]
     except KeyError:
-        print('valid scenarios:')
+        print 'valid scenarios:'
         for k in sorted(cost_scenarios):
-            print('\t', k)
+            print '\t', k
         raise ValueError('unknown cost scenario: %s' % label)
     return callback
 

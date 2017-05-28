@@ -47,11 +47,11 @@ def run_one(chromosome):
     context.verbose = args.v > 1
     nem.run(context)
     context.verbose = args.v > 0
-    print(context)
+    print context
     if args.transmission:
         np.set_printoptions(precision=3)
         x = context.exchanges.max(axis=0)
-        print(np.array_str(x, precision=1, suppress_small=True))
+        print np.array_str(x, precision=1, suppress_small=True)
         with open('results.json', 'w') as f:
             json.dump(x.tolist(), f)
     print
@@ -62,17 +62,17 @@ with open(args.f) as replayfile:
         if re.search(r'^\s*$', line):
             continue
         if re.search(r'^\s*#', line):
-            print(line,)
+            print line,
             continue
         if not re.search(r'^\s*[\w\-\+]+:\s*\[.*\]\s*.?$', line):
-            print('skipping malformed input:', line)
+            print 'skipping malformed input:', line
             continue
         match = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
         scenario = match.group(1)
         capacitylist = match.group(2)
         scenarios.supply_switch(scenario)(context)
         capacities = [float(st) for st in capacitylist.split(',')]  # str -> float
-        print('scenario', scenario)
+        print 'scenario', scenario
         run_one(capacities)
         if args.x:  # pragma: no cover
             utils.plot(context, spills=args.spills, showlegend=args.no_legend)

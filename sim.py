@@ -65,7 +65,7 @@ def _sim(context, starthour, endhour):
         async_demand = residual_hour_demand * context.nsp_limit
 
         if context.verbose:
-            print('HOUR:', hr, 'demand', hour_demand)
+            print 'HOUR:', hr, 'demand', hour_demand
 
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
@@ -88,16 +88,16 @@ def _sim(context, starthour, endhour):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print('GENERATOR: %s,' % g, 'generation: %.1f' % context.generation[gidx, hr],
-                      'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
-                      'async-demand: %.1f' % async_demand)
+                print 'GENERATOR: %s,' % g, 'generation: %.1f' % context.generation[gidx, hr], \
+                    'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
+                    'async-demand: %.1f' % async_demand
 
             # distribute the generation across the regions (local region first)
 
             if context.track_exchanges:
                 paths = connections[g.polygon]
                 if context.verbose:
-                    print('PATHS:', paths)
+                    print 'PATHS:', paths
                 for path in paths:
                     if not gen:
                         break
@@ -108,7 +108,7 @@ def _sim(context, starthour, endhour):
 
                     if transfer > 0:
                         if context.verbose:
-                            print('DISPATCH:', int(transfer), 'to polygon', poly)
+                            print 'DISPATCH:', int(transfer), 'to polygon', poly
                         if poly is g.polygon:
                             context.add_exchange(hr, poly, poly, transfer)
                         else:
@@ -116,7 +116,7 @@ def _sim(context, starthour, endhour):
                             for src, dest in path:
                                 context.add_exchange(hr, src, dest, transfer)
                                 if context.verbose:
-                                    print('FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer)
+                                    print 'FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer
                                     assert polygons.direct_p(src, dest)
                         hour_demand[polyidx] -= transfer
                         gen -= transfer
@@ -130,13 +130,13 @@ def _sim(context, starthour, endhour):
                     # energy stored <= energy transferred, according to store's RTE
                     if context.verbose:
                         # show the energy transferred, not stored
-                        print('STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored)
+                        print 'STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored
                     for src, dest in polygons.path(g.polygon, other.polygon):
                         context.add_exchange(hr, src, dest, stored)
             context.spill[gidx, hr] = spl
 
         if context.verbose and (hour_demand > 0).any():
-            print('hour', hr, 'residual:', hour_demand)
+            print 'hour', hr, 'residual:', hour_demand
     return context
 
 
