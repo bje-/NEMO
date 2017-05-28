@@ -22,7 +22,7 @@ from deap import cma
 try:
     from scoop import futures
 except ImportError:  # pragma: no cover
-    print 'WARNING: scoop not loaded'
+    print('WARNING: scoop not loaded')
 
 import nem
 import generators
@@ -82,12 +82,12 @@ args = parser.parse_args()
 if __name__ == '__main__' and args.list_scenarios:
     for key in sorted(scenarios.supply_scenarios):
         descr = scenarios.supply_scenarios[key].__doc__
-        print '%20s' % key, '\t', descr.split('\n')[0]
+        print('%20s' % key, '\t', descr.split('\n')[0])
     print
     sys.exit(0)
 
 if __name__ == '__main__':
-    print vars(args)
+    print(vars(args))
 
 context = nem.Context()
 
@@ -122,8 +122,8 @@ if args.verbose and __name__ == '__main__':
     assert docstring is not None
     # Prune off any doctest test from the docstring.
     docstring = docstring.split('\n')[0]
-    print "supply scenario: %s (%s)" % (args.supply_scenario, docstring)
-    print context.generators
+    print("supply scenario: %s (%s)" % (args.supply_scenario, docstring))
+    print(context.generators)
 
 if args.trace_file is not None:
     with open(args.trace_file, 'w') as csvfile:
@@ -318,7 +318,7 @@ toolbox.register("evaluate", eval_func)
 def run():
     """Run the evolution."""
     if args.verbose and __name__ == '__main__':
-        print "objective: minimise", eval_func.__doc__
+        print("objective: minimise", eval_func.__doc__)
 
     np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
@@ -331,30 +331,30 @@ def run():
         algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
                                     stats=mstats, halloffame=hof, verbose=True)
     except KeyboardInterrupt:  # pragma: no cover
-        print 'user terminated early'
+        print('user terminated early')
 
-    print '%s:' % args.supply_scenario, [max(0, capacity) for capacity in hof[0]]
+    print('%s:' % args.supply_scenario, [max(0, capacity) for capacity in hof[0]])
     context.set_capacities(hof[0])
     nem.run(context)
     context.verbose = True
-    print context
+    print(context)
     score, penalty, reason = cost(context)
-    print 'Score: %.2f $/MWh' % score
+    print('Score: %.2f $/MWh' % score)
     if reason > 0:
-        print 'Penalty: %.2f $/MWh' % penalty
-        print 'Constraints violated:',
+        print('Penalty: %.2f $/MWh' % penalty)
+        print('Constraints violated:',)
         for label, code in zip(reasons, reasons.values()):
             if reason & code:
-                print label,
-        print
+                print(label,)
+        print()
     if args.transmission:
         np.set_printoptions(precision=5)
         x = context.exchanges.max(axis=0)
-        print np.array_str(x, precision=1, suppress_small=True)
+        print(np.array_str(x, precision=1, suppress_small=True))
         obj = {'exchanges': x.tolist(), 'generators': context}
         with open('results.json', 'w') as f:
             json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
-    print 'Done'
+    print('Done')
 
 if __name__ == '__main__':
     run()
