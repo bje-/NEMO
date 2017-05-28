@@ -209,7 +209,7 @@ def re100_batteries(context):
     """
     re100(context)
     # discharge between 6pm and 6am daily
-    hrs = range(0, 7) + range(18, 24)
+    hrs = list(range(0, 7)) + list(range(18, 24))
     battery = generators.Battery(polygons.wildcard, 0, 0, dischargeHours=hrs)
     g = context.generators
     context.generators = [battery] + g
