@@ -343,7 +343,7 @@ def run():
     if reason > 0:
         print 'Penalty: %.2f $/MWh' % penalty
         print 'Constraints violated:',
-        for label, code in zip(reasons, reasons.values()):
+        for label, code in reasons.iteritems():
             if reason & code:
                 print label,
         print

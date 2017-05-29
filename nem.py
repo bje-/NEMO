@@ -59,7 +59,7 @@ numsteps = hourly_regional_demand.shape[1]
 hourly_demand = np.zeros((polygons.numpolygons, numsteps))
 rgns = [r.polygons for r in regions.All]
 for i, weights in enumerate(rgns):
-    for polygon, share in zip(weights, weights.values()):
+    for polygon, share in weights.iteritems():
         hourly_demand[polygon - 1] = hourly_regional_demand[i] * share
 
 
