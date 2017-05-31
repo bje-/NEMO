@@ -7,6 +7,7 @@
 
 """Support code for the 43 polygons of the AEMO study."""
 
+import json
 import numpy as np
 import dijkstra
 from latlong import LatLong
@@ -110,6 +111,22 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
              36, 374, 574, 1026, 1148, 838, 186, 428, 496, 490, 706,
              1004, 906, 96, 62, 378, 528, 718, 564, 400, 24, 404, 410,
              474, 260, 20, 514, 60, 266, 10, 16, 0.16, 4]
+
+
+def _dump_geojson():
+    """Dump the polygon data for a GeoJSON file.
+
+    >>> geojson = _dump_geojson()
+    >>> assert len(geojson) > 0
+    """
+    polys = []
+    for i in range(1, numpolygons):
+        geometry = {'type': 'Polygon', 'coordinates': [_polygons[i]]}
+        properties = {'Polygon #': i, 'CST limit (GW)': cst_limit[i], 'PV limit (GW)': pv_limit[i], 'Wind limit (GW)': wind_limit[i]}
+        feature = {'type': 'Feature', 'geometry': geometry, 'properties': properties}
+        polys.append(feature)
+    top = {'type': 'FeatureCollection', 'features': polys}
+    return json.dumps(top)
 
 
 def _centroid(vertices):
