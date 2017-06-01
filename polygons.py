@@ -113,11 +113,10 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
              474, 260, 20, 514, 60, 266, 10, 16, 0.16, 4]
 
 
-def _dump_geojson():
-    """Dump the polygon data for a GeoJSON file.
+def dumps():
+    """Dump the polygon data in GeoJSON format.
 
-    >>> geojson = _dump_geojson()
-    >>> assert len(geojson) > 0
+    >>> assert len(dumps()) > 0
     """
     polys = []
     for i in range(1, numpolygons):
