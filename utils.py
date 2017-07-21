@@ -111,7 +111,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
     for hr in np.argwhere(context.unserved):
         unserved_dt = context.startdate + dt.timedelta(hours=hr[0])
         xvalue = mdates.date2num(unserved_dt)
-        plt.plot([xvalue], [ymax * 0.99], "yv", markersize=10, color='red', markeredgecolor='black')
+        plt.plot([xvalue], [ymax], "yv", markersize=10, color='red', markeredgecolor='black')
 
     if not filename:
         plt.show()  # pragma: no cover
