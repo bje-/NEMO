@@ -107,11 +107,11 @@ def plot(context, spills=False, filename=None, showlegend=True):
     plt.gca().xaxis_date()
     plt.gcf().autofmt_xdate()
 
+    _, ymax = plt.gca().get_ylim()
     for hr in np.argwhere(context.unserved):
         unserved_dt = context.startdate + dt.timedelta(hours=hr[0])
         xvalue = mdates.date2num(unserved_dt)
-        _, ymax = plt.gca().get_ylim()
-        plt.plot([xvalue], [ymax * 0.99], "yv", markersize=15, color='red')
+        plt.plot([xvalue], [ymax * 0.99], "yv", markersize=10, color='red', markeredgecolor='black')
 
     if not filename:
         plt.show()  # pragma: no cover
