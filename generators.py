@@ -45,8 +45,8 @@ class Generator(object):
         self.non_synchronous_p = False
 
         # Time series of dispatched power and spills
-        self.hourly_power = {}
-        self.hourly_spilled = {}
+        self.series_power = {}
+        self.series_spilled = {}
 
     def region(self):
         """Return the region the generator is in."""
@@ -59,7 +59,7 @@ class Generator(object):
     def opcost(self, costs):
         """Return the annual operating and maintenance cost."""
         return self.fixed_om_costs(costs) + \
-            sum(self.hourly_power.values()) * self.opcost_per_mwh(costs)
+            sum(self.series_power.values()) * self.opcost_per_mwh(costs)
 
     def fixed_om_costs(self, costs):
         """Return the fixed O&M costs."""
@@ -71,8 +71,8 @@ class Generator(object):
 
     def reset(self):
         """Reset the generator."""
-        self.hourly_power.clear()
-        self.hourly_spilled.clear()
+        self.series_power.clear()
+        self.series_spilled.clear()
 
     def capfactor(self):
         """Capacity factor of this generator (in %).
@@ -85,7 +85,7 @@ class Generator(object):
         """
         if self.capacity == 0:
             raise ValueError('zero capacity')
-        supplied = sum(self.hourly_power.values())
+        supplied = sum(self.series_power.values())
         capfactor = supplied / (self.capacity * 8760) * 100
         return capfactor
 
@@ -93,7 +93,7 @@ class Generator(object):
         """Calculate the LCOE in $/MWh."""
         total_cost = self.capcost(costs) / costs.annuityf * years \
             + self.opcost(costs)
-        supplied = sum(self.hourly_power.values())
+        supplied = sum(self.series_power.values())
         if supplied > 0:
             cost_per_mwh = total_cost / supplied
             return cost_per_mwh
@@ -103,14 +103,14 @@ class Generator(object):
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
-        supplied = sum(self.hourly_power.values()) / consts.twh
+        supplied = sum(self.series_power.values()) / consts.twh
         s = 'supplied %.4g TWh' % supplied
         if self.capacity > 0:
             cf = self.capfactor()
             if cf > 0:
                 s += ', CF %.1f%%' % cf
-        if sum(self.hourly_spilled.values()) > 0:
-            s += ', surplus %.1f TWh' % (sum(self.hourly_spilled.values()) / consts.twh)
+        if sum(self.series_spilled.values()) > 0:
+            s += ', surplus %.1f TWh' % (sum(self.series_spilled.values()) / consts.twh)
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
@@ -164,8 +164,8 @@ class Wind(Generator):
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
-        self.hourly_power[hr] = power
-        self.hourly_spilled[hr] = spilled
+        self.series_power[hr] = power
+        self.series_spilled[hr] = spilled
         return power, spilled
 
 
@@ -196,8 +196,8 @@ class PV(Generator):
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
-        self.hourly_power[hr] = power
-        self.hourly_spilled[hr] = spilled
+        self.series_power[hr] = power
+        self.series_spilled[hr] = spilled
         return power, spilled
 
 
@@ -264,8 +264,8 @@ class CST(Generator):
         assert self.stored <= self.maxstorage
         assert self.stored >= 0
         # assert generation <= self.capacity
-        self.hourly_power[hr] = generation
-        self.hourly_spilled[hr] = 0
+        self.series_power[hr] = generation
+        self.series_spilled[hr] = 0
 
         if generation > demand:
             # This can happen due to rounding errors.
@@ -342,7 +342,7 @@ class Fuelled(Generator):
         power = min(self.capacity, demand)
         if power > 0:
             self.runhours += 1
-        self.hourly_power[hr] = power
+        self.series_power[hr] = power
         return power, 0
 
     def summary(self, context):
@@ -422,7 +422,7 @@ class PumpedHydro(Hydro):
         if self.last_run == hr:
             # Can't pump and generate in the same hour.
             return 0, 0
-        self.hourly_power[hr] = power
+        self.series_power[hr] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
@@ -479,7 +479,7 @@ class Fossil(Fuelled):
 
     def summary(self, context):
         return Fuelled.summary(self, context) + ', %.1f Mt CO2' \
-            % (sum(self.hourly_power.values()) * self.intensity / 1000000.)
+            % (sum(self.series_power.values()) * self.intensity / 1000000.)
 
 
 class Black_Coal(Fossil):
@@ -541,7 +541,7 @@ class CCS(Fossil):
 
     def summary(self, context):
         return Fossil.summary(self, context) + ', %.1f Mt captured' \
-            % (sum(self.hourly_power.values()) * self.intensity / 1000000. * self.capture)
+            % (sum(self.series_power.values()) * self.intensity / 1000000. * self.capture)
 
 
 class Coal_CCS(CCS):
@@ -682,7 +682,7 @@ class Battery(Generator):
             return 0, 0
 
         power = min(self.stored, min(self.capacity, demand))
-        self.hourly_power[hr] = power
+        self.series_power[hr] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
@@ -740,8 +740,8 @@ class Geothermal(Generator):
         """Step method for geothermal generators."""
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
-        self.hourly_power[hr] = power
-        self.hourly_spilled[hr] = 0
+        self.series_power[hr] = power
+        self.series_spilled[hr] = 0
         return power, 0
 
 
@@ -784,8 +784,8 @@ class DemandResponse(Generator):
         """
         power = min(self.capacity, demand)
         self.maxresponse = max(self.maxresponse, power)
-        self.hourly_power[hr] = power
-        self.hourly_spilled[hr] = 0
+        self.series_power[hr] = power
+        self.series_spilled[hr] = 0
         if power > 0:
             self.runhours += 1
         return power, 0
@@ -815,5 +815,5 @@ class GreenPower(Generator):
     def step(self, hr, demand):
         """Step method for GreenPower."""
         power = min(self.capacity, demand)
-        self.hourly_power[hr] = power
+        self.series_power[hr] = power
         return power, 0

@@ -76,7 +76,7 @@ class TestSequenceFunctions(unittest.TestCase):
         ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
-        self.assertEqual(sum(ccgt.hourly_power.values()), self.context.timesteps * 100)
+        self.assertEqual(sum(ccgt.series_power.values()), self.context.timesteps * 100)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0
@@ -182,4 +182,4 @@ class TestSequenceFunctions(unittest.TestCase):
         ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
         nem.run(self.context)
-        self.assertTrue(len(self.context.generators[0].hourly_power) > 0)
+        self.assertTrue(len(self.context.generators[0].series_power) > 0)
