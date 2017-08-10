@@ -86,8 +86,12 @@ class Generator(object):
         if self.capacity == 0:
             raise ValueError('zero capacity')
         supplied = sum(self.series_power.values())
-        capfactor = supplied / (self.capacity * 8760) * 100
-        return capfactor
+        hours = len(self.series_power)
+        try:
+            capfactor = supplied / (self.capacity * hours) * 100
+            return capfactor
+        except ZeroDivisionError:
+            return float('nan')
 
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
