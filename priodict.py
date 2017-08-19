@@ -11,6 +11,7 @@
 
 from __future__ import generators
 
+
 class priorityDictionary(dict):
 	def __init__(self):
 		'''Initialize priorityDictionary by creating binary heap of pairs (value,key).
@@ -22,14 +23,14 @@ until it is found by smallest() or until the heap is rebuilt.'''
 	def smallest(self):
 		'''Find smallest item after removing deleted items from front of heap.'''
 		if len(self) == 0:
-			raise IndexError, "smallest of empty priorityDictionary"
+			raise IndexError("smallest of empty priorityDictionary")
 		heap = self.__heap
 		while heap[0][1] not in self or self[heap[0][1]] != heap[0][0]:
 			lastItem = heap.pop()
 			insertionPoint = 0
 			while 1:
-				smallChild = 2*insertionPoint+1
-				if smallChild+1 < len(heap) and heap[smallChild] > heap[smallChild+1] :
+				smallChild = 2 * insertionPoint + 1
+				if smallChild + 1 < len(heap) and heap[smallChild] > heap[smallChild + 1]:
 					smallChild += 1
 				if smallChild >= len(heap) or lastItem <= heap[smallChild]:
 					heap[insertionPoint] = lastItem
@@ -37,7 +38,7 @@ until it is found by smallest() or until the heap is rebuilt.'''
 				heap[insertionPoint] = heap[smallChild]
 				insertionPoint = smallChild
 		return heap[0][1]
-	
+
 	def __iter__(self):
 		'''Create destructive sorted iterator of priorityDictionary.'''
 		def iterfn():
@@ -46,25 +47,25 @@ until it is found by smallest() or until the heap is rebuilt.'''
 				yield x
 				del self[x]
 		return iterfn()
-	
-	def __setitem__(self,key,val):
+
+	def __setitem__(self, key, val):
 		'''Change value stored in dictionary and add corresponding pair to heap.
 Rebuilds the heap if the number of deleted items gets large, to avoid memory leakage.'''
-		dict.__setitem__(self,key,val)
+		dict.__setitem__(self, key, val)
 		heap = self.__heap
 		if len(heap) > 2 * len(self):
-			self.__heap = [(v,k) for k,v in self.iteritems()]
+			self.__heap = [(v, k) for k, v in self.iteritems()]
 			self.__heap.sort()  # builtin sort probably faster than O(n)-time heapify
 		else:
-			newPair = (val,key)
+			newPair = (val, key)
 			insertionPoint = len(heap)
 			heap.append(None)
-			while insertionPoint > 0 and newPair < heap[(insertionPoint-1)//2]:
-				heap[insertionPoint] = heap[(insertionPoint-1)//2]
-				insertionPoint = (insertionPoint-1)//2
+			while insertionPoint > 0 and newPair < heap[(insertionPoint - 1) // 2]:
+				heap[insertionPoint] = heap[(insertionPoint - 1) // 2]
+				insertionPoint = (insertionPoint - 1) // 2
 			heap[insertionPoint] = newPair
-	
-	def setdefault(self,key,val):
+
+	def setdefault(self, key, val):
 		'''Reimplement setdefault to pass through our customized __setitem__.'''
 		if key not in self:
 			self[key] = val
