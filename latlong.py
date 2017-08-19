@@ -1,6 +1,7 @@
 # Copyright (C) 2010, 2011, 2014 Ben Elliston
 #
-# Latitude/longitude spherical geodesy formulae & scripts (C) Chris Veness 2002-2011
+# Latitude/longitude spherical geodesy formulae and scripts are
+# (C) Chris Veness 2002-2011
 # (www.movable-type.co.uk/scripts/latlong.html)
 #
 # This file is free software; you can redistribute it and/or modify it
@@ -82,7 +83,8 @@ class LatLong(object):
         lat1 = math.radians(self.lat)
         lat2 = math.radians(another.lat)
         a = math.sin(dlat / 2) * math.sin(dlat / 2) + \
-            math.sin(dlon / 2) * math.sin(dlon / 2) * math.cos(lat1) * math.cos(lat2)
+            math.sin(dlon / 2) * math.sin(dlon / 2) * \
+            math.cos(lat1) * math.cos(lat2)
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         return r * c
 
