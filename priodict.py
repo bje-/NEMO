@@ -1,15 +1,17 @@
-# Priority dictionary using binary heaps
-# David Eppstein, UC Irvine, 8 Mar 2002
+"""
+Priority dictionary using binary heaps
+David Eppstein, UC Irvine, 8 Mar 2002
 
-# Implements a data structure that acts almost like a dictionary, with two modifications:
-# (1) D.smallest() returns the value x minimizing D[x].
-#     For this to work correctly, all values D[x] stored in the
-#     dictionary must be comparable.
-# (2) iterating "for x in D" finds and removes the items from D
-#     in sorted order. Each item is not removed until the next item is
-#     requested, so D[x] will still return a useful value until the
-#     next iteration of the for-loop.
-# Each operation takes logarithmic amortized time.
+Implements a data structure that acts almost like a dictionary, with two modifications:
+(1) D.smallest() returns the value x minimizing D[x].
+    For this to work correctly, all values D[x] stored in the
+    dictionary must be comparable.
+(2) iterating "for x in D" finds and removes the items from D
+    in sorted order. Each item is not removed until the next item is
+    requested, so D[x] will still return a useful value until the
+    next iteration of the for-loop.
+Each operation takes logarithmic amortized time.
+"""
 
 from __future__ import generators
 
