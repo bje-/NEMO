@@ -76,9 +76,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
     # Plot demand first.
     plt.plot(xdata, demand, color='black', linewidth=3 if spills else 2)
     if spills:
-        peakdemand = np.empty_like(demand)
-        peakdemand.fill(demand.max())
-        plt.plot(xdata, peakdemand, color='black', linestyle='dashed')
+        plt.axhline(y=demand.max(), xmin=0, xmax=1, color='black', linestyle='dashed')
 
     accum = np.zeros(context.timesteps)
     prev = accum.copy()
