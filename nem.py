@@ -96,6 +96,10 @@ class Context(object):
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
 
+    def total_demand(self):
+        """Return the total demand."""
+        return self.demand.sum()
+
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
         self.exchanges[hour, src - 1, dest - 1] += transfer
@@ -127,7 +131,7 @@ class Context(object):
                 else:
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
-        s += 'Demand energy: %.1f TWh\n' % (self.demand.sum() / consts.twh)
+        s += 'Demand energy: %.1f TWh\n' % (self.total_demand() / consts.twh)
         try:
             s += 'Unused surplus energy: %.1f TWh\n' % (self.spill.sum() / consts.twh)
             if self.spill.sum() > 0:

@@ -136,7 +136,7 @@ reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8,
 
 def _penalty_unserved(ctx):
     """Penalty: unserved energy"""
-    minuse = ctx.demand.sum() * (ctx.relstd / 100)
+    minuse = ctx.total_demand() * (ctx.relstd / 100)
     use = max(0, ctx.unserved_energy - minuse)
     reason = reasons['unserved'] if use > 0 else 0
     return pow(use, 3), reason
@@ -202,7 +202,7 @@ def _penalty_fossil(ctx):
     for g in ctx.generators:
         if isinstance(g, generators.Fossil):
             fossil_energy += sum(g.series_power.values())
-    fossil_exceedance = max(0, fossil_energy - ctx.demand.sum() * args.fossil_limit * ctx.years)
+    fossil_exceedance = max(0, fossil_energy - ctx.total_demand() * args.fossil_limit * ctx.years)
     reason = reasons['fossil'] if fossil_exceedance > 0 else 0
     return pow(fossil_exceedance, 3), reason
 
@@ -276,7 +276,7 @@ def cost(ctx):
         score += costmat.sum()
 
     # Express $/yr as an average $/MWh over the period
-    return score / ctx.demand.sum(), penalty / ctx.demand.sum(), reason
+    return score / ctx.total_demand(), penalty / ctx.total_demand(), reason
 
 
 def eval_func(chromosome):
