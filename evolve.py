@@ -185,11 +185,8 @@ def _penalty_emissions(ctx):
     """Penalty: total emissions"""
     emissions = 0
     for g in ctx.generators:
-        try:
+        if hasattr(g, 'intensity'):
             emissions += sum(g.series_power.values()) * g.intensity
-        except AttributeError:
-            # not all generators have an intensity attribute
-            pass
     # exceedance in tonnes CO2-e
     emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
     reason = reasons['emissions'] if emissions_exceedance > 0 else 0
