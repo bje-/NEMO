@@ -171,11 +171,14 @@ def _penalty_min_regional(ctx):
     """Penalty: minimum share of regional generation"""
     regional_generation_shortfall = 0
     for rgn in ctx.regions:
+        regional_demand = 0
+        for poly in rgn.polygons:
+            regional_demand += ctx.demand[poly - 1].sum()
         regional_generation = 0
         for g in ctx.generators:
             if g.region() is rgn:
                 regional_generation += sum(g.series_power.values())
-        min_regional_generation = sum(ctx.demand[rgn]) * ctx.min_regional_generation
+        min_regional_generation = regional_demand * ctx.min_regional_generation
         regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
     reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
     return pow(regional_generation_shortfall, 3), reason
