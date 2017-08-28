@@ -35,7 +35,7 @@ flake8:
 	python -m flake8 --ignore=E266,E501,N *.py tests/*.py
 
 lint:
-	pylint *.py
+	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
 
 coveralls:
 	coveralls
