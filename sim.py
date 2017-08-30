@@ -8,18 +8,19 @@
 """The simulation engine."""
 
 import numpy as np
+import pandas as pd
 import polygons
 import regions
 
 
-def _sim(context, starthour, endhour):
+def _sim(context, date_range):
     # reset generator internal state
     for g in context.generators:
         g.reset()
 
     context.exchanges.fill(0)
-    context.generation = np.zeros((len(context.generators), context.hours))
-    context.spill = np.zeros((len(context.generators), context.hours))
+    generation = np.zeros((len(date_range), len(context.generators)))
+    spill = np.zeros((len(date_range), len(context.generators)))
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region() in context.regions]
@@ -45,8 +46,6 @@ def _sim(context, starthour, endhour):
                                  polygons.subset(path, selected_polygons)]
             connections[poly].sort(key=polygons.pathlen)
 
-    assert context.demand.shape == (polygons.numpolygons, context.timesteps)
-
     # Zero out polygon demands we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
         for poly in rgn.polygons:
@@ -55,8 +54,8 @@ def _sim(context, starthour, endhour):
     # We are free to scribble all over demand_copy.
     demand_copy = context.demand.copy()
 
-    for hr in xrange(starthour, endhour):
-        hour_demand = demand_copy[::, hr]
+    for hr, date in enumerate(date_range):
+        hour_demand = demand_copy.loc[date].copy()
         residual_hour_demand = hour_demand.sum()
         # async_demand is the maximum amount of the demand in this
         # hour that can be met from non-synchronous
@@ -65,7 +64,9 @@ def _sim(context, starthour, endhour):
         async_demand = residual_hour_demand * context.nsp_limit
 
         if context.verbose:
-            print 'HOUR:', hr, 'demand', hour_demand
+            print 'STEP:', date
+            print 'DEMAND:', \
+                {k: round(v, 2) for k, v in hour_demand.to_dict().items()}
 
         # Dispatch power from each generator in merit order
         for gidx, g in enumerate(gens):
@@ -75,7 +76,7 @@ def _sim(context, starthour, endhour):
                 gen, spl = g.step(hr, residual_hour_demand)
             assert gen <= residual_hour_demand, \
                 "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
-            context.generation[gidx, hr] = gen
+            generation[hr, gidx] = gen
 
             if g.non_synchronous_p:
                 async_demand -= gen
@@ -88,7 +89,7 @@ def _sim(context, starthour, endhour):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print 'GENERATOR: %s,' % g, 'generation: %.1f' % context.generation[gidx, hr], \
+                print 'GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx], \
                     'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
                     'async-demand: %.1f' % async_demand
 
@@ -133,14 +134,21 @@ def _sim(context, starthour, endhour):
                         print 'STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored
                     for src, dest in polygons.path(g.polygon, other.polygon):
                         context.add_exchange(hr, src, dest, stored)
-            context.spill[gidx, hr] = spl
+            spill[hr, gidx] = spl
 
         if context.verbose and (hour_demand > 0).any():
-            print 'hour', hr, 'residual:', hour_demand
+            print 'RESIDUAL:', \
+                {k: round(v, 2) for k, v in hour_demand.to_dict().items()}
+            print 'ENDSTEP:', date
+
+    # Change the numpy arrays to dataframes for human consumption
+    context.generation = pd.DataFrame(index=date_range, data=generation)
+    context.spill = pd.DataFrame(index=date_range, data=spill)
+
     return context
 
 
-def run(context, starthour=0, endhour=None):
+def run(context, starthour=None, endhour=None):
     """Run the simulation (without a plot).
 
     >>> from nem import Context
@@ -154,27 +162,16 @@ def run(context, starthour=0, endhour=None):
     if not isinstance(context.regions, list):
         raise ValueError('regions is not a list')
 
+    if starthour is None:
+        starthour = context.demand.index.min()
     if endhour is None:
-        endhour = context.timesteps
+        endhour = context.demand.index.max()
+    date_range = pd.date_range(starthour, endhour, freq='H')
 
-    _sim(context, starthour, endhour)
+    _sim(context, date_range)
 
-    # Calculate some summary statistics.
-    agg_demand = context.demand.sum(axis=0)
-    context.accum = context.generation.sum(axis=0)
-    context.unserved_energy = (agg_demand - context.accum).sum()
-    context.unserved_energy = max(0, round(context.unserved_energy, 0))
-    context.unserved = (agg_demand - context.accum) > 0.1
-    context.unserved_hours = context.unserved.sum()
-    total_demand = agg_demand.sum()
-    if total_demand > 0:
-        context.unserved_percent = context.unserved_energy / agg_demand.sum() * 100
-    else:
-        context.unserved_percent = 0.
-
-    shortfall = [agg_demand[hr] - context.accum[hr]
-                 for hr in np.argwhere(context.unserved)]
-    if len(shortfall) == 0:
-        context.shortfalls = (None, None)
-    else:
-        context.shortfalls = (round(min(shortfall)), round(max(shortfall)))
+    # Calculate unserved energy.
+    agg_demand = context.demand.sum(axis=1)
+    agg_generation = context.generation.sum(axis=1)
+    unserved = agg_demand - agg_generation
+    context.unserved = unserved[unserved > 0]

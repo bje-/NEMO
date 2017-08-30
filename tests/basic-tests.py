@@ -11,6 +11,7 @@
 
 import math
 import nem
+import consts
 import regions
 import polygons
 import generators
@@ -53,7 +54,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.context = nem.Context()
-        self.minload = math.floor(self.context.demand.sum(axis=0).min())
+        self.minload = math.floor(self.context.demand.sum(axis=1).min())
 
     def test_001(self):
         """Test that all regions are present."""
@@ -63,13 +64,14 @@ class TestSequenceFunctions(unittest.TestCase):
         """Demand equals approx. 204 TWh."""
         self.context.generators = []
         nem.run(self.context)
-        self.assertEqual(math.trunc(self.context.demand.sum() / pow(10, 6)), 204)
+        self.assertEqual(math.trunc(self.context.total_demand() / consts.twh), 204)
 
     def test_003(self):
         """Power system with no generators meets none of the demand."""
         self.context.generators = []
         nem.run(self.context)
-        self.assertEqual(math.trunc(self.context.unserved_energy), math.trunc(self.context.demand.sum()))
+        self.assertEqual(math.trunc(self.context.unserved_energy()),
+                         math.trunc(self.context.total_demand()))
 
     def test_004(self):
         """100 MW fossil plant generates exactly 876,000 MWh."""
@@ -92,13 +94,13 @@ class TestSequenceFunctions(unittest.TestCase):
         """Generation to meet minimum load leads to no spills."""
         self.context.generators = [SuperGenerator(self.minload)]
         nem.run(self.context)
-        self.assertEqual(self.context.spill.sum(), 0)
+        self.assertEqual(self.context.spill.values.sum(), 0)
 
     def test_007(self):
         """Generation to meet minimum load + 1GW produces some spills."""
         self.context.generators = [SuperGenerator(self.minload + 1000)]
         nem.run(self.context)
-        self.assertTrue(self.context.spill.sum() > 0)
+        self.assertTrue(self.context.spill.values.sum() > 0)
 
     def test_008(self):
         """A NSW generator runs in NSW only."""
@@ -125,6 +127,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_010(self):
         """Running in one region only produces no interstate exchanges."""
+        import pandas as pd
         for rgn in regions.All:
             if rgn is regions.snowy:
                 continue
@@ -138,12 +141,10 @@ class TestSequenceFunctions(unittest.TestCase):
             taspoly = [k for k, v in regions.tas.polygons.items() if v > 0][0]
             vicpoly = [k for k, v in regions.vic.polygons.items() if v > 0][0]
 
-            self.context.generators = [generators.OCGT(nswpoly, 100),
-                                       generators.OCGT(qldpoly, 100),
-                                       generators.OCGT(sapoly, 100),
-                                       generators.OCGT(taspoly, 100),
-                                       generators.OCGT(vicpoly, 100)]
-            nem.run(self.context, endhour=100)
+            self.context.generators = []
+            for poly in [nswpoly, qldpoly, sapoly, taspoly, vicpoly]:
+                self.context.generators.append(generators.OCGT(poly, 100))
+            nem.run(self.context, endhour=pd.Timestamp('2010-01-05'))
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
             # FIXME: we need a numpy array that can be indexed from 1
             self.assertTrue(self.context.exchanges[0, loadpoly - 1, loadpoly - 1] > 0, 'Only rgn->rgn is > 0')

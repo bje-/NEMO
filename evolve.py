@@ -137,7 +137,7 @@ reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8,
 def _penalty_unserved(ctx):
     """Penalty: unserved energy"""
     minuse = ctx.total_demand() * (ctx.relstd / 100)
-    use = max(0, ctx.unserved_energy - minuse)
+    use = max(0, ctx.unserved_energy() - minuse)
     reason = reasons['unserved'] if use > 0 else 0
     return pow(use, 3), reason
 

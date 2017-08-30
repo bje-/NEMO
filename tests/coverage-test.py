@@ -44,21 +44,17 @@ class TestCoverage(unittest.TestCase):
 
     def test_004(self):
         """Test Context.__str__ method."""
-        orig_demand = nem.demand.copy()
-        # Shorten the demand to 100 half-hours
-        nem.demand = nem.demand[::, 0:100]
         c = nem.Context()
         print str(c)
         c.regions = [regions.nsw]
         print str(c)
-        nem.demand = orig_demand.copy()
 
     def test_005(self):
         """Test Context summary with no cost generator."""
         import costs
         import types
         c = nem.Context()
-        c.costs = costs.NullCosts(0, 0, 0, 0)
+        c.costs = costs.NullCosts()
         print str(c)
         c.verbose = True
         print str(c)

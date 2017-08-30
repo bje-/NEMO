@@ -8,8 +8,8 @@
 # (at your option) any later version.
 
 """Supply and demand side scenarios."""
-import heapq
 import numpy as np
+import pandas as pd
 
 import configfile
 import generators
@@ -693,12 +693,24 @@ def roll_demand(context, posns):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.arange(3)
+    >>> c.demand = pd.DataFrame(range(10))
     >>> roll_demand(c, 1)
     >>> print c.demand
-    [2 0 1]
+       0
+    0  9
+    1  0
+    2  1
+    3  2
+    4  3
+    5  4
+    6  5
+    7  6
+    8  7
+    9  8
     """
-    context.demand = np.roll(context.demand, posns)
+    idx = context.demand.index
+    values = np.roll(context.demand.values, posns)
+    context.demand = pd.DataFrame(data=values, index=idx)
 
 
 def scale_range_demand(context, fromHour, toHour, factor):
@@ -707,14 +719,23 @@ def scale_range_demand(context, fromHour, toHour, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.zeros((1,10))
-    >>> c.demand[:] = np.arange(10)
+    >>> c.demand = pd.DataFrame(range(10))
     >>> scale_range_demand(c, 0, 4, 1.2)
-    >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
-    [[ 0.  1.2  2.4  3.6  4.  5.  6.  7.  8.  9. ]]
+    >>> print c.demand
+         0
+    0  0.0
+    1  1.2
+    2  2.4
+    3  3.6
+    4  4.0
+    5  5.0
+    6  6.0
+    7  7.0
+    8  8.0
+    9  9.0
     """
     for hour in range(fromHour, toHour):
-        context.demand[:, hour::24] *= factor
+        context.demand[hour::24] *= factor
 
 
 def scale_demand_twh(context, new_demand):
@@ -723,10 +744,11 @@ def scale_demand_twh(context, new_demand):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.ones((100))
+    >>> c.demand = pd.DataFrame([100]*10)
     >>> scale_demand_twh(c, 0.0002)
-    >>> print c.demand[0]
-    2.0
+    >>> print c.demand.loc[0]
+    0    20.0
+    Name: 0, dtype: float64
     """
     total_demand = context.demand.sum()
     new_demand *= pow(10, 6)
@@ -739,12 +761,15 @@ def scale_demand_by(context, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.arange(3)
+    >>> c.demand = pd.DataFrame(range(3))
     >>> scale_demand_by(c, 1.2)
-    >>> print c.demand   # doctest: +NORMALIZE_WHITESPACE
-    [ 0. 1.2 2.4]
+    >>> print c.demand
+         0
+    0  0.0
+    1  1.2
+    2  2.4
     """
-    context.demand = context.demand * factor
+    context.demand *= factor
 
 
 def shift_demand(context, demand, fromHour, toHour):
@@ -766,15 +791,19 @@ def scale_peaks(context, power, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.zeros ((5,10))
-    >>> c.demand[::,3] = 5000
+    >>> c.demand = pd.DataFrame(np.zeros((5,5)))
+    >>> c.demand.loc[3] = 5000
     >>> scale_peaks(c, 3000, 0.5)
-    >>> c.demand[::,3]
-    array([ 2500.,  2500.,  2500.,  2500.,  2500.])
+    >>> c.demand.loc[3]
+    0    2500.0
+    1    2500.0
+    2    2500.0
+    3    2500.0
+    4    2500.0
+    Name: 3, dtype: float64
     """
-    agg_demand = context.demand.sum(axis=0)
-    where = np.where(agg_demand > power)
-    context.demand[::, where] *= factor
+    agg_demand = context.demand.sum(axis=1)
+    context.demand[agg_demand > power] *= factor
 
 
 def scale_npeaks(context, topn, factor):
@@ -782,20 +811,25 @@ def scale_npeaks(context, topn, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = np.zeros ((5,10))
-    >>> c.demand[::,3] = 5000
-    >>> c.demand[::,4] = 3000
+    >>> c.demand = pd.DataFrame(np.zeros((5,5)))
+    >>> c.demand.loc[3] = 5000
+    >>> c.demand.loc[4] = 3000
     >>> scale_npeaks(c, 1, 0.5)
-    >>> c.demand[::,4]
-    array([ 3000.,  3000.,  3000.,  3000.,  3000.])
-    >>> c.demand[::,3]
-    array([ 2500.,  2500.,  2500.,  2500.,  2500.])
+    >>> c.demand.loc[4]
+    0    3000.0
+    1    3000.0
+    2    3000.0
+    3    3000.0
+    4    3000.0
+    Name: 4, dtype: float64
+    >>> c.demand.loc[3]
+    0    2500.0
+    1    2500.0
+    2    2500.0
+    3    2500.0
+    4    2500.0
+    Name: 3, dtype: float64
     """
-    agg_demand = context.demand.sum(axis=0)
-    top_demands = heapq.nlargest(topn, agg_demand)
-    # A trick from:
-    # http://docs.scipy.org/doc/numpy/reference/generated/
-    #   numpy.where.html#numpy.where
-    ix = np.in1d(agg_demand.ravel(), top_demands).reshape(agg_demand.shape)
-    where = np.where(ix)
-    context.demand[::, where] *= factor
+    agg_demand = context.demand.sum(axis=1).sort_values(ascending=False)
+    rng = agg_demand.head(topn).index
+    context.demand.loc[rng] *= factor
