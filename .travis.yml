@@ -6,4 +6,4 @@ before_script:
   - sleep 3 # give xvfb some time to start
 script: nosetests -v -I '(evolve|replay).py'
 install:
-  - pip install numpy matplotlib deap
+  - pip install numpy pandas matplotlib deap
