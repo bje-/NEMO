@@ -79,12 +79,8 @@ class Generator(object):
 
         >>> g = Generator(1, 0, 'label')
         >>> g.capfactor()  # doctest: +ELLIPSIS
-        Traceback (most recent call last):
-           ...
-        ValueError: zero capacity
+        nan
         """
-        if self.capacity == 0:
-            raise ValueError('zero capacity')
         supplied = sum(self.series_power.values())
         hours = len(self.series_power)
         try:
