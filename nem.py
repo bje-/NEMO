@@ -87,14 +87,25 @@ class Context(object):
 
     def unserved_energy(self):
         """Return the total unserved energy."""
-        return self.unserved.sum()
+        return self.unserved.values.sum()
 
     def unserved_percent(self):
-        """Return the total unserved energy as a percentage of total demand."""
-        try:
-            return self.unserved_energy() / self.total_demand() * 100
-        except ZeroDivisionError:
+        """Return the total unserved energy as a percentage of total demand.
+
+        >>> import pandas as pd
+        >>> c = Context()
+        >>> c.unserved_percent()
+        0.0
+        >>> c.demand = pd.DataFrame()
+        >>> c.unserved_percent()
+        nan
+        """
+        # We can't catch ZeroDivision because numpy emits a warning
+        # (which we would rather not suppress).
+        if self.total_demand() == 0:
             return np.nan
+        else:
+	        return self.unserved_energy() / self.total_demand() * 100
 
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
