@@ -68,7 +68,7 @@ def _sim(context, date_range):
             print 'DEMAND:', \
                 {k: round(v, 2) for k, v in hour_demand.to_dict().items()}
 
-        # Dispatch power from each generator in merit order
+        # Dispatch power from each generator in merit (list) order
         for gidx, g in enumerate(gens):
             if g.non_synchronous_p and async_demand < residual_hour_demand:
                 gen, spl = g.step(hr, async_demand)
