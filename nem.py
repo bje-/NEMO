@@ -105,7 +105,7 @@ class Context(object):
         if self.total_demand() == 0:
             return np.nan
         else:
-	        return self.unserved_energy() / self.total_demand() * 100
+            return self.unserved_energy() / self.total_demand() * 100
 
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
