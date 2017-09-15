@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 import configfile
+import costs
 import consts
 import generators
 import regions
@@ -80,6 +81,7 @@ class Context(object):
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
+        self.costs = costs.NullCosts()
 
     def total_demand(self):
         """Return the total demand from the data frame."""

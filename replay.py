@@ -12,7 +12,6 @@ import json
 import re
 import numpy as np
 
-import costs
 import configfile as cf
 import nem
 import scenarios
@@ -32,7 +31,6 @@ parser.add_argument("--spills", action="store_true", help='plot spills')
 args = parser.parse_args()
 
 context = nem.Context()
-context.costs = costs.NullCosts()
 assert 0 <= args.nsp_limit <= 1
 context.nsp_limit = args.nsp_limit
 # Apply each demand modifier argument (if any) in the given order.
