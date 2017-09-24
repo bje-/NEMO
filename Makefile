@@ -3,7 +3,7 @@ all:
 OMIT=priodict.py,dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
-check:  replay.data
+check:  replay.json
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks --costs=Null -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
@@ -12,15 +12,17 @@ check:  replay.data
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
 	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
-	$(COVRUN) replay.py -t -f replay.data -v > /dev/null
-	rm replay.data trace.out results.json
+	$(COVRUN) replay.py -t -f replay.json -v > /dev/null
+	rm trace.out results.json replay.json
 	coverage html --omit=$(OMIT)
 
-replay.data:
+replay.json:
 	echo "# comment line" >> $@
 	echo "malformed line" >> $@
 	echo >> $@
-	echo '{"options": {"supply_scenario": "__one_ccgt__", "nsp_limit": 0.75, "demand_modifier": []}, "parameters": [1]}' >> $@
+	echo -n '{"options": {"carbon_price": 0, "ccs_storage_costs": 27, "gas_price": 11,' >> $@
+	echo -n ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__"' >> $@
+	echo    ' "nsp_limit": 0.75, "demand_modifier": []}, "parameters": [1]}' >> $@
 
 nem.prof:
 	python -m cProfile -o $@ profile.py
@@ -44,5 +46,5 @@ docker:
 	 docker build -t nemo .
 
 clean:
-	rm -rf .coverage htmlcov replay.data
+	rm -rf .coverage htmlcov replay.json
 	rm *.pyc tests/*.pyc nem.prof profile.py.lprof
