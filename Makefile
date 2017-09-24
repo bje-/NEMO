@@ -11,8 +11,8 @@ check:  replay.data
 	$(COVRUN) evolve.py --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
-	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -d unchanged -v > /dev/null
-	$(COVRUN) replay.py -t -d unchanged -f replay.data -v > /dev/null
+	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
+	$(COVRUN) replay.py -t -f replay.data -v > /dev/null
 	rm replay.data trace.out results.json
 	coverage html --omit=$(OMIT)
 
@@ -20,7 +20,7 @@ replay.data:
 	echo "# comment line" >> $@
 	echo "malformed line" >> $@
 	echo >> $@
-	echo "__one_ccgt__: [1]" >> $@
+	echo '{"options": {"supply_scenario": "__one_ccgt__", "nsp_limit": 0.75, "demand_modifier": []}, "parameters": [1]}' >> $@
 
 nem.prof:
 	python -m cProfile -o $@ profile.py

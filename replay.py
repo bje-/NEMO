@@ -12,35 +12,38 @@ import json
 import re
 import numpy as np
 
-import configfile as cf
 import nem
 import scenarios
 import utils
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-parser.add_argument("-f", type=str, help='replay file', required=True)
-parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
+parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', default='results.json')
 parser.add_argument("--no-legend", action="store_false", help="hide legend")
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="count", help='verbose mode')
 parser.add_argument("-x", action="store_true", help='producing a balancing plot')
-parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
-                    help='Non-synchronous penetration limit [default: %s]' %
-                    cf.get('limits', 'nonsync-penetration'))
-parser.add_argument("--spills", action="store_true", help='plot spills')
+parser.add_argument("--spills", action="store_true", help='plot surplus generation')
 args = parser.parse_args()
 
-context = nem.Context()
-assert 0 <= args.nsp_limit <= 1
-context.nsp_limit = args.nsp_limit
-# Apply each demand modifier argument (if any) in the given order.
-for arg in args.demand_modifier:
-    scenarios.demand_switch(arg)(context)
 
-
-def run_one(chromosome):
+def run_one(bundle):
     """Run a single simulation."""
-    context.set_capacities(chromosome)
+
+    context = nem.Context()
+    context.nsp_limit = bundle['options']['nsp_limit']
+    assert 0 <= context.nsp_limit <= 1
+
+    scenario = bundle['options']['supply_scenario']
+    scenarios.supply_switch(scenario)(context)
+    print 'scenario', scenario
+
+    # Apply each demand modifier argument (if any) in the given order.
+    for arg in bundle['options']['demand_modifier']:
+        scenarios.demand_switch(arg)(context)
+
+    capacities = bundle['parameters']
+    context.set_capacities(capacities)
+
     context.track_exchanges = args.transmission
     context.verbose = args.v > 1
     nem.run(context)
@@ -50,27 +53,24 @@ def run_one(chromosome):
         np.set_printoptions(precision=3)
         x = context.exchanges.max(axis=0)
         print np.array_str(x, precision=1, suppress_small=True)
-        with open('results.json', 'w') as f:
+        with open('exchanges.json', 'w') as f:
             json.dump(x.tolist(), f)
     print
 
+    if args.x:  # pragma: no cover
+        utils.plot(context, spills=args.spills, showlegend=args.no_legend)
 
-with open(args.f) as replayfile:
-    for line in replayfile:
+
+with open(args.f) as resultsfile:
+    for line in resultsfile:
         if re.search(r'^\s*$', line):
             continue
         if re.search(r'^\s*#', line):
             print line,
             continue
-        if not re.search(r'^\s*[\w\-\+]+:\s*\[.*\]\s*.?$', line):
+        try:
+            bundle = json.loads(line)
+        except ValueError:
             print 'skipping malformed input:', line
             continue
-        match = re.match(r'^\s*([\w\-\+]+):\s*\[(.*)\]\s*.?$', line)
-        scenario = match.group(1)
-        capacitylist = match.group(2)
-        scenarios.supply_switch(scenario)(context)
-        capacities = [float(st) for st in capacitylist.split(',')]  # str -> float
-        print 'scenario', scenario
-        run_one(capacities)
-        if args.x:  # pragma: no cover
-            utils.plot(context, spills=args.spills, showlegend=args.no_legend)
+        run_one(bundle)

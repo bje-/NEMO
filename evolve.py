@@ -39,6 +39,8 @@ parser.add_argument("-c", "--carbon-price", type=int,
 parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
 parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
                     help='generations [default: %s]' % cf.get('optimiser', 'generations'))
+parser.add_argument("-o", "--output", type=str, default='results.json',
+                    help='filename of output file (will overwrite)')
 parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
                     help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
 parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
@@ -340,11 +342,13 @@ def run():
     print context
     score, penalty, reason = cost(context)
     print 'Score: %.2f $/MWh' % score
+    constraints_violated = []
     if reason > 0:
         print 'Penalty: %.2f $/MWh' % penalty
         print 'Constraints violated:',
         for label, code in reasons.iteritems():
             if reason & code:
+                constraints_violated += [label]
                 print label,
         print
     if args.transmission:
@@ -354,6 +358,13 @@ def run():
         obj = {'exchanges': x.tolist(), 'generators': context}
         with open('results.json', 'w') as f:
             json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
+
+    with open(args.output, 'w') as f:
+        bundle = {'options': vars(args),
+                  'parameters': [max(0, cap) for cap in hof[0]],
+                  'score': score, 'penalty': penalty,
+                  'constraints_violated': constraints_violated}
+        json.dump(bundle, f)
     print 'Done'
 
 if __name__ == '__main__':
