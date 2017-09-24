@@ -13,6 +13,7 @@ import re
 import numpy as np
 
 import nem
+import costs
 import scenarios
 import utils
 
@@ -28,18 +29,25 @@ args = parser.parse_args()
 
 def run_one(bundle):
     """Run a single simulation."""
+    options = bundle['options']
 
     context = nem.Context()
-    context.nsp_limit = bundle['options']['nsp_limit']
+    context.nsp_limit = options['nsp_limit']
     assert 0 <= context.nsp_limit <= 1
 
-    scenario = bundle['options']['supply_scenario']
+    scenario = options['supply_scenario']
     scenarios.supply_switch(scenario)(context)
     print 'scenario', scenario
 
     # Apply each demand modifier argument (if any) in the given order.
-    for arg in bundle['options']['demand_modifier']:
+    for arg in options['demand_modifier']:
         scenarios.demand_switch(arg)(context)
+
+    cost_class = costs.cost_switch(options['costs'])
+    context.costs = cost_class(options['discount_rate'],
+                               options['coal_price'], options['gas_price'],
+                               options['ccs_storage_costs'])
+    context.costs.carbon = options['carbon_price']
 
     capacities = bundle['parameters']
     context.set_capacities(capacities)
