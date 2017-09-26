@@ -94,7 +94,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
         for g in list(g for g in context.generators if g.region() in context.regions):
             idx = context.generators.index(g)
             accum += context.spill[idx]
-            plt.plot(accum.index, accum, color='black')
+            plt.plot(accum.index, accum, color='black', linewidth=0.5)
             plt.fill_between(prev.index, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
 
