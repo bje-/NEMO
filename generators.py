@@ -116,7 +116,7 @@ class Generator(object):
         if self.opcost(costs) > 0:
             s += ', opcost $%s' % locale.format('%d', self.opcost(costs), grouping=True)
         lcoe = self.lcoe(costs, context.years)
-        if supplied > 0 and np.isfinite(lcoe):
+        if np.isfinite(lcoe) and lcoe > 0:
             s += ', LCOE $%d' % int(lcoe)
         return s
 
