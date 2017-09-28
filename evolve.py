@@ -335,10 +335,10 @@ def run():
     except KeyboardInterrupt:  # pragma: no cover
         print 'user terminated early'
 
-    print '%s:' % args.supply_scenario, [max(0, capacity) for capacity in hof[0]]
     context.set_capacities(hof[0])
     nem.run(context)
     context.verbose = True
+    print
     print context
     score, penalty, reason = cost(context)
     print 'Score: %.2f $/MWh' % score
