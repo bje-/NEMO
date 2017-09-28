@@ -5,6 +5,8 @@ COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.json
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
+
+coverage: replay.json
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks --costs=Null -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
 	NEMORC=default.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
