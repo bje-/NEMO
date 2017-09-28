@@ -24,7 +24,7 @@ replay.json:
 	echo >> $@
 	echo -n '{"options": {"carbon_price": 0, "ccs_storage_costs": 27, "gas_price": 11,' >> $@
 	echo -n ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__",' >> $@
-	echo    ' "nsp_limit": 0.75, "demand_modifier": []}, "parameters": [1]}' >> $@
+	echo    ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}' >> $@
 
 nem.prof:
 	python -m cProfile -o $@ profile.py
