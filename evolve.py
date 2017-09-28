@@ -13,6 +13,7 @@ import csv
 import json
 import argparse
 import numpy as np
+import warnings
 
 from deap import algorithms
 from deap import base
@@ -31,6 +32,9 @@ import costs
 import configfile as cf
 import consts
 import transmission
+
+# Ignore possible runtime warnings from SCOOP
+warnings.simplefilter('ignore', RuntimeWarning)
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
 parser.add_argument("-c", "--carbon-price", type=int,
