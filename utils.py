@@ -70,8 +70,6 @@ def plot(context, spills=False, filename=None, showlegend=True):
 
     # Plot demand first.
     plt.plot(demand.index, demand, color='black', linewidth=3 if spills else 2)
-    if spills:
-        plt.axhline(y=demand.max(), xmin=0, xmax=1, color='black', linestyle='dashed')
 
     accum = pd.Series(data=0, index=demand.index)
     prev = accum.copy()
