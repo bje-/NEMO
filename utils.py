@@ -54,6 +54,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
     # aggregate demand
     demand = context.demand.sum(axis=1)
 
+    plt.clf()
     plt.ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
