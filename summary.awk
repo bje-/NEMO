@@ -71,9 +71,9 @@ BEGIN {
 	c = merit[m]
 	if (caps[c] != "")
 	    printf ("%12s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
-		    caps[c], (float) caps[c] / total_capacity, \
-		    energy[c], (float) energy[c] / total_demand, \
-		    (caps[c] > 0) ? (float) (energy[c] * 1000) / (caps[c] * timesteps) : 0)
+		    caps[c], caps[c] / total_capacity, \
+		    energy[c], energy[c] / total_demand, \
+		    (caps[c] > 0) ? (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
     if (surplus > 0)
 	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
