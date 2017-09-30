@@ -49,7 +49,7 @@ def _legend(context):
     plt.setp(legend.get_texts(), fontsize='small')
 
 
-def plot(context, spills=False, filename=None, showlegend=True):
+def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     """Produce a pretty plot of supply and demand."""
     # aggregate demand
     demand = context.demand.sum(axis=1)
@@ -97,6 +97,7 @@ def plot(context, spills=False, filename=None, showlegend=True):
             plt.fill_between(prev.index, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
 
+    plt.gca().set_xlim(xlim)  # set_xlim accepts None
     plt.gca().xaxis_date()
     plt.gcf().autofmt_xdate()
 

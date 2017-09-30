@@ -31,6 +31,12 @@ class TestCoverage(unittest.TestCase):
         utils.plot(c, filename='foo.png', spills=True)
         os.unlink('foo.png')
 
+        # Test limiting the x-range.
+        from datetime import datetime
+        xlim = [datetime(2010, 1, 1), datetime(2010, 1, 10)]
+        utils.plot(c, filename='foo.png', xlim=xlim)
+        os.unlink('foo.png')
+
     def test_003(self):
         c = nem.Context()
         # Add 25 DR generators so that the abbreviated legend is used.
