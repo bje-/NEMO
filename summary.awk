@@ -81,8 +81,8 @@ BEGIN {
     print ""
     co2 = 0
     surplus = 0
-    params = null
-    constraints = null
+    params = ""
+    constraints = ""
     delete caps
     delete energy
 }
