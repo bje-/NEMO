@@ -35,10 +35,10 @@ BEGIN {
 /diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 
-/supplied.*TWh/		{ energy[last] += $2 }
+/supplied [[:digit:]\.]+ TWh/	{ energy[last] += $2 }
+/spilled [[:digit:]\.] TWh/	{ surplus += $5 }	# may be "spilled" in old log files
+/surplus [[:digit:]\.]+ TWh/  	{ surplus += $7 }	# now it's "surplus"
 
-/spilled.*TWh/		{ surplus += $5 }	# may be "spilled" in old log files
-/surplus.*TWh/		{ surplus += $7 }	# now it's "surplus"
 /Mt CO2.?$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
 
