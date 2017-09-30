@@ -11,6 +11,10 @@ BEGIN {
     split("battery HSA EGS PV wind CST Coal Coal-CCS CCGT CCGT-CCS hydro PSH GT OCGT diesel DR", merit)
     # assume 8760 timesteps unless specified in the input
     timesteps = 8760
+
+    # initialise some variables
+    co2 = 0
+    surplus = 0
 }
 
 /battery.*GW.?$/	{ caps["battery"] += $(NF-1); last="battery" }
