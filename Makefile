@@ -48,5 +48,5 @@ docker:
 	 docker build -t nemo .
 
 clean:
-	rm -rf .coverage htmlcov replay.json
+	rm -rf .coverage htmlcov replay.json exchanges.json
 	rm *.pyc tests/*.pyc nem.prof profile.py.lprof
