@@ -74,7 +74,8 @@ parser.add_argument("--min-regional-generation", type=float,
 parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
                     help='Non-synchronous penetration limit [default: %s]' %
                     cf.get('limits', 'nonsync-penetration'))
-parser.add_argument("--reliability-std", type=float, help='reliability standard (%% unserved)')
+parser.add_argument("--reliability-std", type=float, default=0.002,
+                    help='reliability standard (%% unserved)')
 parser.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
                     help='minimum operating reserves [default: %s MW]' %
                     cf.get('limits', 'minimum-reserves-mw'))
@@ -96,14 +97,11 @@ if __name__ == '__main__':
     print vars(args)
 
 context = nem.Context()
+context.relstd = args.reliability_std
 
 # Set the system non-synchronous penetration limit.
 context.nsp_limit = args.nsp_limit
 assert 0 <= context.nsp_limit <= 1
-
-# Override the reliability standard (if the user gives this option).
-if args.reliability_std is not None:
-    context.relstd = args.reliability_std
 
 # Likewise for the minimum share of regional generation.
 context.min_regional_generation = args.min_regional_generation
