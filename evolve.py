@@ -62,7 +62,8 @@ parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cos
                     help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
 parser.add_argument("--emissions-limit", type=float, default=np.inf,
                     help='CO2 emissions limit (Mt/y) [default: infinity]')
-parser.add_argument("--fossil-limit", type=float, help='Fraction of energy from fossil fuel [default: None]')
+parser.add_argument("--fossil-limit", type=float, default=1,
+                    help='Maximum share of energy from fossil fuel [default: 1.0]')
 parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
                     help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
 parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'),
@@ -241,7 +242,7 @@ if args.reserves > 0:
     penaltyfns.append(_penalty_reserves)
 if args.emissions_limit < np.inf:
     penaltyfns.append(_penalty_emissions)
-if args.fossil_limit is not None:
+if args.fossil_limit < 1:
     penaltyfns.append(_penalty_fossil)
 if context.min_regional_generation is not None:
     penaltyfns.append(_penalty_min_regional)
