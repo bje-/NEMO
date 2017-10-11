@@ -62,7 +62,7 @@ parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cos
                     help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
 parser.add_argument("--emissions-limit", type=float, default=np.inf,
                     help='CO2 emissions limit (Mt/y) [default: infinity]')
-parser.add_argument("--fossil-limit", type=float, default=1,
+parser.add_argument("--fossil-limit", type=float, default=1.0,
                     help='Maximum share of energy from fossil fuel [default: 1.0]')
 parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
                     help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
@@ -71,8 +71,8 @@ parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro
                     cf.get('limits', 'hydro-twh-per-yr'))
 parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
 parser.add_argument("--list-scenarios", action="store_true")
-parser.add_argument("--min-regional-generation", type=float,
-                    help='minimum share of energy generated intra-region [default: None]')
+parser.add_argument("--min-regional-generation", type=float, default=0.0,
+                    help='minimum share of energy generated intra-region [default: 0]')
 parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
                     help='Non-synchronous penetration limit [default: %s]' %
                     cf.get('limits', 'nonsync-penetration'))
@@ -107,8 +107,7 @@ assert 0 <= context.nsp_limit <= 1
 
 # Likewise for the minimum share of regional generation.
 context.min_regional_generation = args.min_regional_generation
-assert context.min_regional_generation is None or \
-    (0 <= context.min_regional_generation <= 1), \
+assert 0 <= context.min_regional_generation <= 1, \
     "Minimum regional generation must be in the interval [0,1]"
 
 cost_class = costs.cost_switch(args.costs)
@@ -244,7 +243,7 @@ if args.emissions_limit < np.inf:
     penaltyfns.append(_penalty_emissions)
 if args.fossil_limit < 1:
     penaltyfns.append(_penalty_fossil)
-if context.min_regional_generation is not None:
+if context.min_regional_generation > 0:
     penaltyfns.append(_penalty_min_regional)
 
 
