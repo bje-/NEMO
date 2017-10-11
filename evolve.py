@@ -12,8 +12,8 @@ import sys
 import csv
 import json
 import argparse
-import numpy as np
 import warnings
+import numpy as np
 
 from deap import algorithms
 from deap import base
