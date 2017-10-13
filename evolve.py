@@ -280,8 +280,10 @@ def cost(ctx):
         costmat = ctx.costs.transmission.cost_matrix(maxexchanges) * ctx.years
         score += costmat.sum()
 
+    score /= ctx.total_demand()
+    penalty /= ctx.total_demand()
     # Express $/yr as an average $/MWh over the period
-    return score / ctx.total_demand(), penalty / ctx.total_demand(), reason
+    return score, penalty, reason
 
 
 def eval_func(chromosome):
