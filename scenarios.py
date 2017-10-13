@@ -750,7 +750,7 @@ def scale_demand_twh(context, new_demand):
     0    20.0
     Name: 0, dtype: float64
     """
-    total_demand = context.demand.sum()
+    total_demand = context.demand.values.sum()
     new_demand *= pow(10, 6)
     context.demand *= new_demand / total_demand
 
