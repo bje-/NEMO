@@ -1,2 +1,4 @@
 *.pyc
 htmlcov
+exchanges.json
+results.json
