@@ -12,10 +12,10 @@ import json
 import re
 import numpy as np
 
-import nem
-import costs
-import scenarios
-import utils
+import nemo
+from nemo import costs
+from nemo import scenarios
+from nemo import utils
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
 parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', default='results.json')
@@ -31,7 +31,7 @@ def run_one(bundle):
     """Run a single simulation."""
     options = bundle['options']
 
-    context = nem.Context()
+    context = nemo.Context()
     context.nsp_limit = options['nsp_limit']
     assert 0 <= context.nsp_limit <= 1
 
@@ -54,7 +54,7 @@ def run_one(bundle):
 
     context.track_exchanges = args.transmission
     context.verbose = args.v > 1
-    nem.run(context)
+    nemo.run(context)
     context.verbose = args.v > 0
     print context
     if args.transmission:

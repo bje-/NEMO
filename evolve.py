@@ -25,12 +25,12 @@ try:
 except ImportError:  # pragma: no cover
     print 'WARNING: scoop not loaded'
 
-import nem
-import generators
-import scenarios
-import costs
-import configfile as cf
-import transmission
+import nemo
+from nemo import generators
+from nemo import scenarios
+from nemo import costs
+from nemo import configfile as cf
+from nemo import transmission
 
 # Conversion factor between MWh and TWh.
 twh = pow(10., 6)
@@ -100,7 +100,7 @@ if __name__ == '__main__' and args.list_scenarios:
 if __name__ == '__main__':
     print vars(args)
 
-context = nem.Context()
+context = nemo.Context()
 context.relstd = args.reliability_std
 
 # Set the system non-synchronous penetration limit.
@@ -163,9 +163,9 @@ def _penalty_reserves(ctx):
 
             # Calculate headroom for each generator, except pumped hydro and
             # CST -- tricky to calculate capacity
-            if isinstance(g, nem.generators.Fuelled) and not \
-               isinstance(g, nem.generators.PumpedHydro) and not \
-               isinstance(g, nem.generators.CST):
+            if isinstance(g, nemo.generators.Fuelled) and not \
+               isinstance(g, nemo.generators.PumpedHydro) and not \
+               isinstance(g, nemo.generators.CST):
                 reserve += g.capacity - g.series_power[i]
 
         if reserve + spilled < args.reserves:
@@ -274,7 +274,7 @@ def cost(ctx):
                 maxexchanges[j, i] = 0
         try:
             # existing transmission is "free"
-            maxexchanges = np.maximum(0, maxexchanges - nem.polyons.existing_net)
+            maxexchanges = np.maximum(0, maxexchanges - nemo.polyons.existing_net)
         except AttributeError:
             # skip if not present
             pass
@@ -291,7 +291,7 @@ def cost(ctx):
 def eval_func(chromosome):
     """Average cost of energy (in $/MWh)."""
     context.set_capacities(chromosome)
-    nem.run(context)
+    nemo.run(context)
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
@@ -343,7 +343,7 @@ def run():
         print 'user terminated early'
 
     context.set_capacities(hof[0])
-    nem.run(context)
+    nemo.run(context)
     context.verbose = True
     print
     print context
@@ -364,7 +364,7 @@ def run():
         print np.array_str(x, precision=1, suppress_small=True)
         obj = {'exchanges': x.tolist(), 'generators': context}
         with open('results.json', 'w') as f:
-            json.dump(obj, f, cls=nem.Context.JSONEncoder, indent=True)
+            json.dump(obj, f, cls=nemo.Context.JSONEncoder, indent=True)
 
     with open(args.output, 'w') as f:
         bundle = {'options': vars(args),
