@@ -36,10 +36,10 @@ lineprof:
 	kernprof -v -l profile.py
 
 flake8:
-	python -m flake8 --ignore=E266,E501,N *.py tests/*.py
+	python -m flake8 --ignore=E266,E501,N *.py */*.py
 
 lint:
-	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py))
+	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py nemo/*.py))
 
 coveralls:
 	coveralls
