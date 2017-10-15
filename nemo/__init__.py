@@ -7,5 +7,6 @@
 
 """NEMO package __init__.py"""
 
+import nemo.nem
 from nemo.context import Context
 from nemo.sim import run
