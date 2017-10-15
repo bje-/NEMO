@@ -29,7 +29,7 @@ from nemo.nem import startdate
 from nemo.nem import hourly_regional_demand
 from nemo.nem import hourly_demand
 
-# Context objects are used throughout this module.
+
 class Context(object):
 
     """All state is kept in a Context object."""
