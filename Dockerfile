@@ -8,7 +8,7 @@
 FROM ubuntu:latest
 MAINTAINER bje@air.net.au
 RUN apt-get update
-RUN apt-get -y install python-pip python-numpy python-matplotlib git
+RUN apt-get -y install python-pip python-numpy python-matplotlib python-pandas git
 RUN pip install --upgrade pip
 RUN pip install scoop
 RUN pip install deap
