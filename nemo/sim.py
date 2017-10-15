@@ -151,7 +151,7 @@ def _sim(context, date_range):
 def run(context, starthour=None, endhour=None):
     """Run the simulation (without a plot).
 
-    >>> from nem import Context
+    >>> from nemo import Context
     >>> c = Context()
     >>> c.regions = None
     >>> run(c)
