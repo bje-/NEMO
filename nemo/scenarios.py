@@ -11,10 +11,10 @@
 import numpy as np
 import pandas as pd
 
-import configfile
-import generators
-import polygons
-import regions
+from nemo import configfile
+from nemo import generators
+from nemo import polygons
+from nemo import regions
 
 
 def supply_switch(label):
@@ -157,7 +157,7 @@ def re100(context):
     >>> len(c.generators)
     184
     """
-    from generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
+    from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
     result = []
     # The following list is in merit order.

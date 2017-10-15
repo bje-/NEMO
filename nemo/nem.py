@@ -14,12 +14,12 @@ import urllib2
 import numpy as np
 import pandas as pd
 
-from anywh import anyWh
-import configfile
-import costs
-import generators
-import regions
-import polygons
+from nemo.anywh import anyWh
+from nemo import configfile
+from nemo import costs
+from nemo import generators
+from nemo import regions
+from nemo import polygons
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.

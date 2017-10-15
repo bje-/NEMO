@@ -7,7 +7,7 @@
 # (at your option) any later version.
 
 """Generation technology costs."""
-import generators as tech
+from nemo import generators as tech
 
 
 def annuity_factor(t, r):
@@ -388,7 +388,7 @@ def cost_switch(label):
     Return a class for a given cost scenario.
 
     >>> cost_switch('AETA2013-in2030-low') # doctest: +ELLIPSIS
-    <class 'costs.AETA2013_2030Low'>
+    <class 'nemo.costs.AETA2013_2030Low'>
     >>> cost_switch('foo')
     Traceback (most recent call last):
       ...

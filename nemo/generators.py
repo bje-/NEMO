@@ -14,8 +14,8 @@ import urllib2
 import numpy as np
 from matplotlib.patches import Patch
 
-from anywh import anyWh
-import polygons
+from nemo.anywh import anyWh
+from nemo import polygons
 
 
 # Needed for currency formatting.

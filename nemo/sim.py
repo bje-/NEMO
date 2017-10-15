@@ -9,8 +9,8 @@
 
 import numpy as np
 import pandas as pd
-import polygons
-import regions
+from nemo import polygons
+from nemo import regions
 
 
 def _sim(context, date_range):

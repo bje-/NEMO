@@ -5,7 +5,7 @@ David Eppstein, UC Irvine, 4 April 2002
 http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/117228
 """
 
-from priodict import priorityDictionary
+from nemo.priodict import priorityDictionary
 
 
 def Dijkstra(G, start, end=None):

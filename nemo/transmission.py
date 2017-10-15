@@ -7,8 +7,8 @@
 
 """Transmission model details."""
 import numpy as np
-from polygons import distances
-from costs import annuity_factor
+from nemo.polygons import distances
+from nemo.costs import annuity_factor
 
 
 class Transmission(object):

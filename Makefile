@@ -1,6 +1,6 @@
 all:
 
-OMIT=priodict.py,dijkstra.py
+OMIT=nemo/priodict.py,nemo/dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.json
@@ -39,7 +39,7 @@ flake8:
 	python -m flake8 --ignore=E266,E501,N *.py */*.py
 
 lint:
-	pylint $(filter-out priodict.py dijkstra.py, $(wildcard *.py nemo/*.py))
+	pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
 
 coveralls:
 	coveralls

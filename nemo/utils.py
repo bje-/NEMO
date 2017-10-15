@@ -12,9 +12,9 @@ import numpy as np
 
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
-import configfile
-from configfile import ConfigParser
-from anywh import anyWh
+from nemo import configfile
+from nemo.configfile import ConfigParser
+from nemo.anywh import anyWh
 
 
 def _generator_list(context):

@@ -5,5 +5,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-from nem import Context
-from sim import run
+"""NEMO package __init__.py"""
+
+from nemo.nem import Context
+from nemo.sim import run

@@ -10,10 +10,10 @@
 """A testsuite for NEMO."""
 
 import math
-import nem
-import regions
-import polygons
-import generators
+import nemo
+from nemo import regions
+from nemo import polygons
+from nemo import generators
 import unittest
 
 
@@ -52,7 +52,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
-        self.context = nem.Context()
+        self.context = nemo.Context()
         self.minload = math.floor(self.context.demand.sum(axis=1).min())
 
     def test_001(self):
@@ -62,13 +62,13 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_002(self):
         """Demand equals approx. 204 TWh."""
         self.context.generators = []
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertEqual(math.trunc(self.context.total_demand() / pow(10., 6)), 204)
 
     def test_003(self):
         """Power system with no generators meets none of the demand."""
         self.context.generators = []
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertEqual(math.trunc(self.context.unserved_energy()),
                          math.trunc(self.context.total_demand()))
 
@@ -76,7 +76,7 @@ class TestSequenceFunctions(unittest.TestCase):
         """100 MW fossil plant generates exactly 876,000 MWh."""
         ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertEqual(sum(ccgt.series_power.values()), self.context.timesteps * 100)
 
     # Create a super generator that always meets demand.
@@ -86,19 +86,19 @@ class TestSequenceFunctions(unittest.TestCase):
         """Super generator runs every hour."""
         gen = SuperGenerator(None)
         self.context.generators = [gen]
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertEqual(gen.runhours, self.context.timesteps)
 
     def test_006(self):
         """Generation to meet minimum load leads to no spills."""
         self.context.generators = [SuperGenerator(self.minload)]
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertEqual(self.context.spill.values.sum(), 0)
 
     def test_007(self):
         """Generation to meet minimum load + 1GW produces some spills."""
         self.context.generators = [SuperGenerator(self.minload + 1000)]
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertTrue(self.context.spill.values.sum() > 0)
 
     def test_008(self):
@@ -107,7 +107,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.regions = [rgn]
             gen = SuperGenerator(None)
             self.context.generators = [gen]
-            nem.run(self.context)
+            nemo.run(self.context)
             if rgn == regions.nsw:
                 self.assertEqual(gen.runhours, self.context.timesteps)
             else:
@@ -121,7 +121,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.regions = rgnset
             gen = SuperGenerator(None)
             self.context.generators = [gen]
-            nem.run(self.context)
+            nemo.run(self.context)
             self.assertEqual(gen.runhours, self.context.timesteps)
 
     def test_010(self):
@@ -130,7 +130,7 @@ class TestSequenceFunctions(unittest.TestCase):
         for rgn in regions.All:
             if rgn is regions.snowy:
                 continue
-            self.context = nem.Context()
+            self.context = nemo.Context()
             self.context.track_exchanges = True
             self.context.regions = [rgn]
             loadpoly = [k for k, v in rgn.polygons.items() if v > 0][0]
@@ -143,7 +143,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = []
             for poly in [nswpoly, qldpoly, sapoly, taspoly, vicpoly]:
                 self.context.generators.append(generators.OCGT(poly, 100))
-            nem.run(self.context, endhour=pd.Timestamp('2010-01-05'))
+            nemo.run(self.context, endhour=pd.Timestamp('2010-01-05'))
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
             # FIXME: we need a numpy array that can be indexed from 1
             self.assertTrue(self.context.exchanges[0, loadpoly - 1, loadpoly - 1] > 0, 'Only rgn->rgn is > 0')
@@ -155,7 +155,7 @@ class TestSequenceFunctions(unittest.TestCase):
                 if rgn1 is rgn2:
                     continue
                 self.context.regions = [rgn1, rgn2]
-                nem.run(self.context, endhour=1)
+                nemo.run(self.context, endhour=1)
                 self.assertTrue(self.context.exchanges[0, rgn1, rgn1] >= 0)
                 self.assertTrue(self.context.exchanges[0, rgn2, rgn2] >= 0)
                 for i in regions.All:
@@ -174,12 +174,12 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.regions = rgnset
             gen = SuperGenerator(None)
             self.context.generators = [gen]
-            nem.run(self.context)
+            nemo.run(self.context)
             self.assertEqual(gen.runhours, 0)
 
     def test_013(self):
         """Fossil plant records power generation history."""
         ccgt = generators.CCGT(polygons.wildcard, 100)
         self.context.generators = [ccgt]
-        nem.run(self.context)
+        nemo.run(self.context)
         self.assertTrue(len(self.context.generators[0].series_power) > 0)
