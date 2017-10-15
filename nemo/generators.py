@@ -97,8 +97,7 @@ class Generator(object):
         if supplied > 0:
             cost_per_mwh = total_cost / supplied
             return cost_per_mwh
-        else:
-            return np.inf
+        return np.inf
 
     def summary(self, context):
         """Return a summary of the generator activity."""

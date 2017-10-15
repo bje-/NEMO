@@ -82,8 +82,7 @@ class Context(object):
         # (which we would rather not suppress).
         if self.total_demand() == 0:
             return np.nan
-        else:
-            return self.unserved_energy() / self.total_demand() * 100
+        return self.unserved_energy() / self.total_demand() * 100
 
     def add_exchange(self, hour, src, dest, transfer):
         """Note energy transfer from SRC to DEST in HOUR."""
@@ -123,7 +122,7 @@ class Context(object):
                 spill_series = self.spill[self.spill.sum(axis=1) > 0]
                 s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
 
-        if len(self.unserved) == 0:
+        if not self.unserved:
             s += 'No unserved energy'
         else:
             s += 'Unserved energy: %.3f%%' % self.unserved_percent() + '\n'
@@ -140,7 +139,7 @@ class Context(object):
             rng = pd.date_range(self.unserved.index[0], periods=len(self.unserved.index), freq='H')
             unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
-            if len(self.unserved) > 0:
+            if self.unserved:
                 shortfalls = round(self.unserved.min()), round(self.unserved.max())
                 s += 'Shortfalls (min, max): ' + str(shortfalls)
         return s

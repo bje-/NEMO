@@ -43,8 +43,7 @@ class anyWh(object):
             return self._val / pow(10, 3)
         elif self._val >= 1:
             return self._val
-        else:
-            return self._val * pow(10, 3)
+        return self._val * pow(10, 3)
 
     def __int__(self):
         return int(self._val)
