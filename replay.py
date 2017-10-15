@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+#
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 # Copyright (C) 2014, 2015 The University of New South Wales
 #
@@ -18,7 +20,7 @@ from nemo import scenarios
 from nemo import utils
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', default='results.json')
+parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', metavar='FILE', required=True)
 parser.add_argument("--no-legend", action="store_false", help="hide legend")
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="count", help='verbose mode')
