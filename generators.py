@@ -14,7 +14,7 @@ import urllib2
 import numpy as np
 from matplotlib.patches import Patch
 
-import consts
+from anywh import anyWh
 import polygons
 
 
@@ -103,14 +103,13 @@ class Generator(object):
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
-        supplied = sum(self.series_power.values()) / consts.twh
-        s = 'supplied %.4g TWh' % supplied
+        s = 'supplied %s' % anyWh(sum(self.series_power.values()))
         if self.capacity > 0:
             cf = self.capfactor()
             if cf > 0:
                 s += ', CF %.1f%%' % cf
         if sum(self.series_spilled.values()) > 0:
-            s += ', surplus %.1f TWh' % (sum(self.series_spilled.values()) / consts.twh)
+            s += ', surplus %s' % anyWh(sum(self.series_spilled.values()))
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
@@ -126,9 +125,9 @@ class Generator(object):
 
     def __str__(self):
         """A short string representation of the generator."""
-        return '%s (%s:%s), %.2f GW' \
+        return '%s (%s:%s), %s' \
             % (self.label, self.region(), self.polygon,
-               self.capacity / 1000.)
+               anyWh(self.capacity, 'W'))
 
     def __repr__(self):
         """A representation of the generator."""
@@ -592,7 +591,7 @@ class Battery(Generator):
         self.chargehours = 0
 
     def set_storage(self, maxstorage):
-        """Vary the storage capacity (GWh)."""
+        """Vary the storage capacity (recorded in MWh)."""
         self.maxstorage = maxstorage * 1000
         self.stored = 0
 
@@ -690,7 +689,7 @@ class Battery(Generator):
         return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
             ', charged %s hours' % locale.format('%d', self.chargehours, grouping=True) + \
-            ', %.2f GWh storage' % (self.maxstorage / 1000.)
+            ', %s storage' % anyWh(self.maxstorage)
 
 
 class Geothermal(Generator):

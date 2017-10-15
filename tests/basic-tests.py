@@ -11,7 +11,6 @@
 
 import math
 import nem
-import consts
 import regions
 import polygons
 import generators
@@ -64,7 +63,7 @@ class TestSequenceFunctions(unittest.TestCase):
         """Demand equals approx. 204 TWh."""
         self.context.generators = []
         nem.run(self.context)
-        self.assertEqual(math.trunc(self.context.total_demand() / consts.twh), 204)
+        self.assertEqual(math.trunc(self.context.total_demand() / pow(10., 6)), 204)
 
     def test_003(self):
         """Power system with no generators meets none of the demand."""

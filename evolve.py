@@ -30,8 +30,10 @@ import generators
 import scenarios
 import costs
 import configfile as cf
-import consts
 import transmission
+
+# Conversion factor between MWh and TWh.
+twh = pow(10., 6)
 
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
@@ -218,7 +220,7 @@ def _penalty_bioenergy(ctx):
     for g in ctx.generators:
         if isinstance(g, generators.Biofuel):
             biofuel_energy += sum(g.series_power.values())
-    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * consts.twh * ctx.years)
+    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * twh * ctx.years)
     reason = reasons['bioenergy'] if biofuel_exceedance > 0 else 0
     return pow(biofuel_exceedance, 3), reason
 
@@ -230,7 +232,7 @@ def _penalty_hydro(ctx):
         if isinstance(g, generators.Hydro) and \
            not isinstance(g, generators.PumpedHydro):
             hydro_energy += sum(g.series_power.values())
-    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * consts.twh * ctx.years)
+    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * twh * ctx.years)
     reason = reasons['hydro'] if hydro_exceedance > 0 else 0
     return pow(hydro_exceedance, 3), reason
 

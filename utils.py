@@ -14,6 +14,7 @@ from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 import configfile
 from configfile import ConfigParser
+from anywh import anyWh
 
 
 def _generator_list(context):
@@ -40,7 +41,7 @@ def _legend(context):
                 patches.append(g.patch)
     else:
         for g in gens:
-            labels.append(g.label + ' (%.1f GW)' % (g.capacity / 1000.))
+            labels.append(g.label + ' (%s)' % anyWh(g.capacity, units='W'))
             patches.append(g.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,

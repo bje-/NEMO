@@ -14,9 +14,9 @@ import urllib2
 import numpy as np
 import pandas as pd
 
+from anywh import anyWh
 import configfile
 import costs
-import consts
 import generators
 import regions
 import polygons
@@ -140,9 +140,9 @@ class Context(object):
                 else:
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
-        s += 'Demand energy: %.1f TWh\n' % (self.total_demand() / consts.twh)
+        s += 'Demand energy: %s\n' % anyWh(self.total_demand())
         if hasattr(self, 'spill'):
-            s += 'Unused surplus energy: %.1f TWh\n' % (self.spill.values.sum() / consts.twh)
+            s += 'Unused surplus energy: %s\n' % anyWh(self.spill.values.sum())
             if self.spill.values.sum() > 0:
                 spill_series = self.spill[self.spill.sum(axis=1) > 0]
                 s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
