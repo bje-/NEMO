@@ -10,3 +10,5 @@
 import nemo.nem
 from nemo.context import Context
 from nemo.sim import run
+
+__all__ = [Context, run]
