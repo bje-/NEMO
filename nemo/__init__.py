@@ -11,4 +11,4 @@ import nemo.nem  # noqa: F401
 from nemo.context import Context
 from nemo.sim import run
 
-__all__ = [Context, run]
+__all__ = ['Context', 'run']
