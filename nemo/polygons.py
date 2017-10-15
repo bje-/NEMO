@@ -145,6 +145,7 @@ def _centroid(vertices):
         z = 1. / (3. * thesum)
     return (vsum[0] * z, vsum[1] * z)
 
+
 centroids = {}
 for i, vertices in _polygons.iteritems():
     a, b = _centroid(vertices)

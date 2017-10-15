@@ -69,6 +69,7 @@ class Region(object):
         """
         return self
 
+
 nsw = Region(0, 'NSW1', 'New South Wales')
 qld = Region(1, 'QLD1', 'Queensland')
 sa = Region(2, 'SA1', 'South Australia')

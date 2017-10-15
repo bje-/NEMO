@@ -7,7 +7,7 @@
 
 """NEMO package __init__.py"""
 
-import nemo.nem
+import nemo.nem  # noqa: F401
 from nemo.context import Context
 from nemo.sim import run
 
