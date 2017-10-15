@@ -20,7 +20,7 @@ import scenarios
 import utils
 
 parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', default='results.json')
+parser.add_argument("-f", type=str, help='filename of results file (default: results.json)', metavar='FILE', required=True)
 parser.add_argument("--no-legend", action="store_false", help="hide legend")
 parser.add_argument("-t", "--transmission", action="store_true", help="show region exchanges [default: False]")
 parser.add_argument("-v", action="count", help='verbose mode')
