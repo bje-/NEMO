@@ -20,7 +20,6 @@ import costs
 import generators
 import regions
 import polygons
-from sim import run
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
