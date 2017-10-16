@@ -140,8 +140,8 @@ class Context(object):
             unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             if not self.unserved.empty:
-                shortfalls = round(self.unserved.min()), round(self.unserved.max())
-                s += 'Shortfalls (min, max): ' + str(shortfalls)
+                s += 'Shortfalls (min, max): (%s, %s)' % (anyWh(self.unserved.min(), 'W'),
+                                                          anyWh(self.unserved.max(), 'W'))
         return s
 
     class JSONEncoder(json.JSONEncoder):
