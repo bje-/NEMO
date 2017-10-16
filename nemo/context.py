@@ -71,7 +71,7 @@ class Context(object):
 
     def surplus_energy(self):
         """Return total surplus energy."""
-        self.spill.values.sum()
+        return self.spill.values.sum()
 
     def unserved_percent(self):
         """Return the total unserved energy as a percentage of total demand.
