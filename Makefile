@@ -36,7 +36,7 @@ lineprof:
 	kernprof -v -l profile.py
 
 flake8:
-	python -m flake8 --ignore=E266,E501,N *.py */*.py
+	python -m flake8 --ignore=E501,N *.py */*.py
 
 lint:
 	pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
