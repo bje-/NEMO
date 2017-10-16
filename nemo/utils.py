@@ -41,7 +41,7 @@ def _legend(context):
                 patches.append(g.patch)
     else:
         for g in gens:
-            labels.append(g.label + ' (%s)' % anyWh(g.capacity, units='W'))
+            labels.append(g.label + ' (%s)' % anyWh(g.capacity, 'W'))
             patches.append(g.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,
