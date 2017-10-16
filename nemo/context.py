@@ -53,6 +53,8 @@ class Context(object):
                            generators.OCGT(polygons.wildcard, 20000)]
         self.demand = hourly_demand.copy()
         self.timesteps = len(self.demand)
+        self.spill = pd.DataFrame()
+        self.generation = pd.DataFrame()
         self.unserved = pd.DataFrame()
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
@@ -66,6 +68,10 @@ class Context(object):
     def unserved_energy(self):
         """Return the total unserved energy."""
         return self.unserved.values.sum()
+
+    def surplus_energy(self):
+        """Return total surplus energy."""
+        self.spill.values.sum()
 
     def unserved_percent(self):
         """Return the total unserved energy as a percentage of total demand.
@@ -116,11 +122,10 @@ class Context(object):
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
         s += 'Demand energy: %s\n' % anyWh(self.total_demand())
-        if hasattr(self, 'spill'):
-            s += 'Unused surplus energy: %s\n' % anyWh(self.spill.values.sum())
-            if self.spill.values.sum() > 0:
-                spill_series = self.spill[self.spill.sum(axis=1) > 0]
-                s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
+        s += 'Unused surplus energy: %s\n' % anyWh(self.surplus_energy())
+        if self.surplus_energy() > 0:
+            spill_series = self.spill[self.spill.sum(axis=1) > 0]
+            s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
 
         if self.unserved.empty:
             s += 'No unserved energy'
