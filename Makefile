@@ -3,7 +3,7 @@ all:
 OMIT=nemo/priodict.py,nemo/dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
-check:  replay.json
+check:  replay.json flake8
 	nosetests -I '(evolve|replay).py' --with-doctest --with-coverage --cover-package=.
 
 coverage: replay.json
