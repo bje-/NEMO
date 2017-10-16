@@ -146,10 +146,10 @@ class Context(object):
 
     class JSONEncoder(json.JSONEncoder):
         """A custom encoder for Context objects."""
-        def default(self, obj):  # pylint: disable=E0202
-            if isinstance(obj, Context):
+        def default(self, o):  # pylint: disable=E0202
+            if isinstance(o, Context):
                 result = []
-                for g in obj.generators:
+                for g in o.generators:
                     tech = re.sub(r"<class 'generators\.(.*)'>",
                                   r'\1', str(type(g)))
                     result += [{'label': g.label, 'polygon': g.polygon,
