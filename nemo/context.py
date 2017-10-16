@@ -146,7 +146,7 @@ class Context(object):
 
     class JSONEncoder(json.JSONEncoder):
         """A custom encoder for Context objects."""
-        def default(self, o):  # pylint: disable=E0202
+        def default(self, o):  # false +ve pylint: disable=E0202
             if isinstance(o, Context):
                 result = []
                 for g in o.generators:
