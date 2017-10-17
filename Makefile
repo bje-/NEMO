@@ -51,5 +51,5 @@ pypi:
 	python setup.py sdist upload -r pypi
 
 clean:
-	rm -rf .coverage htmlcov replay.json exchanges.json
-	rm *.pyc tests/*.pyc nem.prof profile.py.lprof
+	-rm -rf .coverage htmlcov replay.json exchanges.json
+	-rm *.pyc tests/*.pyc nem.prof profile.py.lprof
