@@ -48,7 +48,7 @@ docker:
 	 docker build -t nemo .
 
 pypi:
-	python setup.py sdist upload
+	python setup.py sdist upload -r pypi
 
 clean:
 	rm -rf .coverage htmlcov replay.json exchanges.json
