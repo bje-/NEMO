@@ -9,7 +9,7 @@ check:  replay.json flake8
 coverage: replay.json
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks --costs=Null -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
-	NEMORC=default.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
+	NEMORC=nemo.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
 	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi

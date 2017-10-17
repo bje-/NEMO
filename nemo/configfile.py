@@ -35,4 +35,4 @@ config = ConfigParser.ConfigParser()
 if os.getenv('NEMORC') is not None:
     load(os.getenv('NEMORC'))
 else:
-    load('default.cfg')
+    load('nemo.cfg')
