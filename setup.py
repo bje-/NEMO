@@ -3,9 +3,9 @@
 import time
 from setuptools import setup
 
-setup(name='nemo',
+setup(name='nemopt',
       # Use a datestamp as the version.
-      version=time.strftime('%Y%d%m'),
+      version=time.strftime('%Y%m%d'),
       packages=['nemo'],
       description='National Electricity Market Optimiser',
       author='Ben Elliston',
