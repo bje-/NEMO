@@ -401,6 +401,11 @@ class PumpedHydro(Hydro):
             self.last_run = hr
         return power, 0
 
+    def summary(self, context):
+        return Generator.summary(self, context) + \
+            ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
+            ', %s storage' % anyWh(self.maxstorage)
+
     def reset(self):
         Fuelled.reset(self)
         self.stored = self.maxstorage * .5
