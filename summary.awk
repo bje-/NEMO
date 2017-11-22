@@ -17,7 +17,7 @@ BEGIN {
     surplus = 0
 }
 
-/battery.*GW.?$/	{ caps["battery"] += $(NF-1); last="battery" }
+/[Bb]attery.*GW.?$/	{ caps["battery"] += $(NF-1); last="battery" }
 /HSA.*GW.?$/		{ caps["HSA"] += $(NF-1); last="HSA" }
 /EGS.*GW.?$/		{ caps["EGS"] += $(NF-1); last="EGS" }
 /PV.*GW.?$/		{ caps["PV"] += $(NF-1); last="PV" }
