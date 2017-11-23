@@ -35,7 +35,7 @@ BEGIN {
 /diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
 /(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
 
-/supplied [[:digit:]\.]+ TWh/	{ energy[last] += $2 }
+/supplied [[:digit:]\.]+ TWh/	{ energy[last] += $2; total_generation += $2 }
 /spilled [[:digit:]\.] TWh/	{ surplus += $5 }	# may be "spilled" in old log files
 /surplus [[:digit:]\.]+ TWh/  	{ surplus += $7 }	# now it's "surplus"
 
@@ -76,7 +76,7 @@ BEGIN {
 	if (caps[c] != "")
 	    printf ("%12s\t%4.1f\t%.3f\t%5.1f\t%.3f\t%02.3f\n", c, \
 		    caps[c], caps[c] / total_capacity, \
-		    energy[c], energy[c] / total_demand, \
+		    energy[c], energy[c] / total_generation, \
 		    (caps[c] > 0) ? (energy[c] * 1000) / (caps[c] * timesteps) : 0)
     }
     if (surplus > 0)
