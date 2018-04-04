@@ -586,18 +586,18 @@ def demand_switch(label):
     Traceback (most recent call last):
       ...
     ValueError: hour < 0
-    >>> demand_switch('shift:100:12:24')
+    >>> demand_switch('shift:100:12:25')
     Traceback (most recent call last):
       ...
-    ValueError: hour >= 24
+    ValueError: hour > 24
     >>> demand_switch('scalex:-1:12:20')
     Traceback (most recent call last):
       ...
     ValueError: hour < 0
-    >>> demand_switch('scalex:12:24:20')
+    >>> demand_switch('scalex:12:25:20')
     Traceback (most recent call last):
       ...
-    ValueError: hour >= 24
+    ValueError: hour > 24
     >>> demand_switch('scalex:20:8:20')
     Traceback (most recent call last):
       ...
@@ -633,8 +633,8 @@ def demand_switch(label):
         toHour = int(h2)
         if fromHour < 0 or toHour < 0:
             raise ValueError("hour < 0")
-        if fromHour >= 24 or toHour >= 24:
-            raise ValueError("hour >= 24")
+        if fromHour > 24 or toHour > 24:
+            raise ValueError("hour > 24")
         if toHour <= fromHour:
             raise ValueError("toHour comes before fromHour")
         factor = 1 + float(factor) / 100
@@ -655,8 +655,8 @@ def demand_switch(label):
         toHour = int(h2)
         if fromHour < 0 or toHour < 0:
             raise ValueError("hour < 0")
-        if fromHour >= 24 or toHour >= 24:
-            raise ValueError("hour >= 24")
+        if fromHour > 24 or toHour > 24:
+            raise ValueError("hour > 24")
         return lambda context: shift_demand(context, demand, fromHour, toHour)
 
     elif label.startswith('peaks:'):
