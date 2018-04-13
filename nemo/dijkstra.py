@@ -77,7 +77,7 @@ def shortestPath(G, start, end):
     output is a list of the vertices in order along the shortest path.
     """
 
-    D, P = Dijkstra(G, start, end)
+    _, P = Dijkstra(G, start, end)
     Path = []
     while 1:
         Path.append(end)

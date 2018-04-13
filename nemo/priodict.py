@@ -17,6 +17,7 @@ from __future__ import generators
 
 
 class priorityDictionary(dict):
+    """Priority dictionary using binary heaps"""
     def __init__(self):
         '''Initialize priorityDictionary by creating binary heap of
         pairs (value,key). Note that changing or removing a dict entry
@@ -28,7 +29,7 @@ class priorityDictionary(dict):
     def smallest(self):
         '''Find smallest item after removing deleted items from front of
         heap.'''
-        if len(self) == 0:
+        if not self:
             raise IndexError("smallest of empty priorityDictionary")
         heap = self.__heap
         while heap[0][1] not in self or self[heap[0][1]] != heap[0][0]:
@@ -49,7 +50,7 @@ class priorityDictionary(dict):
     def __iter__(self):
         '''Create destructive sorted iterator of priorityDictionary.'''
         def iterfn():
-            while len(self) > 0:
+            while self:
                 x = self.smallest()
                 yield x
                 del self[x]
