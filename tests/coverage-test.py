@@ -1,11 +1,11 @@
 """A stub for profiling tools to run one basic simulation."""
 
 import os
+import unittest
 import nemo
 from nemo import regions
 from nemo import polygons
 from nemo import utils
-import unittest
 
 
 class TestCoverage(unittest.TestCase):
