@@ -50,6 +50,7 @@ class priorityDictionary(dict):
     def __iter__(self):
         '''Create destructive sorted iterator of priorityDictionary.'''
         def iterfn():
+            '''Inner iterator function.'''
             while self:
                 x = self.smallest()
                 yield x
