@@ -48,6 +48,11 @@ class Generator(object):
         self.series_power = {}
         self.series_spilled = {}
 
+        # By default, generators have infinite ramping capability
+        self.power = 0
+        self.ramp_up_mw_per_h = np.inf
+        self.ramp_down_mw_per_h = np.inf
+
     def region(self):
         """Return the region the generator is in."""
         return polygons.region(self.polygon)
@@ -70,9 +75,17 @@ class Generator(object):
         return costs.opcost_per_mwh[type(self)]
 
     def reset(self):
-        """Reset the generator."""
+        """Reset the generator.
+
+        >>> g = Generator(1, 0, 'label')
+        >>> g.power = 10
+        >>> g.reset()
+        >>> g.power
+        0
+        """
         self.series_power.clear()
         self.series_spilled.clear()
+        self.power = 0
 
     def capfactor(self):
         """Capacity factor of this generator (in %).
