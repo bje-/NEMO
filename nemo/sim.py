@@ -41,8 +41,8 @@ def _sim(context, date_range):
         for poly in range(1, polygons.numpolygons + 1):
             # use a list comprehension to filter the connections down to bits of interest
             connections[poly] = [path for (src, dest), path in
-                                 polygons.connections.iteritems() if src is poly and \
-                                 dest in loads and \
+                                 polygons.connections.iteritems() if src is poly and
+                                 dest in loads and
                                  polygons.subset(path, selected_polygons)]
             connections[poly].sort(key=polygons.pathlen)
 
