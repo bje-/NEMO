@@ -103,7 +103,7 @@ def _sim(context, date_range):
                     if not gen:
                         break
 
-                    poly = g.polygon if len(path) is 0 else path[-1][-1]
+                    poly = g.polygon if len(path) == 0 else path[-1][-1]
                     polyidx = poly - 1
                     transfer = gen if gen < hour_demand[polyidx] else hour_demand[polyidx]
 
