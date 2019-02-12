@@ -45,7 +45,7 @@ coveralls:
 	coveralls
 
 docker:
-	 docker build -t nemo .
+	docker build -t nemo .
 
 pypi:
 	python setup.py sdist upload -r pypi
