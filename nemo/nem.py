@@ -8,7 +8,7 @@
 
 """A National Electricity Market (NEM) simulation."""
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import numpy as np
 import pandas as pd
 
@@ -19,7 +19,7 @@ from nemo import polygons
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
 
-urlobj = urllib2.urlopen(configfile.get('demand', 'demand-trace'))
+urlobj = urllib.request.urlopen(configfile.get('demand', 'demand-trace'))
 demand = pd.read_csv(urlobj, comment='#', sep=',',
                      parse_dates=[['Date', 'Time']], index_col='Date_Time')
 
@@ -43,5 +43,5 @@ hourly_demand = pd.DataFrame(index=hourly_regional_demand.index,
                              data=np.zeros((numsteps, polygons.numpolygons)))
 
 for rgn, weights in [(r.id, r.polygons) for r in regions.All]:
-    for polygon, share in weights.iteritems():
+    for polygon, share in weights.items():
         hourly_demand[polygon - 1] = hourly_regional_demand[rgn] * share

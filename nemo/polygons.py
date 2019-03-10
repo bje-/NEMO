@@ -147,7 +147,7 @@ def _centroid(vertices):
 
 
 centroids = {}
-for i, vertices in _polygons.iteritems():
+for i, vertices in _polygons.items():
     a, b = _centroid(vertices)
     centroids[i] = LatLong(b, a)
 
@@ -289,8 +289,8 @@ for (p1, p2, limit) in \
      (32, 37, 900), (37, 32, 900), (37, 39, 900), (39, 37, 900),
      (33, 39, 500), (39, 33, 1300), (34, 39, 1000), (39, 34, 1300),
      (39, 38, 2500), (38, 39, 6400), (38, 41, 450), (41, 38, 600)]:
-    assert p1 in net[p2].keys(), (p2, p1)
-    assert p2 in net[p1].keys(), (p1, p2)
+    assert p1 in list(net[p2].keys()), (p2, p1)
+    assert p2 in list(net[p1].keys()), (p1, p2)
     existing_net[p1, p2] = limit
 
 connections = {}

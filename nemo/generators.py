@@ -10,7 +10,7 @@
 """Simulated generators for the NEMO framework."""
 import locale
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import numpy as np
 from matplotlib.patches import Patch
 
@@ -164,7 +164,7 @@ class Wind(Generator):
         if Wind.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            urlobj = urllib2.urlopen(filename)
+            urlobj = urllib.request.urlopen(filename)
             Wind.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=delimiter)
             Wind.csvdata = np.maximum(0, Wind.csvdata)
             Wind.csvfilename = filename
@@ -196,7 +196,7 @@ class PV(Generator):
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         if PV.csvfilename != filename:
-            urlobj = urllib2.urlopen(filename)
+            urlobj = urllib.request.urlopen(filename)
             PV.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             PV.csvdata = np.maximum(0, PV.csvdata)
             PV.csvfilename = filename
@@ -246,7 +246,7 @@ class CST(Generator):
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
         self.sm = sm
         if CST.csvfilename != filename:
-            urlobj = urllib2.urlopen(filename)
+            urlobj = urllib.request.urlopen(filename)
             CST.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             CST.csvfilename = filename
         self.generation = CST.csvdata[::, column]
@@ -594,7 +594,7 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, dischargeHours=range(24), rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, dischargeHours=list(range(24)), rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
@@ -720,7 +720,7 @@ class Geothermal(Generator):
     def __init__(self, polygon, capacity, filename, column, label):
         Generator.__init__(self, polygon, capacity, label)
         if Geothermal.csvfilename != filename:
-            urlobj = urllib2.urlopen(filename)
+            urlobj = urllib.request.urlopen(filename)
             Geothermal.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             Geothermal.csvdata = np.maximum(0, Geothermal.csvdata)
             Geothermal.csvfilename = filename

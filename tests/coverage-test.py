@@ -43,7 +43,7 @@ class TestCoverage(unittest.TestCase):
         for i in range(25):
             dr = nemo.generators.DemandResponse(polygons.wildcard, 100, 0)
             c.generators += [dr]
-        print len(c.generators)
+        print(len(c.generators))
         nemo.run(c)
         utils.plot(c, filename='foo.png')
         os.unlink('foo.png')
@@ -51,9 +51,9 @@ class TestCoverage(unittest.TestCase):
     def test_004(self):
         """Test Context.__str__ method."""
         c = nemo.Context()
-        print str(c)
+        print(str(c))
         c.regions = [regions.nsw]
-        print str(c)
+        print(str(c))
 
     def test_005(self):
         """Test Context summary with no cost generator."""
@@ -61,14 +61,14 @@ class TestCoverage(unittest.TestCase):
         import types
         c = nemo.Context()
         c.costs = costs.NullCosts()
-        print str(c)
+        print(str(c))
         c.verbose = True
-        print str(c)
+        print(str(c))
         c.regions = [regions.nsw]
-        print str(c)
+        print(str(c))
 
         f = types.MethodType(lambda self, costs: None, c.generators[0], nemo.Context)
-        print f
+        print(f)
         c.generators[0].summary = f
-        print c.generators[0].summary(None)
-        print str(c)
+        print(c.generators[0].summary(None))
+        print(str(c))

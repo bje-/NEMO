@@ -7,7 +7,7 @@
 
 """Configuration file processing (eg, filenames)."""
 
-import ConfigParser
+import configparser
 import os
 
 
@@ -29,7 +29,7 @@ def get(section, keyword):
     return config.get(section, keyword)
 
 
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 
 # If $NEMORC is set, use that as the config filename.
 if os.getenv('NEMORC') is not None:
