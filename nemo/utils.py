@@ -13,7 +13,7 @@ import numpy as np
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 from nemo import configfile
-from nemo.configfile import ConfigParser
+from nemo.configfile import configparser
 from nemo.anywh import anyWh
 
 
@@ -59,11 +59,11 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     plt.ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         title = 'Supply/demand balance'
     try:
         title += '\n' + configfile.get('plot', 'subtitle')
-    except (configfile.ConfigParser.NoSectionError, configfile.ConfigParser.NoOptionError):
+    except (configfile.configparser.NoSectionError, configfile.configparser.NoOptionError):
         pass
     plt.suptitle(title)
 

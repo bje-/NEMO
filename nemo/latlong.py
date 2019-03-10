@@ -20,7 +20,7 @@ maxcols = 839
 maxrows = 679
 
 
-class LatLong(object):
+class LatLong():
 
     """A point of latitude and logitude."""
 

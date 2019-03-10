@@ -300,7 +300,7 @@ def eval_func(chromosome):
         with open(args.trace_file, 'a') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([score, penalty, reason] + list(chromosome))
-    return score + penalty,
+    return (score + penalty,)
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))

@@ -65,8 +65,8 @@ def _sim(context, date_range):
 
         if context.verbose:
             print('STEP:', date)
-            print('DEMAND:', \
-                {k: round(v, 2) for k, v in list(hour_demand.to_dict().items())})
+            print('DEMAND:',
+                  {k: round(v, 2) for k, v in list(hour_demand.to_dict().items())})
 
         # Dispatch power from each generator in merit (list) order
         for gidx, g in enumerate(gens):
@@ -89,9 +89,9 @@ def _sim(context, date_range):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx], \
-                    'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
-                    'async-demand: %.1f' % async_demand)
+                print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx],
+                      'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
+                      'async-demand: %.1f' % async_demand)
 
             # distribute the generation across the regions (local region first)
 
@@ -137,8 +137,8 @@ def _sim(context, date_range):
             spill[hr, gidx] = spl
 
         if context.verbose and (hour_demand > 0).any():
-            print('RESIDUAL:', \
-                {k: round(v, 2) for k, v in list(hour_demand.to_dict().items())})
+            print('RESIDUAL:',
+                  {k: round(v, 2) for k, v in list(hour_demand.to_dict().items())})
             print('ENDSTEP:', date)
 
     # Change the numpy arrays to dataframes for human consumption

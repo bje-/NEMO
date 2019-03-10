@@ -8,7 +8,9 @@
 
 """A National Electricity Market (NEM) simulation."""
 
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import numpy as np
 import pandas as pd
 

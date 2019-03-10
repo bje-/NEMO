@@ -10,7 +10,9 @@
 """Simulated generators for the NEMO framework."""
 import locale
 
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import numpy as np
 from matplotlib.patches import Patch
 
@@ -22,7 +24,7 @@ from nemo import polygons
 locale.setlocale(locale.LC_ALL, '')
 
 
-class Generator(object):
+class Generator():
 
     """Base generator class."""
 
@@ -39,7 +41,7 @@ class Generator(object):
 
         # Sanity check polygon argument.
         assert not isinstance(polygon, polygons.regions.Region)
-        assert polygon >= 1 and polygon <= polygons.numpolygons, polygon
+        assert 0 < polygon <= polygons.numpolygons, polygon
 
         # Is the generator a rotating machine?
         self.non_synchronous_p = False
@@ -298,7 +300,6 @@ class ParabolicTrough(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
-    pass
 
 
 class CentralReceiver(CST):
@@ -307,7 +308,6 @@ class CentralReceiver(CST):
 
     This stub class allows differentiated CST costs in costs.py.
     """
-    pass
 
 
 class Fuelled(Generator):
@@ -594,13 +594,13 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, dischargeHours=list(range(24)), rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, dischargeHours=None, rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
-        self.dischargeHours = dischargeHours
+        self.dischargeHours = dischargeHours if dischargeHours is not None else range(24)
         self.rte = rte
         self.storage_p = True
         self.last_run = None

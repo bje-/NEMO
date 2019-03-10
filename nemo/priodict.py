@@ -14,8 +14,6 @@ Each operation takes logarithmic amortized time.
 """
 
 
-
-
 class priorityDictionary(dict):
     """Priority dictionary using binary heaps"""
     def __init__(self):

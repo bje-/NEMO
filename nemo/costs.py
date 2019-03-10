@@ -20,7 +20,7 @@ def txcost(x):
     return 0 if x == 0 else 965 if x > 5000 else 16319 * pow(x, -0.332)
 
 
-class NullCosts(object):
+class NullCosts():
 
     """All costs are zero. Useful for debugging."""
 
@@ -49,7 +49,7 @@ class NullCosts(object):
             self.fixed_om_costs[t] = 0
 
 
-class APGTR2015(object):
+class APGTR2015():
 
     """Australian Power Generation Technology Report costs in 2015.
 
@@ -142,7 +142,7 @@ class APGTR2030(APGTR2015):
         table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
-class AETA2012_2030(object):
+class AETA2012_2030():
 
     """Australian Energy Technology Assessment (2012) costs for 2030.
 

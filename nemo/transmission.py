@@ -11,7 +11,7 @@ from nemo.polygons import distances
 from nemo.costs import annuity_factor
 
 
-class Transmission(object):
+class Transmission():
 
     """An encapsulating class for transmission specific bits."""
 
