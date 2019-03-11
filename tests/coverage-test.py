@@ -67,7 +67,7 @@ class TestCoverage(unittest.TestCase):
         c.regions = [regions.nsw]
         print(str(c))
 
-        f = types.MethodType(lambda self, costs: None, c.generators[0], nemo.Context)
+        f = types.MethodType(lambda self, costs: None, c.generators[0])
         print(f)
         c.generators[0].summary = f
         print(c.generators[0].summary(None))
