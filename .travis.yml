@@ -1,5 +1,5 @@
 language: python
-python: 2.7
+python: 3.7
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
@@ -8,4 +8,4 @@ script:
   - make flake8 
   - nosetests -v -I '(evolve|replay).py'
 install:
-  - pip install numpy pandas matplotlib deap flake8
+  - pip3 install numpy pandas matplotlib deap flake8
