@@ -36,8 +36,10 @@ class LatLong():
           ...
         ValueError
         >>> obj = LatLong (499, 739, True)
-        >>> obj
-        (-34.925, 148.975)
+        >>> round(obj.lat, 3)  # round for test safety
+        -34.925
+        >>> round(obj.lon, 3)  # round for test safety
+        148.975
         """
         if is_xy:
             if arg1 > maxrows or arg2 > maxcols:
@@ -56,8 +58,10 @@ class LatLong():
         >>> obj.xy()
         (499, 739)
         >>> obj = LatLong(0, 0, True)
-        >>> obj
-        (-9.975, 112.025)
+        >>> round(obj.lat, 3)  # round for test safety
+        -9.975
+        >>> round(obj.lon, 3)  # round for test safety
+        112.025
         """
         col = int((self.lon - xllcorner) / cellsize)
         assert col < maxcols
