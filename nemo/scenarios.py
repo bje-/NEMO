@@ -218,7 +218,7 @@ def re100_batteries(context):
 def _one_per_poly(region):
     """Return three lists of wind, PV and CST generators, one per polygon.
 
-    >>> import regions
+    >>> from nemo import regions
     >>> wind, pv, cst = _one_per_poly(regions.tas)
     >>> len(wind), len(pv), len(cst)
     (4, 4, 4)
@@ -250,7 +250,7 @@ def _one_per_poly(region):
 def re100_one_region(context, region):
     """100% renewables in one region only.
 
-    >>> import regions
+    >>> from nemo import regions
     >>> class C: pass
     >>> c = C()
     >>> c.generators = []
