@@ -4,7 +4,7 @@ OMIT=nemo/priodict.py,nemo/dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.json flake8
-	nosetests -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
+	python3 -m nose -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
 
 coverage: replay.json
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
@@ -27,7 +27,7 @@ replay.json:
 	echo    ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}' >> $@
 
 nem.prof:
-	python -m cProfile -o $@ profile.py
+	python3 -m cProfile -o $@ profile.py
 
 prof: nem.prof
 	python /usr/lib/python2.7/dist-packages/runsnakerun/runsnake.py $<
@@ -36,7 +36,7 @@ lineprof:
 	kernprof -v -l profile.py
 
 flake8:
-	python -m flake8 --ignore=E501,N *.py */*.py
+	python3 -m flake8 --ignore=E501,N *.py */*.py
 
 lint:
 	pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
