@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
