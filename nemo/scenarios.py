@@ -575,13 +575,13 @@ def demand_switch(label):
     >>> demand_switch('unchanged')	  # doctest: +ELLIPSIS
     <function unchanged at ...>
     >>> demand_switch('roll:10')      # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('scale:5')    # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('scalex:0:10:5')    # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('shift:100:10:12') # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('shift:100:-2:12')
     Traceback (most recent call last):
       ...
@@ -603,9 +603,9 @@ def demand_switch(label):
       ...
     ValueError: toHour comes before fromHour
     >>> demand_switch('peaks:10:34000') # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('npeaks:10:5') # doctest: +ELLIPSIS
-    <function <lambda> at ...>
+    <function ...>
     >>> demand_switch('foo')
     Traceback (most recent call last):
       ...
