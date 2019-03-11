@@ -7,12 +7,12 @@
 
 """Utilities eg. plotting."""
 
-import pandas as pd
 import numpy as np
-
+import pandas as pd
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
+
 from nemo import configfile
 from nemo.configfile import configparser
 from nemo.anywh import anyWh
