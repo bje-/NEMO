@@ -10,11 +10,16 @@
 import pandas as pd
 import numpy as np
 
+from pandas.plotting import register_matplotlib_converters
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 from nemo import configfile
 from nemo.configfile import ConfigParser
 from nemo.anywh import anyWh
+
+# Future versions of pandas will require us to explicitly register
+# matplotlib converters, so do it here now.
+register_matplotlib_converters()
 
 
 def _generator_list(context):
