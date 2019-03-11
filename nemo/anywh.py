@@ -10,7 +10,7 @@
 
 class anyWh():
     """
-    >>> for i in range(8): print anyWh(pow(10.23, i))
+    >>> for i in range(8): print(anyWh(pow(10.23, i)))
     1 MWh
     10.23 MWh
     104.65 MWh

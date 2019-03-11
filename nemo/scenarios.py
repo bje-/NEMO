@@ -695,7 +695,7 @@ def roll_demand(context, posns):
     >>> c = C()
     >>> c.demand = pd.DataFrame(range(10))
     >>> roll_demand(c, 1)
-    >>> print c.demand
+    >>> print(c.demand)
        0
     0  9
     1  0
@@ -721,7 +721,7 @@ def scale_range_demand(context, fromHour, toHour, factor):
     >>> c = C()
     >>> c.demand = pd.DataFrame(range(10))
     >>> scale_range_demand(c, 0, 4, 1.2)
-    >>> print c.demand
+    >>> print(c.demand)
          0
     0  0.0
     1  1.2
@@ -746,7 +746,7 @@ def scale_demand_twh(context, new_demand):
     >>> c = C()
     >>> c.demand = pd.DataFrame([100]*10)
     >>> scale_demand_twh(c, 0.0002)
-    >>> print c.demand.loc[0]
+    >>> print(c.demand.loc[0])
     0    20.0
     Name: 0, dtype: float64
     """
@@ -763,7 +763,7 @@ def scale_demand_by(context, factor):
     >>> c = C()
     >>> c.demand = pd.DataFrame(range(3))
     >>> scale_demand_by(c, 1.2)
-    >>> print c.demand
+    >>> print(c.demand)
          0
     0  0.0
     1  1.2
