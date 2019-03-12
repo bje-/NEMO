@@ -52,10 +52,10 @@ def _sim(context, date_range):
             context.demand[poly - 1] = 0
 
     # We are free to scribble all over demand_copy.
-    demand_copy = context.demand.copy()
+    demand_copy = context.demand.copy().values
 
     for hr, date in enumerate(date_range):
-        hour_demand = demand_copy.loc[date].copy()
+        hour_demand = demand_copy[hr]
         residual_hour_demand = hour_demand.sum()
         # async_demand is the maximum amount of the demand in this
         # hour that can be met from non-synchronous
