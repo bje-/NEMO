@@ -47,9 +47,6 @@ coveralls:
 docker:
 	docker build -t nemo .
 
-pypi:
-	python setup.py sdist upload -r pypi
-
 clean:
 	-rm -rf .coverage htmlcov replay.json exchanges.json
 	-rm *.pyc tests/*.pyc nemo.prof stub.py.lprof
