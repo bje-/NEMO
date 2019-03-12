@@ -11,7 +11,7 @@ from nemo.polygons import distances
 from nemo.costs import annuity_factor
 
 
-class Transmission(object):
+class Transmission():
 
     """An encapsulating class for transmission specific bits."""
 
@@ -31,7 +31,7 @@ class Transmission(object):
         >>> caps = np.empty_like(distances[1:, 1:])
         >>> caps.fill(100)
         >>> costmat = t.cost_matrix(caps)
-        >>> import polygons
+        >>> from nemo import polygons
         >>> d = polygons.dist(1, 2)
         >>> expected_value = (800 * 100 * d) / t.af
         >>> assert int(costmat[0, 1]) == int(expected_value)

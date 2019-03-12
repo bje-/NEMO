@@ -218,7 +218,7 @@ def re100_batteries(context):
 def _one_per_poly(region):
     """Return three lists of wind, PV and CST generators, one per polygon.
 
-    >>> import regions
+    >>> from nemo import regions
     >>> wind, pv, cst = _one_per_poly(regions.tas)
     >>> len(wind), len(pv), len(cst)
     (4, 4, 4)
@@ -250,7 +250,7 @@ def _one_per_poly(region):
 def re100_one_region(context, region):
     """100% renewables in one region only.
 
-    >>> import regions
+    >>> from nemo import regions
     >>> class C: pass
     >>> c = C()
     >>> c.generators = []
@@ -614,19 +614,19 @@ def demand_switch(label):
     if label == 'unchanged':
         return unchanged
 
-    elif label.startswith('roll:'):
+    if label.startswith('roll:'):
         # label form: "roll:X" rolls the load by X timesteps
         _, posns = label.split(':')
         posns = int(posns)
         return lambda context: roll_demand(context, posns)
 
-    elif label.startswith('scale:'):
+    if label.startswith('scale:'):
         # label form: "scale:X" scales all of the load by X%
         _, factor = label.split(':')
         factor = 1 + float(factor) / 100
         return lambda context: scale_demand_by(context, factor)
 
-    elif label.startswith('scalex:'):
+    if label.startswith('scalex:'):
         # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
         _, h1, h2, factor = label.split(':')
         fromHour = int(h1)
@@ -641,13 +641,13 @@ def demand_switch(label):
         return lambda context: scale_range_demand(context,
                                                   fromHour, toHour, factor)
 
-    elif label.startswith('scaletwh:'):
+    if label.startswith('scaletwh:'):
         # label form: "scaletwh:N" scales demand to N TWh
         _, n = label.split(':')
         new_demand = float(n)
         return lambda context: scale_demand_twh(context, new_demand)
 
-    elif label.startswith('shift:'):
+    if label.startswith('shift:'):
         # label form: "shift:N:H1:H2" load shifts N MW every day
         _, demand, h1, h2 = label.split(':')
         demand = int(demand)
@@ -659,7 +659,7 @@ def demand_switch(label):
             raise ValueError("hour > 24")
         return lambda context: shift_demand(context, demand, fromHour, toHour)
 
-    elif label.startswith('peaks:'):
+    if label.startswith('peaks:'):
         # label form: "peaks:N:X" adjust demand peaks over N megawatts
         # by X%
         _, power, factor = label.split(':')
@@ -667,16 +667,17 @@ def demand_switch(label):
         factor = 1 + float(factor) / 100
         return lambda context: scale_peaks(context, power, factor)
 
-    elif label.startswith('npeaks:'):
+    if label.startswith('npeaks:'):
         # label form: "npeaks:N:X" adjust top N demand peaks by X%
         _, topn, factor = label.split(':')
         topn = int(topn)
         factor = 1 + float(factor) / 100
         return lambda context: scale_npeaks(context, topn, factor)
-    else:
-        raise ValueError('invalid scenario: %s' % label)
+
+    raise ValueError('invalid scenario: %s' % label)
 
 
+# pylint: disable=unused-argument
 def unchanged(context):
     """No demand modification.
 
@@ -684,8 +685,6 @@ def unchanged(context):
     >>> c = C()
     >>> unchanged(c)
     """
-    # pylint: disable=unused-argument
-    pass
 
 
 def roll_demand(context, posns):
@@ -696,7 +695,7 @@ def roll_demand(context, posns):
     >>> c = C()
     >>> c.demand = pd.DataFrame(list(range(10)))
     >>> roll_demand(c, 1)
-    >>> print c.demand
+    >>> print(c.demand)
        0
     0  9
     1  0
@@ -722,7 +721,7 @@ def scale_range_demand(context, fromHour, toHour, factor):
     >>> c = C()
     >>> c.demand = pd.DataFrame(list(range(10)))
     >>> scale_range_demand(c, 0, 4, 1.2)
-    >>> print c.demand
+    >>> print(c.demand)
          0
     0  0.0
     1  1.2
@@ -747,7 +746,7 @@ def scale_demand_twh(context, new_demand):
     >>> c = C()
     >>> c.demand = pd.DataFrame([100]*10)
     >>> scale_demand_twh(c, 0.0002)
-    >>> print c.demand.loc[0]
+    >>> print(c.demand.loc[0])
     0    20.0
     Name: 0, dtype: float64
     """
@@ -764,7 +763,7 @@ def scale_demand_by(context, factor):
     >>> c = C()
     >>> c.demand = pd.DataFrame([0, 1, 2])
     >>> scale_demand_by(c, 1.2)
-    >>> print c.demand
+    >>> print(c.demand)
          0
     0  0.0
     1  1.2

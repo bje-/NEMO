@@ -36,12 +36,12 @@ def _sim(context, date_range):
                 selected_polygons += r.polygons
 
         # pull out the polygons with non-zero load in each region
-        loads = [k for r in context.regions for (k, v) in r.polygons.iteritems() if v > 0]
+        loads = [k for r in context.regions for (k, v) in r.polygons.items() if v > 0]
         connections = {}
         for poly in range(1, polygons.numpolygons + 1):
             # use a list comprehension to filter the connections down to bits of interest
             connections[poly] = [path for (src, dest), path in
-                                 polygons.connections.iteritems() if
+                                 polygons.connections.items() if
                                  src is poly and dest in
                                  loads and polygons.subset(path, selected_polygons)]
             connections[poly].sort(key=polygons.pathlen)
@@ -65,9 +65,9 @@ def _sim(context, date_range):
         async_demand = residual_hour_demand * context.nsp_limit
 
         if context.verbose:
-            print 'STEP:', date
-            print 'DEMAND:', \
-                {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())}
+            print('STEP:', date)
+            print('DEMAND:',
+                  {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())})
 
         # Dispatch power from each generator in merit (list) order
         for gidx, g in enumerate(gens):
@@ -90,16 +90,16 @@ def _sim(context, date_range):
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
-                print 'GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx], \
-                    'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand, \
-                    'async-demand: %.1f' % async_demand
+                print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx],
+                      'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
+                      'async-demand: %.1f' % async_demand)
 
             # distribute the generation across the regions (local region first)
 
             if context.track_exchanges:
                 paths = connections[g.polygon]
                 if context.verbose:
-                    print 'PATHS:', paths
+                    print('PATHS:', paths)
                 for path in paths:
                     if not gen:
                         break
@@ -110,7 +110,7 @@ def _sim(context, date_range):
 
                     if transfer > 0:
                         if context.verbose:
-                            print 'DISPATCH:', int(transfer), 'to polygon', poly
+                            print('DISPATCH:', int(transfer), 'to polygon', poly)
                         if poly is g.polygon:
                             context.add_exchange(hr, poly, poly, transfer)
                         else:
@@ -118,7 +118,7 @@ def _sim(context, date_range):
                             for src, dest in path:
                                 context.add_exchange(hr, src, dest, transfer)
                                 if context.verbose:
-                                    print 'FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer
+                                    print('FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer)
                                     assert polygons.direct_p(src, dest)
                         hour_demand[polyidx] -= transfer
                         gen -= transfer
@@ -132,15 +132,15 @@ def _sim(context, date_range):
                     # energy stored <= energy transferred, according to store's RTE
                     if context.verbose:
                         # show the energy transferred, not stored
-                        print 'STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored
+                        print('STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored)
                     for src, dest in polygons.path(g.polygon, other.polygon):
                         context.add_exchange(hr, src, dest, stored)
             spill[hr, gidx] = spl
 
         if context.verbose and (hour_demand > 0).any():
-            print 'RESIDUAL:', \
-                {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())}
-            print 'ENDSTEP:', date
+            print('RESIDUAL:',
+                  {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())})
+            print('ENDSTEP:', date)
 
     # Change the numpy arrays to dataframes for human consumption
     context.generation = pd.DataFrame(index=date_range, data=generation)

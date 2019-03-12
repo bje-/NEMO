@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
@@ -25,7 +25,7 @@ from deap import cma
 try:
     from scoop import futures
 except ImportError:  # pragma: no cover
-    print 'WARNING: scoop not loaded'
+    print('WARNING: scoop not loaded')
 
 import nemo
 from nemo import generators
@@ -95,12 +95,12 @@ args = parser.parse_args()
 if __name__ == '__main__' and args.list_scenarios:
     for key in sorted(scenarios.supply_scenarios):
         descr = scenarios.supply_scenarios[key].__doc__
-        print '%20s' % key, '\t', descr.split('\n')[0]
-    print
+        print('%20s' % key, '\t', descr.split('\n')[0])
+    print()
     sys.exit(0)
 
 if __name__ == '__main__':
-    print vars(args)
+    print(vars(args))
 
 context = nemo.Context()
 context.relstd = args.reliability_std
@@ -131,8 +131,8 @@ if args.verbose and __name__ == '__main__':
     assert docstring is not None
     # Prune off any doctest test from the docstring.
     docstring = docstring.split('\n')[0]
-    print "supply scenario: %s (%s)" % (args.supply_scenario, docstring)
-    print context.generators
+    print("supply scenario: %s (%s)" % (args.supply_scenario, docstring))
+    print(context.generators)
 
 if args.trace_file is not None:
     with open(args.trace_file, 'w') as csvfile:
@@ -300,7 +300,7 @@ def eval_func(chromosome):
         with open(args.trace_file, 'a') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([score, penalty, reason] + list(chromosome))
-    return score + penalty,
+    return (score + penalty,)
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -329,7 +329,7 @@ toolbox.register("evaluate", eval_func)
 def run():
     """Run the evolution."""
     if args.verbose and __name__ == '__main__':
-        print "objective: minimise", eval_func.__doc__
+        print("objective: minimise", eval_func.__doc__)
 
     np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
@@ -342,28 +342,28 @@ def run():
         algorithms.eaGenerateUpdate(toolbox, ngen=args.generations,
                                     stats=mstats, halloffame=hof, verbose=True)
     except KeyboardInterrupt:  # pragma: no cover
-        print 'user terminated early'
+        print('user terminated early')
 
     context.set_capacities(hof[0])
     nemo.run(context)
     context.verbose = True
-    print
-    print context
+    print()
+    print(context)
     score, penalty, reason = cost(context)
-    print 'Score: %.2f $/MWh' % score
+    print('Score: %.2f $/MWh' % score)
     constraints_violated = []
     if reason > 0:
-        print 'Penalty: %.2f $/MWh' % penalty
-        print 'Constraints violated:',
-        for label, code in reasons.iteritems():
+        print('Penalty: %.2f $/MWh' % penalty)
+        print('Constraints violated:', end=' ')
+        for label, code in reasons.items():
             if reason & code:
                 constraints_violated += [label]
-                print label,
-        print
+                print(label, end=' ')
+        print()
     if args.transmission:
         np.set_printoptions(precision=5)
         x = context.exchanges.max(axis=0)
-        print np.array_str(x, precision=1, suppress_small=True)
+        print(np.array_str(x, precision=1, suppress_small=True))
         obj = {'exchanges': x.tolist(), 'generators': context}
         with open('results.json', 'w') as f:
             json.dump(obj, f, cls=nemo.Context.JSONEncoder, indent=True)
@@ -374,7 +374,7 @@ def run():
                   'score': score, 'penalty': penalty,
                   'constraints_violated': constraints_violated}
         json.dump(bundle, f)
-    print 'Done'
+    print('Done')
 
 
 if __name__ == '__main__':

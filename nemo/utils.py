@@ -7,14 +7,14 @@
 
 """Utilities eg. plotting."""
 
-import pandas as pd
 import numpy as np
-
+import pandas as pd
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
+
 from nemo import configfile
-from nemo.configfile import ConfigParser
+from nemo.configfile import configparser
 from nemo.anywh import anyWh
 
 # Future versions of pandas will require us to explicitly register
@@ -64,11 +64,11 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     plt.ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         title = 'Supply/demand balance'
     try:
         title += '\n' + configfile.get('plot', 'subtitle')
-    except (configfile.ConfigParser.NoSectionError, configfile.ConfigParser.NoOptionError):
+    except (configfile.configparser.NoSectionError, configfile.configparser.NoOptionError):
         pass
     plt.suptitle(title)
 

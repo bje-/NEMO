@@ -4,7 +4,7 @@ OMIT=nemo/priodict.py,nemo/dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.json flake8
-	nosetests -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
+	python3 -m nose -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
 
 coverage: replay.json
 	$(COVRUN) evolve.py --list-scenarios > /dev/null
@@ -26,20 +26,20 @@ replay.json:
 	echo -n ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__",' >> $@
 	echo    ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}' >> $@
 
-nem.prof:
-	python -m cProfile -o $@ profile.py
+nemo.prof:
+	python3 -m cProfile -o $@ stub.py
 
-prof: nem.prof
-	python /usr/lib/python2.7/dist-packages/runsnakerun/runsnake.py $<
+prof: nemo.prof
+	python3 -m snakeviz $<
 
 lineprof:
-	kernprof -v -l profile.py
+	python3 -m kernprof -v -l stub.py
 
 flake8:
-	python -m flake8 --ignore=E501,N *.py */*.py
+	python3 -m flake8 --ignore=E501,N *.py */*.py
 
 lint:
-	pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
+	python3 -m pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
 
 coveralls:
 	coveralls
@@ -52,4 +52,4 @@ pypi:
 
 clean:
 	-rm -rf .coverage htmlcov replay.json exchanges.json
-	-rm *.pyc tests/*.pyc nem.prof profile.py.lprof
+	-rm *.pyc tests/*.pyc nemo.prof stub.py.lprof

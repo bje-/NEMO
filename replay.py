@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 # Copyright (C) 2014, 2015 The University of New South Wales
@@ -39,7 +39,7 @@ def run_one(bundle):
 
     scenario = options['supply_scenario']
     scenarios.supply_switch(scenario)(context)
-    print 'scenario', scenario
+    print('scenario', scenario)
 
     # Apply each demand modifier argument (if any) in the given order.
     for arg in options['demand_modifier']:
@@ -58,14 +58,14 @@ def run_one(bundle):
     context.verbose = args.v > 1
     nemo.run(context)
     context.verbose = args.v > 0
-    print context
+    print(context)
     if args.transmission:
         np.set_printoptions(precision=3)
         x = context.exchanges.max(axis=0)
-        print np.array_str(x, precision=1, suppress_small=True)
+        print(np.array_str(x, precision=1, suppress_small=True))
         with open('exchanges.json', 'w') as f:
             json.dump(x.tolist(), f)
-    print
+    print()
 
     if args.x:  # pragma: no cover
         utils.plot(context, spills=args.spills, showlegend=args.no_legend)
@@ -76,11 +76,11 @@ with open(args.f) as resultsfile:
         if re.search(r'^\s*$', line):
             continue
         if re.search(r'^\s*#', line):
-            print line,
+            print(line, end=' ')
             continue
         try:
             bundle = json.loads(line)
         except ValueError:
-            print 'skipping malformed input:', line
+            print('skipping malformed input:', line)
             continue
         run_one(bundle)

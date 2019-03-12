@@ -133,12 +133,12 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context = nemo.Context()
             self.context.track_exchanges = True
             self.context.regions = [rgn]
-            loadpoly = [k for k, v in rgn.polygons.items() if v > 0][0]
-            nswpoly = [k for k, v in regions.nsw.polygons.items() if v > 0][0]
-            qldpoly = [k for k, v in regions.qld.polygons.items() if v > 0][0]
-            sapoly = [k for k, v in regions.sa.polygons.items() if v > 0][0]
-            taspoly = [k for k, v in regions.tas.polygons.items() if v > 0][0]
-            vicpoly = [k for k, v in regions.vic.polygons.items() if v > 0][0]
+            loadpoly = [k for k, v in list(rgn.polygons.items()) if v > 0][0]
+            nswpoly = [k for k, v in list(regions.nsw.polygons.items()) if v > 0][0]
+            qldpoly = [k for k, v in list(regions.qld.polygons.items()) if v > 0][0]
+            sapoly = [k for k, v in list(regions.sa.polygons.items()) if v > 0][0]
+            taspoly = [k for k, v in list(regions.tas.polygons.items()) if v > 0][0]
+            vicpoly = [k for k, v in list(regions.vic.polygons.items()) if v > 0][0]
 
             self.context.generators = []
             for poly in [nswpoly, qldpoly, sapoly, taspoly, vicpoly]:

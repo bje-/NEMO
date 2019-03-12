@@ -20,7 +20,7 @@ maxcols = 839
 maxrows = 679
 
 
-class LatLong(object):
+class LatLong():
 
     """A point of latitude and logitude."""
 
@@ -77,7 +77,7 @@ class LatLong(object):
         >>> obj2 = LatLong (-36, 150)
         >>> obj.distance (obj)
         0.0
-        >>> print '%.1f' % obj.distance (obj2)
+        >>> print('%.1f' % obj.distance (obj2))
         143.4
         """
         # Code adapted from Chris Veness
@@ -97,7 +97,7 @@ class LatLong(object):
         Print object representation.
 
         >>> obj = LatLong(-35, 149)
-        >>> print obj
+        >>> print(obj)
         (-35, 149)
         """
         return self.__str__()

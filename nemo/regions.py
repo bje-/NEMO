@@ -9,7 +9,7 @@
 """Regions."""
 
 
-class Region(object):
+class Region():
 
     """Each region is described by a Region object."""
 

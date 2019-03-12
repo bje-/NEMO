@@ -30,7 +30,7 @@ from nemo.nem import hourly_regional_demand
 from nemo.nem import hourly_demand
 
 
-class Context(object):
+class Context():
 
     """All state is kept in a Context object."""
 
