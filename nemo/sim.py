@@ -51,11 +51,12 @@ def _sim(context, date_range):
         for poly in rgn.polygons:
             context.demand[poly - 1] = 0
 
-    # We are free to scribble all over demand_copy.
+    # We are free to scribble all over demand_copy. Use ndarray for speed.
     demand_copy = context.demand.copy()
+    demand_ndarray = demand_copy.values
 
     for hr, date in enumerate(date_range):
-        hour_demand = demand_copy.loc[date].copy()
+        hour_demand = demand_ndarray[hr]
         residual_hour_demand = hour_demand.sum()
         # async_demand is the maximum amount of the demand in this
         # hour that can be met from non-synchronous
@@ -66,7 +67,7 @@ def _sim(context, date_range):
         if context.verbose:
             print 'STEP:', date
             print 'DEMAND:', \
-                {k: round(v, 2) for k, v in hour_demand.to_dict().items()}
+                {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())}
 
         # Dispatch power from each generator in merit (list) order
         for gidx, g in enumerate(gens):
@@ -138,7 +139,7 @@ def _sim(context, date_range):
 
         if context.verbose and (hour_demand > 0).any():
             print 'RESIDUAL:', \
-                {k: round(v, 2) for k, v in hour_demand.to_dict().items()}
+                {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())}
             print 'ENDSTEP:', date
 
     # Change the numpy arrays to dataframes for human consumption
