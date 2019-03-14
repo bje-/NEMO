@@ -23,5 +23,5 @@ setup(name='nemopt',
           'Topic :: Scientific/Engineering'
       ],
       data_files=[('etc', ['nemo.cfg'])],
-      scripts=['evolve.py', 'replay.py'],
+      scripts=['evolve', 'replay'],
       install_requires=['numpy', 'pandas', 'matplotlib', 'deap'])

@@ -7,14 +7,14 @@ check:  replay.json flake8
 	python3 -m nose -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
 
 coverage: replay.json
-	$(COVRUN) evolve.py --list-scenarios > /dev/null
-	$(COVRUN) evolve.py --lambda 2 -g1 -s theworks --costs=Null -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
-	NEMORC=nemo.cfg $(COVRUN) evolve.py -g1 -s __one_ccgt__ > /dev/null
-	$(COVRUN) evolve.py --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
-	$(COVRUN) evolve.py --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
+	$(COVRUN) evolve --list-scenarios > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 -s theworks --costs=Null -d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
+	NEMORC=nemo.cfg $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
-	$(COVRUN) evolve.py --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
-	$(COVRUN) replay.py -t -f replay.json -v > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
+	$(COVRUN) replay -t -f replay.json -v > /dev/null
 	rm trace.out results.json replay.json
 	coverage html --omit=$(OMIT)
 
@@ -47,6 +47,10 @@ coveralls:
 docker:
 	docker build -t nemo .
 
+dist:
+	python3 setup.py sdist bdist_wheel
+
 clean:
+	-rm -rf dist build *.egg-info
 	-rm -rf .coverage htmlcov replay.json exchanges.json
 	-rm *.pyc tests/*.pyc nemo.prof stub.py.lprof
