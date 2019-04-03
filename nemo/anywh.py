@@ -10,7 +10,7 @@
 
 class anyWh():
     """
-    >>> for i in range(8): print(anyWh(pow(10.23, i)))
+    >>> for i in range(8): print(anyWh(10.23 ** i))
     1 MWh
     10.23 MWh
     104.65 MWh
@@ -27,9 +27,9 @@ class anyWh():
     """
     def __init__(self, n, units='Wh'):
         self._val = float(n)
-        if self._val >= pow(10, 6):
+        if self._val >= 10 ** 6:
             self.units = 'T' + units
-        elif self._val >= pow(10, 3):
+        elif self._val >= 10 ** 3:
             self.units = 'G' + units
         elif self._val >= 1:
             self.units = 'M' + units
@@ -37,13 +37,13 @@ class anyWh():
             self.units = 'k' + units
 
     def _scale(self):
-        if self._val >= pow(10, 6):
-            return self._val / pow(10, 6)
-        if self._val >= pow(10, 3):
-            return self._val / pow(10, 3)
+        if self._val >= 10 ** 6:
+            return self._val / 10 ** 6
+        if self._val >= 10 ** 3:
+            return self._val / 10 ** 3
         if self._val >= 1:
             return self._val
-        return self._val * pow(10, 3)
+        return self._val * 10 ** 3
 
     def __int__(self):
         return int(self._val)
