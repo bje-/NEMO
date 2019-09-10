@@ -17,23 +17,43 @@ BEGIN {
     surplus = 0
 }
 
-/[Bb]attery.*GW.?$/	{ caps["battery"] += $(NF-1); last="battery" }
-/HSA.*GW.?$/		{ caps["HSA"] += $(NF-1); last="HSA" }
-/EGS.*GW.?$/		{ caps["EGS"] += $(NF-1); last="EGS" }
-/PV.*GW.?$/		{ caps["PV"] += $(NF-1); last="PV" }
-/wind.*GW.?$/		{ caps["wind"] += $(NF-1); last="wind" }
-/ S?CST.*GW.?$/		{ caps["CST"] += $(NF-1); last="CST" }
-/ hydro.*GW.?$/		{ caps["hydro"] += $(NF-1); last="hydro" }
-/pumped-hydro.*GW.?$/	{ caps["PSH"] += $(NF-1); last="PSH" }
-/PSH.*GW.?$/		{ caps["PSH"] += $(NF-1); last="PSH" }
-/ GT.*GW.?$/		{ caps["GT"] += $(NF-1); last="GT" }
-/CCGT-CCS.*GW.?$/	{ caps["CCGT-CCS"] += $(NF-1); last="CCGT-CCS" }
-/CCGT .*GW.?$/		{ caps["CCGT"] += $(NF-1); last="CCGT" }
-/coal.*GW.?$/		{ caps["Coal"] += $(NF-1); last="Coal" }
-/Coal-CCS.*GW.?$/	{ caps["Coal-CCS"] += $(NF-1); last="Coal-CCS" }
-/OCGT.*GW.?$/		{ caps["OCGT"] += $(NF-1); last="OCGT" }
-/diesel.*GW.?$/		{ caps["diesel"] += $(NF-1); last="diesel" }
-/(DR|demand).*GW.?$/	{ caps["DR"] += $(NF-1); last="DR" }
+# add AMT to the capacity total for technology TECH with a unit SUFFIX
+# (kW, MW, GW)
+function addcap(tech)
+{
+    amt=$(NF-1)
+    suffix=$(NF)
+    switch (suffix) {
+	case "kW":
+	    caps[tech] += amt / 10**6
+	    break
+	case "MW":
+	    caps[tech] += amt / 10**3
+	    break
+	case "GW":
+	    caps[tech] += amt
+	    break
+    }
+    last=tech
+}
+
+/[Bb]attery.*[kMG]W.?$/		{ addcap("battery") }
+/HSA.*[kMG]W.?$/		{ addcap("HSA") }
+/EGS.*[kMG]W.?$/		{ addcap("EGS") }
+/PV.*[kMG]W.?$/			{ addcap("PV") }
+/wind.*[kMG]W.?$/		{ addcap("wind") }
+/ S?CST.*[kMG]W.?$/		{ addcap("CST") }
+/ hydro.*[kMG]W.?$/		{ addcap("hydro") }
+/pumped-hydro.*[kMG]W.?$/   	{ addcap("PSH") }
+/PSH.*[kMG]W.?$/		{ addcap("PSH") }
+/ GT.*[kMG]W.?$/		{ addcap("GT") }
+/CCGT-CCS.*[kMG]W.?$/		{ addcap("CCGT-CCS") }
+/CCGT .*[kMG]W.?$/		{ addcap("CCGT") }
+/coal.*[kMG]W.?$/		{ addcap("Coal") }
+/Coal-CCS.*[kMG]W.?$/		{ addcap("Coal-CCS") }
+/OCGT.*[kMG]W.?$/		{ addcap("OCGT") }
+/diesel.*[kMG]W.?$/		{ addcap("diesel") }
+/(DR|demand).*[kMG]W.?$/	{ addcap("DR") }
 
 /supplied [[:digit:]\.]+ TWh/	{ energy[last] += $2; total_generation += $2 }
 /spilled [[:digit:]\.] TWh/	{ surplus += $5 }	# may be "spilled" in old log files
