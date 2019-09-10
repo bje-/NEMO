@@ -246,19 +246,27 @@ class CST(Generator):
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
-        self.sm = sm
         if CST.csvfilename != filename:
             urlobj = urllib.request.urlopen(filename)
             CST.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             CST.csvfilename = filename
         self.generation = CST.csvdata[::, column]
-        self.shours = shours
-        self.maxstorage = capacity * shours
-        self.stored = 0.5 * self.maxstorage
+        self.set_storage(shours)
+        self.set_multiple(sm)
 
     def set_capacity(self, cap):
         Generator.set_capacity(self, cap)
         self.maxstorage = cap * 1000 * self.shours
+
+    def set_multiple(self, sm):
+        """Change the solar multiple of a CST plant."""
+        self.sm = sm
+
+    def set_storage(self, shours):
+        """Change the storage capacity of a CST plant."""
+        self.shours = shours
+        self.maxstorage = self.capacity * shours
+        self.stored = 0.5 * self.maxstorage
 
     def step(self, hr, demand):
         """Step method for CST generators."""
