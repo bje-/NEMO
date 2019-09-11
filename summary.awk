@@ -82,7 +82,10 @@ function addcap(tech)
     total_generation += twh($2, $3)
 }
 /spilled [[:digit:]\.] TWh/	{ surplus += $5 }	# may be "spilled" in old log files
-/surplus [[:digit:]\.]+ TWh/  	{ surplus += $7 }	# now it's "surplus"
+/surplus [[:digit:]\.]+ [MGT]Wh/ {			# now it's "surplus"
+    sub(/,/, "", $8)  # strip trailing comma
+    surplus += twh($7, $8)
+}
 
 /Mt CO2.?$/ 		{ co2 += $(NF-2) }
 /Mt CO2,/		{ co2 += $(NF-5)-$(NF-2) }
