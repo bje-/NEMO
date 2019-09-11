@@ -17,23 +17,44 @@ BEGIN {
     surplus = 0
 }
 
-# add AMT to the capacity total for technology TECH with a unit SUFFIX
-# (kW, MW, GW)
-function addcap(tech)
+# Convert any power unit to GW
+function gw(amt, suffix)
 {
-    amt=$(NF-1)
-    suffix=$(NF)
     switch (suffix) {
 	case "kW":
-	    caps[tech] += amt / 10**6
-	    break
+	    return amt / 10**6
 	case "MW":
-	    caps[tech] += amt / 10**3
-	    break
+	    return amt / 10**3
 	case "GW":
-	    caps[tech] += amt
-	    break
+	    return amt
+	default:
+	    print("ERROR: unrecognised suffix ", suffix)
+	    exit(1)
     }
+
+}
+
+# Convert any energy unit to TWh
+function twh(amt, suffix)
+{
+    switch (suffix) {
+	case "MWh":
+	    return amt / 10**6
+	case "GWh":
+	    return amt / 10**3
+	case "TWh":
+	    return amt
+	default:
+	    print("ERROR: unrecognised suffix ", suffix)
+	    exit(1)
+    }
+}
+
+
+# add AMT to the capacity total for technology TECH
+function addcap(tech)
+{
+    caps[tech] += gw($(NF-1), $(NF))
     last=tech
 }
 
@@ -55,7 +76,11 @@ function addcap(tech)
 /diesel.*[kMG]W.?$/		{ addcap("diesel") }
 /(DR|demand).*[kMG]W.?$/	{ addcap("DR") }
 
-/supplied [[:digit:]\.]+ TWh/	{ energy[last] += $2; total_generation += $2 }
+/supplied [[:digit:]\.]+ [MGT]Wh/ {
+    sub(/,/, "", $3)  # strip trailing comma
+    energy[last] += twh($2, $3)
+    total_generation += twh($2, $3)
+}
 /spilled [[:digit:]\.] TWh/	{ surplus += $5 }	# may be "spilled" in old log files
 /surplus [[:digit:]\.]+ TWh/  	{ surplus += $7 }	# now it's "surplus"
 
