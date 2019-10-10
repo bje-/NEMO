@@ -296,7 +296,7 @@ for (p1, p2, limit) in \
 connections = {}
 for dest in range(1, numpolygons + 1):
     for src in range(1, numpolygons + 1):
-        shortest = [n for n in dijkstra.shortestPath(net, src, dest)]
+        shortest = list(dijkstra.shortestPath(net, src, dest))
         pairs = []
         for i in range(len(shortest) - 1):
             pairs.append((shortest[i], shortest[i + 1]))
