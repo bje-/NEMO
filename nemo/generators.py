@@ -251,6 +251,9 @@ class CST(Generator):
             CST.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             CST.csvfilename = filename
         self.generation = CST.csvdata[::, column]
+        # initialise these for good measure
+        self.maxstorage = None
+        self.stored = None
         self.set_storage(shours)
         self.set_multiple(sm)
 
