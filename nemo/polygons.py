@@ -270,7 +270,7 @@ distances = np.zeros((numpolygons + 1, numpolygons + 1))
 # mark row 0 and column 0 as unused (there is no polygon #0)
 distances[0] = np.nan
 distances[::, 0] = np.nan
-rows, cols = distances.shape
+rows, cols = numpolygons + 1, numpolygons + 1
 for p1 in range(1, rows):
     for p2 in range(1, cols):
         distances[p1, p2] = dist(p1, p2)
