@@ -15,6 +15,7 @@ from nemo import configfile
 from nemo import generators
 from nemo import polygons
 from nemo import regions
+from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
 
 def supply_switch(label):
@@ -157,8 +158,6 @@ def re100(context):
     >>> len(c.generators)
     184
     """
-    from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
-
     result = []
     # The following list is in merit order.
     for g in [PV1Axis, Wind, PumpedHydro, Hydro, CentralReceiver, Biofuel]:
