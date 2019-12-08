@@ -325,116 +325,6 @@ def re100_dsp(context):
     context.generators = g + _demand_response()
 
 
-def re100_geothermal_egs(context):
-    """100% renewables plus EGS geothermal.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_egs(c)
-    >>> isinstance(c.generators[0], generators.Geothermal)
-    True
-    """
-    re100(context)
-    g = context.generators
-    poly = 14
-    geo = generators.Geothermal_EGS(poly, 0,
-                                    configfile.get('generation',
-                                                   'egs-geothermal-trace'), poly,
-                                    'EGS geothermal')
-    context.generators = [geo] + g
-
-
-def re100_geothermal_hsa(context):
-    """100% renewables plus HSA geothermal.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_hsa(c)
-    >>> isinstance(c.generators[0], generators.Geothermal_HSA)
-    True
-    """
-    re100(context)
-    g = context.generators
-    poly = 38
-    geo = generators.Geothermal_HSA(poly, 0,
-                                    configfile.get('generation',
-                                                   'hsa-geothermal-trace'), poly,
-                                    'HSA geothermal')
-    context.generators = [geo] + g
-
-
-def re100_geothermal_both(context):
-    """100% renewables plus both HSA and EGS geothermal.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_both(c)
-    >>> isinstance(c.generators[0], generators.Geothermal_HSA)
-    True
-    >>> isinstance(c.generators[1], generators.Geothermal_EGS)
-    True
-    """
-    # Grab the HSA generator.
-    re100_geothermal_hsa(context)
-    hsa = context.generators[0]
-
-    # Prepend it to the EGS geothermal scenario.
-    re100_geothermal_egs(context)
-    context.generators = [hsa] + context.generators
-
-
-def re100_geothermal_both_nocst(context):
-    """100% renewables plus geothermal, but no CST.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_both_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.CST)
-    """
-    re100_geothermal_both(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
-    context.generators = newlist
-
-
-def re100_geothermal_both_nopv(context):
-    """100% renewables plus geothermal, but no CST.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_both_nopv(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.PV)
-    """
-    re100_geothermal_both(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.PV)]
-    context.generators = newlist
-
-
-def re100_geothermal_both_nowind(context):
-    """100% renewables plus geothermal, but no CST.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_both_nowind(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.Wind)
-    """
-    re100_geothermal_both(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.Wind)]
-    context.generators = newlist
-
-
-def re100_geothermal_both_novre(context):
-    """100% renewables plus geothermal, but no variable renewable energy (VRE).
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_geothermal_both_novre(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.Wind) and not isinstance(g, generators.PV)
-    """
-    re100_geothermal_both(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.Wind) and not isinstance(g, generators.PV)]
-    context.generators = newlist
-
-
 def re100_nocst(context):
     """100% renewables, but no CST.
 
@@ -448,30 +338,8 @@ def re100_nocst(context):
     context.generators = newlist
 
 
-def re100_egs_nocst(context):
-    """100% renewables with EGS geothermal but no CST.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_egs_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.CST)
-    """
-    re100_geothermal_egs(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
-    context.generators = newlist
 
 
-def re100_hsa_nocst(context):
-    """100% renewables with HSA geothermal, but no CST.
-
-    >>> class C: pass
-    >>> c = C()
-    >>> re100_hsa_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.CST)
-    """
-    re100_geothermal_hsa(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
-    context.generators = newlist
 
 
 def re100_nsw(context):
@@ -552,15 +420,6 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're100-sa': re100_south_aus,
                     're100+batteries': re100_batteries,
                     're100+dsp': re100_dsp,
-                    're100+egs': re100_geothermal_egs,
-                    're100+egs-nocst': re100_egs_nocst,
-                    're100+geo': re100_geothermal_both,
-                    're100+geo-nocst': re100_geothermal_both_nocst,
-                    're100+geo-nopv': re100_geothermal_both_nopv,
-                    're100+geo-novre': re100_geothermal_both_novre,
-                    're100+geo-nowind': re100_geothermal_both_nowind,
-                    're100+hsa': re100_geothermal_hsa,
-                    're100+hsa-nocst': re100_hsa_nocst,
                     're100-nocst': re100_nocst,
                     'replacement': replacement,
                     'theworks': theworks}
