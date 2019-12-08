@@ -916,15 +916,30 @@ class HydrogenGT(Fuelled):
     """A combustion turbine fuelled by hydrogen."""
     patch = Patch(facecolor='violet')
 
-    def __init__(self, tank, polygon, capacity, label='HydrogenGT'):
+    def __init__(self, tank, polygon, capacity, efficiency=0.36, label='HydrogenGT'):
+        """
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> e = HydrogenGT(h, 1, 100, efficiency=0.5, label='test')
+        >>> print(e)
+        test (QLD1:1), 100 MW
+        >>> e.step(0, 100) # discharge 100 MWh-e of hydrogen
+        (100.0, 0)
+        >>> e.step(0, 100) # discharge another 100 MWh-e of hydrogen
+        (100.0, 0)
+        >>> h.storage == (1000 / 2.) - (200 / e.efficiency)
+        True
+        """
         assert isinstance(tank, HydrogenStorage)
         Fuelled.__init__(self, polygon, capacity, label)
         self.tank = tank
+        self.efficiency = efficiency
 
     def step(self, hr, demand):
-        power = min(self.tank.storage, min(self.capacity, demand))
+        # calculate hydrogen requirement
+        h = min(self.capacity, demand) / self.efficiency
+        # discharge that amount of hydrogen
+        power = self.tank.discharge(h) * self.efficiency
         self.series_power[hr] = power
-        self.tank.discharge(power)
         if power > 0:
             self.runhours += 1
         return power, 0
