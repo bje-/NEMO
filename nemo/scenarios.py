@@ -338,10 +338,6 @@ def re100_nocst(context):
     context.generators = newlist
 
 
-
-
-
-
 def re100_nsw(context):
     """100% renewables in New South Wales only.
 
