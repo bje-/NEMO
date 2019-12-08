@@ -75,18 +75,18 @@ def _sim(context, date_range):
                 gen, spl = g.step(hr, async_demand)
             else:
                 gen, spl = g.step(hr, residual_hour_demand)
-            assert gen <= residual_hour_demand, \
-                "generation (%.2f) > demand (%.2f) for %s" % (gen, residual_hour_demand, g)
+            assert gen < residual_hour_demand or \
+                np.isclose(gen, residual_hour_demand), \
+                "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, g)
             generation[hr, gidx] = gen
 
             if g.non_synchronous_p:
                 async_demand -= gen
-                assert async_demand > -0.1
+                assert async_demand > 0 or np.isclose(async_demand, 0)
                 async_demand = max(0, async_demand)
 
             residual_hour_demand -= gen
-            # residual can go below zero due to rounding
-            assert residual_hour_demand > -0.1
+            assert residual_hour_demand > 0 or np.isclose(residual_hour_demand, 0)
             residual_hour_demand = max(0, residual_hour_demand)
 
             if context.verbose:
@@ -127,6 +127,8 @@ def _sim(context, date_range):
                 for other in list(g for g in gens if g.storage_p):
                     stored = other.store(hr, spl)
                     spl -= stored
+                    if spl < 0 and np.isclose(spl, 0):
+                        spl = 0
                     assert spl >= 0
 
                     # energy stored <= energy transferred, according to store's RTE
