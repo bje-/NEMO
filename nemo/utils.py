@@ -40,9 +40,7 @@ def _legend(context):
         for g in gens:
             if type(g) not in unique:  # pylint: disable=unidiomatic-typecheck
                 unique.append(type(g))
-                # Replace the generator label with its class.
-                genclass = str(type(g)).strip('<>').replace("'", "")
-                labels.append(genclass.split()[1].split('.')[1])
+                labels.append(g.__class__.__name__)
                 patches.append(g.patch)
     else:
         for g in gens:
