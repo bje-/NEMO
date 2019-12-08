@@ -818,3 +818,108 @@ class GreenPower(Generator):
         power = min(self.capacity, demand)
         self.series_power[hr] = power
         return power, 0
+
+
+class HydrogenStorage():
+    """A simple hydrogen storage vessel."""
+
+    def __init__(self, maxstorage, label='Hydrogen storage'):
+        self.maxstorage = maxstorage
+        self.storage = self.maxstorage / 2.
+        self.label = label
+
+    def full_p(self):
+        """Is the storage full?
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> h.full_p()
+        False
+        >>> h.storage = 1000
+        >>> h.full_p()
+        True
+        """
+        return self.storage == self.maxstorage
+
+    def charge(self, amt):
+        """Chage the storage by amt.
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> h.charge(100)
+        100
+        >>> h.charge(600)
+        400.0
+        >>> h.full_p()
+        True
+        """
+        assert amt >= 0
+        delta = min(self.maxstorage - self.storage, amt)
+        self.storage = min(self.maxstorage, self.storage + amt)
+        return delta
+
+    def discharge(self, amt):
+        """Discharge the storage by amt.
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> h.discharge(100)
+        100
+        >>> h.discharge(600)
+        400.0
+        """
+        assert amt >= 0
+        delta = min(self.storage, amt)
+        self.storage = max(0, self.storage - amt)
+        return delta
+
+
+class Electrolyser(Generator):
+    """A hydrogen electrolyser."""
+
+    patch = Patch()
+
+    def __init__(self, tank, polygon, capacity, rte=0.8, label='Electrolyser'):
+        """
+        >>> e = Electrolyser(None, 1, 100, 'test')	# doctest: +ELLIPSIS
+        Traceback (most recent call last):
+          ...
+        AssertionError
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> e = Electrolyser(h, 1, 100, 0.8, 'test')
+        >>> print(e)
+        test (QLD1:1), 100 MW
+        >>> e.step(0, 100)
+        (0, 0)
+        >>> e.store(0, 125)
+        125
+        """
+        assert isinstance(tank, HydrogenStorage)
+        Generator.__init__(self, polygon, capacity, label)
+        self.storage_p = True
+        self.rte = rte
+        self.tank = tank
+
+    def step(self, hr, demand):
+        # pylint: disable=no-self-use
+        # pylint: disable=unused-argument
+        """Return 0 as this is not a generator."""
+        return 0, 0
+
+    def store(self, hr, power):
+        """Store power."""
+        # pylint: disable=unused-argument
+        self.tank.charge(power * self.rte)
+        return power
+
+
+class HydrogenGT(Fuelled):
+    """A combustion turbine fuelled by hydrogen."""
+    patch = Patch(facecolor='violet')
+
+    def __init__(self, tank, polygon, capacity, label='HydrogenGT'):
+        assert isinstance(tank, HydrogenStorage)
+        Fuelled.__init__(self, polygon, capacity, label)
+        self.tank = tank
+
+    def step(self, hr, demand):
+        power = min(self.tank.storage, min(self.capacity, demand))
+        self.series_power[hr] = power
+        self.tank.discharge(power)
+        if power > 0:
+            self.runhours += 1
+        return power, 0
