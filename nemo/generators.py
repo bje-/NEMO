@@ -873,25 +873,29 @@ class Electrolyser(Generator):
 
     patch = Patch()
 
-    def __init__(self, tank, polygon, capacity, rte=0.8, label='Electrolyser'):
+    def __init__(self, tank, polygon, capacity, efficiency=0.8, label='Electrolyser'):
         """
         >>> e = Electrolyser(None, 1, 100, 'test')	# doctest: +ELLIPSIS
         Traceback (most recent call last):
           ...
         AssertionError
-        >>> h = HydrogenStorage(1000, 'test')
-        >>> e = Electrolyser(h, 1, 100, 0.8, 'test')
+        >>> h = HydrogenStorage(400, 'test')
+        >>> e = Electrolyser(h, 1, 100, efficiency=1.0, label='test')
         >>> print(e)
         test (QLD1:1), 100 MW
         >>> e.step(0, 100)
         (0, 0)
-        >>> e.store(0, 125)
-        125
+        >>> e.store(0, 100) # store 100 MWh of hydrogen
+        100.0
+        >>> e.store(0, 100) # store another 100 MWh of hydrogen
+        100.0
+        >>> e.store(0, 100) # tank is full, none stored
+        0.0
         """
         assert isinstance(tank, HydrogenStorage)
         Generator.__init__(self, polygon, capacity, label)
         self.storage_p = True
-        self.rte = rte
+        self.efficiency = efficiency
         self.tank = tank
 
     def step(self, hr, demand):
@@ -903,8 +907,9 @@ class Electrolyser(Generator):
     def store(self, hr, power):
         """Store power."""
         # pylint: disable=unused-argument
-        self.tank.charge(power * self.rte)
-        return power
+        power = min(power, self.capacity)
+        stored = self.tank.charge(power * self.efficiency)
+        return stored / self.efficiency
 
 
 class HydrogenGT(Fuelled):
