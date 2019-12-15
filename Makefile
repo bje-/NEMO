@@ -4,7 +4,7 @@ OMIT=nemo/priodict.py,nemo/dijkstra.py
 COVRUN=coverage run -a --source=. --omit=$(OMIT)
 
 check:  replay.json flake8
-	python3 -m nose -I '(evolve|replay|setup).py' --with-doctest --with-coverage --cover-package=.
+	python3 -m nose --with-doctest --with-coverage --cover-package=.
 
 coverage: replay.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
