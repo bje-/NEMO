@@ -6,7 +6,7 @@ from setuptools import setup
 setup(name='nemopt',
       # Use a datestamp as the version.
       version=time.strftime('%Y%m%d'),
-      packages=['nemo'],
+      packages=['dijkstra', 'nemo'],
       description='National Electricity Market Optimiser',
       author='Ben Elliston',
       author_email='bje@air.net.au',
@@ -14,7 +14,7 @@ setup(name='nemopt',
       url='https://nemo.ozlabs.org',
       keywords=['electricity', 'model', 'scenarios'],
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
           'Intended Audience :: Science/Research',
           'Intended Audience :: Developers',
