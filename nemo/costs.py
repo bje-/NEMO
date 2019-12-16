@@ -24,11 +24,16 @@ class NullCosts():
 
     """All costs are zero. Useful for debugging."""
 
+    class ZeroDict(dict):
+        """Return 0 for any key."""
+        def __getitem__(self, key):
+            return dict.get(self, key, 0)
+
     # pylint: disable=unused-argument
     def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
-        self.capcost_per_kw = {}
-        self.fixed_om_costs = {}
-        self.opcost_per_mwh = {}
+        self.capcost_per_kw = self.ZeroDict()
+        self.fixed_om_costs = self.ZeroDict()
+        self.opcost_per_mwh = self.ZeroDict()
         self.annuityf = 1
         self.ccs_storage_per_t = 0
         self.bioenergy_price_per_gj = 0
@@ -36,17 +41,6 @@ class NullCosts():
         self.gas_price_per_gj = 0
         self.diesel_price_per_litre = 0
         self.carbon = 0
-
-        for t in [tech.Behind_Meter_PV, tech.Biofuel, tech.Biomass,
-                  tech.Black_Coal, tech.CCGT, tech.CCGT_CCS,
-                  tech.CentralReceiver, tech.Coal_CCS, tech.Diesel,
-                  tech.DemandResponse, tech.Geothermal_EGS,
-                  tech.Geothermal_HSA, tech.GreenPower, tech.Hydro,
-                  tech.OCGT, tech.ParabolicTrough, tech.PumpedHydro,
-                  tech.PV, tech.PV1Axis, tech.Wind]:
-            self.capcost_per_kw[t] = 0
-            self.opcost_per_mwh[t] = 0
-            self.fixed_om_costs[t] = 0
 
 
 class APGTR2015():
