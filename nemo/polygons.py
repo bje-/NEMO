@@ -10,7 +10,7 @@
 import json
 import numpy as np
 
-from nemo import dijkstra
+from dijkstra import dijkstra
 from nemo.latlong import LatLong
 from nemo import regions
 
