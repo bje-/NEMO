@@ -811,6 +811,11 @@ class GreenPower(Generator):
     patch = Patch(facecolor='darkgreen')
 
     def __init__(self, polygon, capacity, label='GreenPower'):
+        """
+        >>> g = GreenPower(1, 100)
+        >>> g.step(0, 200)
+        (100, 0)
+        """
         Generator.__init__(self, polygon, capacity, label)
 
     def step(self, hr, demand):
