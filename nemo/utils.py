@@ -15,7 +15,7 @@ from matplotlib.patches import Patch
 
 from nemo import configfile
 from nemo.configfile import configparser
-from nemo.anywh import anyWh
+from nemo.anywh import AnyWh
 
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
@@ -44,7 +44,7 @@ def _legend(context):
                 patches.append(g.patch)
     else:
         for g in gens:
-            labels.append(g.label + ' (%s)' % anyWh(g.capacity, 'W'))
+            labels.append(g.label + ' (%s)' % AnyWh(g.capacity, 'W'))
             patches.append(g.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,

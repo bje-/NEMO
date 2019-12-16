@@ -16,7 +16,7 @@ import urllib.parse
 import numpy as np
 from matplotlib.patches import Patch
 
-from nemo.anywh import anyWh
+from nemo.anywh import AnyWh
 from nemo import polygons
 
 
@@ -117,13 +117,13 @@ class Generator():
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
-        s = 'supplied %s' % anyWh(sum(self.series_power.values()))
+        s = 'supplied %s' % AnyWh(sum(self.series_power.values()))
         if self.capacity > 0:
             cf = self.capfactor()
             if cf > 0:
                 s += ', CF %.1f%%' % cf
         if sum(self.series_spilled.values()) > 0:
-            s += ', surplus %s' % anyWh(sum(self.series_spilled.values()))
+            s += ', surplus %s' % AnyWh(sum(self.series_spilled.values()))
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
@@ -141,7 +141,7 @@ class Generator():
         """A short string representation of the generator."""
         return '%s (%s:%s), %s' \
             % (self.label, self.region(), self.polygon,
-               anyWh(self.capacity, 'W'))
+               AnyWh(self.capacity, 'W'))
 
     def __repr__(self):
         """A representation of the generator."""
@@ -428,7 +428,7 @@ class PumpedHydro(Hydro):
     def summary(self, context):
         return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
-            ', %s storage' % anyWh(self.maxstorage)
+            ', %s storage' % AnyWh(self.maxstorage)
 
     def reset(self):
         Fuelled.reset(self)
@@ -717,7 +717,7 @@ class Battery(Generator):
         return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
             ', charged %s hours' % locale.format('%d', self.chargehours, grouping=True) + \
-            ', %s storage' % anyWh(self.maxstorage)
+            ', %s storage' % AnyWh(self.maxstorage)
 
 
 class Geothermal(Generator):

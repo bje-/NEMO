@@ -8,9 +8,9 @@
 """Self-scaling units."""
 
 
-class anyWh():
+class AnyWh():
     """
-    >>> for i in range(8): print(anyWh(10.23 ** i))
+    >>> for i in range(8): print(AnyWh(10.23 ** i))
     1 MWh
     10.23 MWh
     104.65 MWh
@@ -19,7 +19,7 @@ class anyWh():
     112.04 GWh
     1.1462 TWh
     11.725 TWh
-    >>> a = anyWh(500)
+    >>> a = AnyWh(500)
     >>> int(a)
     500
     >>> float(a)

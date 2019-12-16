@@ -18,7 +18,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from nemo.anywh import anyWh
+from nemo.anywh import AnyWh
 from nemo import configfile
 from nemo import costs
 from nemo import generators
@@ -121,8 +121,8 @@ class Context():
                 else:
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
-        s += 'Demand energy: %s\n' % anyWh(self.total_demand())
-        s += 'Unused surplus energy: %s\n' % anyWh(self.surplus_energy())
+        s += 'Demand energy: %s\n' % AnyWh(self.total_demand())
+        s += 'Unused surplus energy: %s\n' % AnyWh(self.surplus_energy())
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
             s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
@@ -145,8 +145,8 @@ class Context():
             unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             if not self.unserved.empty:
-                s += 'Shortfalls (min, max): (%s, %s)' % (anyWh(self.unserved.min(), 'W'),
-                                                          anyWh(self.unserved.max(), 'W'))
+                s += 'Shortfalls (min, max): (%s, %s)' % (AnyWh(self.unserved.min(), 'W'),
+                                                          AnyWh(self.unserved.max(), 'W'))
         return s
 
     class JSONEncoder(json.JSONEncoder):
