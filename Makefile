@@ -36,7 +36,7 @@ lineprof:
 	python3 -m kernprof -v -l stub.py
 
 flake8:
-	python3 -m flake8 --ignore=E501,N *.py */*.py
+	python3 -m flake8 . --max-line-length=127 --ignore=N
 
 lint:
 	python3 -m pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
