@@ -97,8 +97,8 @@ class LatLong():
         Print object representation.
 
         >>> obj = LatLong(-35, 149)
-        >>> print(obj)
-        (-35, 149)
+        >>> repr(obj)
+        '(-35, 149)'
         """
         return self.__str__()
 
