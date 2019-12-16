@@ -19,12 +19,10 @@ coverage: replay.json
 	coverage html --omit=$(OMIT)
 
 replay.json:
-	echo "# comment line" >> $@
-	echo "malformed line" >> $@
-	echo >> $@
-	echo -n '{"options": {"carbon_price": 0, "ccs_storage_costs": 27, "gas_price": 11,' >> $@
-	echo -n ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__",' >> $@
-	echo    ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}' >> $@
+	printf "# %s\n%s\n\n" "comment line" "malformed line" >> $@
+	printf '{"options": {"carbon_price": 0, "ccs_storage_costs": 27, "gas_price": 11,' >> $@
+	printf ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__",' >> $@
+	printf ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}\n' >> $@
 
 nemo.prof:
 	python3 -m cProfile -o $@ stub.py
