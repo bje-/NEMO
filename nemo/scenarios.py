@@ -209,7 +209,7 @@ def re100_batteries(context):
     re100(context)
     # discharge between 6pm and 6am daily
     hrs = list(range(0, 7)) + list(range(18, 24))
-    battery = generators.Battery(polygons.wildcard, 0, 0, dischargeHours=hrs)
+    battery = generators.Battery(polygons.wildcard, 0, 0, discharge_hours=hrs)
     g = context.generators
     context.generators = [battery] + g
 
@@ -455,7 +455,7 @@ def demand_switch(label):
     >>> demand_switch('scalex:20:8:20')
     Traceback (most recent call last):
       ...
-    ValueError: toHour comes before fromHour
+    ValueError: to_hour comes before from_hour
     >>> demand_switch('peaks:10:34000') # doctest: +ELLIPSIS
     <function ...>
     >>> demand_switch('npeaks:10:5') # doctest: +ELLIPSIS
@@ -483,17 +483,17 @@ def demand_switch(label):
     if label.startswith('scalex:'):
         # label form: "scalex:H1:H2:X" scales hours H1 to H2 by X%
         _, h1, h2, factor = label.split(':')
-        fromHour = int(h1)
-        toHour = int(h2)
-        if fromHour < 0 or toHour < 0:
+        from_hour = int(h1)
+        to_hour = int(h2)
+        if from_hour < 0 or to_hour < 0:
             raise ValueError("hour < 0")
-        if fromHour > 24 or toHour > 24:
+        if from_hour > 24 or to_hour > 24:
             raise ValueError("hour > 24")
-        if toHour <= fromHour:
-            raise ValueError("toHour comes before fromHour")
+        if to_hour <= from_hour:
+            raise ValueError("to_hour comes before from_hour")
         factor = 1 + float(factor) / 100
         return lambda context: scale_range_demand(context,
-                                                  fromHour, toHour, factor)
+                                                  from_hour, to_hour, factor)
 
     if label.startswith('scaletwh:'):
         # label form: "scaletwh:N" scales demand to N TWh
@@ -505,13 +505,13 @@ def demand_switch(label):
         # label form: "shift:N:H1:H2" load shifts N MW every day
         _, demand, h1, h2 = label.split(':')
         demand = int(demand)
-        fromHour = int(h1)
-        toHour = int(h2)
-        if fromHour < 0 or toHour < 0:
+        from_hour = int(h1)
+        to_hour = int(h2)
+        if from_hour < 0 or to_hour < 0:
             raise ValueError("hour < 0")
-        if fromHour > 24 or toHour > 24:
+        if from_hour > 24 or to_hour > 24:
             raise ValueError("hour > 24")
-        return lambda context: shift_demand(context, demand, fromHour, toHour)
+        return lambda context: shift_demand(context, demand, from_hour, to_hour)
 
     if label.startswith('peaks:'):
         # label form: "peaks:N:X" adjust demand peaks over N megawatts
@@ -567,9 +567,9 @@ def roll_demand(context, posns):
     context.demand = pd.DataFrame(data=values, index=idx)
 
 
-def scale_range_demand(context, fromHour, toHour, factor):
+def scale_range_demand(context, from_hour, to_hour, factor):
     """
-    Scale demand between fromHour and toHour by factor%.
+    Scale demand between from_hour and to_hour by factor%.
 
     >>> class C: pass
     >>> c = C()
@@ -588,7 +588,7 @@ def scale_range_demand(context, fromHour, toHour, factor):
     8  8.0
     9  9.0
     """
-    for hour in range(fromHour, toHour):
+    for hour in range(from_hour, to_hour):
         context.demand[hour::24] *= factor
 
 
@@ -626,18 +626,18 @@ def scale_demand_by(context, factor):
     context.demand *= factor
 
 
-def shift_demand(context, demand, fromHour, toHour):
-    """Move N MW of demand from fromHour to toHour."""
+def shift_demand(context, demand, from_hour, to_hour):
+    """Move N MW of demand from from_hour to to_hour."""
     # Shift demand within in each polygon
     for p in range(43):
         for r in context.regions:
             if p + 1 in r.polygons:
                 weight = r.polygons[p + 1]
                 if context.demand[p].sum() > 0:
-                    context.demand[p, fromHour::24] -= demand * weight
-                    context.demand[p, toHour::24] += demand * weight
+                    context.demand[p, from_hour::24] -= demand * weight
+                    context.demand[p, to_hour::24] += demand * weight
     assert np.all(context.demand >= 0), \
-        "negative load in hour %d" % fromHour
+        "negative load in hour %d" % from_hour
 
 
 def scale_peaks(context, power, factor):

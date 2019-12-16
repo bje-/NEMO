@@ -605,13 +605,13 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, dischargeHours=None, rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, discharge_hours=None, rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
-        self.dischargeHours = dischargeHours if dischargeHours is not None else range(24)
+        self.discharge_hours = discharge_hours if discharge_hours is not None else range(24)
         self.rte = rte
         self.storage_p = True
         self.last_run = None
@@ -675,7 +675,7 @@ class Battery(Generator):
         >>> b.step(hr=19, demand=200)
         (0, 0)
         """
-        if hr % 24 not in self.dischargeHours:
+        if hr % 24 not in self.discharge_hours:
             return 0, 0
 
         if hr == self.last_run:
