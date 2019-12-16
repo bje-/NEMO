@@ -1,9 +1,17 @@
-# Copyright (C) 2013, 2014, 2017 Ben Elliston
+# Copyright (C) 2013, 2014, 2017, 2019 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
+
+# This script processes the output of evolve into a summary
+# table. Usage example:
+#
+# awk -f summary.awk < evolve-output.txt
+#
+# The script is capable of processing a file containing multiple runs.
+# Multiple summary tables will be output.
 
 BEGIN {
     PROCINFO["sorted_in"] = "@ind_num_asc"
