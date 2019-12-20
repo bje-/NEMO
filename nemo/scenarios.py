@@ -465,6 +465,7 @@ def demand_switch(label):
       ...
     ValueError: invalid scenario: foo
     """
+    # pylint: disable=too-many-branches
     if label == 'unchanged':
         return unchanged
 
