@@ -1,3 +1,5 @@
+#!/usr/bin/gawk -f
+#
 # Copyright (C) 2013, 2014, 2017, 2019 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
