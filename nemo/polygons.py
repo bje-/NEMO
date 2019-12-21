@@ -8,10 +8,10 @@
 """Support code for the 43 polygons of the AEMO study."""
 
 import json
+import math
 import numpy as np
 
 from dijkstra import dijkstra
-from nemo.latlong import LatLong
 from nemo import regions
 
 # The fraction of a region's load in each polygon.
@@ -170,7 +170,7 @@ def _centroid(vertices):
 centroids = {}
 for i, vertices in _polygons.items():
     a, b = _centroid(vertices)
-    centroids[i] = LatLong(b, a)
+    centroids[i] = (b, a)
 
 
 def path(poly1, poly2):
@@ -222,7 +222,19 @@ def dist(poly1, poly2):
     >>> dist(1,43) == distances[1,43]
     True
     """
-    return int(centroids[poly1].distance(centroids[poly2]))
+    # Code adapted from Chris Veness
+    r = 6371  # km
+    point1 = centroids[poly1]
+    point2 = centroids[poly2]
+    dlat = math.radians(point1[0] - point2[0])
+    dlon = math.radians(point1[1] - point2[1])
+    lat1 = math.radians(point1[0])
+    lat2 = math.radians(point2[0])
+    a = math.sin(dlat / 2) * math.sin(dlat / 2) + \
+        math.sin(dlon / 2) * math.sin(dlon / 2) * \
+        math.cos(lat1) * math.cos(lat2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return int(r * c)
 
 
 def pathlen(path):
