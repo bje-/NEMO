@@ -15,13 +15,17 @@ import urllib.error
 import urllib.parse
 import numpy as np
 from matplotlib.patches import Patch
+import pint
 
-from nemo.anywh import AnyWh
 from nemo import polygons
 
 
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
+
+# Default to abbreviated units when formatting
+ureg = pint.UnitRegistry()
+ureg.default_format = '.2f~P'
 
 
 class Generator():
@@ -117,13 +121,15 @@ class Generator():
     def summary(self, context):
         """Return a summary of the generator activity."""
         costs = context.costs
-        s = 'supplied %s' % AnyWh(sum(self.series_power.values()))
+        supplied = sum(self.series_power.values()) * ureg.MWh
+        s = 'supplied {}'.format(supplied.to_compact())
         if self.capacity > 0:
             cf = self.capfactor()
             if cf > 0:
                 s += ', CF %.1f%%' % cf
         if sum(self.series_spilled.values()) > 0:
-            s += ', surplus %s' % AnyWh(sum(self.series_spilled.values()))
+            spilled = sum(self.series_spilled.values()) * ureg.MWh
+            s += ', surplus {}'.format(spilled.to_compact())
         if self.capcost(costs) > 0:
             s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
         if self.opcost(costs) > 0:
@@ -140,8 +146,7 @@ class Generator():
     def __str__(self):
         """A short string representation of the generator."""
         return '%s (%s:%s), %s' \
-            % (self.label, self.region(), self.polygon,
-               AnyWh(self.capacity, 'W'))
+            % (self.label, self.region(), self.polygon, str(self.capacity * ureg.MW))
 
     def __repr__(self):
         """A representation of the generator."""
@@ -428,7 +433,7 @@ class PumpedHydro(Hydro):
     def summary(self, context):
         return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
-            ', %s storage' % AnyWh(self.maxstorage)
+            ', %s storage' % str(self.maxstorage * ureg.MWh)
 
     def reset(self):
         Fuelled.reset(self)
@@ -717,7 +722,7 @@ class Battery(Generator):
         return Generator.summary(self, context) + \
             ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
             ', charged %s hours' % locale.format('%d', self.chargehours, grouping=True) + \
-            ', %s storage' % AnyWh(self.maxstorage)
+            ', %s storage' % str(self.maxstorage * ureg.MWh)
 
 
 class Geothermal(Generator):
@@ -887,7 +892,7 @@ class Electrolyser(Generator):
         >>> h = HydrogenStorage(400, 'test')
         >>> e = Electrolyser(h, 1, 100, efficiency=1.0, label='test')
         >>> print(e)
-        test (QLD1:1), 100 MW
+        test (QLD1:1), 100.00 MW
         >>> e.step(0, 100)
         (0, 0)
         >>> e.store(0, 100) # store 100 MWh of hydrogen
@@ -926,7 +931,7 @@ class HydrogenGT(Fuelled):
         >>> h = HydrogenStorage(1000, 'test')
         >>> e = HydrogenGT(h, 1, 100, efficiency=0.5, label='test')
         >>> print(e)
-        test (QLD1:1), 100 MW
+        test (QLD1:1), 100.00 MW
         >>> e.step(0, 100) # discharge 100 MWh-e of hydrogen
         (100.0, 0)
         >>> e.step(0, 100) # discharge another 100 MWh-e of hydrogen

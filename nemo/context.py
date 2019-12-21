@@ -17,8 +17,8 @@ import re
 import json
 import numpy as np
 import pandas as pd
+import pint
 
-from nemo.anywh import AnyWh
 from nemo import configfile
 from nemo import costs
 from nemo import generators
@@ -28,6 +28,9 @@ from nemo import polygons
 from nemo.nem import startdate
 from nemo.nem import hourly_regional_demand
 from nemo.nem import hourly_demand
+
+ureg = pint.UnitRegistry()
+ureg.default_format = '.2f~P'
 
 
 class Context():
@@ -121,8 +124,10 @@ class Context():
                 else:
                     s += '\n'
         s += 'Timesteps: %d h\n' % self.hours
-        s += 'Demand energy: %s\n' % AnyWh(self.total_demand())
-        s += 'Unused surplus energy: %s\n' % AnyWh(self.surplus_energy())
+        total_demand = (self.total_demand() * ureg.MWh).to_compact()
+        s += 'Demand energy: {}\n'.format(total_demand)
+        surplus_energy = (self.surplus_energy() * ureg.MWh).to_compact()
+        s += 'Unused surplus energy: {}\n'.format(surplus_energy)
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
             s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
@@ -145,8 +150,9 @@ class Context():
             unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
             s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             if not self.unserved.empty:
-                s += 'Shortfalls (min, max): (%s, %s)' % (AnyWh(self.unserved.min(), 'W'),
-                                                          AnyWh(self.unserved.max(), 'W'))
+                usmin = (self.unserved.min() * ureg.MW).to_compact()
+                usmax = (self.unserved.max() * ureg.MW).to_compact()
+                s += 'Shortfalls (min, max): ({}, {})'.format(usmin, usmax)
         return s
 
     class JSONEncoder(json.JSONEncoder):

@@ -12,14 +12,17 @@ import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+import pint
 
 from nemo import configfile
 from nemo.configfile import configparser
-from nemo.anywh import AnyWh
 
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
 register_matplotlib_converters()
+
+# SI units
+ureg = pint.UnitRegistry()
 
 
 def _generator_list(context):
@@ -44,7 +47,8 @@ def _legend(context):
                 patches.append(g.patch)
     else:
         for g in gens:
-            labels.append(g.label + ' (%s)' % AnyWh(g.capacity, 'W'))
+            capacity = (g.capacity * ureg.MW)
+            labels.append(g.label + ' ({:.2f~P})'.format(capacity.to_compact()))
             patches.append(g.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,
