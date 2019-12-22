@@ -2,10 +2,16 @@
 
 import os
 import unittest
+import types
+from datetime import datetime
+
 import nemo
+from nemo import costs
 from nemo import regions
 from nemo import polygons
 from nemo import utils
+
+# pylint: disable=no-self-use
 
 
 class TestCoverage(unittest.TestCase):
@@ -13,6 +19,7 @@ class TestCoverage(unittest.TestCase):
     """A handful of miscellaneous tests to ensure good coverage."""
 
     def test_001(self):
+        """Test 1"""
         c = nemo.Context()
         c.regions = [regions.nsw, regions.vic, regions.sa]
         c.track_exchanges = True
@@ -20,6 +27,7 @@ class TestCoverage(unittest.TestCase):
         nemo.run(c)
 
     def test_002(self):
+        """Test 2"""
         c = nemo.Context()
         # Make sure there is unserved energy by setting 2nd and
         # subsequent generator capacity to 0.
@@ -32,15 +40,15 @@ class TestCoverage(unittest.TestCase):
         os.unlink('foo.png')
 
         # Test limiting the x-range.
-        from datetime import datetime
         xlim = [datetime(2010, 1, 1), datetime(2010, 1, 10)]
         utils.plot(c, filename='foo.png', xlim=xlim)
         os.unlink('foo.png')
 
     def test_003(self):
+        """Test 3"""
         c = nemo.Context()
         # Add 25 DR generators so that the abbreviated legend is used.
-        for i in range(25):
+        for _ in range(25):
             dr = nemo.generators.DemandResponse(polygons.wildcard, 100, 0)
             c.generators += [dr]
         print(len(c.generators))
@@ -57,8 +65,6 @@ class TestCoverage(unittest.TestCase):
 
     def test_005(self):
         """Test Context summary with no cost generator."""
-        from nemo import costs
-        import types
         c = nemo.Context()
         c.costs = costs.NullCosts()
         print(str(c))

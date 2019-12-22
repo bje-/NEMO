@@ -10,11 +10,13 @@
 """A testsuite for NEMO."""
 
 import math
+import unittest
+import pandas as pd
+
 import nemo
 from nemo import regions
 from nemo import polygons
 from nemo import generators
-import unittest
 
 
 class SuperGenerator(generators.Generator):
@@ -40,10 +42,9 @@ class SuperGenerator(generators.Generator):
         if self.capacity is None:
             # meet demand exactly
             return demand, 0
-        else:
-            # meet demand, spill surplus capacity
-            surplus = max(0, self.capacity - demand)
-            return demand, surplus
+        # meet demand, spill surplus capacity
+        surplus = max(0, self.capacity - demand)
+        return demand, surplus
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -126,7 +127,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_010(self):
         """Running in one region only produces no interstate exchanges."""
-        import pandas as pd
         for rgn in regions.All:
             if rgn is regions.snowy:
                 continue
@@ -145,7 +145,7 @@ class TestSequenceFunctions(unittest.TestCase):
                 self.context.generators.append(generators.OCGT(poly, 100))
             nemo.run(self.context, endhour=pd.Timestamp('2010-01-05'))
             self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
-            # FIXME: we need a numpy array that can be indexed from 1
+            # FXME: we need a numpy array that can be indexed from 1
             self.assertTrue(self.context.exchanges[0, loadpoly - 1, loadpoly - 1] > 0, 'Only rgn->rgn is > 0')
 
     def test_011(self):
