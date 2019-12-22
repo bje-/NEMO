@@ -1,7 +1,6 @@
 all:
 
-OMIT=nemo/priodict.py,nemo/dijkstra.py
-COVRUN=coverage run -a --source=. --omit=$(OMIT)
+COVRUN=coverage run -a --source=.
 
 check:  replay.json flake8
 	python3 -m nose --with-doctest --with-coverage --cover-package=nemo
@@ -16,7 +15,7 @@ coverage: replay.json
 	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
 	$(COVRUN) replay -t -f replay.json -v > /dev/null
 	rm trace.out results.json replay.json
-	coverage html --omit=$(OMIT)
+	coverage html
 
 replay.json:
 	printf "# %s\n%s\n\n" "comment line" "malformed line" >> $@
@@ -34,10 +33,10 @@ lineprof:
 	python3 -m kernprof -v -l stub.py
 
 flake8:
-	python3 -m flake8 nemo --max-line-length=127 --ignore=N801
+	python3 -m flake8 evolve replay nemo --max-line-length=127 --ignore=N801
 
 lint:
-	python3 -m pylint $(filter-out nemo/priodict.py nemo/dijkstra.py, $(wildcard *.py nemo/*.py))
+	python3 -m pylint evolve replay $(wildcard *.py nemo/*.py)
 
 coveralls:
 	coveralls
