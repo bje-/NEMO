@@ -132,8 +132,9 @@ def _store_spills(context, hr, g, generators, spl):
         if context.verbose:
             # show the energy transferred, not stored
             print('STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored)
-        for src, dest in polygons.path(g.polygon, other.polygon):
-            context.add_exchange(hr, src, dest, stored)
+        if context.track_exchanges:
+            for src, dest in polygons.path(g.polygon, other.polygon):
+                context.add_exchange(hr, src, dest, stored)
     return spl
 
 
