@@ -20,10 +20,10 @@ def _sim(context, date_range):
         # every generator must be assigned to a polygon
         assert g.polygon is not None, 'every generator must be assigned a polygon'
 
+    context.connections = {}
     context.exchanges.fill(0)
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))
-    context.connections = {}
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region() in context.regions]
@@ -105,6 +105,22 @@ def _track_exchanges(context, hr, g, gen, hour_demand, paths):
 
 
 def _store_spills(context, hr, g, generators, spl):
+    """
+    Store spills from a generator into any storage.
+
+    >>> class C: pass
+    >>> ctx = C()
+    >>> ctx.verbose = 0
+    >>> ctx.track_exchanges = 0
+    >>> from nemo import generators
+    >>> g = generators.Hydro(1, 100)
+    >>> h = generators.HydrogenStorage(400)
+    >>> e = generators.Electrolyser(h, 1, 100, efficiency=1.0)
+    >>> _store_spills(ctx, 0, g, [e], 50)
+    0.0
+    >>> h.storage
+    250.0
+    """
     for other in list(g for g in generators if g.storage_p):
         stored = other.store(hr, spl)
         spl -= stored
@@ -166,7 +182,7 @@ def _dispatch(context, hr, hour_demand, gens, generation, spill):
 
 
 def run(context, starthour=None, endhour=None):
-    """Run the simulation (without a plot).
+    """Run the simulation.
 
     >>> from nemo import Context
     >>> c = Context()
