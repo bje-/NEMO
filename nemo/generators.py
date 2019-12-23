@@ -264,7 +264,7 @@ class CST(Generator):
 
     def set_capacity(self, cap):
         Generator.set_capacity(self, cap)
-        self.maxstorage = cap * 1000 * self.shours
+        self.maxstorage = self.capacity * self.shours
 
     def set_multiple(self, sm):
         """Change the solar multiple of a CST plant."""
