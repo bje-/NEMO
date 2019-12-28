@@ -646,7 +646,7 @@ def scale_peaks(context, power, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = pd.DataFrame(np.zeros((5,5)))
+    >>> c.demand = pd.DataFrame([[0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> scale_peaks(c, 3000, 0.5)
     >>> c.demand.loc[3]
@@ -666,7 +666,7 @@ def scale_npeaks(context, topn, factor):
 
     >>> class C: pass
     >>> c = C()
-    >>> c.demand = pd.DataFrame(np.zeros((5,5)))
+    >>> c.demand = pd.DataFrame([[0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> c.demand.loc[4] = 3000
     >>> scale_npeaks(c, 1, 0.5)
