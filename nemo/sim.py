@@ -7,6 +7,7 @@
 
 """The simulation engine."""
 
+import math
 import numpy as np
 import pandas as pd
 from nemo import polygons
@@ -21,7 +22,7 @@ def _sim(context, date_range):
         assert g.polygon is not None, 'every generator must be assigned a polygon'
 
     context.connections = {}
-    context.exchanges.fill(0)
+    context.exchanges = np.zeros(context.exchanges.shape)
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))
 
@@ -124,7 +125,7 @@ def _store_spills(context, hr, g, generators, spl):
     for other in list(g for g in generators if g.storage_p):
         stored = other.store(hr, spl)
         spl -= stored
-        if spl < 0 and np.isclose(spl, 0):
+        if spl < 0 and math.isclose(spl, 0):
             spl = 0
         assert spl >= 0
 
@@ -153,17 +154,17 @@ def _dispatch(context, hr, hour_demand, gens, generation, spill):
         else:
             gen, spl = g.step(hr, residual_hour_demand)
         assert gen < residual_hour_demand or \
-            np.isclose(gen, residual_hour_demand), \
+            math.isclose(gen, residual_hour_demand), \
             "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, g)
         generation[hr, gidx] = gen
 
         if g.non_synchronous_p:
             async_demand -= gen
-            assert async_demand > 0 or np.isclose(async_demand, 0)
+            assert async_demand > 0 or math.isclose(async_demand, 0)
             async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
-        assert residual_hour_demand > 0 or np.isclose(residual_hour_demand, 0)
+        assert residual_hour_demand > 0 or math.isclose(residual_hour_demand, 0)
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
