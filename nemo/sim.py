@@ -38,22 +38,20 @@ def _sim(context, date_range):
             context.demand[poly - 1] = 0
 
     # We are free to scribble all over demand_copy. Use ndarray for speed.
-    demand_copy = context.demand.copy()
-    demand_ndarray = demand_copy.values
+    demand_copy = context.demand.copy().values
+    residual_demand = demand_copy.sum(axis=1)
 
     for hr, date in enumerate(date_range):
-        hour_demand = demand_ndarray[hr]
+        hour_demand = demand_copy[hr]
+        residual_hour_demand = residual_demand[hr]
 
         if context.verbose:
             print('STEP:', date)
-            print('DEMAND:',
-                  {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())})
+            print('DEMAND:', {a: round(b, 2) for a, b in enumerate(hour_demand)})
 
-        _dispatch(context, hr, hour_demand, gens, generation, spill)
+        _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, spill)
 
-        if context.verbose and (hour_demand > 0).any():
-            print('RESIDUAL:',
-                  {k: round(v, 2) for k, v in list(demand_copy.loc[date].to_dict().items())})
+        if context.verbose:
             print('ENDSTEP:', date)
 
     # Change the numpy arrays to dataframes for human consumption
@@ -139,9 +137,9 @@ def _store_spills(context, hr, g, generators, spl):
     return spl
 
 
-def _dispatch(context, hr, hour_demand, gens, generation, spill):
+def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, spill):
     """Dispatch power from each generator in merit (list) order."""
-    residual_hour_demand = hour_demand.sum()
+
     # async_demand is the maximum amount of the demand in this
     # hour that can be met from non-synchronous
     # generation. Non-synchronous generation in excess of this
