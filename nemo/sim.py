@@ -177,8 +177,6 @@ def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, 
 
         if spl > 0:
             spill[hr, gidx] = _store_spills(context, hr, g, gens, spl)
-        else:
-            spill[hr, gidx] = 0
 
 
 def run(context, starthour=None, endhour=None):
