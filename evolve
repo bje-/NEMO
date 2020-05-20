@@ -40,57 +40,86 @@ twh = pow(10., 6)
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
 
-parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-parser.add_argument("-c", "--carbon-price", type=int,
-                    default=cf.get('costs', 'co2-price-per-t'),
-                    help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
-parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
-parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
-                    help='generations [default: %s]' % cf.get('optimiser', 'generations'))
-parser.add_argument("-o", "--output", type=str, default='results.json',
-                    help='filename of output file (will overwrite)')
-parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
-                    help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
-parser.add_argument("-s", "--supply-scenario", type=str, default='re100', help='generation mix scenario [default: \'re100\']')
-parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
-parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
 
-parser.add_argument("--bioenergy-limit", type=float, default=cf.get('limits', 'bioenergy-twh-per-yr'),
-                    help='Limit on annual energy from bioenergy (TWh/y) [default: %s]' %
-                    cf.get('limits', 'bioenergy-twh-per-yr'))
-parser.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'),
-                    help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
-parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
-                    help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
-parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cost-class'),
-                    help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
-parser.add_argument("--emissions-limit", type=float, default=np.inf,
-                    help='CO2 emissions limit (Mt/y) [default: infinity]')
-parser.add_argument("--fossil-limit", type=float, default=1.0,
-                    help='Maximum share of energy from fossil fuel [default: 1.0]')
-parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
-                    help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
-parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'),
-                    help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
-                    cf.get('limits', 'hydro-twh-per-yr'))
-parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
-parser.add_argument("--list-scenarios", action="store_true")
-parser.add_argument("--min-regional-generation", type=float, default=0.0,
-                    help='minimum share of energy generated intra-region [default: 0]')
-parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
-                    help='Non-synchronous penetration limit [default: %s]' %
-                    cf.get('limits', 'nonsync-penetration'))
-parser.add_argument("--reliability-std", type=float, default=0.002,
-                    help='reliability standard (%% unserved)')
-parser.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
-                    help='minimum operating reserves [default: %s MW]' %
-                    cf.get('limits', 'minimum-reserves-mw'))
-parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
-parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
-                    help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
-parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
-parser.add_argument('--version', action='version', version='1.0')
-args = parser.parse_args()
+def process_cmdline():
+    """Process command line options and return an argparse object."""
+    parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
+    parser.add_argument("-c", "--carbon-price", type=int,
+                        default=cf.get('costs', 'co2-price-per-t'),
+                        help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
+    parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
+    parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
+                        help='generations [default: %s]' % cf.get('optimiser', 'generations'))
+    parser.add_argument("-o", "--output", type=str, default='results.json',
+                        help='filename of output file (will overwrite)')
+    parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
+                        help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
+    parser.add_argument("-s", "--supply-scenario", type=str, default='re100',
+                        help='generation mix scenario [default: \'re100\']')
+    parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
+    parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
+
+    parser.add_argument("--bioenergy-limit", type=float, default=cf.get('limits', 'bioenergy-twh-per-yr'),
+                        help='Limit on annual energy from bioenergy (TWh/y) [default: %s]' %
+                        cf.get('limits', 'bioenergy-twh-per-yr'))
+    parser.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'),
+                        help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
+    parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
+                        help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
+    parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cost-class'),
+                        help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
+    parser.add_argument("--emissions-limit", type=float, default=np.inf,
+                        help='CO2 emissions limit (Mt/y) [default: infinity]')
+    parser.add_argument("--fossil-limit", type=float, default=1.0,
+                        help='Maximum share of energy from fossil fuel [default: 1.0]')
+    parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
+                        help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
+    parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'),
+                        help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
+                        cf.get('limits', 'hydro-twh-per-yr'))
+    parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
+    parser.add_argument("--list-scenarios", action="store_true")
+    parser.add_argument("--min-regional-generation", type=float, default=0.0,
+                        help='minimum share of energy generated intra-region [default: 0]')
+    parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
+                        help='Non-synchronous penetration limit [default: %s]' %
+                        cf.get('limits', 'nonsync-penetration'))
+    parser.add_argument("--reliability-std", type=float, default=0.002,
+                        help='reliability standard (%% unserved)')
+    parser.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
+                        help='minimum operating reserves [default: %s MW]' %
+                        cf.get('limits', 'minimum-reserves-mw'))
+    parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
+    parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
+                        help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
+    parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
+    parser.add_argument('--version', action='version', version='1.0')
+    return parser.parse_args()
+
+
+def setup_context(args):
+    """Set up the context object based on command line arguments."""
+    context = nemo.Context()
+    context.relstd = args.reliability_std
+
+    # Set the system non-synchronous penetration limit.
+    context.nsp_limit = args.nsp_limit
+    assert 0 <= context.nsp_limit <= 1
+
+    # Likewise for the minimum share of regional generation.
+    context.min_regional_generation = args.min_regional_generation
+    assert 0 <= context.min_regional_generation <= 1, \
+        "Minimum regional generation must be in the interval [0,1]"
+
+    cost_class = costs.cost_switch(args.costs)
+    context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
+    context.costs.carbon = args.carbon_price
+    context.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
+    context.track_exchanges = args.transmission
+    return context
+
+
+args = process_cmdline()
 
 if __name__ == '__main__' and args.list_scenarios:
     for key in sorted(scenarios.supply_scenarios):
@@ -102,23 +131,7 @@ if __name__ == '__main__' and args.list_scenarios:
 if __name__ == '__main__':
     print(vars(args))
 
-context = nemo.Context()
-context.relstd = args.reliability_std
-
-# Set the system non-synchronous penetration limit.
-context.nsp_limit = args.nsp_limit
-assert 0 <= context.nsp_limit <= 1
-
-# Likewise for the minimum share of regional generation.
-context.min_regional_generation = args.min_regional_generation
-assert 0 <= context.min_regional_generation <= 1, \
-    "Minimum regional generation must be in the interval [0,1]"
-
-cost_class = costs.cost_switch(args.costs)
-context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
-context.costs.carbon = args.carbon_price
-context.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
-context.track_exchanges = args.transmission
+context = setup_context(args)
 
 # Set up the scenario.
 scenarios.supply_switch(args.supply_scenario)(context)
