@@ -41,8 +41,8 @@ twh = pow(10., 6)
 warnings.simplefilter('ignore', RuntimeWarning)
 
 
-def process_cmdline():
-    """Process command line options and return an argparse object."""
+def process_options(source=None):
+    """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
     parser.add_argument("-c", "--carbon-price", type=int,
                         default=cf.get('costs', 'co2-price-per-t'),
@@ -94,7 +94,7 @@ def process_cmdline():
                         help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
     parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
     parser.add_argument('--version', action='version', version='1.0')
-    return parser.parse_args()
+    return parser.parse_args(source)
 
 
 def setup_context(args):
@@ -119,7 +119,7 @@ def setup_context(args):
     return context
 
 
-args = process_cmdline()
+args = process_options()
 
 if __name__ == '__main__' and args.list_scenarios:
     for key in sorted(scenarios.supply_scenarios):
