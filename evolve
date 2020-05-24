@@ -68,7 +68,7 @@ def process_options():
     costgroup.add_argument("-c", "--carbon-price", type=int,
                            default=cf.get('costs', 'co2-price-per-t'),
                            help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
-    costgroup.add_argument("--costs", type=str, metavar='CLASS',
+    costgroup.add_argument("--costs", type=str, metavar='cost_class',
                            default=cf.get('costs', 'technology-cost-class'),
                            choices=sorted(costs.cost_scenarios),
                            help='technology cost class [default: %s]' % cf.get('costs', 'technology-cost-class'))
