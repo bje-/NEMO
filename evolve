@@ -92,7 +92,7 @@ def process_options(source=None):
     parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
     parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
                         help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
-    parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (comma separated) [default: None]')
+    parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (CSV format)')
     parser.add_argument('--version', action='version', version='1.0')
     return parser.parse_args(source)
 
