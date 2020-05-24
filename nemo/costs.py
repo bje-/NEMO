@@ -377,27 +377,6 @@ class CEEM2016_2030(AETA2012_2030Mid):
         self.capcost_per_kw[tech.PV1Axis] = 1255
 
 
-def cost_switch(label):
-    """
-    Return a class for a given cost scenario.
-
-    >>> cost_switch('AETA2013-in2030-low') # doctest: +ELLIPSIS
-    <class 'nemo.costs.AETA2013_2030Low'>
-    >>> cost_switch('foo')
-    Traceback (most recent call last):
-      ...
-    ValueError: unknown cost scenario: foo
-    """
-    try:
-        callback = cost_scenarios[label]
-    except KeyError:
-        print('valid scenarios:')
-        for k in sorted(cost_scenarios):
-            print('\t', k)
-        raise ValueError('unknown cost scenario: %s' % label)
-    return callback
-
-
 cost_scenarios = {'Null': NullCosts,
                   'AETA2012-in2030-low': AETA2012_2030Low,
                   'AETA2012-in2030-mid': AETA2012_2030Mid,

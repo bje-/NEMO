@@ -41,7 +41,7 @@ twh = pow(10., 6)
 warnings.simplefilter('ignore', RuntimeWarning)
 
 
-def process_options(source=None):
+def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
     parser.add_argument("-c", "--carbon-price", type=int,
@@ -54,7 +54,8 @@ def process_options(source=None):
                         help='filename of output file (will overwrite)')
     parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
                         help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
-    parser.add_argument("-s", "--supply-scenario", type=str, default='re100',
+    parser.add_argument("-s", "--supply-scenario", metavar='SCENARIO', type=str, default='re100',
+                        choices=sorted(scenarios.supply_scenarios),
                         help='generation mix scenario [default: \'re100\']')
     parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
     parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
@@ -66,8 +67,10 @@ def process_options(source=None):
                         help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
     parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
                         help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
-    parser.add_argument("--costs", type=str, default=cf.get('costs', 'technology-cost-class'),
-                        help='cost scenario [default: %s]' % cf.get('costs', 'technology-cost-class'))
+    parser.add_argument("--costs", type=str, metavar='CLASS',
+                        default=cf.get('costs', 'technology-cost-class'),
+                        choices=sorted(costs.cost_scenarios),
+                        help='technology cost class [default: %s]' % cf.get('costs', 'technology-cost-class'))
     parser.add_argument("--emissions-limit", type=float, default=np.inf,
                         help='CO2 emissions limit (Mt/y) [default: infinity]')
     parser.add_argument("--fossil-limit", type=float, default=1.0,
@@ -78,7 +81,7 @@ def process_options(source=None):
                         help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
                         cf.get('limits', 'hydro-twh-per-yr'))
     parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
-    parser.add_argument("--list-scenarios", action="store_true")
+    parser.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
     parser.add_argument("--min-regional-generation", type=float, default=0.0,
                         help='minimum share of energy generated intra-region [default: 0]')
     parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
@@ -94,7 +97,7 @@ def process_options(source=None):
                         help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
     parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (CSV format)')
     parser.add_argument('--version', action='version', version='1.0')
-    return parser.parse_args(source)
+    return parser.parse_args()
 
 
 def setup_context(args):
@@ -111,7 +114,7 @@ def setup_context(args):
     assert 0 <= context.min_regional_generation <= 1, \
         "Minimum regional generation must be in the interval [0,1]"
 
-    cost_class = costs.cost_switch(args.costs)
+    cost_class = costs.cost_scenarios[args.costs]
     context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
     context.costs.carbon = args.carbon_price
     context.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
@@ -119,14 +122,19 @@ def setup_context(args):
     return context
 
 
-args = process_options()
-
-if __name__ == '__main__' and args.list_scenarios:
+def list_scenarios():
+    """Print out a list of the scenarios with a description."""
     for key in sorted(scenarios.supply_scenarios):
         descr = scenarios.supply_scenarios[key].__doc__
         print('%20s' % key, '\t', descr.split('\n')[0])
     print()
     sys.exit(0)
+
+
+args = process_options()
+
+if __name__ == '__main__' and args.list_scenarios:
+    list_scenarios()
 
 if __name__ == '__main__':
     print(vars(args))
@@ -134,13 +142,14 @@ if __name__ == '__main__':
 context = setup_context(args)
 
 # Set up the scenario.
-scenarios.supply_switch(args.supply_scenario)(context)
+scenarios.supply_scenarios[args.supply_scenario](context)
+
 # Apply each demand modifier argument (if any) in the given order.
 for arg in args.demand_modifier:
     scenarios.demand_switch(arg)(context)
 
 if args.verbose and __name__ == '__main__':
-    docstring = scenarios.supply_switch(args.supply_scenario).__doc__
+    docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
     assert docstring is not None
     # Prune off any doctest test from the docstring.
     docstring = docstring.split('\n')[0]

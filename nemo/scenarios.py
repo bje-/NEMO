@@ -18,24 +18,6 @@ from nemo import regions
 from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
 
-def supply_switch(label):
-    """
-    Return a callback function to set up a given scenario.
-
-    >>> supply_switch('re100') # doctest: +ELLIPSIS
-    <function re100 at 0x...>
-    >>> supply_switch('foo')
-    Traceback (most recent call last):
-      ...
-    ValueError: unknown supply scenario foo
-    """
-    try:
-        callback = supply_scenarios[label]
-    except KeyError:
-        raise ValueError('unknown supply scenario %s' % label)
-    return callback
-
-
 def _demand_response():
     """
     Return a list of DR 'generators'.

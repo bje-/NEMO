@@ -39,14 +39,20 @@ def run_one(bundle):
     assert 0 <= context.nsp_limit <= 1
 
     scenario = options['supply_scenario']
-    scenarios.supply_switch(scenario)(context)
+    try:
+        scenarios.supply_scenarios[scenario](context)
+    except KeyError:
+        raise KeyError('unrecognised scenario: %s' % scenario)
     print('scenario', scenario)
 
     # Apply each demand modifier argument (if any) in the given order.
     for arg in options['demand_modifier']:
         scenarios.demand_switch(arg)(context)
 
-    cost_class = costs.cost_switch(options['costs'])
+    try:
+        cost_class = costs.cost_scenarios[options['costs']]
+    except KeyError:
+        raise KeyError('unrecognised cost class: %s' % options[costs])
     context.costs = cost_class(options['discount_rate'],
                                options['coal_price'], options['gas_price'],
                                options['ccs_storage_costs'])
