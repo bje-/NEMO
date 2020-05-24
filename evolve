@@ -60,9 +60,9 @@ def process_options():
     comgroup.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
                           help='minimum operating reserves [default: %s MW]' %
                           cf.get('limits', 'minimum-reserves-mw'))
-    comgroup.add_argument("-s", "--supply-scenario", metavar='SCENARIO', type=str, default='re100',
+    comgroup.add_argument("-s", "--supply-scenario", type=str, default='ccgt', metavar='SCENARIO',
                           choices=sorted(scenarios.supply_scenarios),
-                          help='generation mix scenario [default: re100]')
+                          help='generation mix scenario [default: ccgt]')
     comgroup.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
 
     costgroup.add_argument("-c", "--carbon-price", type=int,
