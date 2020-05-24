@@ -44,59 +44,67 @@ warnings.simplefilter('ignore', RuntimeWarning)
 def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-    parser.add_argument("-c", "--carbon-price", type=int,
-                        default=cf.get('costs', 'co2-price-per-t'),
-                        help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
-    parser.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
-    parser.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
-                        help='generations [default: %s]' % cf.get('optimiser', 'generations'))
-    parser.add_argument("-o", "--output", type=str, default='results.json',
-                        help='filename of output file (will overwrite)')
-    parser.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
-                        help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
-    parser.add_argument("-s", "--supply-scenario", metavar='SCENARIO', type=str, default='re100',
-                        choices=sorted(scenarios.supply_scenarios),
-                        help='generation mix scenario [default: \'re100\']')
-    parser.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
-    parser.add_argument("-v", "--verbose", action="store_true", help="be verbose")
+    comgroup = parser.add_argument_group('common options', None)
+    costgroup = parser.add_argument_group('cost-related options', None)
+    limitgroup = parser.add_argument_group('limits/constraints', None)
+    optgroup = parser.add_argument_group('optimiser controls', None)
 
-    parser.add_argument("--bioenergy-limit", type=float, default=cf.get('limits', 'bioenergy-twh-per-yr'),
-                        help='Limit on annual energy from bioenergy (TWh/y) [default: %s]' %
-                        cf.get('limits', 'bioenergy-twh-per-yr'))
-    parser.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'),
-                        help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
-    parser.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
-                        help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
-    parser.add_argument("--costs", type=str, metavar='CLASS',
-                        default=cf.get('costs', 'technology-cost-class'),
-                        choices=sorted(costs.cost_scenarios),
-                        help='technology cost class [default: %s]' % cf.get('costs', 'technology-cost-class'))
-    parser.add_argument("--emissions-limit", type=float, default=np.inf,
-                        help='CO2 emissions limit (Mt/y) [default: infinity]')
-    parser.add_argument("--fossil-limit", type=float, default=1.0,
-                        help='Maximum share of energy from fossil fuel [default: 1.0]')
-    parser.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
-                        help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
-    parser.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'),
-                        help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
-                        cf.get('limits', 'hydro-twh-per-yr'))
-    parser.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
-    parser.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
-    parser.add_argument("--min-regional-generation", type=float, default=0.0,
-                        help='minimum share of energy generated intra-region [default: 0]')
-    parser.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
-                        help='Non-synchronous penetration limit [default: %s]' %
-                        cf.get('limits', 'nonsync-penetration'))
-    parser.add_argument("--reliability-std", type=float, default=0.002,
-                        help='reliability standard (%% unserved)')
-    parser.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
-                        help='minimum operating reserves [default: %s MW]' %
-                        cf.get('limits', 'minimum-reserves-mw'))
-    parser.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
-    parser.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
-                        help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
-    parser.add_argument("--trace-file", type=str, help='Filename for evaluation trace (CSV format)')
     parser.add_argument('--version', action='version', version='1.0')
+    parser.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
+
+    comgroup.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
+    comgroup.add_argument("-o", "--output", type=str, default='results.json',
+                          help='output filename (will overwrite)')
+    comgroup.add_argument("--reliability-std", type=float, default=0.002,
+                          help='reliability standard (%% unserved)')
+    comgroup.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
+                          help='minimum operating reserves [default: %s MW]' %
+                          cf.get('limits', 'minimum-reserves-mw'))
+    comgroup.add_argument("-s", "--supply-scenario", metavar='SCENARIO', type=str, default='re100',
+                          choices=sorted(scenarios.supply_scenarios),
+                          help='generation mix scenario [default: re100]')
+    comgroup.add_argument("-t", "--transmission", action="store_true", help="include transmission [default: False]")
+
+    costgroup.add_argument("-c", "--carbon-price", type=int,
+                           default=cf.get('costs', 'co2-price-per-t'),
+                           help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
+    costgroup.add_argument("--costs", type=str, metavar='CLASS',
+                           default=cf.get('costs', 'technology-cost-class'),
+                           choices=sorted(costs.cost_scenarios),
+                           help='technology cost class [default: %s]' % cf.get('costs', 'technology-cost-class'))
+    costgroup.add_argument("--ccs-storage-costs", type=float, default=cf.get('costs', 'ccs-storage-costs-per-t'),
+                           help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
+    costgroup.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
+                           help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
+    costgroup.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
+                           help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
+    costgroup.add_argument("-r", "--discount-rate", type=float, default=cf.get('costs', 'discount-rate'),
+                           help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
+
+    limitgroup.add_argument("--bioenergy-limit", type=float, default=cf.get('limits', 'bioenergy-twh-per-yr'),
+                            help='Limit on annual energy from bioenergy (TWh/y) [default: %s]' %
+                            cf.get('limits', 'bioenergy-twh-per-yr'))
+    limitgroup.add_argument("--emissions-limit", type=float, default=np.inf,
+                            help='CO2 emissions limit (Mt/y) [default: infinity]')
+    limitgroup.add_argument("--fossil-limit", type=float, default=1.0,
+                            help='Maximum share of energy from fossil fuel [default: 1.0]')
+    limitgroup.add_argument("--hydro-limit", type=float, default=cf.get('limits', 'hydro-twh-per-yr'),
+                            help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
+                            cf.get('limits', 'hydro-twh-per-yr'))
+    limitgroup.add_argument("--min-regional-generation", type=float, default=0.0,
+                            help='minimum share of energy generated intra-region [default: 0]')
+    limitgroup.add_argument("--nsp-limit", type=float, default=cf.get('limits', 'nonsync-penetration'),
+                            help='Non-synchronous penetration limit [default: %s]' %
+                            cf.get('limits', 'nonsync-penetration'))
+
+    optgroup.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
+    optgroup.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
+    optgroup.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
+                          help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
+    optgroup.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
+                          help='generations [default: %s]' % cf.get('optimiser', 'generations'))
+    optgroup.add_argument("--trace-file", type=str, help='Filename for evaluation trace (CSV format)')
+    optgroup.add_argument("-v", "--verbose", action="store_true", help="be verbose")
     return parser.parse_args()
 
 
