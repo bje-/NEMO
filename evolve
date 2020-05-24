@@ -98,7 +98,7 @@ def process_options():
                             cf.get('limits', 'nonsync-penetration'))
 
     optgroup.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
-    optgroup.add_argument("--seed", type=int, help='seed for random number generator [default: None]')
+    optgroup.add_argument("--seed", type=int, help='seed for random number generator')
     optgroup.add_argument("--sigma", type=float, default=cf.get('optimiser', 'sigma'),
                           help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
     optgroup.add_argument("-g", "--generations", type=int, default=cf.get('optimiser', 'generations'),
