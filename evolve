@@ -43,16 +43,16 @@ warnings.simplefilter('ignore', RuntimeWarning)
 
 def process_options():
     """Process options and return an argparse object."""
-    parser = argparse.ArgumentParser(description='Bug reports to: nemo-devel@lists.ozlabs.org')
-    comgroup = parser.add_argument_group('common options', None)
-    costgroup = parser.add_argument_group('cost-related options', None)
-    limitgroup = parser.add_argument_group('limits/constraints', None)
-    optgroup = parser.add_argument_group('optimiser controls', None)
-
-    parser.add_argument('--version', action='version', version='1.0')
-    parser.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
+    parser = argparse.ArgumentParser(description='Bug reports via https://nemo.ozlabs.org/',
+                                     add_help=False)
+    comgroup = parser.add_argument_group('common', 'Commonly used options')
+    costgroup = parser.add_argument_group('costs', 'Cost-related options')
+    limitgroup = parser.add_argument_group('limits', 'Limits/constraints for the model')
+    optgroup = parser.add_argument_group('optimiser', 'CMA-ES controls')
 
     comgroup.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
+    comgroup.add_argument("-h", "--help", action="help", help="show this help message and exit")
+    comgroup.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
     comgroup.add_argument("-o", "--output", type=str, default='results.json',
                           help='output filename (will overwrite)')
     comgroup.add_argument("--reliability-std", type=float, default=0.002,
