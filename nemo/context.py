@@ -166,4 +166,3 @@ class Context():
                     result += [{'label': g.label, 'polygon': g.polygon,
                                 'capacity': g.capacity, 'technology': tech}]
                 return result
-            return None
