@@ -8,7 +8,7 @@
 """Support code for the 43 polygons of the AEMO study."""
 
 import json
-import math
+from math import atan2, sin, cos, radians, sqrt
 import numpy as np
 
 from dijkstra import dijkstra
@@ -106,7 +106,7 @@ for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
         _region_table[poly] = rgn
 
 
-def region(poly):
+def region(polygon):
     """Return the region a polygon resides in.
 
     >>> region(1)
@@ -114,7 +114,7 @@ def region(poly):
     >>> region(40)
     TAS1
     """
-    return _region_table[poly]
+    return _region_table[polygon]
 
 
 wind_limit = [None, 80.3, 0, 36.9, 6.5, 15.6, 1.5, 6.9, 2.6, 0, 4.1,
@@ -167,12 +167,6 @@ def _centroid(vertices):
     return (vsum[0] * z, vsum[1] * z)
 
 
-centroids = {}
-for i, vertices in _polygons.items():
-    a, b = _centroid(vertices)
-    centroids[i] = (b, a)
-
-
 def path(poly1, poly2):
     """
     Return a path from polygon 1 to polygon 2.
@@ -185,9 +179,9 @@ def path(poly1, poly2):
     return connections[(poly1, poly2)]
 
 
-def subset(path, polysuperset):
+def subset(p, polysuperset):
     """
-    Are all polygons in path present in superset?
+    Are all polygons in path P present in superset?
 
     >>> subset([(1,2), (2,3)], [1,2,3])
     True
@@ -195,7 +189,7 @@ def subset(path, polysuperset):
     False
     """
     # Flatten the list of pairs into one long list.
-    polylist = [i for sub in path for i in sub]
+    polylist = [i for sub in p for i in sub]
     # Now for a simple set operation.
     return set(polylist) <= set(polysuperset)
 
@@ -223,22 +217,21 @@ def dist(poly1, poly2):
     True
     """
     # Code adapted from Chris Veness
-    r = 6371  # km
+    radius = 6371  # km
     point1 = centroids[poly1]
     point2 = centroids[poly2]
-    dlat = math.radians(point1[0] - point2[0])
-    dlon = math.radians(point1[1] - point2[1])
-    lat1 = math.radians(point1[0])
-    lat2 = math.radians(point2[0])
-    a = math.sin(dlat / 2) * math.sin(dlat / 2) + \
-        math.sin(dlon / 2) * math.sin(dlon / 2) * \
-        math.cos(lat1) * math.cos(lat2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return int(r * c)
+    dlat = radians(point1[0] - point2[0])
+    dlon = radians(point1[1] - point2[1])
+    lat1 = radians(point1[0])
+    lat2 = radians(point2[0])
+    a = sin(dlat / 2) ** 2 + \
+        sin(dlon / 2) ** 2 * cos(lat1) * cos(lat2)
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return int(radius * c)
 
 
-def pathlen(path):
-    """Return the total length of a path.
+def pathlen(p):
+    """Return the total length of a path P.
 
     >>> pathlen([])
     0
@@ -248,10 +241,15 @@ def pathlen(path):
     >>> assert pathlen([(1, 4), (4, 7)]) == x + y
     """
     total = 0
-    for poly1, poly2 in path:
+    for poly1, poly2 in p:
         total += dist(poly1, poly2)
     return total
 
+
+centroids = {}
+for _i, _vertices in _polygons.items():
+    _lon, _lat = _centroid(_vertices)
+    centroids[_i] = (_lat, _lon)
 
 # A proposed transmission network.
 
@@ -333,6 +331,6 @@ for dest in range(1, numpolygons + 1):
     for src in range(1, numpolygons + 1):
         shortest = list(dijkstra.shortestPath(net, src, dest))
         pairs = []
-        for i in range(len(shortest) - 1):
-            pairs.append((shortest[i], shortest[i + 1]))
+        for _i in range(len(shortest) - 1):
+            pairs.append((shortest[_i], shortest[_i + 1]))
         connections[(src, dest)] = pairs

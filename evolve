@@ -108,26 +108,26 @@ def process_options():
     return parser.parse_args()
 
 
-def setup_context(args):
+def setup_context():
     """Set up the context object based on command line arguments."""
-    context = nemo.Context()
-    context.relstd = args.reliability_std
+    ctx = nemo.Context()
+    ctx.relstd = args.reliability_std
 
     # Set the system non-synchronous penetration limit.
-    context.nsp_limit = args.nsp_limit
-    assert 0 <= context.nsp_limit <= 1
+    ctx.nsp_limit = args.nsp_limit
+    assert 0 <= ctx.nsp_limit <= 1
 
     # Likewise for the minimum share of regional generation.
-    context.min_regional_generation = args.min_regional_generation
-    assert 0 <= context.min_regional_generation <= 1, \
+    ctx.min_regional_generation = args.min_regional_generation
+    assert 0 <= ctx.min_regional_generation <= 1, \
         "Minimum regional generation must be in the interval [0,1]"
 
     cost_class = costs.cost_scenarios[args.costs]
-    context.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
-    context.costs.carbon = args.carbon_price
-    context.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
-    context.track_exchanges = args.transmission
-    return context
+    ctx.costs = cost_class(args.discount_rate, args.coal_price, args.gas_price, args.ccs_storage_costs)
+    ctx.costs.carbon = args.carbon_price
+    ctx.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
+    ctx.track_exchanges = args.transmission
+    return ctx
 
 
 def list_scenarios():
@@ -147,7 +147,7 @@ if __name__ == '__main__' and args.list_scenarios:
 if __name__ == '__main__':
     print(vars(args))
 
-context = setup_context(args)
+context = setup_context()
 
 # Set up the scenario.
 scenarios.supply_scenarios[args.supply_scenario](context)
@@ -327,9 +327,9 @@ def eval_func(chromosome):
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
-        with open(args.trace_file, 'a') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow([score, penalty, reason] + list(chromosome))
+        with open(args.trace_file, 'a') as tracefile:
+            tracer = csv.writer(tracefile)
+            tracer.writerow([score, penalty, reason] + list(chromosome))
     return (score + penalty,)
 
 
