@@ -3,7 +3,7 @@ all:
 COVRUN=coverage run -a --source=.
 
 check:  replay.json flake8
-	python3 -m nose --with-doctest --with-coverage --cover-package=nemo
+	nosetests --with-doctest --with-coverage --cover-package=nemo
 
 coverage: replay.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
@@ -27,10 +27,10 @@ nemo.prof:
 	python3 -m cProfile -o $@ stub.py
 
 prof: nemo.prof
-	python3 -m snakeviz $<
+	snakeviz $<
 
 lineprof:
-	python3 -m kernprof -v -l stub.py
+	kernprof -v -l stub.py
 
 flake8:
 	flake8 evolve replay nemo tests --max-line-length=127 --ignore=N801
