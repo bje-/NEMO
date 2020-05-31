@@ -21,6 +21,7 @@ from nemo import utils
 
 
 def process_options():
+    """Process command line options."""
     parser = argparse.ArgumentParser(description='Bug reports via via https://nemo.ozlabs.org')
     parser.add_argument("-f", type=str, help='filename of results file', metavar='FILE',
                         default='results.json')
@@ -76,7 +77,7 @@ def run_one(bundle):
             json.dump(x.tolist(), f)
     print()
 
-    if args.x:  # pragma: no cover
+    if args.plot:  # pragma: no cover
         utils.plot(context, spills=args.spills, showlegend=args.no_legend)
 
 
