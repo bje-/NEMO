@@ -31,7 +31,7 @@ jobs:
     - name: Test with nosetests
       run: |
         pip install nose
-        nosetests -v --with-doctest 
+        nosetests -v --with-doctest --with-coverage
 
     - name: Coveralls
       uses: coverallsapp/github-action@master
