@@ -32,3 +32,8 @@ jobs:
       run: |
         pip install nose
         nosetests -v --with-doctest 
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
