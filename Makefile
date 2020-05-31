@@ -1,6 +1,6 @@
 all:
 
-COVRUN=coverage run -a --source=.
+COVRUN=coverage run -a --source=. --omit=dijkstra/*.py,setup.py,stub.py
 
 check:  replay.json flake8
 	nosetests --with-doctest --with-coverage --cover-package=nemo
