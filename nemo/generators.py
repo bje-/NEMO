@@ -296,7 +296,7 @@ class CST(Generator):
         self.series_power[hr] = generation
         self.series_spilled[hr] = 0
 
-        if generation > demand:
+        if generation > demand:  # pragma: no cover
             # This can happen due to rounding errors.
             generation = demand
         return generation, 0
