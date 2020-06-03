@@ -12,8 +12,8 @@
 import argparse
 import json
 import re
-import numpy as np
 import sys
+import numpy as np
 
 import nemo
 from nemo import costs
