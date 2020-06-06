@@ -47,6 +47,9 @@ docker:
 dist:
 	python3 setup.py sdist bdist_wheel
 
+upload: dist
+	twine upload dist/*
+
 clean:
 	-rm -rf dist build *.egg-info
 	-rm -rf .coverage htmlcov replay.json exchanges.json
