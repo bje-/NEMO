@@ -15,12 +15,18 @@ import re
 import sys
 import numpy as np
 
+from gooey import Gooey
 import nemo
 from nemo import costs
 from nemo import scenarios
 from nemo import utils
 
 
+@Gooey(program_name="NEMO replay tool",
+       richtext_controls=True,
+       show_success_modal=False,
+       monospaced_font=True,
+       optional_cols=1)
 def process_options():
     """Process command line options."""
     parser = argparse.ArgumentParser(description='Bug reports via via https://nemo.ozlabs.org')

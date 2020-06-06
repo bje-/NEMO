@@ -16,6 +16,8 @@ import json
 import argparse
 import warnings
 import numpy as np
+import wx
+from gooey import Gooey
 
 from deap import algorithms
 from deap import base
@@ -41,6 +43,20 @@ twh = pow(10., 6)
 warnings.simplefilter('ignore', RuntimeWarning)
 
 
+def conditionalGooey(*pargs, **kwargs):
+    """Conditional decorator that wraps the Gooey decorator if the display can be found."""
+    def decorator(func):
+        if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
+            return func
+        return Gooey(*pargs, **kwargs)(func)
+    return decorator
+
+
+@conditionalGooey(monospaced_font=True,
+                  program_name="NEMO evolution",
+                  richtext_controls=True,
+                  show_success_modal=False,
+                  disable_progress_bar_animation=True)
 def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports via https://nemo.ozlabs.org/',
