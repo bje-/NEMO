@@ -3,4 +3,4 @@ pandas
 matplotlib
 deap
 pint
-Gooey
+Gooey>=1.0.4 
