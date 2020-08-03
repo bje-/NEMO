@@ -66,7 +66,7 @@ def process_options():
     limitgroup = parser.add_argument_group('limits', 'Limits/constraints for the model')
     optgroup = parser.add_argument_group('optimiser', 'CMA-ES controls')
 
-    comgroup.add_argument("-d", "--demand-modifier", type=str, default=[], action="append", help='demand modifier')
+    comgroup.add_argument("-d", "--demand-modifier", action="append", help='demand modifier')
     comgroup.add_argument("-h", "--help", action="help", help="show this help message and exit")
     comgroup.add_argument("--list-scenarios", action="store_true", help='list supply scenarios and exit')
     comgroup.add_argument("-o", "--output", type=str, default='results.json',
@@ -169,7 +169,7 @@ context = setup_context()
 scenarios.supply_scenarios[args.supply_scenario](context)
 
 # Apply each demand modifier argument (if any) in the given order.
-for arg in args.demand_modifier:
+for arg in args.demand_modifier or []:
     scenarios.demand_switch(arg)(context)
 
 if args.verbose and __name__ == '__main__':
