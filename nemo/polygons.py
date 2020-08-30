@@ -196,7 +196,7 @@ def subset(p, polysuperset):
 
 def direct_p(poly1, poly2):
     """
-    Return True if region A and B are directly connected.
+    Return True if poly1 and poly2 are directly connected.
 
     >>> direct_p(1, 2)
     True
