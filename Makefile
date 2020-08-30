@@ -47,6 +47,9 @@ dist:
 upload: dist
 	twine upload dist/*
 
+pdoc:
+	pdoc --force --html nemo
+
 clean:
 	-rm -rf dist build *.egg-info
 	-rm -rf .coverage htmlcov replay.json exchanges.json
