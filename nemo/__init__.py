@@ -5,7 +5,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""NEMO package __init__.py"""
+"""The National Electricity Market Optimiser (NEMO)"""
 
 import nemo.nem  # noqa: F401
 from nemo.context import Context
