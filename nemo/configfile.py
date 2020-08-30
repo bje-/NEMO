@@ -24,9 +24,10 @@ def load(filename):
     config.get('demand', 'demand-trace')
 
 
-def get(section, keyword):
-    """A wrapper around ConfigParser.get."""
-    return config.get(section, keyword)
+def get(section, option):
+    """Get an option value for the named section, just like
+    ConfigParser.get."""
+    return config.get(section, option)
 
 
 config = configparser.ConfigParser()

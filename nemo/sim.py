@@ -5,7 +5,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""The simulation engine."""
+"""The core of the simulation engine."""
 
 import math
 import numpy as np

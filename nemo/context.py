@@ -7,9 +7,10 @@
 # (at your option) any later version.
 
 """
-NEMO context class. This class encapsulates all simulation state
-ensuring that there is never any residual state left behind after a
-simulation run.
+A simulation context encapsulates all simulation state ensuring that
+there is never any residual state left behind after a simulation
+run. It also allows multiple contexts to be compared after individual
+simulation runs.
 """
 
 import re
@@ -35,7 +36,7 @@ ureg.default_format = '.2f~P'
 
 class Context():
 
-    """All state is kept in a Context object."""
+    """All simulation state is kept in a Context object."""
 
     def __init__(self):
         """Initialise a default context."""
@@ -94,7 +95,7 @@ class Context():
         return self.unserved_energy() / self.total_demand() * 100
 
     def add_exchange(self, hour, src, dest, transfer):
-        """Note energy transfer from SRC to DEST in HOUR."""
+        """Record an energy transfer from src to dest in given hour."""
         self.exchanges[hour, src - 1, dest - 1] += transfer
 
     def set_capacities(self, caps):

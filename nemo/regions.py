@@ -6,22 +6,22 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""Regions."""
+"""Market regions consisting of one or more polygons."""
 
 
 class Region():
 
     """Each region is described by a Region object."""
 
-    def __init__(self, count, regionid, descr):
+    def __init__(self, ordinal, regionid, descr):
         """
-        Construct a Region given a count, region ID, description and lat/long of the region's centre.
+        Construct a Region given an ordinal number, region ID and description.
 
         >>> r = Region(0, 'cbr', 'Capital region')
         """
         self.id = regionid
         self.descr = descr
-        self.num = count
+        self.num = ordinal
         self.polygons = None
 
     def __repr__(self):

@@ -7,7 +7,8 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""Simulated generators for the NEMO framework."""
+"""Simulated electricity generators for the NEMO framework."""
+
 import locale
 
 import urllib.request
@@ -33,7 +34,7 @@ class Generator():
     """Base generator class."""
 
     def __init__(self, polygon, capacity, label):
-        """Base class constructor.
+        """Base Generator constructor.
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
