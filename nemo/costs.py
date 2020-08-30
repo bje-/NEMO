@@ -24,16 +24,16 @@ class NullCosts():
 
     """All costs are zero. Useful for debugging."""
 
-    class ZeroDict(dict):
+    class _ZeroDict(dict):
         """Return 0 for any key."""
         def __getitem__(self, key):
             return dict.get(self, key, 0)
 
     # pylint: disable=unused-argument
     def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
-        self.capcost_per_kw = self.ZeroDict()
-        self.fixed_om_costs = self.ZeroDict()
-        self.opcost_per_mwh = self.ZeroDict()
+        self.capcost_per_kw = self._ZeroDict()
+        self.fixed_om_costs = self._ZeroDict()
+        self.opcost_per_mwh = self._ZeroDict()
         self.annuityf = 1
         self.ccs_storage_per_t = 0
         self.bioenergy_price_per_gj = 0
