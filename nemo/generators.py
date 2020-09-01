@@ -851,7 +851,7 @@ class HydrogenStorage():
         return self.storage == self.maxstorage
 
     def charge(self, amt):
-        """Chage the storage by amt.
+        """Charge the storage by amt.
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.charge(100)
         100
