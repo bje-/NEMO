@@ -835,9 +835,23 @@ class HydrogenStorage():
     """A simple hydrogen storage vessel."""
 
     def __init__(self, maxstorage, label='Hydrogen storage'):
-        self.maxstorage = maxstorage
-        self.storage = self.maxstorage / 2.
+        # initialise these for good measure
+        self.maxstorage = None
+        self.storage = None
+        self.set_storage(maxstorage)
         self.label = label
+
+    def set_storage(self, maxstorage):
+        """Change the storage capacity.
+        >>> h = HydrogenStorage(1000, 'test')
+        >>> h.set_storage(1200)
+        >>> h.maxstorage
+        1200
+        >>> h.storage
+        600.0
+        """
+        self.maxstorage = maxstorage
+        self.storage = self.maxstorage / 2
 
     def full_p(self):
         """Is the storage full?
@@ -908,6 +922,7 @@ class Electrolyser(Generator):
         self.storage_p = True
         self.efficiency = efficiency
         self.tank = tank
+        self.setters += [(self.tank.set_storage, 0, 10000)]
 
     def step(self, hr, demand):
         # pylint: disable=no-self-use
