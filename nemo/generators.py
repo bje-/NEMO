@@ -162,7 +162,8 @@ class Wind(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, delimiter=None, build_limit=None, label='wind'):
+    def __init__(self, polygon, capacity, filename, column, delimiter=None,
+                 build_limit=None, label='wind'):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -196,7 +197,8 @@ class PV(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV'):
+    def __init__(self, polygon, capacity, filename, column,
+                 build_limit=None, label='PV'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         if build_limit is not None:
@@ -225,7 +227,8 @@ class PV1Axis(PV):
 
     patch = Patch(facecolor='lightyellow')
 
-    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='PV 1-axis'):
+    def __init__(self, polygon, capacity, filename, column,
+                 build_limit=None, label='PV 1-axis'):
         PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
 
 
@@ -234,7 +237,8 @@ class Behind_Meter_PV(PV):
 
     This stub class allows differentiated PV costs in costs.py."""
 
-    def __init__(self, polygon, capacity, filename, column, build_limit=None, label='Behind-meter PV'):
+    def __init__(self, polygon, capacity, filename, column,
+                 build_limit=None, label='Behind-meter PV'):
         PV.__init__(self, polygon, capacity, filename, column, build_limit, label)
 
 
@@ -246,7 +250,8 @@ class CST(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, sm, shours, filename, column, build_limit=None, label='CST'):
+    def __init__(self, polygon, capacity, sm, shours, filename, column,
+                 build_limit=None, label='CST'):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -370,7 +375,8 @@ class PumpedHydro(Hydro):
 
     patch = Patch(facecolor='powderblue')
 
-    def __init__(self, polygon, capacity, maxstorage, rte=0.8, label='pumped-hydro'):
+    def __init__(self, polygon, capacity, maxstorage, rte=0.8,
+                 label='pumped-hydro'):
         Hydro.__init__(self, polygon, capacity, label)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
@@ -555,7 +561,8 @@ class Coal_CCS(CCS):
 
     """Coal with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label='Coal-CCS'):
+    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85,
+                 label='Coal-CCS'):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -574,7 +581,8 @@ class CCGT_CCS(CCS):
 
     """CCGT with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label='CCGT-CCS'):
+    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85,
+                 label='CCGT-CCS'):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -593,7 +601,8 @@ class Diesel(Fossil):
 
     patch = Patch(facecolor='dimgrey')
 
-    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3, label='diesel'):
+    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3,
+                 label='diesel'):
         Fossil.__init__(self, polygon, capacity, intensity, label)
         self.kwh_per_litre = kwh_per_litre
 
@@ -611,7 +620,8 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, discharge_hours=None, rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, discharge_hours=None,
+                 rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
         self.non_synchronous_p = True
         self.setters += [(self.set_storage, 0, 10000)]

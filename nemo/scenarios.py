@@ -243,9 +243,11 @@ def re100_one_region(context, region):
     wind, pv, cst = _one_per_poly(region)
     newlist = wind
     newlist += pv
-    newlist += [g for g in context.generators if isinstance(g, generators.Hydro) and g.region() is region]
+    newlist += [g for g in context.generators if
+                isinstance(g, generators.Hydro) and g.region() is region]
     newlist += cst
-    newlist += [g for g in context.generators if isinstance(g, generators.Biofuel) and g.region() is region]
+    newlist += [g for g in context.generators if
+                isinstance(g, generators.Biofuel) and g.region() is region]
     context.generators = newlist
 
 
