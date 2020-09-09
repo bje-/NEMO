@@ -369,10 +369,11 @@ def theworks(context):
                                     configfile.get('generation', 'hsa-geothermal-trace'), 38)
     pt = generators.ParabolicTrough(polygons.wildcard, 0, 2, 6,
                                     configfile.get('generation', 'cst-trace'), 12)
-    coal = generators.Black_Coal(polygons.wildcard, 0)
-    coal_ccs = generators.Coal_CCS(polygons.wildcard, 0)
-    ccgt = generators.CCGT(polygons.wildcard, 0)
-    ccgt_ccs = generators.CCGT_CCS(polygons.wildcard, 0)
+    thermals = [generators.Black_Coal(polygons.wildcard, 0),
+                generators.Coal_CCS(polygons.wildcard, 0),
+                generators.CCGT(polygons.wildcard, 0),
+                generators.CCGT_CCS(polygons.wildcard, 0)]
+
     ocgt = generators.OCGT(polygons.wildcard, 0)
     batt = generators.Battery(polygons.wildcard, 0, 0)
     diesel = generators.Diesel(polygons.wildcard, 0)
@@ -384,8 +385,8 @@ def theworks(context):
                                         0)
     g = context.generators
 
-    context.generators = [hsa, egs, pt, coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + \
-                         [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
+    context.generators = [hsa, egs, pt] + thermals + g[:-4] + \
+        [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
 
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
