@@ -3,7 +3,7 @@ all:
 COVRUN=coverage run -a --source=. --omit=dijkstra/*.py,setup.py,stub.py
 
 check:  replay.json flake8
-	nosetests --with-doctest --with-coverage --cover-package=nemo
+	PYTHONOPTIMIZE=0 nosetests --with-doctest --with-coverage --cover-package=nemo
 
 coverage: replay.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
