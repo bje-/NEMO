@@ -36,7 +36,7 @@ flake8:
 	flake8 evolve replay nemo tests --max-line-length=127 --ignore=N801
 
 lint:
-	pylint --disable=E1120,E1124,C0103,R0902,R0903,R0913,R0914 evolve replay $(wildcard *.py nemo/*.py tests/*.py)
+	pylint --disable=E1120,E1123,E1124,C0103,R0902,R0903,R0913,R0914 evolve replay $(wildcard *.py nemo/*.py tests/*.py)
 
 coveralls:
 	coveralls
