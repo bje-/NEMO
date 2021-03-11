@@ -29,6 +29,24 @@ ureg = pint.UnitRegistry()
 ureg.default_format = '.2f~P'
 
 
+def _thousands(value):
+    """
+    Format a value with thousands separator(s).
+    No doctest provided as the result will be locale specific.
+    """
+    return locale.format_string('%d', value, grouping=True)
+
+
+def _currency(value):
+    """
+    Format a value into currency with thousands separator(s). If there
+    are zero cents, remove .00 for brevity.
+    No doctest provided as the result will be locale specific.
+    """
+    cents = locale.localeconv()['mon_decimal_point'] + '00'
+    return locale.currency(value, grouping=True).replace(cents, '')
+
+
 class Generator():
 
     """Base generator class."""
@@ -132,12 +150,12 @@ class Generator():
             spilled = sum(self.series_spilled.values()) * ureg.MWh
             s += ', surplus {}'.format(spilled.to_compact())
         if self.capcost(costs) > 0:
-            s += ', capcost $%s' % locale.format('%d', self.capcost(costs), grouping=True)
+            s += ', capcost %s' % _currency(self.capcost(costs))
         if self.opcost(costs) > 0:
-            s += ', opcost $%s' % locale.format('%d', self.opcost(costs), grouping=True)
+            s += ', opcost %s' % _currency(self.opcost(costs))
         lcoe = self.lcoe(costs, context.years)
         if np.isfinite(lcoe) and lcoe > 0:
-            s += ', LCOE $%d' % int(lcoe)
+            s += ', LCOE %s' % _currency(int(lcoe))
         return s
 
     def set_capacity(self, cap):
@@ -354,7 +372,7 @@ class Fuelled(Generator):
 
     def summary(self, context):
         return Generator.summary(self, context) + ', ran %s hours' \
-            % locale.format('%d', self.runhours, grouping=True)
+            % _thousands(self.runhours)
 
 
 class Hydro(Fuelled):
@@ -439,7 +457,7 @@ class PumpedHydro(Hydro):
 
     def summary(self, context):
         return Generator.summary(self, context) + \
-            ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
+            ', ran %s hours' % _thousands(self.runhours) + \
             ', %s storage' % str(self.maxstorage * ureg.MWh)
 
     def reset(self):
@@ -731,8 +749,8 @@ class Battery(Generator):
 
     def summary(self, context):
         return Generator.summary(self, context) + \
-            ', ran %s hours' % locale.format('%d', self.runhours, grouping=True) + \
-            ', charged %s hours' % locale.format('%d', self.chargehours, grouping=True) + \
+            ', ran %s hours' % _thousands(self.runhours) + \
+            ', charged %s hours' % _thousands(self.chargehours) + \
             ', %s storage' % str(self.maxstorage * ureg.MWh)
 
 
@@ -818,7 +836,7 @@ class DemandResponse(Generator):
     def summary(self, context):
         return Generator.summary(self, context) + \
             ', max response %d MW' % self.maxresponse + \
-            ', ran %s hours' % locale.format('%d', self.runhours, grouping=True)
+            ', ran %s hours' % _thousands(self.runhours)
 
 
 class GreenPower(Generator):
