@@ -48,8 +48,6 @@ def conditionalGooey(*pargs, **kwargs):
     def decorator(func):
         if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
             return func
-        if len(sys.argv) > 1:
-            return func
         return Gooey(*pargs, **kwargs)(func)
     return decorator
 
