@@ -207,6 +207,15 @@ class Wind(Generator):
         return power, spilled
 
 
+class OffshoreWind(Wind):
+
+    """Offshore wind generator.
+
+    This stub class allows differentiated wind costs in costs.py.
+    """
+    patch = Patch(facecolor='lightgreen')
+
+
 class PV(Generator):
 
     """Solar photovoltaic (PV) model."""
