@@ -42,6 +42,9 @@ twh = pow(10., 6)
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
 
+if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
+    sys.argv.append('--ignore-gooey')
+
 
 def conditionalGooey(*pargs, **kwargs):
     """Conditional decorator that wraps the Gooey decorator if the display can be found."""
