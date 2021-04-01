@@ -71,8 +71,6 @@ def process_options():
                           help='demand modifier')
     comgroup.add_argument("-h", "--help", action="help",
                           help="show this help message and exit")
-    comgroup.add_argument("--ignore-gooey", action="store_true",
-                          help="terminal output only [default: False]")
     comgroup.add_argument("--list-scenarios", action="store_true",
                           help='list supply scenarios and exit')
     comgroup.add_argument("-o", "--output", type=str, default='results.json',
