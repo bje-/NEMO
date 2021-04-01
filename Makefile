@@ -48,7 +48,7 @@ upload: dist
 	twine upload dist/*
 
 pdoc:
-	pdoc --force --html nemo
+	pdoc3 --force --html nemo
 
 clean:
 	-rm -rf dist build *.egg-info
