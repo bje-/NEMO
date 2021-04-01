@@ -56,8 +56,7 @@ def conditionalGooey(*pargs, **kwargs):
                   program_name="NEMO evolution",
                   richtext_controls=True,
                   show_success_modal=False,
-                  disable_progress_bar_animation=True,
-                  use_cmd_args=True)
+                  disable_progress_bar_animation=True)
 def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports via https://nemo.ozlabs.org/',
