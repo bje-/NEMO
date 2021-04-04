@@ -360,7 +360,10 @@ class Hydro(Fuelled):
 
 class PumpedHydro(Hydro):
 
-    """Pumped storage hydro (PSH) model."""
+    """Pumped storage hydro (PSH) model.
+
+    >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+    """
 
     patch = Patch(facecolor='powderblue')
 
@@ -376,9 +379,7 @@ class PumpedHydro(Hydro):
     def store(self, hr, power):
         """Pump water uphill for one hour.
 
-        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
-
-        Cannot pump and generate at the same time.
+        Test not pumping and generating at the same time.
         >>> psh.step(hr=0, demand=100)
         (100, 0)
         >>> psh.store(hr=0, power=250)
@@ -601,7 +602,10 @@ class Diesel(Fossil):
 
 class Battery(Generator):
 
-    """Battery storage (of any type)."""
+    """Battery storage (of any type).
+
+    >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
+    """
 
     patch = Patch(facecolor='grey')
     synchronous_p = False
@@ -627,7 +631,6 @@ class Battery(Generator):
     def store(self, hr, power):
         """Store power.
 
-        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
         >>> b.store(hr=0, power=400)
         400
         >>> b.store(hr=1, power=700)
