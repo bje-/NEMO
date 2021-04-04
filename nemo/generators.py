@@ -751,8 +751,10 @@ class Geothermal_EGS(Geothermal):
 
 class DemandResponse(Generator):
 
-    """Load shedding generator."""
+    """Load shedding generator.
 
+    >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
+    """
     patch = Patch(facecolor='white')
 
     def __init__(self, polygon, capacity, cost_per_mwh, label=None):
@@ -764,7 +766,6 @@ class DemandResponse(Generator):
 
     def step(self, hr, demand):
         """
-        >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
         >>> dr.step(hr=0, demand=200)
         (200, 0)
         >>> dr.runhours
