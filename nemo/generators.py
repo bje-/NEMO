@@ -69,7 +69,7 @@ class Generator():
         assert 0 < polygon <= polygons.numpolygons, polygon
 
         # Is the generator a rotating machine?
-        self.non_synchronous_p = False
+        self.synchronous_p = True
 
         # Time series of dispatched power and spills
         self.series_power = {}
@@ -189,7 +189,7 @@ class Wind(Generator):
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
-        self.non_synchronous_p = True
+        self.synchronous_p = False
         if Wind.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
@@ -229,7 +229,7 @@ class PV(Generator):
     def __init__(self, polygon, capacity, filename, column,
                  build_limit=None, label='PV'):
         Generator.__init__(self, polygon, capacity, label)
-        self.non_synchronous_p = True
+        self.synchronous_p = False
         if build_limit is not None:
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
@@ -644,7 +644,7 @@ class Battery(Generator):
     def __init__(self, polygon, capacity, maxstorage, discharge_hours=None,
                  rte=0.95, label='battery'):
         Generator.__init__(self, polygon, capacity, label)
-        self.non_synchronous_p = True
+        self.synchronous_p = False
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0

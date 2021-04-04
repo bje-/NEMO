@@ -147,7 +147,7 @@ def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, 
     async_demand = residual_hour_demand * context.nsp_limit
 
     for gidx, g in enumerate(gens):
-        if g.non_synchronous_p and async_demand < residual_hour_demand:
+        if not g.synchronous_p and async_demand < residual_hour_demand:
             gen, spl = g.step(hr, async_demand)
         else:
             gen, spl = g.step(hr, residual_hour_demand)
@@ -156,7 +156,7 @@ def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, 
             "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, g)
         generation[hr, gidx] = gen
 
-        if g.non_synchronous_p:
+        if not g.synchronous_p:
             async_demand -= gen
             assert async_demand > 0 or math.isclose(async_demand, 0)
             async_demand = max(0, async_demand)
