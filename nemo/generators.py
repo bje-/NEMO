@@ -53,23 +53,23 @@ class Generator():
 
     """Base generator class."""
 
-    def __init__(self, polygon, capacity, label):
+    # Is the generator a rotating machine?
+    synchronous_p = True
+
+    def __init__(self, polygon, capacity, label=None):
         """Base Generator constructor.
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
         self.setters = [(self.set_capacity, 0, 40)]
         self.storage_p = False
-        self.label = label
+        self.label = self.__class__.__name__ if label is None else label
         self.capacity = capacity
         self.polygon = polygon
 
         # Sanity check polygon argument.
         assert not isinstance(polygon, polygons.regions.Region)
         assert 0 < polygon <= polygons.numpolygons, polygon
-
-        # Is the generator a rotating machine?
-        self.synchronous_p = True
 
         # Time series of dispatched power and spills
         self.series_power = {}
@@ -174,30 +174,28 @@ class Generator():
         return self.__str__()
 
 
-class Wind(Generator):
+class TraceGenerator(Generator):
 
-    """Wind power."""
+    """A generator that gets its hourly dispatch from a CSV trace file."""
 
-    patch = Patch(facecolor='green')
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, label='wind',
+    def __init__(self, polygon, capacity, filename, column, label,
                  build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
-        self.synchronous_p = False
-        if Wind.csvfilename != filename:
+        if self.__class__.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
             urlobj = urllib.request.urlopen(filename)
-            Wind.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
-            Wind.csvdata = np.maximum(0, Wind.csvdata)
-            Wind.csvfilename = filename
-        self.generation = Wind.csvdata[::, column]
+            self.__class__.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
+            self.__class__.csvdata = np.maximum(0, self.__class__.csvdata)
+            self.__class__.csvfilename = filename
+        self.generation = self.__class__.csvdata[::, column]
 
     def step(self, hr, demand):
         """Step method for wind generators."""
@@ -209,46 +207,27 @@ class Wind(Generator):
         return power, spilled
 
 
+class Wind(TraceGenerator):
+
+    """Wind power."""
+
+    patch = Patch(facecolor='green')
+    synchronous_p = False
+
+
 class OffshoreWind(Wind):
 
-    """Offshore wind generator.
+    """Offshore wind power."""
 
-    This stub class allows differentiated wind costs in costs.py.
-    """
     patch = Patch(facecolor='lightgreen')
 
 
-class PV(Generator):
+class PV(TraceGenerator):
 
     """Solar photovoltaic (PV) model."""
 
     patch = Patch(facecolor='yellow')
-    csvfilename = None
-    csvdata = None
-
-    def __init__(self, polygon, capacity, filename, column, label='PV',
-                 build_limit=None):
-        Generator.__init__(self, polygon, capacity, label)
-        self.synchronous_p = False
-        if build_limit is not None:
-            # Override default capacity limit with build_limit
-            _, _, limit = self.setters[0]
-            self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
-        if PV.csvfilename != filename:
-            urlobj = urllib.request.urlopen(filename)
-            PV.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
-            PV.csvdata = np.maximum(0, PV.csvdata)
-            PV.csvfilename = filename
-        self.generation = PV.csvdata[::, column]
-
-    def step(self, hr, demand):
-        """Step method for PV generators."""
-        generation = self.generation[hr] * self.capacity
-        power = min(generation, demand)
-        spilled = generation - power
-        self.series_power[hr] = power
-        self.series_spilled[hr] = spilled
-        return power, spilled
+    synchronous_p = False
 
 
 class PV1Axis(PV):
@@ -272,7 +251,7 @@ class CST(Generator):
     csvdata = None
 
     def __init__(self, polygon, capacity, sm, shours, filename, column,
-                 label='CST', build_limit=None):
+                 label=None, build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -384,7 +363,7 @@ class Hydro(Fuelled):
 
     patch = Patch(facecolor='lightskyblue')
 
-    def __init__(self, polygon, capacity, label='hydro'):
+    def __init__(self, polygon, capacity, label=None):
         Fuelled.__init__(self, polygon, capacity, label)
         # capacity is in MW, but build limit is in GW
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
@@ -396,8 +375,7 @@ class PumpedHydro(Hydro):
 
     patch = Patch(facecolor='powderblue')
 
-    def __init__(self, polygon, capacity, maxstorage, rte=0.8,
-                 label='pumped-hydro'):
+    def __init__(self, polygon, capacity, maxstorage, rte=0.8, label=None):
         Hydro.__init__(self, polygon, capacity, label)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
@@ -475,7 +453,7 @@ class Biofuel(Fuelled):
 
     patch = Patch(facecolor='wheat')
 
-    def __init__(self, polygon, capacity, label='biofuel'):
+    def __init__(self, polygon, capacity, label=None):
         Fuelled.__init__(self, polygon, capacity, label)
 
     def opcost_per_mwh(self, costs):
@@ -490,7 +468,7 @@ class Biomass(Fuelled):
 
     patch = Patch(facecolor='greenyellow')
 
-    def __init__(self, polygon, capacity, label='biomass', heatrate=0.3):
+    def __init__(self, polygon, capacity, label=None, heatrate=0.3):
         Fuelled.__init__(self, polygon, capacity, label)
         self.heatrate = heatrate
 
@@ -506,7 +484,7 @@ class Fossil(Fuelled):
 
     patch = Patch(facecolor='brown')
 
-    def __init__(self, polygon, capacity, intensity, label='fossil'):
+    def __init__(self, polygon, capacity, intensity, label=None):
         # Greenhouse gas intensity in tonnes per MWh
         Fuelled.__init__(self, polygon, capacity, label)
         self.intensity = intensity
@@ -522,7 +500,7 @@ class Black_Coal(Fossil):
 
     patch = Patch(facecolor='black')
 
-    def __init__(self, polygon, capacity, intensity=0.773, label='coal'):
+    def __init__(self, polygon, capacity, intensity=0.773, label=None):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -538,7 +516,7 @@ class OCGT(Fossil):
 
     patch = Patch(facecolor='purple')
 
-    def __init__(self, polygon, capacity, intensity=0.7, label='OCGT'):
+    def __init__(self, polygon, capacity, intensity=0.7, label=None):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -554,7 +532,7 @@ class CCGT(Fossil):
 
     patch = Patch(facecolor='purple')
 
-    def __init__(self, polygon, capacity, intensity=0.4, label='CCGT'):
+    def __init__(self, polygon, capacity, intensity=0.4, label=None):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -568,7 +546,7 @@ class CCS(Fossil):
 
     """Base class of carbon capture and storage (CCS)."""
 
-    def __init__(self, polygon, capacity, intensity, capture, label='CCS'):
+    def __init__(self, polygon, capacity, intensity, capture, label=None):
         Fossil.__init__(self, polygon, capacity, intensity, label)
         # capture fraction ranges from 0 to 1
         self.capture = capture
@@ -582,8 +560,7 @@ class Coal_CCS(CCS):
 
     """Coal with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85,
-                 label='Coal-CCS'):
+    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label=None):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -602,8 +579,7 @@ class CCGT_CCS(CCS):
 
     """CCGT with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85,
-                 label='CCGT-CCS'):
+    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label=None):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -622,8 +598,7 @@ class Diesel(Fossil):
 
     patch = Patch(facecolor='dimgrey')
 
-    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3,
-                 label='diesel'):
+    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3, label=None):
         Fossil.__init__(self, polygon, capacity, intensity, label)
         self.kwh_per_litre = kwh_per_litre
 
@@ -640,11 +615,11 @@ class Battery(Generator):
     """Battery storage (of any type)."""
 
     patch = Patch(facecolor='grey')
+    synchronous_p = False
 
-    def __init__(self, polygon, capacity, maxstorage, label='battery',
+    def __init__(self, polygon, capacity, maxstorage, label=None,
                  discharge_hours=None, rte=0.95):
         Generator.__init__(self, polygon, capacity, label)
-        self.synchronous_p = False
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
@@ -757,25 +732,14 @@ class Battery(Generator):
             ', %s storage' % str(self.maxstorage * ureg.MWh)
 
 
-class Geothermal(Generator):
+class Geothermal(TraceGenerator):
 
     """Geothermal power plant."""
 
     patch = Patch(facecolor='brown')
-    csvfilename = None
-    csvdata = None
-
-    def __init__(self, polygon, capacity, filename, column, label):
-        Generator.__init__(self, polygon, capacity, label)
-        if Geothermal.csvfilename != filename:
-            urlobj = urllib.request.urlopen(filename)
-            Geothermal.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
-            Geothermal.csvdata = np.maximum(0, Geothermal.csvdata)
-            Geothermal.csvfilename = filename
-        self.generation = Geothermal.csvdata[::, column]
 
     def step(self, hr, demand):
-        """Step method for geothermal generators."""
+        """Override step method for geothermal generators."""
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         self.series_power[hr] = power
@@ -799,7 +763,7 @@ class DemandResponse(Generator):
 
     patch = Patch(facecolor='white')
 
-    def __init__(self, polygon, capacity, cost_per_mwh, label='demand-response'):
+    def __init__(self, polygon, capacity, cost_per_mwh, label=None):
         Generator.__init__(self, polygon, capacity, label)
         self.setters = []
         self.runhours = 0
@@ -837,17 +801,13 @@ class DemandResponse(Generator):
 
 
 class GreenPower(Generator):
-    """GreenPower"""
+    """GreenPower
 
+    >>> g = GreenPower(1, 100)
+    >>> g.step(0, 200)
+    (100, 0)
+    """
     patch = Patch(facecolor='darkgreen')
-
-    def __init__(self, polygon, capacity, label='GreenPower'):
-        """
-        >>> g = GreenPower(1, 100)
-        >>> g.step(0, 200)
-        (100, 0)
-        """
-        Generator.__init__(self, polygon, capacity, label)
 
     def step(self, hr, demand):
         """Step method for GreenPower."""
@@ -859,7 +819,7 @@ class GreenPower(Generator):
 class HydrogenStorage():
     """A simple hydrogen storage vessel."""
 
-    def __init__(self, maxstorage, label='Hydrogen storage'):
+    def __init__(self, maxstorage, label=None):
         # initialise these for good measure
         self.maxstorage = None
         self.storage = None
@@ -923,16 +883,16 @@ class Electrolyser(Generator):
 
     patch = Patch()
 
-    def __init__(self, tank, polygon, capacity, efficiency=0.8, label='Electrolyser'):
+    def __init__(self, tank, polygon, capacity, efficiency=0.8, label=None):
         """
         >>> e = Electrolyser(None, 1, 100, 'test')	# doctest: +ELLIPSIS
         Traceback (most recent call last):
           ...
         AssertionError
         >>> h = HydrogenStorage(400, 'test')
-        >>> e = Electrolyser(h, 1, 100, efficiency=1.0, label='test')
+        >>> e = Electrolyser(h, 1, 100, efficiency=1.0)
         >>> print(e)
-        test (QLD1:1), 100.00 MW
+        Electrolyser (QLD1:1), 100.00 MW
         >>> e.step(0, 100)
         (0, 0)
         >>> e.store(0, 100) # store 100 MWh of hydrogen
@@ -967,12 +927,12 @@ class HydrogenGT(Fuelled):
     """A combustion turbine fuelled by hydrogen."""
     patch = Patch(facecolor='violet')
 
-    def __init__(self, tank, polygon, capacity, efficiency=0.36, label='HydrogenGT'):
+    def __init__(self, tank, polygon, capacity, efficiency=0.36, label=None):
         """
         >>> h = HydrogenStorage(1000, 'test')
-        >>> e = HydrogenGT(h, 1, 100, efficiency=0.5, label='test')
+        >>> e = HydrogenGT(h, 1, 100, efficiency=0.5)
         >>> print(e)
-        test (QLD1:1), 100.00 MW
+        HydrogenGT (QLD1:1), 100.00 MW
         >>> e.step(0, 100) # discharge 100 MWh-e of hydrogen
         (100.0, 0)
         >>> e.step(0, 100) # discharge another 100 MWh-e of hydrogen
