@@ -787,16 +787,10 @@ class Geothermal_HSA(Geothermal):
 
     """Hot sedimentary aquifer (HSA) geothermal model."""
 
-    def __init__(self, polygon, capacity, filename, column, label='HSA geothermal'):
-        Geothermal.__init__(self, polygon, capacity, filename, column, label)
-
 
 class Geothermal_EGS(Geothermal):
 
     """Enhanced geothermal systems (EGS) geothermal model."""
-
-    def __init__(self, polygon, capacity, filename, column, label='EGS geothermal'):
-        Geothermal.__init__(self, polygon, capacity, filename, column, label)
 
 
 class DemandResponse(Generator):
