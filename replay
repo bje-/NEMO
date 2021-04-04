@@ -21,6 +21,9 @@ from nemo import costs
 from nemo import scenarios
 from nemo import utils
 
+if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
+    sys.argv.append('--ignore-gooey')
+
 
 @Gooey(program_name="NEMO replay tool",
        richtext_controls=True,
