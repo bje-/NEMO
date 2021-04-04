@@ -169,7 +169,6 @@ def re100(context):
                 result.append(g(poly, 0,
                                 configfile.get('generation', 'wind-trace'),
                                 poly - 1,
-                                delimiter=',',
                                 build_limit=polygons.wind_limit[poly],
                                 label='polygon %d wind' % poly))
         else:  # pragma: no cover
@@ -212,7 +211,6 @@ def _one_per_poly(region):
         wind.append(generators.Wind(poly, 0,
                                     configfile.get('generation', 'wind-trace'),
                                     poly - 1,
-                                    delimiter=',',
                                     build_limit=polygons.wind_limit[poly],
                                     label='poly %d wind' % poly))
         pv.append(generators.PV1Axis(poly, 0,

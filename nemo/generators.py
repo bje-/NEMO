@@ -182,8 +182,8 @@ class Wind(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, delimiter=None,
-                 build_limit=None, label='wind'):
+    def __init__(self, polygon, capacity, filename, column, label='wind',
+                 build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -194,7 +194,7 @@ class Wind(Generator):
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
             urlobj = urllib.request.urlopen(filename)
-            Wind.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=delimiter)
+            Wind.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             Wind.csvdata = np.maximum(0, Wind.csvdata)
             Wind.csvfilename = filename
         self.generation = Wind.csvdata[::, column]
@@ -226,8 +226,8 @@ class PV(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column,
-                 build_limit=None, label='PV'):
+    def __init__(self, polygon, capacity, filename, column, label='PV',
+                 build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         self.synchronous_p = False
         if build_limit is not None:
@@ -272,7 +272,7 @@ class CST(Generator):
     csvdata = None
 
     def __init__(self, polygon, capacity, sm, shours, filename, column,
-                 build_limit=None, label='CST'):
+                 label='CST', build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -641,8 +641,8 @@ class Battery(Generator):
 
     patch = Patch(facecolor='grey')
 
-    def __init__(self, polygon, capacity, maxstorage, discharge_hours=None,
-                 rte=0.95, label='battery'):
+    def __init__(self, polygon, capacity, maxstorage, label='battery',
+                 discharge_hours=None, rte=0.95):
         Generator.__init__(self, polygon, capacity, label)
         self.synchronous_p = False
         self.setters += [(self.set_storage, 0, 10000)]
@@ -688,8 +688,8 @@ class Battery(Generator):
 
     def step(self, hr, demand):
         """
-        >>> dischg = range(18, 24)
-        >>> b = Battery(polygons.wildcard, 400, 1000, dischg, rte=1.0)
+        >>> dc = range(18, 24)
+        >>> b = Battery(polygons.wildcard, 400, 1000, discharge_hours=dc, rte=1.0)
         >>> b.stored = 400
 
         Cannot discharge outside of discharge hours.
