@@ -215,7 +215,7 @@ class Wind(TraceGenerator):
     synchronous_p = False
 
 
-class OffshoreWind(Wind):
+class WindOffshore(Wind):
 
     """Offshore wind power."""
 
