@@ -57,7 +57,7 @@ def run_one(bundle):
     print('scenario', scenario)
 
     # Apply each demand modifier argument (if any) in the given order.
-    for arg in options['demand_modifier']:
+    for arg in options['demand_modifier'] or []:
         scenarios.demand_switch(arg)(context)
 
     try:
