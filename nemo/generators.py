@@ -379,6 +379,8 @@ class PumpedHydro(Hydro):
     def store(self, hr, power):
         """Pump water uphill for one hour.
 
+        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+
         Test not pumping and generating at the same time.
         >>> psh.step(hr=0, demand=100)
         (100, 0)
@@ -631,6 +633,7 @@ class Battery(Generator):
     def store(self, hr, power):
         """Store power.
 
+        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
         >>> b.store(hr=0, power=400)
         400
         >>> b.store(hr=1, power=700)
@@ -765,6 +768,7 @@ class DemandResponse(Generator):
 
     def step(self, hr, demand):
         """
+        >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
         >>> dr.step(hr=0, demand=200)
         (200, 0)
         >>> dr.runhours
