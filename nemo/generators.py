@@ -181,7 +181,7 @@ class TraceGenerator(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, label,
+    def __init__(self, polygon, capacity, filename, column, label=None,
                  build_limit=None):
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
@@ -655,8 +655,7 @@ class Battery(Generator):
 
     def step(self, hr, demand):
         """
-        >>> dc = range(18, 24)
-        >>> b = Battery(polygons.wildcard, 400, 1000, discharge_hours=dc, rte=1.0)
+        >>> b = Battery(polygons.wildcard, 400, 1000, discharge_hours=range(18, 24), rte=1.0)
         >>> b.stored = 400
 
         Cannot discharge outside of discharge hours.
