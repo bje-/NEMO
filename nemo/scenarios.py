@@ -362,29 +362,25 @@ def theworks(context):
     re100(context)
     # pylint: disable=redefined-outer-name
     egs = generators.Geothermal_EGS(polygons.wildcard, 0,
-                                    configfile.get('generation', 'egs-geothermal-trace'), 38,
-                                    label=None)
+                                    configfile.get('generation', 'egs-geothermal-trace'), 38)
     hsa = generators.Geothermal_HSA(polygons.wildcard, 0,
-                                    configfile.get('generation', 'hsa-geothermal-trace'), 38,
-                                    label=None)
+                                    configfile.get('generation', 'hsa-geothermal-trace'), 38)
     pt = generators.ParabolicTrough(polygons.wildcard, 0, 2, 6,
-                                    configfile.get('generation', 'cst-trace'), 12,
-                                    label=None)
+                                    configfile.get('generation', 'cst-trace'), 12)
     thermals = [generators.Black_Coal(polygons.wildcard, 0),
                 generators.Coal_CCS(polygons.wildcard, 0),
                 generators.CCGT(polygons.wildcard, 0),
                 generators.CCGT_CCS(polygons.wildcard, 0)]
 
-    ocgt = generators.OCGT(polygons.wildcard, 0, label=None)
-    batt = generators.Battery(polygons.wildcard, 0, 0, label=None)
-    diesel = generators.Diesel(polygons.wildcard, 0, label=None)
-    dem = generators.DemandResponse(polygons.wildcard, 0, 300, label=None)
-    biomass = generators.Biomass(polygons.wildcard, 0, label=None)
-    greenpower = generators.GreenPower(polygons.wildcard, 0, label=None)
+    ocgt = generators.OCGT(polygons.wildcard, 0)
+    batt = generators.Battery(polygons.wildcard, 0, 0)
+    diesel = generators.Diesel(polygons.wildcard, 0)
+    dem = generators.DemandResponse(polygons.wildcard, 0, 300)
+    biomass = generators.Biomass(polygons.wildcard, 0)
+    greenpower = generators.GreenPower(polygons.wildcard, 0)
     btm_pv = generators.Behind_Meter_PV(polygons.wildcard, 0,
                                         configfile.get('generation', 'rooftop-pv-trace'),
-                                        0,
-                                        label=None)
+                                        0)
     g = context.generators
 
     context.generators = [hsa, egs, pt] + thermals + g[:-4] + \
