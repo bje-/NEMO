@@ -111,7 +111,7 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
 
     _, ymax = plt.gca().get_ylim()
     plt.plot(context.unserved.index, [ymax] * len(context.unserved),
-             "yv", markersize=10, color='red', markeredgecolor='black')
+             "v", markersize=10, color='red', markeredgecolor='black')
 
     if not filename:
         plt.show()  # pragma: no cover
