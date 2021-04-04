@@ -242,27 +242,16 @@ class Behind_Meter_PV(PV):
     This stub class allows differentiated PV costs in costs.py."""
 
 
-class CST(Generator):
+class CST(TraceGenerator):
 
     """Concentrating solar thermal (CST) model."""
 
     patch = Patch(facecolor='yellow')
-    csvfilename = None
-    csvdata = None
 
-    def __init__(self, polygon, capacity, sm, shours, filename, column,
-                 label=None, build_limit=None):
-        Generator.__init__(self, polygon, capacity, label)
-        if build_limit is not None:
-            # Override default capacity limit with build_limit
-            _, _, limit = self.setters[0]
-            self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
-        if CST.csvfilename != filename:
-            urlobj = urllib.request.urlopen(filename)
-            CST.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
-            CST.csvfilename = filename
-        self.generation = CST.csvdata[::, column]
-        # initialise these for good measure
+    def __init__(self, polygon, capacity, sm, shours, filename,
+                 column, label=None, build_limit=None):
+        TraceGenerator.__init__(self, polygon, capacity, filename, column,
+                                label)
         self.maxstorage = None
         self.stored = None
         self.set_storage(shours)
