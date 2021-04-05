@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2012, 2013, 2014 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
+# Copyright (C) 2021 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -30,14 +31,11 @@ except ImportError:  # pragma: no cover
     print('WARNING: scoop not loaded')
 
 import nemo
-from nemo import generators
 from nemo import scenarios
 from nemo import costs
 from nemo import configfile as cf
+from nemo import penalties
 from nemo import transmission
-
-# Conversion factor between MWh and TWh.
-twh = pow(10., 6)
 
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
@@ -201,116 +199,17 @@ if args.trace_file is not None:
         writer = csv.writer(csvfile)
         writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
 
-reasons = {'unserved': 1, 'emissions': 2, 'fossil': 4, 'bioenergy': 8,
-           'hydro': 16, 'reserves': 32, 'min-regional-gen': 64}
-
-
-def _penalty_unserved(ctx):
-    """Penalty: unserved energy"""
-    minuse = ctx.total_demand() * (ctx.relstd / 100)
-    use = max(0, ctx.unserved_energy() - minuse)
-    reason = reasons['unserved'] if use > 0 else 0
-    return pow(use, 3), reason
-
-
-def _penalty_reserves(ctx):
-    """Penalty: minimum reserves"""
-    pen, reas = 0, 0
-    for i in range(ctx.timesteps):
-        reserve, spilled = 0, 0
-        for g in ctx.generators:
-            try:
-                spilled += g.series_spilled[i]
-            except KeyError:
-                # non-variable generators may not have spill data
-                pass
-
-            # Calculate headroom for each generator, except pumped hydro and
-            # CST -- tricky to calculate capacity
-            if isinstance(g, nemo.generators.Fuelled) and not \
-               isinstance(g, nemo.generators.PumpedHydro) and not \
-               isinstance(g, nemo.generators.CST):
-                reserve += g.capacity - g.series_power[i]
-
-        if reserve + spilled < args.reserves:
-            reas |= reasons['reserves']
-            pen += pow(args.reserves - reserve + spilled, 3)
-    return pen, reas
-
-
-def _penalty_min_regional(ctx):
-    """Penalty: minimum share of regional generation"""
-    regional_generation_shortfall = 0
-    for rgn in ctx.regions:
-        regional_demand = 0
-        for poly in rgn.polygons:
-            regional_demand += ctx.demand[poly - 1].sum()
-        regional_generation = 0
-        for g in ctx.generators:
-            if g.region() is rgn:
-                regional_generation += sum(g.series_power.values())
-        min_regional_generation = regional_demand * ctx.min_regional_generation
-        regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
-    reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
-    return pow(regional_generation_shortfall, 3), reason
-
-
-def _penalty_emissions(ctx):
-    """Penalty: total emissions"""
-    emissions = 0
-    for g in ctx.generators:
-        if hasattr(g, 'intensity'):
-            emissions += sum(g.series_power.values()) * g.intensity
-    # exceedance in tonnes CO2-e
-    emissions_exceedance = max(0, emissions - args.emissions_limit * pow(10, 6) * ctx.years)
-    reason = reasons['emissions'] if emissions_exceedance > 0 else 0
-    return pow(emissions_exceedance, 3), reason
-
-
-def _penalty_fossil(ctx):
-    """Penalty: limit fossil to fraction of annual demand"""
-    fossil_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Fossil):
-            fossil_energy += sum(g.series_power.values())
-    fossil_exceedance = max(0, fossil_energy - ctx.total_demand() * args.fossil_limit * ctx.years)
-    reason = reasons['fossil'] if fossil_exceedance > 0 else 0
-    return pow(fossil_exceedance, 3), reason
-
-
-def _penalty_bioenergy(ctx):
-    """Penalty: limit biofuel use"""
-    biofuel_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Biofuel):
-            biofuel_energy += sum(g.series_power.values())
-    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * twh * ctx.years)
-    reason = reasons['bioenergy'] if biofuel_exceedance > 0 else 0
-    return pow(biofuel_exceedance, 3), reason
-
-
-def _penalty_hydro(ctx):
-    """Penalty: limit hydro use"""
-    hydro_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Hydro) and \
-           not isinstance(g, generators.PumpedHydro):
-            hydro_energy += sum(g.series_power.values())
-    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * twh * ctx.years)
-    reason = reasons['hydro'] if hydro_exceedance > 0 else 0
-    return pow(hydro_exceedance, 3), reason
-
 
 # Build list of penalty functions based on command line args, etc.
-penaltyfns = [_penalty_unserved, _penalty_bioenergy, _penalty_hydro]
+penaltyfns = [penalties.unserved, penalties.bioenergy, penalties.hydro]
 if args.reserves > 0:
-    penaltyfns.append(_penalty_reserves)
+    penaltyfns.append(penalties.reserves)
 if args.emissions_limit < np.inf:
-    penaltyfns.append(_penalty_emissions)
+    penaltyfns.append(penalties.emissions)
 if args.fossil_limit < 1:
-    penaltyfns.append(_penalty_fossil)
+    penaltyfns.append(penalties.fossil)
 if context.min_regional_generation > 0:
-    penaltyfns.append(_penalty_min_regional)
+    penaltyfns.append(penalties.minRegional)
 
 
 def cost(ctx):
@@ -323,7 +222,7 @@ def cost(ctx):
     # Run through all of the penalty functions.
     penalty, reason = 0, 0
     for penaltyfn in penaltyfns:
-        p, r = penaltyfn(ctx)
+        p, r = penaltyfn(ctx, args)
         penalty += p
         reason |= r
 
@@ -417,7 +316,7 @@ def run():
     if reason > 0:
         print('Penalty: %.2f $/MWh' % penalty)
         print('Constraints violated:', end=' ')
-        for label, code in reasons.items():
+        for label, code in penalties.reasons.items():
             if reason & code:
                 constraints_violated += [label]
                 print(label, end=' ')
