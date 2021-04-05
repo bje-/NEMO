@@ -7,8 +7,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# pylint: disable=too-many-lines
-
 """Simulated electricity generators for the NEMO framework."""
 
 import locale
