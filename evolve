@@ -227,28 +227,33 @@ def cost(ctx):
         reason |= r
 
     if args.transmission:
-        maxexchanges = ctx.exchanges.max(axis=0)
-        np.fill_diagonal(maxexchanges, 0)
-        for i in range(1, maxexchanges.shape[0]):
-            # then put the max (upper, lower) into lower
-            # and zero the upper entries
-            for j in range(i):
-                maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
-                maxexchanges[j, i] = 0
-        try:
-            # existing transmission is "free"
-            maxexchanges = np.maximum(0, maxexchanges - nemo.polyons.existing_net)
-        except AttributeError:
-            # skip if not present
-            pass
-
-        costmat = ctx.costs.transmission.cost_matrix(maxexchanges) * ctx.years
-        score += costmat.sum()
+        score += foo(ctx)
 
     score /= ctx.total_demand()
     penalty /= ctx.total_demand()
     # Express $/yr as an average $/MWh over the period
     return score, penalty, reason
+
+
+def foo(ctx):
+    maxexchanges = ctx.exchanges.max(axis=0)
+    np.fill_diagonal(maxexchanges, 0)
+    for i in range(1, maxexchanges.shape[0]):
+        # then put the max (upper, lower) into lower
+        # and zero the upper entries
+        for j in range(i):
+            maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
+            maxexchanges[j, i] = 0
+    try:
+        # existing transmission is "free"
+        print(maxexchanges.shape, nemo.polygons.existing_net.shape)
+        maxexchanges = np.maximum(0, maxexchanges - nemo.polyons.existing_net)
+    except AttributeError:
+        # skip if not present
+        pass
+
+    costmat = ctx.costs.transmission.cost_matrix(maxexchanges) * ctx.years
+    return costmat.sum()
 
 
 def eval_func(chromosome):
