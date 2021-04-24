@@ -189,8 +189,8 @@ class TraceGenerator(Generator):
         if self.__class__.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            urlobj = urllib.request.urlopen(filename)
-            self.__class__.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
+            with urllib.request.urlopen(filename) as urlobj:
+                self.__class__.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
             self.__class__.csvdata = np.maximum(0, self.__class__.csvdata)
             self.__class__.csvfilename = filename
         self.generation = self.__class__.csvdata[::, column]
@@ -289,9 +289,8 @@ class CST(TraceGenerator):
         self.series_power[hr] = generation
         self.series_spilled[hr] = 0
 
-        if generation > demand:  # pragma: no cover
-            # This can happen due to rounding errors.
-            generation = demand
+        # This can happen due to rounding errors.
+        generation = min(generation, demand)
         return generation, 0
 
     def reset(self):

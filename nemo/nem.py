@@ -21,9 +21,10 @@ from nemo import polygons
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.
 
-urlobj = urllib.request.urlopen(configfile.get('demand', 'demand-trace'))
-demand = pd.read_csv(urlobj, comment='#', sep=',',
-                     parse_dates=[['Date', 'Time']], index_col='Date_Time')
+url = configfile.get('demand', 'demand-trace')
+with urllib.request.urlopen(url) as urlobj:
+    demand = pd.read_csv(urlobj, comment='#', sep=',',
+                         parse_dates=[['Date', 'Time']], index_col='Date_Time')
 
 # Check for date, time and n demand columns (for n regions).
 assert len(demand.columns) == regions.numregions
