@@ -26,7 +26,8 @@ class Transmission():
         self.af = annuity_factor(lifetime, discount)
 
     def cost_matrix(self, capacities):
-        """Return the cost matrix given a capacity matrix.
+        """
+        Return the cost matrix given a capacity matrix.
 
         >>> t = Transmission(lambda x: 800, 0.05, 30)
         >>> caps = np.empty_like(distances[1:, 1:])

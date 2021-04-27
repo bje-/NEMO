@@ -35,7 +35,6 @@ ureg.default_format = '.2f~P'
 
 
 class Context():
-
     """All simulation state is kept in a Context object."""
 
     def __init__(self):

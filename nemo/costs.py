@@ -115,7 +115,6 @@ class APGTR2015():
 
 
 class APGTR2030(APGTR2015):
-
     """Australian Power Generation Technology Report (2015) costs in 2030.
 
     Source: CO2CRC Australian Power Generation Technology Report (2015)

@@ -10,7 +10,6 @@
 
 
 class Region():
-
     """Each region is described by a Region object."""
 
     def __init__(self, ordinal, regionid, descr):
