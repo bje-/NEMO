@@ -137,7 +137,8 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
 
 
 def dumps():
-    """Dump the polygon data in GeoJSON format.
+    """
+    Dump the polygon data in GeoJSON format.
 
     >>> assert len(dumps()) > 0
     """

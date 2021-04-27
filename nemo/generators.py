@@ -54,7 +54,8 @@ class Generator():
     synchronous_p = True
 
     def __init__(self, polygon, capacity, label=None):
-        """Base Generator constructor.
+        """
+        Base Generator constructor.
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """

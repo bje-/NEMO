@@ -16,7 +16,8 @@ class Transmission():
     """An encapsulating class for transmission specific bits."""
 
     def __init__(self, costfn, discount, lifetime=50):
-        """Construct transmission costs given a cost function, discount rate and lifetime.
+        """
+        Construct transmission costs given a cost function, discount rate and lifetime.
 
         >>> t = Transmission(0.05, 30)
         """

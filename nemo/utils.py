@@ -32,7 +32,6 @@ def _generator_list(context):
 
 def _legend(context):
     """Draw the legend."""
-
     # ::-1 slicing reverses the list so that the legend appears in "merit order".
     gens = _generator_list(context)[::-1]
     labels = []
