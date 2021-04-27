@@ -48,7 +48,6 @@ def _currency(value):
 
 
 class Generator():
-
     """Base generator class."""
 
     # Is the generator a rotating machine?
@@ -173,7 +172,6 @@ class Generator():
 
 
 class TraceGenerator(Generator):
-
     """A generator that gets its hourly dispatch from a CSV trace file."""
 
     csvfilename = None
@@ -206,7 +204,6 @@ class TraceGenerator(Generator):
 
 
 class Wind(TraceGenerator):
-
     """Wind power."""
 
     patch = Patch(facecolor='green')
@@ -214,14 +211,12 @@ class Wind(TraceGenerator):
 
 
 class WindOffshore(Wind):
-
     """Offshore wind power."""
 
     patch = Patch(facecolor='lightgreen')
 
 
 class PV(TraceGenerator):
-
     """Solar photovoltaic (PV) model."""
 
     patch = Patch(facecolor='yellow')
@@ -241,7 +236,6 @@ class Behind_Meter_PV(PV):
 
 
 class CST(TraceGenerator):
-
     """Concentrating solar thermal (CST) model."""
 
     patch = Patch(facecolor='yellow')
@@ -303,7 +297,6 @@ class CST(TraceGenerator):
 
 
 class ParabolicTrough(CST):
-
     """Parabolic trough CST generator.
 
     This stub class allows differentiated CST costs in costs.py.
@@ -311,7 +304,6 @@ class ParabolicTrough(CST):
 
 
 class CentralReceiver(CST):
-
     """Central receiver CST generator.
 
     This stub class allows differentiated CST costs in costs.py.
@@ -319,7 +311,6 @@ class CentralReceiver(CST):
 
 
 class Fuelled(Generator):
-
     """The class of generators that consume fuel."""
 
     def __init__(self, polygon, capacity, label):
@@ -344,7 +335,6 @@ class Fuelled(Generator):
 
 
 class Hydro(Fuelled):
-
     """Hydro power stations."""
 
     patch = Patch(facecolor='lightskyblue')
@@ -356,7 +346,6 @@ class Hydro(Fuelled):
 
 
 class PumpedHydro(Hydro):
-
     """Pumped storage hydro (PSH) model.
 
     >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
@@ -437,7 +426,6 @@ class PumpedHydro(Hydro):
 
 
 class Biofuel(Fuelled):
-
     """Model of open cycle gas turbines burning biofuel."""
 
     patch = Patch(facecolor='wheat')
@@ -452,7 +440,6 @@ class Biofuel(Fuelled):
 
 
 class Biomass(Fuelled):
-
     """Model of steam turbine burning solid biomass."""
 
     patch = Patch(facecolor='greenyellow')
@@ -468,7 +455,6 @@ class Biomass(Fuelled):
 
 
 class Fossil(Fuelled):
-
     """Base class for GHG emitting power stations."""
 
     patch = Patch(facecolor='brown')
@@ -484,7 +470,6 @@ class Fossil(Fuelled):
 
 
 class Black_Coal(Fossil):
-
     """Black coal power stations with no CCS."""
 
     patch = Patch(facecolor='black')
@@ -500,7 +485,6 @@ class Black_Coal(Fossil):
 
 
 class OCGT(Fossil):
-
     """Open cycle gas turbine (OCGT) model."""
 
     patch = Patch(facecolor='purple')
@@ -516,7 +500,6 @@ class OCGT(Fossil):
 
 
 class CCGT(Fossil):
-
     """Combined cycle gas turbine (CCGT) model."""
 
     patch = Patch(facecolor='purple')
@@ -532,7 +515,6 @@ class CCGT(Fossil):
 
 
 class CCS(Fossil):
-
     """Base class of carbon capture and storage (CCS)."""
 
     def __init__(self, polygon, capacity, intensity, capture, label=None):
@@ -546,7 +528,6 @@ class CCS(Fossil):
 
 
 class Coal_CCS(CCS):
-
     """Coal with CCS."""
 
     def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label=None):
@@ -565,7 +546,6 @@ class Coal_CCS(CCS):
 
 
 class CCGT_CCS(CCS):
-
     """CCGT with CCS."""
 
     def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label=None):
@@ -582,7 +562,6 @@ class CCGT_CCS(CCS):
 
 
 class Diesel(Fossil):
-
     """Diesel genset model."""
 
     patch = Patch(facecolor='dimgrey')
@@ -600,7 +579,6 @@ class Diesel(Fossil):
 
 
 class Battery(Generator):
-
     """Battery storage (of any type).
 
     >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
@@ -724,7 +702,6 @@ class Battery(Generator):
 
 
 class Geothermal(TraceGenerator):
-
     """Geothermal power plant."""
 
     patch = Patch(facecolor='brown')
@@ -739,17 +716,14 @@ class Geothermal(TraceGenerator):
 
 
 class Geothermal_HSA(Geothermal):
-
     """Hot sedimentary aquifer (HSA) geothermal model."""
 
 
 class Geothermal_EGS(Geothermal):
-
     """Enhanced geothermal systems (EGS) geothermal model."""
 
 
 class DemandResponse(Generator):
-
     """Load shedding generator.
 
     >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
