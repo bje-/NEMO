@@ -25,6 +25,7 @@ class NullCosts():
     """All costs are zero. Useful for debugging."""
 
     class _ZeroDict(dict):
+
         """Return 0 for any key."""
         def __getitem__(self, key):
             return dict.get(self, key, 0)
@@ -44,7 +45,6 @@ class NullCosts():
 
 
 class APGTR2015():
-
     """Australian Power Generation Technology Report costs in 2015.
 
     Source: CO2CRC Australian Power Generation Technology Report (2015)
@@ -207,7 +207,6 @@ class AETA2012_2030():
 
 
 class AETA2012_2030Low(AETA2012_2030):
-
     """AETA (2012) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -235,7 +234,6 @@ class AETA2012_2030Low(AETA2012_2030):
 
 
 class AETA2012_2030High(AETA2012_2030):
-
     """AETA (2012) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -263,7 +261,6 @@ class AETA2012_2030High(AETA2012_2030):
 
 
 class AETA2012_2030Mid(AETA2012_2030):
-
     """AETA (2012) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):

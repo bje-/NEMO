@@ -15,7 +15,6 @@ from nemo import utils
 
 
 class TestCoverage(unittest.TestCase):
-
     """A handful of miscellaneous tests to ensure good coverage."""
 
     def test_001(self):

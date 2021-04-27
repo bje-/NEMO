@@ -139,7 +139,6 @@ def _store_spills(context, hr, g, generators, spl):
 
 def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, spill):
     """Dispatch power from each generator in merit (list) order."""
-
     # async_demand is the maximum amount of the demand in this
     # hour that can be met from non-synchronous
     # generation. Non-synchronous generation in excess of this

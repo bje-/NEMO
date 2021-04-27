@@ -375,7 +375,6 @@ def re100_south_aus(context):
 
 def theworks(context):
     """All technologies."""
-
     re100(context)
     # pylint: disable=redefined-outer-name
     egs = generators.Geothermal_EGS(wildcard, 0,
