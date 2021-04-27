@@ -109,7 +109,8 @@ for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
 
 
 def region(polygon):
-    """Return the region a polygon resides in.
+    """
+    Return the region a polygon resides in.
 
     >>> region(1)
     QLD1
