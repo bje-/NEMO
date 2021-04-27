@@ -63,7 +63,8 @@ def _hydro():
 
 
 def replacement(context):
-    """The current NEM fleet, more or less.
+    """
+    The current NEM fleet, more or less.
 
     >>> class C: pass
     >>> c = C()
@@ -77,7 +78,8 @@ def replacement(context):
 
 
 def _one_ccgt(context):
-    """One CCGT only.
+    """
+    One CCGT only.
 
     >>> class C: pass
     >>> c = C()
@@ -89,7 +91,8 @@ def _one_ccgt(context):
 
 
 def ccgt(context):
-    """All gas scenario.
+    """
+    All gas scenario.
 
     >>> class C: pass
     >>> c = C()
@@ -104,7 +107,8 @@ def ccgt(context):
 
 
 def ccgt_ccs(context):
-    """CCGT CCS scenario.
+    """
+    CCGT CCS scenario.
 
     >>> class C: pass
     >>> c = C()
@@ -119,7 +123,8 @@ def ccgt_ccs(context):
 
 
 def coal_ccs(context):
-    """Coal CCS scenario.
+    """
+    Coal CCS scenario.
 
     >>> class C: pass
     >>> c = C()
@@ -133,7 +138,8 @@ def coal_ccs(context):
 
 
 def re100(context):
-    """100% renewable electricity.
+    """
+    100% renewable electricity.
 
     >>> class C: pass
     >>> c = C()
@@ -179,7 +185,8 @@ def re100(context):
 
 
 def re100_batteries(context):
-    """Use lots of renewables plus battery storage.
+    """
+    Use lots of renewables plus battery storage.
 
     >>> class C: pass
     >>> c = C()
@@ -197,7 +204,8 @@ def re100_batteries(context):
 
 
 def _one_per_poly(region):
-    """Return three lists of wind, PV and CST generators, one per polygon.
+    """
+    Return three lists of wind, PV and CST generators, one per polygon.
 
     >>> from nemo import regions
     >>> wind, pv, cst = _one_per_poly(regions.tas)
@@ -228,7 +236,8 @@ def _one_per_poly(region):
 
 
 def re100_one_region(context, region):
-    """100% renewables in one region only.
+    """
+    100% renewables in one region only.
 
     >>> from nemo import regions
     >>> class C: pass
@@ -251,7 +260,8 @@ def re100_one_region(context, region):
 
 
 def re_plus_ccs(context):
-    """Mostly renewables with fossil and CCS augmentation.
+    """
+    Mostly renewables with fossil and CCS augmentation.
 
     >>> class C: pass
     >>> c = C()
@@ -273,7 +283,8 @@ def re_plus_ccs(context):
 
 
 def re_plus_fossil(context):
-    """Mostly renewables with some fossil augmentation.
+    """
+    Mostly renewables with some fossil augmentation.
 
     >>> class C: pass
     >>> c = C()
@@ -292,7 +303,8 @@ def re_plus_fossil(context):
 
 
 def re100_dsp(context):
-    """Mostly renewables with demand side participation.
+    """
+    Mostly renewables with demand side participation.
 
     >>> class C: pass
     >>> c = C()
@@ -309,7 +321,8 @@ def re100_dsp(context):
 
 
 def re100_nocst(context):
-    """100% renewables, but no CST.
+    """
+    100% renewables, but no CST.
 
     >>> class C: pass
     >>> c = C()
@@ -322,7 +335,8 @@ def re100_nocst(context):
 
 
 def re100_nsw(context):
-    """100% renewables in New South Wales only.
+    """
+    100% renewables in New South Wales only.
 
     >>> class C: pass
     >>> c = C()
@@ -334,7 +348,8 @@ def re100_nsw(context):
 
 
 def re100_qld(context):
-    """100% renewables in Queensland only.
+    """
+    100% renewables in Queensland only.
 
     >>> class C: pass
     >>> c = C()
@@ -346,7 +361,8 @@ def re100_qld(context):
 
 
 def re100_south_aus(context):
-    """100% renewables in South Australia only.
+    """
+    100% renewables in South Australia only.
 
     >>> class C: pass
     >>> c = C()
@@ -518,7 +534,8 @@ def demand_switch(label):
 
 # pylint: disable=unused-argument
 def unchanged(context):
-    """No demand modification.
+    """
+    No demand modification.
 
     >>> class C: pass
     >>> c = C()
@@ -612,7 +629,8 @@ def scale_demand_by(context, factor):
 
 
 def shift_demand(context, demand, from_hour, to_hour):
-    """Move N MW of demand from from_hour to to_hour."""
+    """
+    Move N MW of demand from from_hour to to_hour."""
     # Shift demand within in each polygon
     for p in range(43):
         for r in context.regions:
@@ -626,7 +644,8 @@ def shift_demand(context, demand, from_hour, to_hour):
 
 
 def scale_peaks(context, power, factor):
-    """Adjust demand peaks over N megawatts by factor%.
+    """
+    Adjust demand peaks over N megawatts by factor%.
 
     >>> class C: pass
     >>> c = C()
@@ -646,7 +665,8 @@ def scale_peaks(context, power, factor):
 
 
 def scale_npeaks(context, topn, factor):
-    """Adjust top N demand peaks by X%.
+    """
+    Adjust top N demand peaks by X%.
 
     >>> class C: pass
     >>> c = C()
