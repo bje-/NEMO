@@ -45,6 +45,7 @@ class NullCosts():
 
 
 class APGTR2015():
+
     """Australian Power Generation Technology Report costs in 2015.
 
     Source: CO2CRC Australian Power Generation Technology Report (2015)
@@ -121,6 +122,7 @@ class APGTR2030(APGTR2015):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object given discount rate, coal, gas and CCS costs."""
         APGTR2015.__init__(self, discount, coal_price, gas_price, ccs_price)
 
         # Modify the capital costs in APGTR2015 by specified learning rates.

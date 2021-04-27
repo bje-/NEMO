@@ -113,7 +113,8 @@ class Generator():
         self.power = 0
 
     def capfactor(self):
-        """Capacity factor of this generator (in %).
+        """
+        Capacity factor of this generator (in %).
 
         >>> g = Generator(1, 0, 'label')
         >>> g.capfactor()  # doctest: +ELLIPSIS
@@ -769,7 +770,8 @@ class DemandResponse(Generator):
 
 
 class GreenPower(Generator):
-    """GreenPower
+    """
+    GreenPower
 
     >>> g = GreenPower(1, 100)
     >>> g.step(0, 200)
