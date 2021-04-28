@@ -21,7 +21,6 @@ def txcost(x):
 
 
 class NullCosts():
-
     """All costs are zero. Useful for debugging."""
 
     class _ZeroDict(dict):
@@ -211,7 +210,8 @@ class AETA2012_2030Low(AETA2012_2030):
     """AETA (2012) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """
+        Construct a cost object given discount rate, coal, gas and CCS costs.
 
         >>> obj = AETA2012_2030Low(0.05, 1.00, 9.00, 30)
         """

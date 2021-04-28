@@ -77,7 +77,8 @@ class Context():
         return self.spill.values.sum()
 
     def unserved_percent(self):
-        """Return the total unserved energy as a percentage of total demand.
+        """
+        Return the total unserved energy as a percentage of total demand.
 
         >>> import pandas as pd
         >>> c = Context()
