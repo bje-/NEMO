@@ -7,6 +7,8 @@
 # (at your option) any later version.
 
 """
+Implementation of the Context class.
+
 A simulation context encapsulates all simulation state ensuring that
 there is never any residual state left behind after a simulation
 run. It also allows multiple contexts to be compared after individual
@@ -158,6 +160,7 @@ class Context():
 
     class JSONEncoder(json.JSONEncoder):
         """A custom encoder for Context objects."""
+
         def default(self, o):
             if isinstance(o, Context):
                 result = []

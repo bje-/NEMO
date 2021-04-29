@@ -18,7 +18,7 @@ class TestCoverage(unittest.TestCase):
     """A handful of miscellaneous tests to ensure good coverage."""
 
     def test_001(self):
-        """Test 1"""
+        """Test 1."""
         c = nemo.Context()
         c.regions = [regions.nsw, regions.vic, regions.sa]
         c.track_exchanges = True
@@ -26,7 +26,7 @@ class TestCoverage(unittest.TestCase):
         nemo.run(c)
 
     def test_002(self):
-        """Test 2"""
+        """Test 2."""
         c = nemo.Context()
         # Make sure there is unserved energy by setting 2nd and
         # subsequent generator capacity to 0.
@@ -44,7 +44,7 @@ class TestCoverage(unittest.TestCase):
         os.unlink('foo.png')
 
     def test_003(self):
-        """Test 3"""
+        """Test 3."""
         c = nemo.Context()
         # Add 25 DR generators so that the abbreviated legend is used.
         for _ in range(25):

@@ -32,6 +32,7 @@ ureg.default_format = '.2f~P'
 def _thousands(value):
     """
     Format a value with thousands separator(s).
+
     No doctest provided as the result will be locale specific.
     """
     return locale.format_string('%d', value, grouping=True)
@@ -39,9 +40,10 @@ def _thousands(value):
 
 def _currency(value):
     """
-    Format a value into currency with thousands separator(s). If there
-    are zero cents, remove .00 for brevity.
-    No doctest provided as the result will be locale specific.
+    Format a value into currency with thousands separator(s).
+
+    If there are zero cents, remove .00 for brevity.  No doctest
+    provided as the result will be locale specific.
     """
     cents = locale.localeconv()['mon_decimal_point'] + '00'
     return locale.currency(value, grouping=True).replace(cents, '')
@@ -52,6 +54,7 @@ class Generator():
 
     # Is the generator a rotating machine?
     synchronous_p = True
+    """Is this a synchronous generator?"""
 
     def __init__(self, polygon, capacity, label=None):
         """
@@ -181,6 +184,7 @@ class TraceGenerator(Generator):
 
     def __init__(self, polygon, capacity, filename, column, label=None,
                  build_limit=None):
+        """Constructor for a TraceGenerator."""
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -209,41 +213,56 @@ class Wind(TraceGenerator):
     """Wind power."""
 
     patch = Patch(facecolor='green')
+    """Patch for plotting"""
     synchronous_p = False
+    """Is this a synchronous generator?"""
 
 
 class WindOffshore(Wind):
     """Offshore wind power."""
 
     patch = Patch(facecolor='lightgreen')
+    """Colour for plotting"""
 
 
 class PV(TraceGenerator):
     """Solar photovoltaic (PV) model."""
 
     patch = Patch(facecolor='yellow')
+    """Colour for plotting"""
     synchronous_p = False
+    """Is this a synchronous generator?"""
 
 
 class PV1Axis(PV):
     """Single-axis tracking PV."""
 
     patch = Patch(facecolor='lightyellow')
+    """Colour for plotting"""
 
 
 class Behind_Meter_PV(PV):
-    """Behind the meter PV.
+    """
+    Behind the meter PV.
 
-    This stub class allows differentiated PV costs in costs.py."""
+    This stub class allows differentiated PV costs in costs.py.
+    """
 
 
 class CST(TraceGenerator):
     """Concentrating solar thermal (CST) model."""
 
     patch = Patch(facecolor='yellow')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, sm, shours, filename,
                  column, label=None, build_limit=None):
+        """
+        Construct a CST generator.
+
+        Arguments include capacity (in MW), sm (solar multiple) and
+        shours (hours of storage).
+        """
         TraceGenerator.__init__(self, polygon, capacity, filename, column,
                                 label)
         self.maxstorage = None
@@ -316,6 +335,7 @@ class Fuelled(Generator):
     """The class of generators that consume fuel."""
 
     def __init__(self, polygon, capacity, label):
+        """Construct a fuelled generator."""
         Generator.__init__(self, polygon, capacity, label)
         self.runhours = 0
 
@@ -340,8 +360,10 @@ class Hydro(Fuelled):
     """Hydro power stations."""
 
     patch = Patch(facecolor='lightskyblue')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, label=None):
+        """Construct a hydroelectric generator."""
         Fuelled.__init__(self, polygon, capacity, label)
         # capacity is in MW, but build limit is in GW
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
@@ -354,8 +376,10 @@ class PumpedHydro(Hydro):
     """
 
     patch = Patch(facecolor='powderblue')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, maxstorage, rte=0.8, label=None):
+        """Construct a pumped hydro storage generator."""
         Hydro.__init__(self, polygon, capacity, label)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
@@ -397,6 +421,8 @@ class PumpedHydro(Hydro):
 
     def step(self, hr, demand):
         """
+        Step method for pumped hydro storage.
+
         >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
 
         Cannot pump and generate at the same time.
@@ -431,8 +457,10 @@ class Biofuel(Fuelled):
     """Model of open cycle gas turbines burning biofuel."""
 
     patch = Patch(facecolor='wheat')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, label=None):
+        """Construct a biofuel generator."""
         Fuelled.__init__(self, polygon, capacity, label)
 
     def opcost_per_mwh(self, costs):
@@ -445,8 +473,10 @@ class Biomass(Fuelled):
     """Model of steam turbine burning solid biomass."""
 
     patch = Patch(facecolor='greenyellow')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, label=None, heatrate=0.3):
+        """Construct a biomass generator."""
         Fuelled.__init__(self, polygon, capacity, label)
         self.heatrate = heatrate
 
@@ -460,9 +490,14 @@ class Fossil(Fuelled):
     """Base class for GHG emitting power stations."""
 
     patch = Patch(facecolor='brown')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity, label=None):
-        # Greenhouse gas intensity in tonnes per MWh
+        """
+        Construct a fossil fuelled generator.
+
+        Greenhouse gas emissions intensity is given in tonnes per MWh.
+        """
         Fuelled.__init__(self, polygon, capacity, label)
         self.intensity = intensity
 
@@ -475,8 +510,10 @@ class Black_Coal(Fossil):
     """Black coal power stations with no CCS."""
 
     patch = Patch(facecolor='black')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.773, label=None):
+        """Construct a black coal generator."""
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -490,8 +527,10 @@ class OCGT(Fossil):
     """Open cycle gas turbine (OCGT) model."""
 
     patch = Patch(facecolor='purple')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.7, label=None):
+        """Construct an OCGT generator."""
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -505,8 +544,10 @@ class CCGT(Fossil):
     """Combined cycle gas turbine (CCGT) model."""
 
     patch = Patch(facecolor='purple')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.4, label=None):
+        """Construct a CCGT generator."""
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
@@ -520,8 +561,11 @@ class CCS(Fossil):
     """Base class of carbon capture and storage (CCS)."""
 
     def __init__(self, polygon, capacity, intensity, capture, label=None):
+        """Construct a CCS generator.
+
+        Emissions capture rate is given in the range 0 to 1.
+        """
         Fossil.__init__(self, polygon, capacity, intensity, label)
-        # capture fraction ranges from 0 to 1
         self.capture = capture
 
     def summary(self, context):
@@ -533,6 +577,10 @@ class Coal_CCS(CCS):
     """Coal with CCS."""
 
     def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label=None):
+        """Construct a coal CCS generator.
+
+        Emissions capture rate is given in the range 0 to 1.
+        """
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -551,6 +599,10 @@ class CCGT_CCS(CCS):
     """CCGT with CCS."""
 
     def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label=None):
+        """Construct a CCGT (with CCS) generator.
+
+        Emissions capture rate is given in the range 0 to 1.
+        """
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
@@ -567,8 +619,10 @@ class Diesel(Fossil):
     """Diesel genset model."""
 
     patch = Patch(facecolor='dimgrey')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3, label=None):
+        """Construct a diesel generator."""
         Fossil.__init__(self, polygon, capacity, intensity, label)
         self.kwh_per_litre = kwh_per_litre
 
@@ -587,10 +641,19 @@ class Battery(Generator):
     """
 
     patch = Patch(facecolor='grey')
+    """Colour for plotting"""
     synchronous_p = False
+    """Is this a synchronous generator?"""
 
     def __init__(self, polygon, capacity, maxstorage, label=None,
                  discharge_hours=None, rte=0.95):
+        """
+        Construct a Battery 'generator'.
+
+        Maximum storage (maxstorage) is specified in MWh.
+        Discharge hours is a list of hours when discharging can occur.
+        Round-trip efficiency (rte) defaults to 95% for good Li-ion.
+        """
         Generator.__init__(self, polygon, capacity, label)
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
@@ -635,6 +698,8 @@ class Battery(Generator):
 
     def step(self, hr, demand):
         """
+        Specialised step method for batteries.
+
         >>> b = Battery(polygons.wildcard, 400, 1000, discharge_hours=range(18, 24), rte=1.0)
         >>> b.stored = 400
 
@@ -707,9 +772,13 @@ class Geothermal(TraceGenerator):
     """Geothermal power plant."""
 
     patch = Patch(facecolor='brown')
+    """Colour for plotting"""
 
     def step(self, hr, demand):
-        """Override step method for geothermal generators."""
+        """Specialised step method for geothermal generators.
+
+        Geothermal power plants do not spill.
+        """
         generation = self.generation[hr] * self.capacity
         power = min(generation, demand)
         self.series_power[hr] = power
@@ -726,13 +795,22 @@ class Geothermal_EGS(Geothermal):
 
 
 class DemandResponse(Generator):
-    """Load shedding generator.
+    """
+    Load shedding generator.
 
     >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
     """
+
     patch = Patch(facecolor='white')
+    """Colour for plotting"""
 
     def __init__(self, polygon, capacity, cost_per_mwh, label=None):
+        """
+        Construct a demand response 'generator'.
+
+        The demand response opportunity cost is given by
+        cost_per_mwh. There is assumed to be no capital cost.
+        """
         Generator.__init__(self, polygon, capacity, label)
         self.setters = []
         self.runhours = 0
@@ -741,6 +819,8 @@ class DemandResponse(Generator):
 
     def step(self, hr, demand):
         """
+        Specialised step method for demand response.
+
         >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
         >>> dr.step(hr=0, demand=200)
         (200, 0)
@@ -771,13 +851,15 @@ class DemandResponse(Generator):
 
 class GreenPower(Generator):
     """
-    GreenPower
+    A simple GreenPower generator.
 
     >>> g = GreenPower(1, 100)
     >>> g.step(0, 200)
     (100, 0)
     """
+
     patch = Patch(facecolor='darkgreen')
+    """Colour for plotting"""
 
     def step(self, hr, demand):
         """Step method for GreenPower."""
@@ -790,6 +872,10 @@ class HydrogenStorage():
     """A simple hydrogen storage vessel."""
 
     def __init__(self, maxstorage, label=None):
+        """Construct a hydrogen storage vessel.
+
+        The storage capacity (in MWh) is specified by maxstorage.
+        """
         # initialise these for good measure
         self.maxstorage = None
         self.storage = None
@@ -797,7 +883,9 @@ class HydrogenStorage():
         self.label = label
 
     def set_storage(self, maxstorage):
-        """Change the storage capacity.
+        """
+        Change the storage capacity.
+
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.set_storage(1200)
         >>> h.maxstorage
@@ -809,7 +897,9 @@ class HydrogenStorage():
         self.storage = self.maxstorage / 2
 
     def full_p(self):
-        """Is the storage full?
+        """
+        Is the storage full?
+
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.full_p()
         False
@@ -820,7 +910,9 @@ class HydrogenStorage():
         return self.storage == self.maxstorage
 
     def charge(self, amt):
-        """Charge the storage by amt.
+        """
+        Charge the storage by amt.
+
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.charge(100)
         100
@@ -835,7 +927,9 @@ class HydrogenStorage():
         return delta
 
     def discharge(self, amt):
-        """Discharge the storage by amt.
+        """
+        Discharge the storage by 'amt'.
+
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.discharge(100)
         100
@@ -852,9 +946,16 @@ class Electrolyser(Generator):
     """A hydrogen electrolyser."""
 
     patch = Patch()
+    """Colour for plotting"""
 
     def __init__(self, tank, polygon, capacity, efficiency=0.8, label=None):
         """
+        Construct a hydrogen electrolyser.
+
+        Arguments include the associated storage vessel (the 'tank'),
+        the capacity of the electrolyser (in MW) and electrolysis
+        conversion efficiency.
+
         >>> e = Electrolyser(None, 1, 100, 'test')	# doctest: +ELLIPSIS
         Traceback (most recent call last):
           ...
@@ -895,10 +996,14 @@ class Electrolyser(Generator):
 
 class HydrogenGT(Fuelled):
     """A combustion turbine fuelled by hydrogen."""
+
     patch = Patch(facecolor='violet')
+    """Colour for plotting"""
 
     def __init__(self, tank, polygon, capacity, efficiency=0.36, label=None):
         """
+        Construct a HydrogenGT object.
+
         >>> h = HydrogenStorage(1000, 'test')
         >>> e = HydrogenGT(h, 1, 100, efficiency=0.5)
         >>> print(e)

@@ -1,5 +1,6 @@
 """
-Dijkstra's algorithm for shortest paths
+Dijkstra's algorithm for shortest paths.
+
 David Eppstein, UC Irvine, 4 April 2002
 
 http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/117228
@@ -10,7 +11,7 @@ from dijkstra.priodict import priorityDictionary
 
 def Dijkstra(G, start, end=None):
     """
-    Find shortest paths from the  start vertex to all vertices nearer
+    Find shortest paths from start vertex to all vertices nearer
     than or equal to the end.
 
     The input graph G is assumed to have the following representation: A
@@ -72,9 +73,12 @@ def Dijkstra(G, start, end=None):
 
 def shortestPath(G, start, end):
     """
-    Find a single shortest path from the given start vertex to the given
-    end vertex. The input has the same conventions as Dijkstra(). The
-    output is a list of the vertices in order along the shortest path.
+    Find a shortest path.
+
+    Find a single shortest path from the given start vertex to the
+    given end vertex. The input has the same conventions as
+    Dijkstra(). The output is a list of the vertices in order along
+    the shortest path.
     """
 
     _, P = Dijkstra(G, start, end)

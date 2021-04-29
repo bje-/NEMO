@@ -26,11 +26,13 @@ class NullCosts():
     class _ZeroDict(dict):
 
         """Return 0 for any key."""
+
         def __getitem__(self, key):
             return dict.get(self, key, 0)
 
     # pylint: disable=unused-argument
     def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
+        """Construct an all-zero costs object."""
         self.capcost_per_kw = self._ZeroDict()
         self.fixed_om_costs = self._ZeroDict()
         self.opcost_per_mwh = self._ZeroDict()
@@ -358,11 +360,16 @@ class AETA2013_2030Mid(AETA2012_2030):
 
 class CEEM2016_2030(AETA2012_2030Mid):
 
-    """Custom costs produced by CEEM -- AETA (2013) mid costs with CO2CRC
-    Power Generation Technology Report 2030 capital costs for
-    utility-scale PV."""
+    """
+    CEEM 2016 custom costs.
+
+    These custom costs were produced by CEEM -- AETA (2013) mid costs
+    with CO2CRC Power Generation Technology Report 2030 capital costs
+    for utility-scale PV.
+    """
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
+
         """Construct a cost object given discount rate, coal, gas and CCS costs.
 
         >>> obj = CEEM2016_2030(0.05, 1.00, 9.00, 30)

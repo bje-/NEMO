@@ -25,8 +25,11 @@ def load(filename):
 
 
 def get(section, option):
-    """Get an option value for the named section, just like
-    ConfigParser.get."""
+    """
+    Get an option value for the named section.
+
+    This works the same as ConfigParser.get.
+    """
     return config.get(section, option)
 
 

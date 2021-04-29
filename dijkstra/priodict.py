@@ -17,16 +17,16 @@ Each operation takes logarithmic amortized time.
 class priorityDictionary(dict):
     """Priority dictionary using binary heaps"""
     def __init__(self):
-        '''Initialize priorityDictionary by creating binary heap of
+        """Initialize priorityDictionary by creating binary heap of
         pairs (value,key). Note that changing or removing a dict entry
         will not remove the old pair from the heap until it is found by
-        smallest() or until the heap is rebuilt.'''
+        smallest() or until the heap is rebuilt."""
         self.__heap = []
         dict.__init__(self)
 
     def smallest(self):
-        '''Find smallest item after removing deleted items from front of
-        heap.'''
+        """Find smallest item after removing deleted items from front of
+        heap."""
         if not self:
             raise IndexError("smallest of empty priorityDictionary")
         heap = self.__heap
@@ -46,9 +46,9 @@ class priorityDictionary(dict):
         return heap[0][1]
 
     def __iter__(self):
-        '''Create destructive sorted iterator of priorityDictionary.'''
+        """Create destructive sorted iterator of priorityDictionary."""
         def iterfn():
-            '''Inner iterator function.'''
+            """Inner iterator function."""
             while self:
                 x = self.smallest()
                 yield x
@@ -56,9 +56,9 @@ class priorityDictionary(dict):
         return iterfn()
 
     def __setitem__(self, key, val):
-        '''Change value stored in dictionary and add corresponding pair
+        """Change value stored in dictionary and add corresponding pair
         to heap. Rebuilds the heap if the number of deleted items gets
-        large, to avoid memory leakage.'''
+        large, to avoid memory leakage."""
         dict.__setitem__(self, key, val)
         heap = self.__heap
         if len(heap) > 2 * len(self):
@@ -76,7 +76,7 @@ class priorityDictionary(dict):
             heap[insertionPoint] = newPair
 
     def setdefault(self, key, val):
-        '''Reimplement setdefault to pass through our customized __setitem__.'''
+        """Reimplement setdefault to pass through our customized __setitem__."""
         if key not in self:
             self[key] = val
         return self[key]

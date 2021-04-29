@@ -21,7 +21,7 @@ _twh = pow(10., 6)
 
 
 def unserved(ctx, _):
-    """Penalty: unserved energy"""
+    """Penalty: unserved energy."""
     minuse = ctx.total_demand() * (ctx.relstd / 100)
     use = max(0, ctx.unserved_energy() - minuse)
     reason = reasons['unserved'] if use > 0 else 0
@@ -29,7 +29,7 @@ def unserved(ctx, _):
 
 
 def reserves(ctx, args):
-    """Penalty: minimum reserves"""
+    """Penalty: minimum reserves."""
     pen, reas = 0, 0
     for t in range(ctx.timesteps):
         reserve, spilled = 0, 0
@@ -54,7 +54,7 @@ def reserves(ctx, args):
 
 
 def min_regional(ctx, _):
-    """Penalty: minimum share of regional generation"""
+    """Penalty: minimum share of regional generation."""
     regional_generation_shortfall = 0
     for rgn in ctx.regions:
         regional_demand = 0
@@ -71,7 +71,7 @@ def min_regional(ctx, _):
 
 
 def emissions(ctx, args):
-    """Penalty: total emissions"""
+    """Penalty: total emissions."""
     total_emissions = 0
     for g in ctx.generators:
         if hasattr(g, 'intensity'):
@@ -83,7 +83,7 @@ def emissions(ctx, args):
 
 
 def fossil(ctx, args):
-    """Penalty: limit fossil to fraction of annual demand"""
+    """Penalty: limit fossil to fraction of annual demand."""
     fossil_energy = 0
     for g in ctx.generators:
         if isinstance(g, generators.Fossil):
@@ -94,7 +94,7 @@ def fossil(ctx, args):
 
 
 def bioenergy(ctx, args):
-    """Penalty: limit biofuel use"""
+    """Penalty: limit biofuel use."""
     biofuel_energy = 0
     for g in ctx.generators:
         if isinstance(g, generators.Biofuel):
@@ -105,7 +105,7 @@ def bioenergy(ctx, args):
 
 
 def hydro(ctx, args):
-    """Penalty: limit hydro use"""
+    """Penalty: limit hydro use."""
     hydro_energy = 0
     for g in ctx.generators:
         if isinstance(g, generators.Hydro) and \

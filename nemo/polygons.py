@@ -156,7 +156,6 @@ def dumps():
 
 def _centroid(vertices):
     """Find the centroid of a polygon."""
-
     # Ensure the polygon is closed
     assert vertices[0] == vertices[-1]
     thesum = 0
