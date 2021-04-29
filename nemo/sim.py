@@ -10,7 +10,6 @@
 import math
 import numpy as np
 import pandas as pd
-from nemo import polygons
 from nemo import regions
 
 
@@ -21,16 +20,11 @@ def _sim(context, date_range):
         # every generator must be assigned to a polygon
         assert g.polygon is not None, 'every generator must be assigned a polygon'
 
-    context.connections = {}
-    context.exchanges = np.zeros(context.exchanges.shape)
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region() in context.regions]
-
-    if context.track_exchanges:
-        _build_connections(context)
 
     # Zero out polygon demands we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
@@ -49,7 +43,7 @@ def _sim(context, date_range):
             print('STEP:', date)
             print('DEMAND:', {a: round(b, 2) for a, b in enumerate(hour_demand)})
 
-        _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, spill)
+        _dispatch(context, hr, residual_hour_demand, gens, generation, spill)
 
         if context.verbose:
             print('ENDSTEP:', date)
@@ -59,50 +53,6 @@ def _sim(context, date_range):
     context.spill = pd.DataFrame(index=date_range, data=spill)
 
 
-def _build_connections(context):
-    selected_polygons = []
-    for r in context.regions:
-        if r.polygons is not None:
-            selected_polygons += r.polygons
-
-    # pull out the polygons with non-zero load in each region
-    loads = [k for r in context.regions for (k, v) in r.polygons.items() if v > 0]
-    for poly in range(1, polygons.numpolygons + 1):
-        # use a list comprehension to filter the connections down to bits of interest
-        context.connections[poly] = [path for (src, dest), path in
-                                     polygons.connections.items() if
-                                     src is poly and dest in
-                                     loads and polygons.subset(path, selected_polygons)]
-        context.connections[poly].sort(key=polygons.pathlen)
-
-
-def _track_exchanges(context, hr, g, gen, hour_demand, paths):
-    if context.verbose:
-        print('PATHS:', paths)
-    for path in paths:
-        if not gen:
-            break
-
-        poly = g.polygon if not path else path[-1][-1]
-        polyidx = poly - 1
-        transfer = gen if gen < hour_demand[polyidx] else hour_demand[polyidx]
-
-        if transfer > 0:
-            if context.verbose:
-                print('DISPATCH:', int(transfer), 'to polygon', poly)
-            if poly is g.polygon:
-                context.add_exchange(hr, poly, poly, transfer)
-            else:
-                # dispatch to another region
-                for src, dest in path:
-                    context.add_exchange(hr, src, dest, transfer)
-                    if context.verbose:
-                        print('FLOW: polygon', src, '-> polygon', dest, '(%d)' % transfer)
-                        assert polygons.direct_p(src, dest)
-            hour_demand[polyidx] -= transfer
-            gen -= transfer
-
-
 def _store_spills(context, hr, g, generators, spl):
     """
     Store spills from a generator into any storage.
@@ -110,7 +60,6 @@ def _store_spills(context, hr, g, generators, spl):
     >>> class C: pass
     >>> ctx = C()
     >>> ctx.verbose = 0
-    >>> ctx.track_exchanges = 0
     >>> from nemo import generators
     >>> g = generators.Hydro(1, 100)
     >>> h = generators.HydrogenStorage(400)
@@ -131,13 +80,10 @@ def _store_spills(context, hr, g, generators, spl):
         if context.verbose:
             # show the energy transferred, not stored
             print('STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored)
-        if context.track_exchanges:
-            for src, dest in polygons.path(g.polygon, other.polygon):
-                context.add_exchange(hr, src, dest, stored)
     return spl
 
 
-def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, spill):
+def _dispatch(context, hr, residual_hour_demand, gens, generation, spill):
     """Dispatch power from each generator in merit (list) order."""
     # async_demand is the maximum amount of the demand in this
     # hour that can be met from non-synchronous
@@ -168,11 +114,6 @@ def _dispatch(context, hr, hour_demand, residual_hour_demand, gens, generation, 
             print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx],
                   'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
                   'async-demand: %.1f' % async_demand)
-
-        # distribute the generation across the regions (local region first)
-        if context.track_exchanges:
-            paths = context.connections[g.polygon]
-            _track_exchanges(context, hr, g, gen, hour_demand, paths)
 
         if spl > 0:
             spill[hr, gidx] = _store_spills(context, hr, g, gens, spl)

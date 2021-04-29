@@ -1,6 +1,6 @@
 all:
 
-COVRUN=coverage run -a --source=. --omit=dijkstra/*.py,setup.py,stub.py
+COVRUN=coverage run -a --source=. --omit=setup.py,stub.py
 
 check:  replay.json flake8
 	PYTHONOPTIMIZE=0 nosetests --with-doctest --with-coverage --cover-package=nemo
@@ -12,8 +12,8 @@ coverage: replay.json
 	$(COVRUN) evolve --lambda 2 -g1 -s __one_ccgt__ --fossil-limit=0 > /dev/null
 	$(COVRUN) evolve --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
-	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 -t --costs=AETA2013-in2030-high -v > /dev/null
-	$(COVRUN) replay -t -f replay.json -v > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 --costs=AETA2013-in2030-high -v > /dev/null
+	$(COVRUN) replay -f replay.json -v > /dev/null
 	rm trace.out results.json replay.json
 	coverage html
 
@@ -52,5 +52,5 @@ pdoc:
 
 clean:
 	-rm -rf dist build *.egg-info
-	-rm -rf .coverage htmlcov replay.json exchanges.json
+	-rm -rf .coverage htmlcov replay.json
 	-rm *.pyc tests/*.pyc nemo.prof stub.py.lprof

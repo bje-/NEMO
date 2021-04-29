@@ -42,7 +42,6 @@ class Context():
     def __init__(self):
         """Initialise a default context."""
         self.verbose = False
-        self.track_exchanges = False
         self.regions = regions.All
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
@@ -63,7 +62,6 @@ class Context():
         self.unserved = pd.DataFrame()
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
-        self.exchanges = np.zeros((self.hours, polygons.numpolygons, polygons.numpolygons))
         self.costs = costs.NullCosts()
 
     def total_demand(self):
@@ -95,10 +93,6 @@ class Context():
         if self.total_demand() == 0:
             return np.nan
         return self.unserved_energy() / self.total_demand() * 100
-
-    def add_exchange(self, hour, src, dest, transfer):
-        """Record an energy transfer from src to dest in given hour."""
-        self.exchanges[hour, src - 1, dest - 1] += transfer
 
     def set_capacities(self, caps):
         """Set generator capacities from a list."""

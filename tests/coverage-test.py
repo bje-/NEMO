@@ -21,7 +21,6 @@ class TestCoverage(unittest.TestCase):
         """Test 1."""
         c = nemo.Context()
         c.regions = [regions.nsw, regions.vic, regions.sa]
-        c.track_exchanges = True
         c.verbose = 1
         nemo.run(c)
 

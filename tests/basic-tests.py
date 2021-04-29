@@ -11,7 +11,6 @@
 
 import math
 import unittest
-import pandas as pd
 
 import nemo
 from nemo import regions
@@ -124,47 +123,6 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = [gen]
             nemo.run(self.context)
             self.assertEqual(gen.runhours, self.context.timesteps)
-
-    def test_010(self):
-        """Running in one region only produces no interstate exchanges."""
-        for rgn in regions.All:
-            if rgn is regions.snowy:
-                continue
-            self.context = nemo.Context()
-            self.context.track_exchanges = True
-            self.context.regions = [rgn]
-            loadpoly = [k for k, v in list(rgn.polygons.items()) if v > 0][0]
-            nswpoly = [k for k, v in list(regions.nsw.polygons.items()) if v > 0][0]
-            qldpoly = [k for k, v in list(regions.qld.polygons.items()) if v > 0][0]
-            sapoly = [k for k, v in list(regions.sa.polygons.items()) if v > 0][0]
-            taspoly = [k for k, v in list(regions.tas.polygons.items()) if v > 0][0]
-            vicpoly = [k for k, v in list(regions.vic.polygons.items()) if v > 0][0]
-
-            self.context.generators = []
-            for poly in [nswpoly, qldpoly, sapoly, taspoly, vicpoly]:
-                self.context.generators.append(generators.OCGT(poly, 100))
-            nemo.run(self.context, endhour=pd.Timestamp('2010-01-05'))
-            self.assertEqual((self.context.exchanges[0] > 0).sum(), 1, 'Only one exchange > 0')
-            # FXME: we need a numpy array that can be indexed from 1
-            self.assertTrue(self.context.exchanges[0, loadpoly - 1, loadpoly - 1] > 0,
-                            'Only rgn->rgn is > 0')
-
-    def test_011(self):
-        """Running in two regions only produces limited interstate exchanges."""
-        for rgn1 in regions.All:
-            for rgn2 in regions.All:
-                if rgn1 is rgn2:
-                    continue
-                self.context.regions = [rgn1, rgn2]
-                nemo.run(self.context, endhour=1)
-                self.assertTrue(self.context.exchanges[0, rgn1, rgn1] >= 0)
-                self.assertTrue(self.context.exchanges[0, rgn2, rgn2] >= 0)
-                for i in regions.All:
-                    for j in regions.All:
-                        # Check that various elements of the exchanges matrix are 0.
-                        # Ignore: diagonals, [RGN1,RGN2] and [RGN2,RGN1].
-                        if i != j and (i, j) != (rgn1, rgn2) and (i, j) != (rgn2, rgn1):
-                            self.assertEqual(self.context.exchanges[0, i, j], 0)
 
     def test_012(self):
         """A NSW generator does not run in other regions."""

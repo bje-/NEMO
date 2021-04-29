@@ -35,7 +35,6 @@ from nemo import scenarios
 from nemo import costs
 from nemo import configfile as cf
 from nemo import penalties
-from nemo import transmission
 
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
@@ -83,8 +82,6 @@ def process_options():
     comgroup.add_argument("-s", "--supply-scenario", type=str, default='ccgt', metavar='SCENARIO',
                           choices=sorted(scenarios.supply_scenarios),
                           help='generation mix scenario [default: ccgt]')
-    comgroup.add_argument("-t", "--transmission", action="store_true",
-                          help="include transmission [default: False]")
 
     costgroup.add_argument("-c", "--carbon-price", type=int,
                            default=cf.get('costs', 'co2-price-per-t'),
@@ -155,8 +152,6 @@ def setup_context():
     ctx.costs = cost_class(args.discount_rate, args.coal_price,
                            args.gas_price, args.ccs_storage_costs)
     ctx.costs.carbon = args.carbon_price
-    ctx.costs.transmission = transmission.Transmission(costs.txcost, args.discount_rate)
-    ctx.track_exchanges = args.transmission
     return ctx
 
 
@@ -225,25 +220,6 @@ def cost(ctx):
         p, r = penaltyfn(ctx, args)
         penalty += p
         reason |= r
-
-    if args.transmission:
-        maxexchanges = ctx.exchanges.max(axis=0)
-        np.fill_diagonal(maxexchanges, 0)
-        for i in range(1, maxexchanges.shape[0]):
-            # then put the max (upper, lower) into lower
-            # and zero the upper entries
-            for j in range(i):
-                maxexchanges[i, j] = max(maxexchanges[i, j], maxexchanges[j, i])
-                maxexchanges[j, i] = 0
-        try:
-            # existing transmission is "free"
-            maxexchanges = np.maximum(0, maxexchanges - nemo.polyons.existing_net)
-        except AttributeError:
-            # skip if not present
-            pass
-
-        costmat = ctx.costs.transmission.cost_matrix(maxexchanges) * ctx.years
-        score += costmat.sum()
 
     score /= ctx.total_demand()
     penalty /= ctx.total_demand()
@@ -321,13 +297,6 @@ def run():
                 constraints_violated += [label]
                 print(label, end=' ')
         print()
-    if args.transmission:
-        np.set_printoptions(precision=5)
-        x = context.exchanges.max(axis=0)
-        print(np.array_str(x, precision=1, suppress_small=True))
-        obj = {'exchanges': x.tolist(), 'generators': context}
-        with open('results.json', 'w') as f:
-            json.dump(obj, f, cls=nemo.Context.JSONEncoder, indent=True)
 
     with open(args.output, 'w') as f:
         bundle = {'options': vars(args),

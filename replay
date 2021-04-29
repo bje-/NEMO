@@ -13,7 +13,6 @@ import argparse
 import json
 import re
 import sys
-import numpy as np
 
 from gooey import Gooey
 import nemo
@@ -36,7 +35,6 @@ def process_options():
     parser.add_argument("-f", type=str, help='filename of results file', metavar='FILE',
                         default='results.json')
     parser.add_argument("-v", action="count", help='verbosity level', default=0)
-    parser.add_argument("-t", "--transmission", action="store_true", help='show region exchanges')
     parser.add_argument("-x", "--plot", action="store_true", help='plot an energy balance')
     parser.add_argument("--spills", action="store_true", help='plot surplus generation')
     parser.add_argument("--no-legend", action="store_false", help="hide legend")
@@ -76,17 +74,10 @@ def run_one(bundle):
     capacities = bundle['parameters']
     context.set_capacities(capacities)
 
-    context.track_exchanges = args.transmission
     context.verbose = args.v > 1
     nemo.run(context)
     context.verbose = args.v > 0
     print(context)
-    if args.transmission:
-        np.set_printoptions(precision=3)
-        x = context.exchanges.max(axis=0)
-        print(np.array_str(x, precision=1, suppress_small=True))
-        with open('exchanges.json', 'w') as f:
-            json.dump(x.tolist(), f)
     print()
 
     if args.plot:  # pragma: no cover

@@ -15,11 +15,6 @@ def annuity_factor(t, r):
     return (1 - (1 / (1 + r) ** t)) / r
 
 
-def txcost(x):
-    """Transmission cost expression."""
-    return 0 if x == 0 else 965 if x > 5000 else 16319 * (x ** -0.332)
-
-
 class NullCosts():
     """All costs are zero. Useful for debugging."""
 

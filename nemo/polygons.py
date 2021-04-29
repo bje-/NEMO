@@ -13,7 +13,6 @@ import json
 from math import atan2, sin, cos, radians, sqrt
 import numpy as np
 
-from dijkstra import dijkstra
 from nemo import regions
 
 # The fraction of a region's load in each polygon.
@@ -170,45 +169,6 @@ def _centroid(vertices):
     return (vsum[0] * z, vsum[1] * z)
 
 
-def path(poly1, poly2):
-    """
-    Return a path from polygon 1 to polygon 2.
-
-    >>> path(1, 30)
-    [(1, 4), (4, 10), (10, 16), (16, 23), (23, 30)]
-    >>> path(23, 43)
-    [(23, 30), (30, 35), (35, 38), (38, 41), (41, 43)]
-    """
-    return connections[(poly1, poly2)]
-
-
-def subset(p, polysuperset):
-    """
-    Are all polygons in path P present in superset?
-
-    >>> subset([(1,2), (2,3)], [1,2,3])
-    True
-    >>> subset([(1,4), (4,3)], [1,2,3])
-    False
-    """
-    # Flatten the list of pairs into one long list.
-    polylist = [i for sub in p for i in sub]
-    # Now for a simple set operation.
-    return set(polylist) <= set(polysuperset)
-
-
-def direct_p(poly1, poly2):
-    """
-    Return True if polygon 1 and polygon 2 are directly connected.
-
-    >>> direct_p(1, 2)
-    True
-    >>> direct_p(1, 40)
-    False
-    """
-    return len(path(poly1, poly2)) <= 1
-
-
 def dist(poly1, poly2):
     """Return the distance between two polygon centroids.
 
@@ -328,12 +288,3 @@ for (p1, p2, limit) in \
     assert p1 in list(net[p2].keys()), (p2, p1)
     assert p2 in list(net[p1].keys()), (p1, p2)
     existing_net[p1, p2] = limit
-
-connections = {}
-for dest in range(1, numpolygons + 1):
-    for src in range(1, numpolygons + 1):
-        shortest = list(dijkstra.shortestPath(net, src, dest))
-        pairs = []
-        for _i in range(len(shortest) - 1):
-            pairs.append((shortest[_i], shortest[_i + 1]))
-        connections[(src, dest)] = pairs
