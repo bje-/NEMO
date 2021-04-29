@@ -9,7 +9,6 @@
 
 """Support code for the 43 polygons of the AEMO study."""
 
-import json
 from math import atan2, sin, cos, radians, sqrt
 import numpy as np
 
@@ -136,23 +135,6 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
              474, 260, 20, 514, 60, 266, 10, 16, 0.16, 4]
 
 
-def dumps():
-    """
-    Dump the polygon data in GeoJSON format.
-
-    >>> assert len(dumps()) > 0
-    """
-    polys = []
-    for i in range(1, numpolygons):
-        geometry = {'type': 'Polygon', 'coordinates': [_polygons[i]]}
-        properties = {'Polygon #': i, 'CST limit (GW)': cst_limit[i], 'PV limit (GW)': pv_limit[i],
-                      'Wind limit (GW)': wind_limit[i]}
-        feature = {'type': 'Feature', 'geometry': geometry, 'properties': properties}
-        polys.append(feature)
-    top = {'type': 'FeatureCollection', 'features': polys}
-    return json.dumps(top)
-
-
 def _centroid(vertices):
     """Find the centroid of a polygon."""
     # Ensure the polygon is closed
@@ -191,22 +173,6 @@ def dist(poly1, poly2):
         sin(dlon / 2) ** 2 * cos(lat1) * cos(lat2)
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return int(radius * c)
-
-
-def pathlen(p):
-    """Return the total length of a path P.
-
-    >>> pathlen([])
-    0
-    >>> x = dist(1,4)
-    >>> assert pathlen([(1, 4)]) == x
-    >>> y = dist(4,7)
-    >>> assert pathlen([(1, 4), (4, 7)]) == x + y
-    """
-    total = 0
-    for poly1, poly2 in p:
-        total += dist(poly1, poly2)
-    return total
 
 
 centroids = {}

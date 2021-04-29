@@ -9,6 +9,8 @@
 
 """Simulated electricity generators for the NEMO framework."""
 
+# pylint: disable=too-many-lines
+
 import locale
 
 import urllib.request
