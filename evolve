@@ -44,7 +44,7 @@ if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
     sys.argv.append('--ignore-gooey')
 
 
-def conditionalGooey(*pargs, **kwargs):
+def conditional_gooey(*pargs, **kwargs):
     """Conditional decorator that wraps the Gooey decorator if the display can be found."""
     def decorator(func):
         if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
@@ -53,11 +53,11 @@ def conditionalGooey(*pargs, **kwargs):
     return decorator
 
 
-@conditionalGooey(monospaced_font=True,
-                  program_name="NEMO evolution",
-                  richtext_controls=True,
-                  show_success_modal=False,
-                  disable_progress_bar_animation=True)
+@conditional_gooey(monospaced_font=True,
+                   program_name="NEMO evolution",
+                   richtext_controls=True,
+                   show_success_modal=False,
+                   disable_progress_bar_animation=True)
 def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(description='Bug reports via https://nemo.ozlabs.org/',
@@ -209,7 +209,7 @@ if args.emissions_limit < np.inf:
 if args.fossil_limit < 1:
     penaltyfns.append(penalties.fossil)
 if context.min_regional_generation > 0:
-    penaltyfns.append(penalties.minRegional)
+    penaltyfns.append(penalties.min_regional)
 
 
 def cost(ctx):

@@ -9,11 +9,11 @@
 
 from nemo import generators
 
-_reasonLabels = ['unserved', 'emissions', 'fossil', 'bioenergy',
-                 'hydro', 'reserves', 'min-regional-gen']
+_reason_labels = ['unserved', 'emissions', 'fossil', 'bioenergy',
+                  'hydro', 'reserves', 'min-regional-gen']
 
 reasons = {}
-for i, label in enumerate(_reasonLabels):
+for i, label in enumerate(_reason_labels):
     reasons[label] = 1 << i
 
 # Conversion factor between MWh and TWh.
@@ -53,7 +53,7 @@ def reserves(ctx, args):
     return pen, reas
 
 
-def minRegional(ctx, _):
+def min_regional(ctx, _):
     """Penalty: minimum share of regional generation"""
     regional_generation_shortfall = 0
     for rgn in ctx.regions:
@@ -72,12 +72,12 @@ def minRegional(ctx, _):
 
 def emissions(ctx, args):
     """Penalty: total emissions"""
-    totalEmissions = 0
+    total_emissions = 0
     for g in ctx.generators:
         if hasattr(g, 'intensity'):
-            totalEmissions += sum(g.series_power.values()) * g.intensity
+            total_emissions += sum(g.series_power.values()) * g.intensity
     # exceedance in tonnes CO2-e
-    emissions_exceedance = max(0, totalEmissions - args.emissions_limit * pow(10, 6) * ctx.years)
+    emissions_exceedance = max(0, total_emissions - args.emissions_limit * pow(10, 6) * ctx.years)
     reason = reasons['emissions'] if emissions_exceedance > 0 else 0
     return pow(emissions_exceedance, 3), reason
 

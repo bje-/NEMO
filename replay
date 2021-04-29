@@ -102,8 +102,8 @@ with open(args.f) as resultsfile:
             print(line, end=' ')
             continue
         try:
-            jsonBundle = json.loads(line)
+            json_bundle = json.loads(line)
         except ValueError:
             print('skipping malformed input:', line)
             continue
-        run_one(jsonBundle)
+        run_one(json_bundle)
