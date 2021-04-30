@@ -154,33 +154,25 @@ def re100(context):
             result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
         elif g == Hydro:
             result += [h for h in _hydro() if isinstance(h, Hydro) and not isinstance(h, PumpedHydro)]
-        elif g == Biofuel:
+        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             for poly in range(1, 44):
-                result.append(g(poly, 0, label='polygon %d GT' % poly))
-        elif g == PV1Axis:
-            for poly in range(1, 44):
-                result.append(g(poly, 0,
-                                configfile.get('generation', 'pv1axis-trace'),
-                                poly - 1,
-                                build_limit=polygons.pv_limit[poly],
-                                label='polygon %d PV' % poly))
-        elif g == CentralReceiver:
-            for poly in range(1, 44):
-                result.append(g(poly, 0, 2, 6,
-                                configfile.get('generation', 'cst-trace'),
-                                poly - 1,
-                                build_limit=polygons.cst_limit[poly],
-                                label='polygon %d CST' % poly))
-        elif g == Wind:
-            for poly in range(1, 44):
-                result.append(g(poly, 0,
-                                configfile.get('generation', 'wind-trace'),
-                                poly - 1,
-                                build_limit=polygons.wind_limit[poly],
-                                label='polygon %d wind' % poly))
+                if g == Biofuel:
+                    result.append(g(poly, 0, label='polygon %d GT' % poly))
+                elif g == PV1Axis:
+                    result.append(g(poly, 0, configfile.get('generation', 'pv1axis-trace'),
+                                    poly - 1, build_limit=polygons.pv_limit[poly],
+                                    label='polygon %d PV' % poly))
+                elif g == CentralReceiver:
+                    result.append(g(poly, 0, 2, 6, configfile.get('generation', 'cst-trace'),
+                                    poly - 1, build_limit=polygons.cst_limit[poly],
+                                    label='polygon %d CST' % poly))
+                elif g == Wind:
+                    result.append(g(poly, 0,
+                                    configfile.get('generation', 'wind-trace'),
+                                    poly - 1, build_limit=polygons.wind_limit[poly],
+                                    label='polygon %d wind' % poly))
         else:  # pragma: no cover
-            raise ValueError
-
+            raise ValueError(g)
     context.generators = result
 
 
