@@ -56,7 +56,7 @@ class Region():
 
         return self
 
-    def __deepcopy__(self, memo):
+    def __deepcopy__(self, _):
         """
         Prevent deepcopying.
 
@@ -64,7 +64,6 @@ class Region():
         >>> sacopy = copy.deepcopy(sa)
         >>> sa is sacopy
         True
-
         """
         return self
 
