@@ -32,9 +32,9 @@ function gw(amt, suffix)
 {
     switch (suffix) {
 	case "kW":
-	    return amt / 10**6
+	    return amt / 10^6
 	case "MW":
-	    return amt / 10**3
+	    return amt / 10^3
 	case "GW":
 	    return amt
 	default:
@@ -49,9 +49,9 @@ function twh(amt, suffix)
 {
     switch (suffix) {
 	case "MWh":
-	    return amt / 10**6
+	    return amt / 10^6
 	case "GWh":
-	    return amt / 10**3
+	    return amt / 10^3
 	case "TWh":
 	    return amt
 	default:
