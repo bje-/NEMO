@@ -17,6 +17,7 @@ import sys
 from gooey import Gooey
 import nemo
 from nemo import costs
+from nemo import demand
 from nemo import scenarios
 from nemo import utils
 
@@ -59,7 +60,7 @@ def run_one(bundle):
 
     # Apply each demand modifier argument (if any) in the given order.
     for arg in options['demand_modifier'] or []:
-        scenarios.demand_switch(arg)(context)
+        demand.switch(arg)(context)
 
     try:
         cost_class = costs.cost_scenarios[options['costs']]

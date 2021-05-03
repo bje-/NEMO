@@ -34,6 +34,7 @@ import nemo
 from nemo import scenarios
 from nemo import costs
 from nemo import configfile as cf
+from nemo import demand
 from nemo import penalties
 
 # Ignore possible runtime warnings from SCOOP
@@ -179,7 +180,7 @@ scenarios.supply_scenarios[args.supply_scenario](context)
 
 # Apply each demand modifier argument (if any) in the given order.
 for arg in args.demand_modifier or []:
-    scenarios.demand_switch(arg)(context)
+    demand.switch(arg)(context)
 
 if args.verbose and __name__ == '__main__':
     docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
