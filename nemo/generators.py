@@ -302,7 +302,6 @@ class CST(TraceGenerator):
             assert self.stored >= 0
         assert self.stored <= self.maxstorage
         assert self.stored >= 0
-        # assert generation <= self.capacity
         self.series_power[hr] = generation
         self.series_spilled[hr] = 0
 
