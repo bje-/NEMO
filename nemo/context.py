@@ -15,9 +15,6 @@ run. It also allows multiple contexts to be compared after individual
 simulation runs.
 """
 
-import json
-import re
-
 import numpy as np
 import pandas as pd
 import pint
@@ -145,18 +142,3 @@ class Context():
                 usmax = (self.unserved.max() * ureg.MW).to_compact()
                 string += 'Shortfalls (min, max): ({}, {})'.format(usmin, usmax)
         return string
-
-    class JSONEncoder(json.JSONEncoder):
-        """A custom encoder for Context objects."""
-
-        def default(self, o):
-            """Encode a Context object into JSON."""
-            if isinstance(o, Context):
-                result = []
-                for gen in o.generators:
-                    tech = re.sub(r"<class 'generators\.(.*)'>",
-                                  r'\1', str(type(gen)))
-                    result += [{'label': gen.label, 'polygon': gen.polygon,
-                                'capacity': gen.capacity, 'technology': tech}]
-                return result
-            return None
