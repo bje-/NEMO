@@ -272,7 +272,7 @@ def run():
     np.random.seed(args.seed)
     hof = tools.HallOfFame(1)
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
-    stats_hof = tools.Statistics(lambda ignored: hof[0].fitness.values)
+    stats_hof = tools.Statistics(lambda _: hof[0].fitness.values)
     mstats = tools.MultiStatistics(fitness=stats_fit, hallfame=stats_hof)
     mstats.register("min", np.min)
 
