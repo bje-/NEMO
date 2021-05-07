@@ -12,7 +12,7 @@
 from nemo import configfile
 from nemo import generators
 from nemo import polygons
-from nemo.polygons import wildcard
+from nemo.polygons import WILDCARD
 from nemo import regions
 from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
@@ -25,9 +25,9 @@ def _demand_response():
     >>> len(dr)
     3
     """
-    dr1 = generators.DemandResponse(wildcard, 1000, 100, "DR100")
-    dr2 = generators.DemandResponse(wildcard, 1000, 500, "DR500")
-    dr3 = generators.DemandResponse(wildcard, 1000, 1000, "DR1000")
+    dr1 = generators.DemandResponse(WILDCARD, 1000, 100, "DR100")
+    dr2 = generators.DemandResponse(WILDCARD, 1000, 500, "DR500")
+    dr3 = generators.DemandResponse(WILDCARD, 1000, 1000, "DR1000")
     return [dr1, dr2, dr3]
 
 
@@ -70,8 +70,8 @@ def replacement(context):
     >>> len(c.generators)
     14
     """
-    coal = generators.Black_Coal(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
+    coal = generators.Black_Coal(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -85,7 +85,7 @@ def _one_ccgt(context):
     >>> len(c.generators)
     1
     """
-    context.generators = [generators.CCGT(wildcard, 0)]
+    context.generators = [generators.CCGT(WILDCARD, 0)]
 
 
 def ccgt(context):
@@ -99,8 +99,8 @@ def ccgt(context):
     14
     """
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
+    ccgt = generators.CCGT(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
@@ -115,8 +115,8 @@ def ccgt_ccs(context):
     14
     """
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT_CCS(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
+    ccgt = generators.CCGT_CCS(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
@@ -130,8 +130,8 @@ def coal_ccs(context):
     >>> len(c.generators)
     14
     """
-    coal = generators.Coal_CCS(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
+    coal = generators.Coal_CCS(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -188,9 +188,8 @@ def re100_batteries(context):
     re100(context)
     # discharge between 6pm and 6am daily
     hrs = list(range(0, 7)) + list(range(18, 24))
-    battery = generators.Battery(wildcard, 0, 0, discharge_hours=hrs)
-    g = context.generators
-    context.generators = [battery] + g
+    battery = generators.Battery(WILDCARD, 0, 0, discharge_hours=hrs)
+    context.generators.insert(0, battery)
 
 
 def _one_per_poly(region):
@@ -261,15 +260,15 @@ def re_plus_ccs(context):
     185
     """
     re100(context)
-    coal = generators.Black_Coal(wildcard, 0)
+    coal = generators.Black_Coal(WILDCARD, 0)
     # pylint: disable=redefined-outer-name
-    coal_ccs = generators.Coal_CCS(wildcard, 0)
+    coal_ccs = generators.Coal_CCS(WILDCARD, 0)
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(wildcard, 0)
-    ccgt_ccs = generators.CCGT_CCS(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
-    g = context.generators
-    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + g[:-4] + [ocgt]
+    ccgt = generators.CCGT(WILDCARD, 0)
+    ccgt_ccs = generators.CCGT_CCS(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + \
+        context.generators[:-4] + [ocgt]
 
 
 def re_plus_fossil(context):
@@ -285,11 +284,10 @@ def re_plus_fossil(context):
     """
     re100(context)
     # pylint: disable=redefined-outer-name
-    coal = generators.Black_Coal(wildcard, 0)
-    ccgt = generators.CCGT(wildcard, 0)
-    ocgt = generators.OCGT(wildcard, 0)
-    g = context.generators
-    context.generators = [coal, ccgt] + g[:-4] + [ocgt]
+    coal = generators.Black_Coal(WILDCARD, 0)
+    ccgt = generators.CCGT(WILDCARD, 0)
+    ocgt = generators.OCGT(WILDCARD, 0)
+    context.generators = [coal, ccgt] + context.generators[:-4] + [ocgt]
 
 
 def re100_dsp(context):
@@ -306,8 +304,7 @@ def re100_dsp(context):
     True
     """
     re100(context)
-    g = context.generators
-    context.generators = g + _demand_response()
+    context.generators += _demand_response()
 
 
 def re100_nocst(context):
@@ -367,29 +364,29 @@ def theworks(context):
     """All technologies."""
     re100(context)
     # pylint: disable=redefined-outer-name
-    egs = generators.Geothermal_EGS(wildcard, 0,
+    egs = generators.Geothermal_EGS(WILDCARD, 0,
                                     configfile.get('generation', 'egs-geothermal-trace'), 38)
-    hsa = generators.Geothermal_HSA(wildcard, 0,
+    hsa = generators.Geothermal_HSA(WILDCARD, 0,
                                     configfile.get('generation', 'hsa-geothermal-trace'), 38)
-    pt = generators.ParabolicTrough(wildcard, 0, 2, 6,
-                                    configfile.get('generation', 'cst-trace'), 12)
-    thermals = [generators.Black_Coal(wildcard, 0),
-                generators.Coal_CCS(wildcard, 0),
-                generators.CCGT(wildcard, 0),
-                generators.CCGT_CCS(wildcard, 0)]
+    parat = generators.ParabolicTrough(WILDCARD, 0, 2, 6,
+                                       configfile.get('generation', 'cst-trace'), 12)
+    thermals = [generators.Black_Coal(WILDCARD, 0),
+                generators.Coal_CCS(WILDCARD, 0),
+                generators.CCGT(WILDCARD, 0),
+                generators.CCGT_CCS(WILDCARD, 0)]
 
-    ocgt = generators.OCGT(wildcard, 0)
-    batt = generators.Battery(wildcard, 0, 0)
-    diesel = generators.Diesel(wildcard, 0)
-    dem = generators.DemandResponse(wildcard, 0, 300)
-    biomass = generators.Biomass(wildcard, 0)
-    greenpower = generators.GreenPower(wildcard, 0)
-    btm_pv = generators.Behind_Meter_PV(wildcard, 0,
+    ocgt = generators.OCGT(WILDCARD, 0)
+    batt = generators.Battery(WILDCARD, 0, 0)
+    diesel = generators.Diesel(WILDCARD, 0)
+    dem = generators.DemandResponse(WILDCARD, 0, 300)
+    biomass = generators.Biomass(WILDCARD, 0)
+    greenpower = generators.GreenPower(WILDCARD, 0)
+    btm_pv = generators.Behind_Meter_PV(WILDCARD, 0,
                                         configfile.get('generation', 'rooftop-pv-trace'),
                                         0)
-    g = context.generators
 
-    context.generators = [hsa, egs, pt] + thermals + g[:-4] + \
+    context.generators = [hsa, egs, parat] + thermals + \
+        context.generators[:-4] + \
         [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
 
 

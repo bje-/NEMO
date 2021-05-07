@@ -31,21 +31,21 @@ def unserved(ctx, _):
 def reserves(ctx, args):
     """Penalty: minimum reserves."""
     pen, reas = 0, 0
-    for t in range(ctx.timesteps):
+    for time in range(ctx.timesteps):
         reserve, spilled = 0, 0
-        for g in ctx.generators:
+        for gen in ctx.generators:
             try:
-                spilled += g.series_spilled[t]
+                spilled += gen.series_spilled[time]
             except KeyError:
                 # non-variable generators may not have spill data
                 pass
 
             # Calculate headroom for each generator, except pumped hydro and
             # CST -- tricky to calculate capacity
-            if isinstance(g, generators.Fuelled) and not \
-               isinstance(g, generators.PumpedHydro) and not \
-               isinstance(g, generators.CST):
-                reserve += g.capacity - g.series_power[t]
+            if isinstance(gen, generators.Fuelled) and not \
+               isinstance(gen, generators.PumpedHydro) and not \
+               isinstance(gen, generators.CST):
+                reserve += gen.capacity - gen.series_power[time]
 
         if reserve + spilled < args.reserves:
             reas |= reasons['reserves']
@@ -61,9 +61,9 @@ def min_regional(ctx, _):
         for poly in rgn.polygons:
             regional_demand += ctx.demand[poly - 1].sum()
         regional_generation = 0
-        for g in ctx.generators:
-            if g.region() is rgn:
-                regional_generation += sum(g.series_power.values())
+        for gen in ctx.generators:
+            if gen.region() is rgn:
+                regional_generation += sum(gen.series_power.values())
         min_regional_generation = regional_demand * ctx.min_regional_generation
         regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
     reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
@@ -73,9 +73,9 @@ def min_regional(ctx, _):
 def emissions(ctx, args):
     """Penalty: total emissions."""
     total_emissions = 0
-    for g in ctx.generators:
-        if hasattr(g, 'intensity'):
-            total_emissions += sum(g.series_power.values()) * g.intensity
+    for gen in ctx.generators:
+        if hasattr(gen, 'intensity'):
+            total_emissions += sum(gen.series_power.values()) * gen.intensity
     # exceedance in tonnes CO2-e
     emissions_exceedance = max(0, total_emissions - args.emissions_limit * pow(10, 6) * ctx.years)
     reason = reasons['emissions'] if emissions_exceedance > 0 else 0
@@ -85,9 +85,9 @@ def emissions(ctx, args):
 def fossil(ctx, args):
     """Penalty: limit fossil to fraction of annual demand."""
     fossil_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Fossil):
-            fossil_energy += sum(g.series_power.values())
+    for gen in ctx.generators:
+        if isinstance(gen, generators.Fossil):
+            fossil_energy += sum(gen.series_power.values())
     fossil_exceedance = max(0, fossil_energy - ctx.total_demand() * args.fossil_limit * ctx.years)
     reason = reasons['fossil'] if fossil_exceedance > 0 else 0
     return pow(fossil_exceedance, 3), reason
@@ -96,9 +96,9 @@ def fossil(ctx, args):
 def bioenergy(ctx, args):
     """Penalty: limit biofuel use."""
     biofuel_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Biofuel):
-            biofuel_energy += sum(g.series_power.values())
+    for gen in ctx.generators:
+        if isinstance(gen, generators.Biofuel):
+            biofuel_energy += sum(gen.series_power.values())
     biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * _twh * ctx.years)
     reason = reasons['bioenergy'] if biofuel_exceedance > 0 else 0
     return pow(biofuel_exceedance, 3), reason
@@ -107,10 +107,10 @@ def bioenergy(ctx, args):
 def hydro(ctx, args):
     """Penalty: limit hydro use."""
     hydro_energy = 0
-    for g in ctx.generators:
-        if isinstance(g, generators.Hydro) and \
-           not isinstance(g, generators.PumpedHydro):
-            hydro_energy += sum(g.series_power.values())
+    for gen in ctx.generators:
+        if isinstance(gen, generators.Hydro) and \
+           not isinstance(gen, generators.PumpedHydro):
+            hydro_energy += sum(gen.series_power.values())
     hydro_exceedance = max(0, hydro_energy - args.hydro_limit * _twh * ctx.years)
     reason = reasons['hydro'] if hydro_exceedance > 0 else 0
     return pow(hydro_exceedance, 3), reason

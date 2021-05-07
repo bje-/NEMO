@@ -47,7 +47,7 @@ class TestCoverage(unittest.TestCase):
         c = nemo.Context()
         # Add 25 DR generators so that the abbreviated legend is used.
         for _ in range(25):
-            dr = nemo.generators.DemandResponse(polygons.wildcard, 100, 0)
+            dr = nemo.generators.DemandResponse(polygons.WILDCARD, 100, 0)
             c.generators += [dr]
         print(len(c.generators))
         nemo.run(c)

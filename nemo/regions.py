@@ -74,4 +74,4 @@ snowy = Region(3, 'SNOWY1', 'Snowy Mountains')
 tas = Region(4, 'TAS1', 'Tasmania')
 vic = Region(5, 'VIC1', 'Victoria')
 All = [nsw, qld, sa, snowy, tas, vic]
-numregions = len(All)
+NUMREGIONS = len(All)

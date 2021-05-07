@@ -39,16 +39,16 @@ def _legend(context):
 
     if len(gens) > 20:
         unique = []
-        for g in gens:
-            if type(g) not in unique:  # pylint: disable=unidiomatic-typecheck
-                unique.append(type(g))
-                labels.append(g.__class__.__name__)
-                patches.append(g.patch)
+        for gen in gens:
+            if type(gen) not in unique:  # pylint: disable=unidiomatic-typecheck
+                unique.append(type(gen))
+                labels.append(gen.__class__.__name__)
+                patches.append(gen.patch)
     else:
-        for g in gens:
-            capacity = (g.capacity * ureg.MW)
-            labels.append(g.label + ' ({:.2f~P})'.format(capacity.to_compact()))
-            patches.append(g.patch)
+        for gen in gens:
+            capacity = (gen.capacity * ureg.MW)
+            labels.append(gen.label + ' ({:.2f~P})'.format(capacity.to_compact()))
+            patches.append(gen.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,
                            ['unserved'] + labels,
@@ -81,27 +81,27 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
 
     accum = pd.Series(data=0, index=demand.index)
     prev = accum.copy()
-    for g in _generator_list(context):
-        idx = context.generators.index(g)
+    for gen in _generator_list(context):
+        idx = context.generators.index(gen)
         accum += context.generation[idx]
         # Ensure accumulated generation does not exceed demand in any timestep.
         # (Due to rounding, accum can be close to demand.)
         assert all(np.logical_or(accum < demand, np.isclose(accum, demand)))
         plt.plot(accum.index, accum, color='black', linewidth=0.5)
         plt.fill_between(accum.index, prev, accum,
-                         facecolor=g.patch.get_fc(),
-                         hatch=g.patch.get_hatch())
+                         facecolor=gen.patch.get_fc(),
+                         hatch=gen.patch.get_hatch())
         prev = accum.copy()
     # Unmet demand is shaded red.
     plt.fill_between(accum.index, accum, demand, facecolor='red')
 
     if spills:
         prev = demand.copy()
-        for g in list(g for g in context.generators if g.region() in context.regions):
-            idx = context.generators.index(g)
+        for gen in list(g for g in context.generators if g.region() in context.regions):
+            idx = context.generators.index(gen)
             accum += context.spill[idx]
             plt.plot(accum.index, accum, color='black', linewidth=0.5)
-            plt.fill_between(prev.index, prev, accum, facecolor=g.patch.get_fc(), alpha=0.3)
+            plt.fill_between(prev.index, prev, accum, facecolor=gen.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
 
     plt.gca().set_xlim(xlim)  # set_xlim accepts None

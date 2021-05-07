@@ -34,9 +34,9 @@ def scalex(label):
     """scalex:H1:H2:X scales hours H1 to H2 by X%."""
     assert label.startswith('scalex:')
 
-    _, h1, h2, factor = label.split(':')
-    from_hour = int(h1)
-    to_hour = int(h2)
+    _, hour1, hour2, factor = label.split(':')
+    from_hour = int(hour1)
+    to_hour = int(hour2)
     if from_hour < 0 or to_hour < 0:
         raise ValueError("hour < 0")
     if from_hour > 24 or to_hour > 24:
@@ -52,18 +52,18 @@ def scaletwh(label):
     """scaletwh:N scales demand to N TWh."""
     assert label.startswith('scaletwh:')
 
-    _, n = label.split(':')
-    new_demand = float(n)
+    _, val = label.split(':')
+    new_demand = float(val)
     return lambda context: _scale_demand_twh(context, new_demand)
 
 
 def shift(label):
     """shift:N:H1:H2 shifts N MW of daily load from H1 to H2."""
     assert label.startswith('shift:')
-    _, demand, h1, h2 = label.split(':')
+    _, demand, hour1, hour2 = label.split(':')
     demand = int(demand)
-    from_hour = int(h1)
-    to_hour = int(h2)
+    from_hour = int(hour1)
+    to_hour = int(hour2)
     if from_hour < 0 or to_hour < 0:
         raise ValueError("hour < 0")
     if from_hour > 24 or to_hour > 24:
@@ -244,13 +244,13 @@ def _scale_demand_by(context, factor):
 def _shift_demand(context, demand, from_hour, to_hour):
     """Move n MW of demand from from_hour to to_hour."""
     # Shift demand within in each polygon
-    for p in range(43):
-        for r in context.regions:
-            if p + 1 in r.polygons:
-                weight = r.polygons[p + 1]
-                if context.demand[p].sum() > 0:
-                    context.demand[p, from_hour::24] -= demand * weight
-                    context.demand[p, to_hour::24] += demand * weight
+    for poly in range(43):
+        for regn in context.regions:
+            if poly + 1 in regn.polygons:
+                weight = regn.polygons[poly + 1]
+                if context.demand[poly].sum() > 0:
+                    context.demand[poly, from_hour::24] -= demand * weight
+                    context.demand[poly, to_hour::24] += demand * weight
     assert np.all(context.demand >= 0), \
         "negative load in hour %d" % from_hour
 

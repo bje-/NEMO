@@ -24,7 +24,7 @@ class SuperGenerator(generators.Generator):
 
     def __init__(self, capacity):
         """Create a super generator."""
-        generators.Generator.__init__(self, polygons.wildcard, capacity, 'super')
+        generators.Generator.__init__(self, polygons.WILDCARD, capacity, 'super')
         self.energy = 0
         self.runhours = 0
 
@@ -74,7 +74,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_004(self):
         """100 MW fossil plant generates exactly 876,000 MWh."""
-        ccgt = generators.CCGT(polygons.wildcard, 100)
+        ccgt = generators.CCGT(polygons.WILDCARD, 100)
         self.context.generators = [ccgt]
         nemo.run(self.context)
         self.assertEqual(sum(ccgt.series_power.values()), self.context.timesteps * 100)
@@ -138,7 +138,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_013(self):
         """Fossil plant records power generation history."""
-        ccgt = generators.CCGT(polygons.wildcard, 100)
+        ccgt = generators.CCGT(polygons.WILDCARD, 100)
         self.context.generators = [ccgt]
         nemo.run(self.context)
         self.assertTrue(len(self.context.generators[0].series_power) > 0)

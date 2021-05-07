@@ -27,7 +27,7 @@ with urllib.request.urlopen(url) as urlobj:
                          parse_dates=[['Date', 'Time']], index_col='Date_Time')
 
 # Check for date, time and n demand columns (for n regions).
-assert len(demand.columns) == regions.numregions
+assert len(demand.columns) == regions.NUMREGIONS
 # The number of rows must be even.
 assert len(demand) % 2 == 0, "odd number of rows in half-hourly demand data"
 
@@ -43,7 +43,7 @@ hourly_regional_demand = demand.resample('H', closed='right').mean()
 # apportioning figures given in each region's polygons field.
 numsteps = len(hourly_regional_demand)
 hourly_demand = pd.DataFrame(index=hourly_regional_demand.index,
-                             data=np.zeros((numsteps, polygons.numpolygons)))
+                             data=np.zeros((numsteps, polygons.NUMPOLYGONS)))
 
 for rgn, weights in [(r.id, r.polygons) for r in regions.All]:
     for polygon, share in weights.items():

@@ -72,7 +72,7 @@ class Generator():
 
         # Sanity check polygon argument.
         assert not isinstance(polygon, polygons.regions.Region)
-        assert 0 < polygon <= polygons.numpolygons, polygon
+        assert 0 < polygon <= polygons.NUMPOLYGONS, polygon
 
         # Time series of dispatched power and spills
         self.series_power = {}
@@ -147,22 +147,21 @@ class Generator():
         """Return a summary of the generator activity."""
         costs = context.costs
         supplied = sum(self.series_power.values()) * ureg.MWh
-        s = 'supplied {}'.format(supplied.to_compact())
+        string = 'supplied {}'.format(supplied.to_compact())
         if self.capacity > 0:
-            cf = self.capfactor()
-            if cf > 0:
-                s += ', CF %.1f%%' % cf
+            if self.capfactor() > 0:
+                string += ', CF %.1f%%' % self.capfactor()
         if sum(self.series_spilled.values()) > 0:
             spilled = sum(self.series_spilled.values()) * ureg.MWh
-            s += ', surplus {}'.format(spilled.to_compact())
+            string += ', surplus {}'.format(spilled.to_compact())
         if self.capcost(costs) > 0:
-            s += ', capcost %s' % _currency(self.capcost(costs))
+            string += ', capcost %s' % _currency(self.capcost(costs))
         if self.opcost(costs) > 0:
-            s += ', opcost %s' % _currency(self.opcost(costs))
+            string += ', opcost %s' % _currency(self.opcost(costs))
         lcoe = self.lcoe(costs, context.years)
         if np.isfinite(lcoe) and lcoe > 0:
-            s += ', LCOE %s' % _currency(int(lcoe))
-        return s
+            string += ', LCOE %s' % _currency(int(lcoe))
+        return string
 
     def set_capacity(self, cap):
         """Change the capacity of the generator to cap GW."""
@@ -201,13 +200,13 @@ class TraceGenerator(Generator):
             self.__class__.csvfilename = filename
         self.generation = self.__class__.csvdata[::, column]
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Step method for wind generators."""
-        generation = self.generation[hr] * self.capacity
+        generation = self.generation[hour] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
-        self.series_power[hr] = power
-        self.series_spilled[hr] = spilled
+        self.series_power[hour] = power
+        self.series_spilled[hour] = spilled
         return power, spilled
 
 
@@ -257,7 +256,7 @@ class CST(TraceGenerator):
     patch = Patch(facecolor='yellow')
     """Colour for plotting"""
 
-    def __init__(self, polygon, capacity, sm, shours, filename,
+    def __init__(self, polygon, capacity, solarmult, shours, filename,
                  column, label=None, build_limit=None):
         """
         Construct a CST generator.
@@ -270,16 +269,16 @@ class CST(TraceGenerator):
         self.maxstorage = None
         self.stored = None
         self.set_storage(shours)
-        self.set_multiple(sm)
+        self.set_multiple(solarmult)
 
     def set_capacity(self, cap):
         """Change the capacity of the generator to cap GW."""
         Generator.set_capacity(self, cap)
         self.maxstorage = self.capacity * self.shours
 
-    def set_multiple(self, sm):
+    def set_multiple(self, solarmult):
         """Change the solar multiple of a CST plant."""
-        self.sm = sm
+        self.solarmult = solarmult
 
     def set_storage(self, shours):
         """Change the storage capacity of a CST plant."""
@@ -287,9 +286,9 @@ class CST(TraceGenerator):
         self.maxstorage = self.capacity * shours
         self.stored = 0.5 * self.maxstorage
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Step method for CST generators."""
-        generation = self.generation[hr] * self.capacity * self.sm
+        generation = self.generation[hour] * self.capacity * self.solarmult
         remainder = min(self.capacity, demand)
         if generation > remainder:
             to_storage = generation - remainder
@@ -303,8 +302,8 @@ class CST(TraceGenerator):
             assert self.stored >= 0
         assert self.stored <= self.maxstorage
         assert self.stored >= 0
-        self.series_power[hr] = generation
-        self.series_spilled[hr] = 0
+        self.series_power[hour] = generation
+        self.series_spilled[hour] = 0
 
         # This can happen due to rounding errors.
         generation = min(generation, demand)
@@ -318,7 +317,7 @@ class CST(TraceGenerator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            ', solar mult %.2f' % self.sm + ', %dh storage' % self.shours
+            ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.shours
 
 
 class ParabolicTrough(CST):
@@ -348,12 +347,12 @@ class Fuelled(Generator):
         Generator.reset(self)
         self.runhours = 0
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Step method for fuelled generators."""
         power = min(self.capacity, demand)
         if power > 0:
             self.runhours += 1
-        self.series_power[hr] = power
+        self.series_power[hour] = power
         return power, 0
 
     def summary(self, context):
@@ -378,7 +377,7 @@ class Hydro(Fuelled):
 class PumpedHydro(Hydro):
     """Pumped storage hydro (PSH) model.
 
-    >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+    >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
     """
 
     patch = Patch(facecolor='powderblue')
@@ -394,24 +393,24 @@ class PumpedHydro(Hydro):
         self.storage_p = True
         self.last_run = None
 
-    def store(self, hr, power):
+    def store(self, hour, power):
         """Pump water uphill for one hour.
 
-        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+        >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
 
         Test not pumping and generating at the same time.
-        >>> psh.step(hr=0, demand=100)
+        >>> psh.step(hour=0, demand=100)
         (100, 0)
-        >>> psh.store(hr=0, power=250)
+        >>> psh.store(hour=0, power=250)
         0
 
         Test filling the store.
-        >>> for hour in range(1, 4): psh.store(hr=hour, power=250)
+        >>> for hour in range(1, 4): psh.store(hour=hour, power=250)
         250
         250
         100.0
         """
-        if self.last_run == hr:
+        if self.last_run == hour:
             # Can't pump and generate in the same hour.
             return 0
         power = min(power, self.capacity)
@@ -422,30 +421,30 @@ class PumpedHydro(Hydro):
         else:
             self.stored += energy
         if power > 0:
-            self.last_run = hr
+            self.last_run = hour
         return power
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """
         Step method for pumped hydro storage.
 
-        >>> psh = PumpedHydro(polygons.wildcard, 250, 1000, rte=1.0)
+        >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
 
         Cannot pump and generate at the same time.
-        >>> psh.store(hr=0, power=250)
+        >>> psh.store(hour=0, power=250)
         250
-        >>> psh.step(hr=0, demand=100)
+        >>> psh.step(hour=0, demand=100)
         (0, 0)
         """
         power = min(self.stored, min(self.capacity, demand))
-        if self.last_run == hr:
+        if self.last_run == hour:
             # Can't pump and generate in the same hour.
             return 0, 0
-        self.series_power[hr] = power
+        self.series_power[hour] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
-            self.last_run = hr
+            self.last_run = hour
         return power, 0
 
     def summary(self, context):
@@ -655,7 +654,7 @@ class Diesel(Fossil):
 class Battery(Generator):
     """Battery storage (of any type).
 
-    >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
+    >>> b = Battery(polygons.WILDCARD, 400, 1000, rte=1.0)
     """
 
     patch = Patch(facecolor='grey')
@@ -688,18 +687,18 @@ class Battery(Generator):
         self.maxstorage = maxstorage * 1000
         self.stored = 0
 
-    def store(self, hr, power):
+    def store(self, hour, power):
         """Store power.
 
-        >>> b = Battery(polygons.wildcard, 400, 1000, rte=1.0)
-        >>> b.store(hr=0, power=400)
+        >>> b = Battery(polygons.WILDCARD, 400, 1000, rte=1.0)
+        >>> b.store(hour=0, power=400)
         400
-        >>> b.store(hr=1, power=700)
+        >>> b.store(hour=1, power=700)
         400
-        >>> b.store(hr=2, power=400)
+        >>> b.store(hour=2, power=400)
         200.0
         """
-        if self.last_run == hr:
+        if self.last_run == hour:
             # Can't charge and discharge in the same hour.
             return 0
         power = min(power, self.capacity)
@@ -711,49 +710,49 @@ class Battery(Generator):
             self.chargehours += 1
             self.stored += energy
         if power > 0:
-            self.last_run = hr
+            self.last_run = hour
         return power
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """
         Specialised step method for batteries.
 
-        >>> b = Battery(polygons.wildcard, 400, 1000, discharge_hours=range(18, 24), rte=1.0)
+        >>> b = Battery(polygons.WILDCARD, 400, 1000, discharge_hours=range(18, 24), rte=1.0)
         >>> b.stored = 400
 
         Cannot discharge outside of discharge hours.
-        >>> b.step(hr=0, demand=200)
+        >>> b.step(hour=0, demand=200)
         (0, 0)
 
         Normal operation.
-        >>> b.store(hr=0, power=400)
+        >>> b.store(hour=0, power=400)
         400
-        >>> b.step(hr=18, demand=200)
+        >>> b.step(hour=18, demand=200)
         (200, 0)
 
         Cannot generate and then store at the same time.
-        >>> b.store(hr=18, power=200)
+        >>> b.store(hour=18, power=200)
         0
 
         Cannot store and then generate at the same time.
-        >>> b.store(hr=19, power=200)
+        >>> b.store(hour=19, power=200)
         200
-        >>> b.step(hr=19, demand=200)
+        >>> b.step(hour=19, demand=200)
         (0, 0)
         """
-        if hr % 24 not in self.discharge_hours:
+        if hour % 24 not in self.discharge_hours:
             return 0, 0
 
-        if hr == self.last_run:
+        if hour == self.last_run:
             # Can't charge and discharge in the same hour.
             return 0, 0
 
         power = min(self.stored, min(self.capacity, demand))
-        self.series_power[hr] = power
+        self.series_power[hour] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
-            self.last_run = hr
+            self.last_run = hour
         return power, 0
 
     def reset(self):
@@ -803,15 +802,15 @@ class Geothermal(TraceGenerator):
     patch = Patch(facecolor='brown')
     """Colour for plotting"""
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Specialised step method for geothermal generators.
 
         Geothermal power plants do not spill.
         """
-        generation = self.generation[hr] * self.capacity
+        generation = self.generation[hour] * self.capacity
         power = min(generation, demand)
-        self.series_power[hr] = power
-        self.series_spilled[hr] = 0
+        self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         return power, 0
 
 
@@ -827,7 +826,7 @@ class DemandResponse(Generator):
     """
     Load shedding generator.
 
-    >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
+    >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
     """
 
     patch = Patch(facecolor='white')
@@ -846,20 +845,20 @@ class DemandResponse(Generator):
         self.maxresponse = 0
         self.cost_per_mwh = cost_per_mwh
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """
         Specialised step method for demand response.
 
-        >>> dr = DemandResponse(polygons.wildcard, 500, 1500)
-        >>> dr.step(hr=0, demand=200)
+        >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
+        >>> dr.step(hour=0, demand=200)
         (200, 0)
         >>> dr.runhours
         1
         """
         power = min(self.capacity, demand)
         self.maxresponse = max(self.maxresponse, power)
-        self.series_power[hr] = power
-        self.series_spilled[hr] = 0
+        self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         if power > 0:
             self.runhours += 1
         return power, 0
@@ -893,10 +892,10 @@ class GreenPower(Generator):
     patch = Patch(facecolor='darkgreen')
     """Colour for plotting"""
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Step method for GreenPower."""
         power = min(self.capacity, demand)
-        self.series_power[hr] = power
+        self.series_power[hour] = power
         return power, 0
 
 
@@ -1012,13 +1011,13 @@ class Electrolyser(Generator):
         self.tank = tank
         self.setters += [(self.tank.set_storage, 0, 10000)]
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """Return 0 as this is not a generator."""
         return 0, 0
 
-    def store(self, hr, power):
+    def store(self, hour, power):
         """Store power."""
         # pylint: disable=unused-argument
         power = min(power, self.capacity)
@@ -1052,13 +1051,13 @@ class HydrogenGT(Fuelled):
         self.tank = tank
         self.efficiency = efficiency
 
-    def step(self, hr, demand):
+    def step(self, hour, demand):
         """Step method for hydrogen comubstion turbine generators."""
         # calculate hydrogen requirement
-        h = min(self.capacity, demand) / self.efficiency
+        hydrogen = min(self.capacity, demand) / self.efficiency
         # discharge that amount of hydrogen
-        power = self.tank.discharge(h) * self.efficiency
-        self.series_power[hr] = power
+        power = self.tank.discharge(hydrogen) * self.efficiency
+        self.series_power[hour] = power
         if power > 0:
             self.runhours += 1
         return power, 0

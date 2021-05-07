@@ -53,8 +53,8 @@ class Context():
             self.years = self.hours / (365.25 * 24)
 
         self.relstd = 0.002  # 0.002% unserved energy
-        self.generators = [generators.CCGT(polygons.wildcard, 20000),
-                           generators.OCGT(polygons.wildcard, 20000)]
+        self.generators = [generators.CCGT(polygons.WILDCARD, 20000),
+                           generators.OCGT(polygons.WILDCARD, 20000)]
         self.demand = hourly_demand.copy()
         self.timesteps = len(self.demand)
         self.spill = pd.DataFrame()
@@ -96,46 +96,46 @@ class Context():
 
     def set_capacities(self, caps):
         """Set generator capacities from a list."""
-        n = 0
+        num = 0
         for gen in self.generators:
             for (setter, min_cap, max_cap) in gen.setters:
                 # keep parameters within bounds
-                newval = max(min(caps[n], max_cap), min_cap)
+                newval = max(min(caps[num], max_cap), min_cap)
                 setter(newval)
-                n += 1
+                num += 1
         # Check every parameter has been set.
-        assert n == len(caps), '%d != %d' % (n, len(caps))
+        assert num == len(caps), '%d != %d' % (num, len(caps))
 
     def __str__(self):
         """Make a human-readable representation of the context."""
-        s = ""
+        string = ""
         if self.regions != regions.All:
-            s += 'Regions: ' + str(self.regions) + '\n'
+            string += 'Regions: ' + str(self.regions) + '\n'
         if self.verbose:
-            s += 'Generators:' + '\n'
-            for g in self.generators:
-                s += '\t' + str(g)
-                summary = g.summary(self)
+            string += 'Generators:' + '\n'
+            for gen in self.generators:
+                string += '\t' + str(gen)
+                summary = gen.summary(self)
                 if summary is not None:
-                    s += '\n\t   ' + summary + '\n'
+                    string += '\n\t   ' + summary + '\n'
                 else:
-                    s += '\n'
-        s += 'Timesteps: %d h\n' % self.hours
+                    string += '\n'
+        string += 'Timesteps: %d h\n' % self.hours
         total_demand = (self.total_demand() * ureg.MWh).to_compact()
-        s += 'Demand energy: {}\n'.format(total_demand)
+        string += 'Demand energy: {}\n'.format(total_demand)
         surplus_energy = (self.surplus_energy() * ureg.MWh).to_compact()
-        s += 'Unused surplus energy: {}\n'.format(surplus_energy)
+        string += 'Unused surplus energy: {}\n'.format(surplus_energy)
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
-            s += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
+            string += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
 
         if self.unserved.empty:
-            s += 'No unserved energy'
+            string += 'No unserved energy'
         else:
-            s += 'Unserved energy: %.3f%%' % self.unserved_percent() + '\n'
+            string += 'Unserved energy: %.3f%%' % self.unserved_percent() + '\n'
             if self.unserved_percent() > self.relstd * 1.001:
-                s += 'WARNING: reliability standard exceeded\n'
-            s += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
+                string += 'WARNING: reliability standard exceeded\n'
+            string += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
 
             # A subtle trick: generate a date range and then substract
             # it from the timestamps of unserved events.  This will
@@ -145,12 +145,12 @@ class Context():
             # constant). Group by the deltas.
             rng = pd.date_range(self.unserved.index[0], periods=len(self.unserved.index), freq='H')
             unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
-            s += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
+            string += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
             if not self.unserved.empty:
                 usmin = (self.unserved.min() * ureg.MW).to_compact()
                 usmax = (self.unserved.max() * ureg.MW).to_compact()
-                s += 'Shortfalls (min, max): ({}, {})'.format(usmin, usmax)
-        return s
+                string += 'Shortfalls (min, max): ({}, {})'.format(usmin, usmax)
+        return string
 
     class JSONEncoder(json.JSONEncoder):
         """A custom encoder for Context objects."""
@@ -159,10 +159,10 @@ class Context():
             """Encode a Context object into JSON."""
             if isinstance(o, Context):
                 result = []
-                for g in o.generators:
+                for gen in o.generators:
                     tech = re.sub(r"<class 'generators\.(.*)'>",
-                                  r'\1', str(type(g)))
-                    result += [{'label': g.label, 'polygon': g.polygon,
-                                'capacity': g.capacity, 'technology': tech}]
+                                  r'\1', str(type(gen)))
+                    result += [{'label': gen.label, 'polygon': gen.polygon,
+                                'capacity': gen.capacity, 'technology': tech}]
                 return result
             return None

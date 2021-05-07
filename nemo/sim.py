@@ -15,10 +15,10 @@ from nemo import regions
 
 def _sim(context, date_range):
     # reset generator internal state
-    for g in context.generators:
-        g.reset()
+    for gen in context.generators:
+        gen.reset()
         # every generator must be assigned to a polygon
-        assert g.polygon is not None, 'every generator must be assigned a polygon'
+        assert gen.polygon is not None, 'every generator must be assigned a polygon'
 
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))
@@ -35,15 +35,15 @@ def _sim(context, date_range):
     demand_copy = context.demand.copy().values
     residual_demand = demand_copy.sum(axis=1)
 
-    for hr, date in enumerate(date_range):
-        hour_demand = demand_copy[hr]
-        residual_hour_demand = residual_demand[hr]
+    for hour, date in enumerate(date_range):
+        hour_demand = demand_copy[hour]
+        residual_hour_demand = residual_demand[hour]
 
         if context.verbose:
             print('STEP:', date)
             print('DEMAND:', {a: round(b, 2) for a, b in enumerate(hour_demand)})
 
-        _dispatch(context, hr, residual_hour_demand, gens, generation, spill)
+        _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
         if context.verbose:
             print('ENDSTEP:', date)
@@ -53,7 +53,7 @@ def _sim(context, date_range):
     context.spill = pd.DataFrame(index=date_range, data=spill)
 
 
-def _store_spills(context, hr, g, generators, spl):
+def _store_spills(context, hour, gen, generators, spl):
     """
     Store spills from a generator into any storage.
 
@@ -70,7 +70,7 @@ def _store_spills(context, hr, g, generators, spl):
     250.0
     """
     for other in list(g for g in generators if g.storage_p):
-        stored = other.store(hr, spl)
+        stored = other.store(hour, spl)
         spl -= stored
         if spl < 0 and math.isclose(spl, 0):
             spl = 0
@@ -79,11 +79,11 @@ def _store_spills(context, hr, g, generators, spl):
         # energy stored <= energy transferred, according to store's RTE
         if context.verbose:
             # show the energy transferred, not stored
-            print('STORE:', g.polygon, '->', other.polygon, '(%.1f)' % stored)
+            print('STORE:', gen.polygon, '->', other.polygon, '(%.1f)' % stored)
     return spl
 
 
-def _dispatch(context, hr, residual_hour_demand, gens, generation, spill):
+def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
     """Dispatch power from each generator in merit (list) order."""
     # async_demand is the maximum amount of the demand in this
     # hour that can be met from non-synchronous
@@ -93,13 +93,13 @@ def _dispatch(context, hr, residual_hour_demand, gens, generation, spill):
 
     for gidx, g in enumerate(gens):
         if not g.synchronous_p and async_demand < residual_hour_demand:
-            gen, spl = g.step(hr, async_demand)
+            gen, spl = g.step(hour, async_demand)
         else:
-            gen, spl = g.step(hr, residual_hour_demand)
+            gen, spl = g.step(hour, residual_hour_demand)
         assert gen < residual_hour_demand or \
             math.isclose(gen, residual_hour_demand), \
             "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, g)
-        generation[hr, gidx] = gen
+        generation[hour, gidx] = gen
 
         if not g.synchronous_p:
             async_demand -= gen
@@ -111,12 +111,12 @@ def _dispatch(context, hr, residual_hour_demand, gens, generation, spill):
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
-            print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hr, gidx],
+            print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hour, gidx],
                   'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
                   'async-demand: %.1f' % async_demand)
 
         if spl > 0:
-            spill[hr, gidx] = _store_spills(context, hr, g, gens, spl)
+            spill[hour, gidx] = _store_spills(context, hour, g, gens, spl)
 
 
 def run(context, starthour=None, endhour=None):

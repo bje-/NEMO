@@ -10,9 +10,9 @@
 from nemo import generators as tech
 
 
-def annuity_factor(t, r):
+def annuity_factor(lifetime, rate):
     """Return the annuity factor for lifetime t and interest rate r."""
-    return (1 - (1 / (1 + r) ** t)) / r
+    return (1 - (1 / (1 + rate) ** lifetime)) / rate
 
 
 class NullCosts():
@@ -274,8 +274,8 @@ class AETA2012_2030Mid(AETA2012_2030):
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw
         hightable = high.capcost_per_kw
-        for t in lowtable:
-            table[t] = lowtable[t] / 2 + hightable[t] / 2
+        for row in lowtable:
+            table[row] = lowtable[row] / 2 + hightable[row] / 2
 
 
 class AETA2013_2030Low(AETA2012_2030Low):
@@ -345,8 +345,8 @@ class AETA2013_2030Mid(AETA2012_2030):
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw
         hightable = high.capcost_per_kw
-        for t in lowtable:
-            table[t] = lowtable[t] / 2 + hightable[t] / 2
+        for row in lowtable:
+            table[row] = lowtable[row] / 2 + hightable[row] / 2
 
 
 class CEEM2016_2030(AETA2012_2030Mid):

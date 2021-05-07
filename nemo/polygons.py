@@ -32,7 +32,7 @@ for r in regions.All:
         assert round(sum(r.polygons.values())) == 1
 
 # Useful for testing
-wildcard = 31
+WILDCARD = 31
 
 # Vertices of the closed polygons (nb. must be closed)
 _polygons = {
@@ -97,10 +97,10 @@ _polygons = {
     43: ((146.426, -42.033), (149.052, -42.033), (149.052, -43.747), (146.426, -44), (146.426, -42.033)),
 }
 
-numpolygons = len(_polygons)
+NUMPOLYGONS = len(_polygons)
 
 # Table mapping polygon number to region.
-_region_table = [None] * (numpolygons + 1)
+_region_table = [None] * (NUMPOLYGONS + 1)
 for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
     for poly in rgn.polygons:
         _region_table[poly] = rgn
@@ -227,16 +227,16 @@ net = {1: {2: dist(1, 2), 3: dist(1, 3), 4: dist(1, 4)},
        42: {40: dist(42, 40), 43: dist(42, 43)},
        43: {41: dist(43, 41), 42: dist(43, 42)}}
 
-distances = np.zeros((numpolygons + 1, numpolygons + 1))
+distances = np.zeros((NUMPOLYGONS + 1, NUMPOLYGONS + 1))
 # mark row 0 and column 0 as unused (there is no polygon #0)
 distances[0] = np.nan
 distances[::, 0] = np.nan
-rows, cols = numpolygons + 1, numpolygons + 1
+rows, cols = NUMPOLYGONS + 1, NUMPOLYGONS + 1
 for p1 in range(1, rows):
     for p2 in range(1, cols):
         distances[p1, p2] = dist(p1, p2)
 
-existing_net = np.zeros((numpolygons + 1, numpolygons + 1))
+existing_net = np.zeros((NUMPOLYGONS + 1, NUMPOLYGONS + 1))
 # mark row 0 and column 0 as unused (there is no polygon #0)
 existing_net[0] = np.nan
 existing_net[::, 0] = np.nan
