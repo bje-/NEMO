@@ -107,7 +107,7 @@ class Context():
         assert n == len(caps), '%d != %d' % (n, len(caps))
 
     def __str__(self):
-        """A human-readable representation of the context."""
+        """Make a human-readable representation of the context."""
         s = ""
         if self.regions != regions.All:
             s += 'Regions: ' + str(self.regions) + '\n'
@@ -156,6 +156,7 @@ class Context():
         """A custom encoder for Context objects."""
 
         def default(self, o):
+            """Encode a Context object into JSON."""
             if isinstance(o, Context):
                 result = []
                 for g in o.generators:

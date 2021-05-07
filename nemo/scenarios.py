@@ -62,7 +62,7 @@ def _hydro():
 
 def replacement(context):
     """
-    The current NEM fleet, more or less.
+    Replace the current NEM fleet, more or less.
 
     >>> class C: pass
     >>> c = C()

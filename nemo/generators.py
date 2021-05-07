@@ -60,7 +60,7 @@ class Generator():
 
     def __init__(self, polygon, capacity, label=None):
         """
-        Base Generator constructor.
+        Construct a base Generator.
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
@@ -165,16 +165,16 @@ class Generator():
         return s
 
     def set_capacity(self, cap):
-        """Change the capacity of the generator to 'cap' GW."""
+        """Change the capacity of the generator to cap GW."""
         self.capacity = cap * 1000
 
     def __str__(self):
-        """A short string representation of the generator."""
+        """Return a short string representation of the generator."""
         return '%s (%s:%s), %s' \
             % (self.label, self.region(), self.polygon, str(self.capacity * ureg.MW))
 
     def __repr__(self):
-        """A representation of the generator."""
+        """Return a representation of the generator."""
         return self.__str__()
 
 
@@ -186,7 +186,7 @@ class TraceGenerator(Generator):
 
     def __init__(self, polygon, capacity, filename, column, label=None,
                  build_limit=None):
-        """Constructor for a TraceGenerator."""
+        """Construct a generator with a specified trace file."""
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
@@ -273,6 +273,7 @@ class CST(TraceGenerator):
         self.set_multiple(sm)
 
     def set_capacity(self, cap):
+        """Change the capacity of the generator to cap GW."""
         Generator.set_capacity(self, cap)
         self.maxstorage = self.capacity * self.shours
 
@@ -310,10 +311,12 @@ class CST(TraceGenerator):
         return generation, 0
 
     def reset(self):
+        """Reset the generator."""
         Generator.reset(self)
         self.stored = 0.5 * self.maxstorage
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
             ', solar mult %.2f' % self.sm + ', %dh storage' % self.shours
 
@@ -341,6 +344,7 @@ class Fuelled(Generator):
         self.runhours = 0
 
     def reset(self):
+        """Reset the generator."""
         Generator.reset(self)
         self.runhours = 0
 
@@ -353,6 +357,7 @@ class Fuelled(Generator):
         return power, 0
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Generator.summary(self, context) + ', ran %s hours' \
             % _thousands(self.runhours)
 
@@ -444,11 +449,13 @@ class PumpedHydro(Hydro):
         return power, 0
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
             ', ran %s hours' % _thousands(self.runhours) + \
             ', %s storage' % str(self.maxstorage * ureg.MWh)
 
     def reset(self):
+        """Reset the generator."""
         Fuelled.reset(self)
         self.stored = self.maxstorage * .5
         self.last_run = None
@@ -465,6 +472,7 @@ class Biofuel(Fuelled):
         Fuelled.__init__(self, polygon, capacity, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.bioenergy_price_per_gj * (3.6 / .31)  # 31% heat rate
         return vom + fuel_cost
@@ -482,6 +490,7 @@ class Biomass(Fuelled):
         self.heatrate = heatrate
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.bioenergy_price_per_gj * (3.6 / self.heatrate)
         return vom + fuel_cost
@@ -503,6 +512,7 @@ class Fossil(Fuelled):
         self.intensity = intensity
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Fuelled.summary(self, context) + ', %.1f Mt CO2' \
             % (sum(self.series_power.values()) * self.intensity / 1000000.)
 
@@ -518,6 +528,7 @@ class Black_Coal(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.coal_price_per_gj * 8.57
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
@@ -535,6 +546,7 @@ class OCGT(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 11.61
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
@@ -552,6 +564,7 @@ class CCGT(Fossil):
         Fossil.__init__(self, polygon, capacity, intensity, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 6.92
         total_opcost = vom + fuel_cost + self.intensity * costs.carbon
@@ -570,6 +583,7 @@ class CCS(Fossil):
         self.capture = capture
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Fossil.summary(self, context) + ', %.1f Mt captured' \
             % (sum(self.series_power.values()) * self.intensity / 1000000. * self.capture)
 
@@ -585,6 +599,7 @@ class Coal_CCS(CCS):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         # thermal efficiency 31.4% (AETA 2012)
         fuel_cost = costs.coal_price_per_gj * (3.6 / 0.314)
@@ -607,6 +622,7 @@ class CCGT_CCS(CCS):
         CCS.__init__(self, polygon, capacity, intensity, capture, label)
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         # thermal efficiency 43.1% (AETA 2012)
         fuel_cost = costs.gas_price_per_gj * (3.6 / 0.431)
@@ -628,6 +644,7 @@ class Diesel(Fossil):
         self.kwh_per_litre = kwh_per_litre
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         litres_per_mwh = (1 / self.kwh_per_litre) * 1000
         fuel_cost = costs.diesel_price_per_litre * litres_per_mwh
@@ -740,6 +757,7 @@ class Battery(Generator):
         return power, 0
 
     def reset(self):
+        """Reset the generator."""
         Generator.reset(self)
         self.runhours = 0
         self.chargehours = 0
@@ -747,22 +765,32 @@ class Battery(Generator):
         self.last_run = None
 
     def capcost(self, costs):
-        # capital cost of batteries has power and energy components
-        # $400/kW and $400/kWh respectively
+        """Return the annual capital cost.
+
+        Capital cost of batteries has power and energy components. Set
+        to $400/kW and $400/kWh, initially.
+        """
         power = 400 * self.capacity * 1000
         energy = 400 * self.maxstorage * 1000
         return power + energy
 
     def fixed_om_costs(self, costs):
-        # fixed O&M of $28/kW/yr
+        """Return the fixed O&M costs.
+
+        Assume $20/kW/yr.
+        """
         fom = 28 * self.capacity * 1000
         return fom
 
     def opcost_per_mwh(self, costs):
-        # per-kWh costs for batteries are included in capital costs
+        """Return the variable O&M costs.
+
+        Per-kWh costs for batteries are included in the capital cost.
+        """
         return 0
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
             ', ran %s hours' % _thousands(self.runhours) + \
             ', charged %s hours' % _thousands(self.chargehours) + \
@@ -837,14 +865,17 @@ class DemandResponse(Generator):
         return power, 0
 
     def reset(self):
+        """Reset the generator."""
         Generator.reset(self)
         self.runhours = 0
         self.maxresponse = 0
 
     def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
         return self.cost_per_mwh
 
     def summary(self, context):
+        """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
             ', max response %d MW' % self.maxresponse + \
             ', ran %s hours' % _thousands(self.runhours)
@@ -899,7 +930,7 @@ class HydrogenStorage():
 
     def full_p(self):
         """
-        Is the storage full?
+        Return True if the storage is full.
 
         >>> h = HydrogenStorage(1000, 'test')
         >>> h.full_p()
@@ -1022,6 +1053,7 @@ class HydrogenGT(Fuelled):
         self.efficiency = efficiency
 
     def step(self, hr, demand):
+        """Step method for hydrogen comubstion turbine generators."""
         # calculate hydrogen requirement
         h = min(self.capacity, demand) / self.efficiency
         # discharge that amount of hydrogen
