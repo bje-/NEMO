@@ -57,7 +57,22 @@ def _legend(context):
 
 
 def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
-    """Produce a pretty plot of supply and demand."""
+    """Produce a pretty plot of supply and demand.
+
+    >>> import os
+    >>> from nemo import context, scenarios, sim
+    >>> c = context.Context()
+    >>> scenarios.ccgt(c)
+    >>> sim.run(c)
+    >>> plot(c, spills=True, filename='foo.png', showlegend=True)
+    >>> os.unlink('foo.png')
+
+    # Double the generator list so that there are >20 generators.
+    >>> c.generators *= 2
+    >>> sim.run(c)
+    >>> plot(c, spills=True, filename='foo.png', showlegend=True)
+    >>> os.unlink('foo.png')
+    """
     # aggregate demand
     demand = context.demand.sum(axis=1)
 

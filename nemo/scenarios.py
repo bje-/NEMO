@@ -167,8 +167,6 @@ def re100(context):
                                     configfile.get('generation', 'wind-trace'),
                                     poly - 1, build_limit=polygons.wind_limit[poly],
                                     label='polygon %d wind' % poly))
-        else:  # pragma: no cover
-            raise ValueError(g)
     context.generators = result
 
 
