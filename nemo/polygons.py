@@ -100,8 +100,8 @@ _polygons = {
 
 NUMPOLYGONS = len(_polygons)
 
-# Table mapping polygon number to region.
-_region_table = [None] * (NUMPOLYGONS + 1)
+# Dictionary mapping polygon number to region.
+_region_table = {}
 for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
     for poly in rgn.polygons:
         _region_table[poly] = rgn
