@@ -43,6 +43,7 @@ lint:
 	pylava --ignore=E501 $(LINTSRC)
 	vulture --min-confidence=100 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
+	pydocstyle $(LINTSRC)
 
 coveralls:
 	coveralls
