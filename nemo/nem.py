@@ -21,7 +21,7 @@ from nemo import configfile, polygons, regions
 # demand file now dictates the number of timesteps in the simulation.
 
 url = configfile.get('demand', 'demand-trace')
-with urllib.request.urlopen(url) as urlobj:
+with urllib.request.urlopen(url) as urlobj:  # nosec
     demand = pd.read_csv(urlobj, comment='#', sep=',',
                          parse_dates=[['Date', 'Time']], index_col='Date_Time')
 
