@@ -7,12 +7,12 @@
 
 """Utility functions (eg, plotting)."""
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
 import pint
+from matplotlib.patches import Patch
+from pandas.plotting import register_matplotlib_converters
 
 from nemo import configfile
 from nemo.configfile import configparser

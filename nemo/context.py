@@ -15,22 +15,15 @@ run. It also allows multiple contexts to be compared after individual
 simulation runs.
 """
 
+import json
 import re
 
-import json
 import numpy as np
 import pandas as pd
 import pint
 
-from nemo import configfile
-from nemo import costs
-from nemo import generators
-from nemo import regions
-from nemo import polygons
-
-from nemo.nem import startdate
-from nemo.nem import hourly_regional_demand
-from nemo.nem import hourly_demand
+from nemo import configfile, costs, generators, polygons, regions
+from nemo.nem import hourly_demand, hourly_regional_demand, startdate
 
 ureg = pint.UnitRegistry()
 ureg.default_format = '.2f~P'

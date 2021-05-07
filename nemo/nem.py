@@ -8,15 +8,14 @@
 
 """A National Electricity Market (NEM) simulation."""
 
-import urllib.request
 import urllib.error
 import urllib.parse
+import urllib.request
+
 import numpy as np
 import pandas as pd
 
-from nemo import configfile
-from nemo import regions
-from nemo import polygons
+from nemo import configfile, polygons, regions
 
 # Demand is in 30 minute intervals. NOTE: the number of rows in the
 # demand file now dictates the number of timesteps in the simulation.

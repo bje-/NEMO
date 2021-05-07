@@ -8,8 +8,10 @@
 """The core of the simulation engine."""
 
 import math
+
 import numpy as np
 import pandas as pd
+
 from nemo import regions
 
 

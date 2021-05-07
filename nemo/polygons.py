@@ -9,7 +9,8 @@
 
 """Support code for the 43 polygons of the AEMO study."""
 
-from math import atan2, sin, cos, radians, sqrt
+from math import atan2, cos, radians, sin, sqrt
+
 import numpy as np
 
 from nemo import regions

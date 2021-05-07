@@ -9,12 +9,10 @@
 
 """Supply side scenarios."""
 
-from nemo import configfile
-from nemo import generators
-from nemo import polygons
+from nemo import configfile, generators, polygons, regions
+from nemo.generators import (Biofuel, CentralReceiver, Hydro, PumpedHydro,
+                             PV1Axis, Wind)
 from nemo.polygons import WILDCARD
-from nemo import regions
-from nemo.generators import CentralReceiver, Wind, PV1Axis, Hydro, PumpedHydro, Biofuel
 
 
 def _demand_response():

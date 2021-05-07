@@ -14,16 +14,15 @@
 # pylint: disable=invalid-name
 
 import locale
-
-import urllib.request
 import urllib.error
 import urllib.parse
+import urllib.request
+
 import numpy as np
-from matplotlib.patches import Patch
 import pint
+from matplotlib.patches import Patch
 
 from nemo import polygons
-
 
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
