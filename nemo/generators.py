@@ -10,6 +10,8 @@
 """Simulated electricity generators for the NEMO framework."""
 
 # pylint: disable=too-many-lines
+# We use class names here that upset Pylint.
+# pylint: disable=invalid-name
 
 import locale
 

@@ -91,17 +91,17 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
     # value must be spilled.
     async_demand = residual_hour_demand * context.nsp_limit
 
-    for gidx, g in enumerate(gens):
-        if not g.synchronous_p and async_demand < residual_hour_demand:
-            gen, spl = g.step(hour, async_demand)
+    for gidx, generator in enumerate(gens):
+        if not generator.synchronous_p and async_demand < residual_hour_demand:
+            gen, spl = generator.step(hour, async_demand)
         else:
-            gen, spl = g.step(hour, residual_hour_demand)
+            gen, spl = generator.step(hour, residual_hour_demand)
         assert gen < residual_hour_demand or \
             math.isclose(gen, residual_hour_demand), \
-            "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, g)
+            "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, generator)
         generation[hour, gidx] = gen
 
-        if not g.synchronous_p:
+        if not generator.synchronous_p:
             async_demand -= gen
             assert async_demand > 0 or math.isclose(async_demand, 0)
             async_demand = max(0, async_demand)
@@ -111,12 +111,14 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
-            print('GENERATOR: %s,' % g, 'generation: %.1f' % generation[hour, gidx],
-                  'spill: %.1f' % spl, 'residual-demand: %.1f' % residual_hour_demand,
+            print('GENERATOR: %s,' % generator,
+                  'generation: %.1f' % generation[hour, gidx],
+                  'spill: %.1f' % spl,
+                  'residual-demand: %.1f' % residual_hour_demand,
                   'async-demand: %.1f' % async_demand)
 
         if spl > 0:
-            spill[hour, gidx] = _store_spills(context, hour, g, gens, spl)
+            spill[hour, gidx] = _store_spills(context, hour, generator, gens, spl)
 
 
 def run(context, starthour=None, endhour=None):

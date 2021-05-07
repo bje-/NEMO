@@ -6,6 +6,9 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
+# We use class names here that upset Pylint.
+# pylint: disable=invalid-name
+
 """Generation technology costs."""
 from nemo import generators as tech
 

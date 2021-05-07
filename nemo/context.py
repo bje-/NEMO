@@ -39,6 +39,7 @@ ureg.default_format = '.2f~P'
 class Context():
     """All simulation state is kept in a Context object."""
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         """Initialise a default context."""
         self.verbose = False

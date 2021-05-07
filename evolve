@@ -211,16 +211,16 @@ if context.min_regional_generation > 0:
 def cost(ctx):
     """Sum up the costs."""
     score = 0
-    for g in ctx.generators:
-        score += (g.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
-            + g.opcost(ctx.costs)
+    for gen in ctx.generators:
+        score += (gen.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
+            + gen.opcost(ctx.costs)
 
     # Run through all of the penalty functions.
     penalty, reason = 0, 0
     for penaltyfn in penaltyfns:
-        p, r = penaltyfn(ctx, args)
-        penalty += p
-        reason |= r
+        pvalue, rcode = penaltyfn(ctx, args)
+        penalty += pvalue
+        reason |= rcode
 
     score /= ctx.total_demand()
     penalty /= ctx.total_demand()
@@ -299,12 +299,12 @@ def run():
                 print(label, end=' ')
         print()
 
-    with open(args.output, 'w') as f:
+    with open(args.output, 'w') as filehandle:
         bundle = {'options': vars(args),
                   'parameters': [max(0, cap) for cap in hof[0]],
                   'score': score, 'penalty': penalty,
                   'constraints_violated': constraints_violated}
-        json.dump(bundle, f)
+        json.dump(bundle, filehandle)
     print('Done')
 
 

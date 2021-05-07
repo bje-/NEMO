@@ -33,8 +33,7 @@ class SuperGenerator(generators.Generator):
         self.energy = 0
         self.runhours = 0
 
-    # pylint: disable=unused-argument
-    def step(self, hr, demand):
+    def step(self, _, demand):
         """Step the super generator."""
         self.runhours += 1
         self.energy += demand

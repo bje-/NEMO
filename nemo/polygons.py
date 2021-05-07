@@ -137,6 +137,7 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
 
 def _centroid(vertices):
     """Find the centroid of a polygon."""
+    # pylint: disable=invalid-name
     # Ensure the polygon is closed
     assert vertices[0] == vertices[-1]
     thesum = 0
@@ -162,6 +163,7 @@ def dist(poly1, poly2):
     True
     """
     # Code adapted from Chris Veness
+    # pylint: disable=invalid-name
     radius = 6371  # km
     point1 = centroids[poly1]
     point2 = centroids[poly2]
