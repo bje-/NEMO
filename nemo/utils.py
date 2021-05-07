@@ -40,7 +40,7 @@ def _legend(context):
     if len(gens) > 20:
         unique = []
         for gen in gens:
-            if type(gen) not in unique:  # pylint: disable=unidiomatic-typecheck
+            if type(gen) not in unique:
                 unique.append(type(gen))
                 labels.append(gen.__class__.__name__)
                 patches.append(gen.patch)

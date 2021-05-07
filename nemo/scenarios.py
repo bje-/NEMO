@@ -363,7 +363,6 @@ def re100_south_aus(context):
 def theworks(context):
     """All technologies."""
     re100(context)
-    # pylint: disable=redefined-outer-name
     egs = generators.Geothermal_EGS(WILDCARD, 0,
                                     configfile.get('generation', 'egs-geothermal-trace'), 38)
     hsa = generators.Geothermal_HSA(WILDCARD, 0,
