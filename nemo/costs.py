@@ -19,7 +19,6 @@ class NullCosts():
     """All costs are zero. Useful for debugging."""
 
     class _ZeroDict(dict):
-
         """Return 0 for any key."""
 
         def __getitem__(self, key):
@@ -41,7 +40,6 @@ class NullCosts():
 
 
 class APGTR2015():
-
     """Australian Power Generation Technology Report costs in 2015.
 
     Source: CO2CRC Australian Power Generation Technology Report (2015)
@@ -134,7 +132,6 @@ class APGTR2030(APGTR2015):
 
 
 class AETA2012_2030():
-
     """Australian Energy Technology Assessment (2012) costs for 2030.
 
     Source: BREE AETA report (2012), bree.gov.au
@@ -328,7 +325,6 @@ class AETA2013_2030High(AETA2012_2030High):
 
 
 class AETA2013_2030Mid(AETA2012_2030):
-
     """AETA (2013) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
@@ -354,7 +350,6 @@ class AETA2013_2030Mid(AETA2012_2030):
 
 
 class CEEM2016_2030(AETA2012_2030Mid):
-
     """
     CEEM 2016 custom costs.
 
@@ -364,7 +359,6 @@ class CEEM2016_2030(AETA2012_2030Mid):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-
         """Construct a cost object given discount rate, coal, gas and CCS costs.
 
         >>> obj = CEEM2016_2030(0.05, 1.00, 9.00, 30)

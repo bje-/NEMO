@@ -53,7 +53,6 @@ class Region():
         >>> sa is sacopy
         True
         """
-
         return self
 
     def __deepcopy__(self, _):
