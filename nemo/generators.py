@@ -1018,9 +1018,8 @@ class Electrolyser(Generator):
         """Return 0 as this is not a generator."""
         return 0, 0
 
-    def store(self, hour, power):
+    def store(self, _, power):
         """Store power."""
-        # pylint: disable=unused-argument
         power = min(power, self.capacity)
         stored = self.tank.charge(power * self.efficiency)
         return stored / self.efficiency
