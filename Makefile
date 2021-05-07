@@ -16,7 +16,7 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 --costs=AETA2013-in2030-high -v > /dev/null
 	$(COVRUN) evolve -s nonexistent 2> /dev/null > /dev/null || true
 	$(COVRUN) evolve --costs=nonexistent 2> /dev/null > /dev/null || true
-	$(COVRUN) replay -f replay.json -x -v -v > /dev/null
+	$(COVRUN) replay -f replay.json -v -v > /dev/null
 	$(COVRUN) replay -f replay-noscenario.json -v > /dev/null || true
 	$(COVRUN) replay -f replay-nocost.json -v > /dev/null || true
 	rm trace.out results.json
