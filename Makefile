@@ -35,8 +35,13 @@ replay-noscenario.json: replay.json
 replay-nocost.json: replay.json
 	sed 's/Null/noexist/' < $< > $@
 
-nemo.prof:
-	python3 -m cProfile -o $@ stub.py
+stub.py:
+	printf 'import nemo' > $@
+	printf 'c = nemo.Context()' >> $@
+	printf 'nemo.run(c)' >> $@
+
+nemo.prof: stub.py
+	python3 -m cProfile -o $@ $<
 
 prof: nemo.prof
 	snakeviz $<
@@ -73,4 +78,4 @@ clean:
 	-rm -r dist build *.egg-info
 	-rm -r .coverage htmlcov
 	-rm replay.json replay-noscenario.json replay-nocost.json
-	-rm *.pyc tests/*.pyc nemo.prof stub.py.lprof
+	-rm *.pyc tests/*.pyc nemo.prof stub.py stub.py.lprof
