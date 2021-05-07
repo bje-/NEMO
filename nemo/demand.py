@@ -12,7 +12,14 @@ import pandas as pd
 
 
 def roll(label):
-    """roll:X rolls the load by X timesteps."""
+    """roll:X rolls the load by X timesteps.
+
+    >>> roll("roll:3")  # doctest: +ELLIPSIS
+    <function roll.<locals>.<lambda> at ...>
+    >>> roll("junk string")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('roll:')
 
     # label form: "roll:X" rolls the load by X timesteps
@@ -22,7 +29,14 @@ def roll(label):
 
 
 def scale(label):
-    """scale:X scales all of the load uniformly by X%."""
+    """scale:X scales all of the load uniformly by X%.
+
+    >>> scale("scale:10")  # doctest: +ELLIPSIS
+    <function scale.<locals>.<lambda> at ...>
+    >>> scale("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('scale:')
 
     _, factor = label.split(':')
@@ -31,7 +45,20 @@ def scale(label):
 
 
 def scalex(label):
-    """scalex:H1:H2:X scales hours H1 to H2 by X%."""
+    """scalex:H1:H2:X scales hours H1 to H2 by X%.
+
+    >>> scalex("scalex:8:12:10")  # doctest: +ELLIPSIS
+    <function scalex.<locals>.<lambda> at ...>
+    >>> scalex("scalex:10:30:5")
+    Traceback (most recent call last):
+    ValueError: hour > 24
+    >>> scalex("scalex:12:8:5")
+    Traceback (most recent call last):
+    ValueError: to_hour comes before from_hour
+    >>> scalex("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('scalex:')
 
     _, hour1, hour2, factor = label.split(':')
@@ -49,7 +76,14 @@ def scalex(label):
 
 
 def scaletwh(label):
-    """scaletwh:N scales demand to N TWh."""
+    """scaletwh:N scales demand to N TWh.
+
+    >>> scaletwh("scaletwh:100")  # doctest: +ELLIPSIS
+    <function scaletwh.<locals>.<lambda> at ...>
+    >>> scaletwh("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('scaletwh:')
 
     _, val = label.split(':')
@@ -58,7 +92,14 @@ def scaletwh(label):
 
 
 def shift(label):
-    """shift:N:H1:H2 shifts N MW of daily load from H1 to H2."""
+    """shift:N:H1:H2 shifts N MW of daily load from H1 to H2.
+
+    >>> shift("shift:3:10:14")  # doctest: +ELLIPSIS
+    <function shift.<locals>.<lambda> at ...>
+    >>> shift("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('shift:')
     _, demand, hour1, hour2 = label.split(':')
     demand = int(demand)
@@ -72,7 +113,14 @@ def shift(label):
 
 
 def peaks(label):
-    """peaks:N:X reduces demand peaks over N MW by X%."""
+    """peaks:N:X reduces demand peaks over N MW by X%.
+
+    >>> peaks("peaks:5:10")  # doctest: +ELLIPSIS
+    <function peaks.<locals>.<lambda> at ...>
+    >>> peaks("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('peaks:')
     _, power, factor = label.split(':')
     power = int(power)
@@ -81,7 +129,14 @@ def peaks(label):
 
 
 def npeaks(label):
-    """npeaks:N:X adjusts top N demand peaks by X%."""
+    """npeaks:N:X adjusts top N demand peaks by X%.
+
+    >>> npeaks("npeaks:5:10")  # doctest: +ELLIPSIS
+    <function npeaks.<locals>.<lambda> at ...>
+    >>> npeaks("junkstring")
+    Traceback (most recent call last):
+    AssertionError
+    """
     assert label.startswith('npeaks:')
     _, topn, factor = label.split(':')
     topn = int(topn)
@@ -90,7 +145,11 @@ def npeaks(label):
 
 
 def unchanged(_):
-    """No demand modification."""
+    """No demand modification.
+
+    >>> unchanged("any")  # doctest: +ELLIPSIS
+    <function unchanged.<locals>.<lambda> at ...>
+    """
     return lambda context: context
 
 
@@ -112,41 +171,47 @@ def switch(label):
 
     >>> switch('unchanged')	  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('roll:10')      # doctest: +ELLIPSIS
+
+    >>> switch('roll:10')  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('scale:5')    # doctest: +ELLIPSIS
+
+    >>> switch('scale:5')  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('scalex:0:10:5')    # doctest: +ELLIPSIS
+
+    >>> switch('scalex:0:10:5')  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('shift:100:10:12') # doctest: +ELLIPSIS
+
+    >>> switch('shift:100:10:12')  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('shift:100:-2:12')
+
+    >>> switch('shift:100:-2:12')  # doctest: +ELLIPSIS
     Traceback (most recent call last):
-      ...
     ValueError: hour < 0
-    >>> switch('shift:100:12:25')
+
+    >>> switch('shift:100:12:25')  # doctest: +ELLIPSIS
     Traceback (most recent call last):
-      ...
     ValueError: hour > 24
-    >>> switch('scalex:-1:12:20')
+
+    >>> switch('scalex:-1:12:20')  # doctest: +ELLIPSIS
     Traceback (most recent call last):
-      ...
     ValueError: hour < 0
-    >>> switch('scalex:12:25:20')
+
+    >>> switch('scalex:12:25:20')  # doctest: +ELLIPSIS
     Traceback (most recent call last):
-      ...
     ValueError: hour > 24
-    >>> switch('scalex:20:8:20')
+
+    >>> switch('scalex:20:8:20')  # doctest: +ELLIPSIS
     Traceback (most recent call last):
-      ...
     ValueError: to_hour comes before from_hour
-    >>> switch('peaks:10:34000') # doctest: +ELLIPSIS
+
+    >>> switch('peaks:10:34000')  # doctest: +ELLIPSIS
     <function ...>
-    >>> switch('npeaks:10:5') # doctest: +ELLIPSIS
+
+    >>> switch('npeaks:10:5')  # doctest: +ELLIPSIS
     <function ...>
+
     >>> switch('foo')
     Traceback (most recent call last):
-      ...
     ValueError: invalid scenario: foo
     """
     for (predicate, callback) in switch_table:

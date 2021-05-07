@@ -123,7 +123,7 @@ class Generator():
         Capacity factor of this generator (in %).
 
         >>> g = Generator(1, 0, 'label')
-        >>> g.capfactor()  # doctest: +ELLIPSIS
+        >>> g.capfactor()
         nan
         """
         supplied = sum(self.series_power.values())
@@ -988,9 +988,8 @@ class Electrolyser(Generator):
         the capacity of the electrolyser (in MW) and electrolysis
         conversion efficiency.
 
-        >>> e = Electrolyser(None, 1, 100, 'test')	# doctest: +ELLIPSIS
+        >>> e = Electrolyser(None, 1, 100, 'test')
         Traceback (most recent call last):
-          ...
         AssertionError
         >>> h = HydrogenStorage(400, 'test')
         >>> e = Electrolyser(h, 1, 100, efficiency=1.0)

@@ -131,7 +131,6 @@ def run(context, starthour=None, endhour=None):
     >>> c.regions = None
     >>> run(c)
     Traceback (most recent call last):
-      ...
     ValueError: regions is not a list
     """
     if not isinstance(context.regions, list):
