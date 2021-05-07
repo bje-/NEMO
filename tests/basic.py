@@ -19,7 +19,6 @@ from nemo import generators
 
 
 class SuperGenerator(generators.Generator):
-
     """A synthetic generator that can always meet demand."""
 
     def __init__(self, capacity):
@@ -46,7 +45,6 @@ class SuperGenerator(generators.Generator):
 
 
 class TestSequenceFunctions(unittest.TestCase):
-
     """Basic tests for now."""
 
     def setUp(self):
