@@ -171,7 +171,8 @@ class Generator():
     def __str__(self):
         """Return a short string representation of the generator."""
         return '%s (%s:%s), %s' \
-            % (self.label, self.region(), self.polygon, str(self.capacity * ureg.MW))
+            % (self.label, self.region(), self.polygon,
+               str(self.capacity * ureg.MW))
 
     def __repr__(self):
         """Return a representation of the generator."""
@@ -196,7 +197,8 @@ class TraceGenerator(Generator):
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
             with urllib.request.urlopen(filename) as urlobj:  # nosec
-                self.__class__.csvdata = np.genfromtxt(urlobj, comments='#', delimiter=',')
+                self.__class__.csvdata = np.genfromtxt(urlobj, comments='#',
+                                                       delimiter=',')
             self.__class__.csvdata = np.maximum(0, self.__class__.csvdata)
             self.__class__.csvfilename = filename
         self.generation = self.__class__.csvdata[::, column]
@@ -318,7 +320,8 @@ class CST(TraceGenerator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            ', solar mult %.2f' % self.solarmult + ', %dh storage' % self.shours
+            ', solar mult %.2f' % self.solarmult + \
+            ', %dh storage' % self.shours
 
 
 class ParabolicTrough(CST):
@@ -676,7 +679,8 @@ class Battery(Generator):
         self.setters += [(self.set_storage, 0, 10000)]
         self.maxstorage = maxstorage
         self.stored = 0
-        self.discharge_hours = discharge_hours if discharge_hours is not None else range(24)
+        self.discharge_hours = discharge_hours \
+            if discharge_hours is not None else range(24)
         self.rte = rte
         self.storage_p = True
         self.last_run = None
@@ -718,7 +722,8 @@ class Battery(Generator):
         """
         Specialised step method for batteries.
 
-        >>> b = Battery(polygons.WILDCARD, 400, 1000, discharge_hours=range(18, 24), rte=1.0)
+        >>> b = Battery(polygons.WILDCARD, 400, 1000, \
+                        discharge_hours=range(18, 24), rte=1.0)
         >>> b.stored = 400
 
         Cannot discharge outside of discharge hours.

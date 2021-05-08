@@ -118,27 +118,33 @@ class Context():
         string += 'Unused surplus energy: {}\n'.format(surplus_energy)
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
-            string += 'Timesteps with unused surplus energy: %d\n' % len(spill_series)
+            string += 'Timesteps with unused surplus energy: '
+            string += '%d\n' % len(spill_series)
 
         if self.unserved.empty:
             string += 'No unserved energy'
         else:
-            string += 'Unserved energy: %.3f%%' % self.unserved_percent() + '\n'
+            string += 'Unserved energy: '
+            string += '%.3f%%' % self.unserved_percent() + '\n'
             if self.unserved_percent() > self.relstd * 1.001:
                 string += 'WARNING: reliability standard exceeded\n'
             string += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
 
             # A subtle trick: generate a date range and then substract
             # it from the timestamps of unserved events.  This will
-            # produce a run of time detlas (for each consecutive hour,
+            # produce a run of time deltas (for each consecutive hour,
             # the time delta between this timestamp and the
             # corresponding row from the range will be
             # constant). Group by the deltas.
-            rng = pd.date_range(self.unserved.index[0], periods=len(self.unserved.index), freq='H')
-            unserved_events = [k for k, g in self.unserved.groupby(self.unserved.index - rng)]
-            string += 'Number of unserved energy events: ' + str(len(unserved_events)) + '\n'
+            date_range = pd.date_range(self.unserved.index[0],
+                                       periods=len(self.unserved.index),
+                                       freq='H')
+            deltas = self.unserved.groupby(self.unserved.index - date_range)
+            unserved_events = [k for k, g in deltas]
+            string += 'Number of unserved energy events: '
+            string += str(len(unserved_events)) + '\n'
             if not self.unserved.empty:
-                usmin = (self.unserved.min() * ureg.MW).to_compact()
-                usmax = (self.unserved.max() * ureg.MW).to_compact()
-                string += 'Shortfalls (min, max): ({}, {})'.format(usmin, usmax)
+                umin = (self.unserved.min() * ureg.MW).to_compact()
+                umax = (self.unserved.max() * ureg.MW).to_compact()
+                string += 'Shortfalls (min, max): ({}, {})'.format(umin, umax)
         return string

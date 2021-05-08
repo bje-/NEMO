@@ -32,7 +32,7 @@ def _generator_list(context):
 
 def _legend(context):
     """Draw the legend."""
-    # ::-1 slicing reverses the list so that the legend appears in "merit order".
+    # ::-1 slicing reverses the list so that the legend appears in merit order
     gens = _generator_list(context)[::-1]
     labels = []
     patches = []
@@ -46,8 +46,8 @@ def _legend(context):
                 patches.append(gen.patch)
     else:
         for gen in gens:
-            capacity = (gen.capacity * ureg.MW)
-            labels.append(gen.label + ' ({:.2f~P})'.format(capacity.to_compact()))
+            capacity = (gen.capacity * ureg.MW).to_compact()
+            labels.append(gen.label + ' ({:.2f~P})'.format(capacity))
             patches.append(gen.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,
@@ -84,7 +84,8 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
         title = 'Supply/demand balance'
     try:
         title += '\n' + configfile.get('plot', 'subtitle')
-    except (configfile.configparser.NoSectionError, configfile.configparser.NoOptionError):
+    except (configfile.configparser.NoSectionError,
+            configfile.configparser.NoOptionError):
         pass
     plt.suptitle(title)
 
@@ -112,11 +113,13 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
 
     if spills:
         prev = demand.copy()
-        for gen in list(g for g in context.generators if g.region() in context.regions):
+        for gen in list(g for g in context.generators if
+                        g.region() in context.regions):
             idx = context.generators.index(gen)
             accum += context.spill[idx]
             plt.plot(accum.index, accum, color='black', linewidth=0.5)
-            plt.fill_between(prev.index, prev, accum, facecolor=gen.patch.get_fc(), alpha=0.3)
+            plt.fill_between(prev.index, prev, accum,
+                             facecolor=gen.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
 
     plt.gca().set_xlim(xlim)  # set_xlim accepts None

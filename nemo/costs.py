@@ -55,7 +55,7 @@ class APGTR2015():
         """Construct a cost object given discount rate, coal, gas and CCS costs."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
-        # bioenergy costs are taken from the CSIRO energy storage report for AEMO
+        # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price

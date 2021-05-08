@@ -23,7 +23,7 @@ class SuperGenerator(generators.Generator):
 
     def __init__(self, capacity):
         """Create a super generator."""
-        generators.Generator.__init__(self, polygons.WILDCARD, capacity, 'super')
+        generators.Generator.__init__(self, polygons.WILDCARD, capacity)
         self.energy = 0
         self.runhours = 0
 
@@ -60,7 +60,8 @@ class TestSequenceFunctions(unittest.TestCase):
         """Demand equals approx. 204 TWh."""
         self.context.generators = []
         nemo.run(self.context)
-        self.assertEqual(math.trunc(self.context.total_demand() / pow(10., 6)), 204)
+        total_demand = math.trunc(self.context.total_demand() / pow(10., 6))
+        self.assertEqual(total_demand, 204)
 
     def test_003(self):
         """Power system with no generators meets none of the demand."""
@@ -74,7 +75,9 @@ class TestSequenceFunctions(unittest.TestCase):
         ccgt = generators.CCGT(polygons.WILDCARD, 100)
         self.context.generators = [ccgt]
         nemo.run(self.context)
-        self.assertEqual(sum(ccgt.series_power.values()), self.context.timesteps * 100)
+        total_generation = sum(ccgt.series_power.values())
+        expected_generation = self.context.timesteps * 100
+        self.assertEqual(total_generation, expected_generation)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0

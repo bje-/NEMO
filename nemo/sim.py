@@ -7,7 +7,7 @@
 
 """The core of the simulation engine."""
 
-import math
+from math import isclose
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,8 @@ def _sim(context, date_range):
     for gen in context.generators:
         gen.reset()
         # every generator must be assigned to a polygon
-        assert gen.polygon is not None, 'every generator must be assigned a polygon'
+        assert gen.polygon is not None, \
+            'every generator must be assigned a polygon'
 
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))
@@ -43,7 +44,8 @@ def _sim(context, date_range):
 
         if context.verbose:
             print('STEP:', date)
-            print('DEMAND:', {a: round(b, 2) for a, b in enumerate(hour_demand)})
+            print('DEMAND:', {a: round(b, 2) for a, b in
+                              enumerate(hour_demand)})
 
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
@@ -74,7 +76,7 @@ def _store_spills(context, hour, gen, generators, spl):
     for other in list(g for g in generators if g.storage_p):
         stored = other.store(hour, spl)
         spl -= stored
-        if spl < 0 and math.isclose(spl, 0):
+        if spl < 0 and isclose(spl, 0):
             spl = 0
         assert spl >= 0
 
@@ -99,17 +101,17 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         else:
             gen, spl = generator.step(hour, residual_hour_demand)
         assert gen < residual_hour_demand or \
-            math.isclose(gen, residual_hour_demand), \
+            isclose(gen, residual_hour_demand), \
             "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, generator)
         generation[hour, gidx] = gen
 
         if not generator.synchronous_p:
             async_demand -= gen
-            assert async_demand > 0 or math.isclose(async_demand, 0)
+            assert async_demand > 0 or isclose(async_demand, 0)
             async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
-        assert residual_hour_demand > 0 or math.isclose(residual_hour_demand, 0)
+        assert residual_hour_demand > 0 or isclose(residual_hour_demand, 0)
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
