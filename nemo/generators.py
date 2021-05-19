@@ -594,7 +594,8 @@ class CCS(Fossil):
 class Coal_CCS(CCS):
     """Coal with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85, label=None):
+    def __init__(self, polygon, capacity, intensity=0.8, capture=0.85,
+                 label=None):
         """Construct a coal CCS generator.
 
         Emissions capture rate is given in the range 0 to 1.
@@ -617,7 +618,8 @@ class Coal_CCS(CCS):
 class CCGT_CCS(CCS):
     """CCGT with CCS."""
 
-    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85, label=None):
+    def __init__(self, polygon, capacity, intensity=0.4, capture=0.85,
+                 label=None):
         """Construct a CCGT (with CCS) generator.
 
         Emissions capture rate is given in the range 0 to 1.
@@ -641,7 +643,8 @@ class Diesel(Fossil):
     patch = Patch(facecolor='dimgrey')
     """Colour for plotting"""
 
-    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3, label=None):
+    def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3,
+                 label=None):
         """Construct a diesel generator."""
         Fossil.__init__(self, polygon, capacity, intensity, label)
         self.kwh_per_litre = kwh_per_litre

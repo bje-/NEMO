@@ -83,7 +83,8 @@ def _store_spills(context, hour, gen, generators, spl):
         # energy stored <= energy transferred, according to store's RTE
         if context.verbose:
             # show the energy transferred, not stored
-            print('STORE:', gen.polygon, '->', other.polygon, '(%.1f)' % stored)
+            print('STORE:', gen.polygon, '->', end=' ')
+            print(other.polygon, '(%.1f)' % stored)
     return spl
 
 
@@ -102,7 +103,8 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             gen, spl = generator.step(hour, residual_hour_demand)
         assert gen < residual_hour_demand or \
             isclose(gen, residual_hour_demand), \
-            "generation (%.4f) > demand (%.4f) for %s" % (gen, residual_hour_demand, generator)
+            "generation (%.4f) > demand " % gen + \
+            "(%.4f) for %s" % (residual_hour_demand, generator)
         generation[hour, gidx] = gen
 
         if not generator.synchronous_p:
@@ -122,7 +124,8 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
                   'async-demand: %.1f' % async_demand)
 
         if spl > 0:
-            spill[hour, gidx] = _store_spills(context, hour, generator, gens, spl)
+            spill[hour, gidx] = \
+                _store_spills(context, hour, generator, gens, spl)
 
 
 def run(context, starthour=None, endhour=None):

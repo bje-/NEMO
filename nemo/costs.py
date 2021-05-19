@@ -52,7 +52,7 @@ class APGTR2015():
     escalation = 1.0
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        """Construct a cost object."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
@@ -118,7 +118,7 @@ class APGTR2030(APGTR2015):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        """Construct a cost object."""
         APGTR2015.__init__(self, discount, coal_price, gas_price, ccs_price)
 
         # Modify the capital costs in APGTR2015 by specified learning rates.
@@ -144,10 +144,10 @@ class AETA2012_2030():
     escalation = 1.171
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object given discount rate, coal, gas and CCS costs."""
+        """Construct a cost object."""
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
-        # bioenergy costs are taken from the CSIRO energy storage report for AEMO
+        # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
@@ -235,7 +235,7 @@ class AETA2012_2030High(AETA2012_2030):
     """AETA (2012) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = AETA2012_2030High(0.05, 1.00, 9.00, 30)
         """
@@ -262,15 +262,17 @@ class AETA2012_2030Mid(AETA2012_2030):
     """AETA (2012) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = AETA2012_2030Mid(0.05, 1.00, 9.00, 30)
         """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
 
-        low = AETA2012_2030Low(discount, coal_price, gas_price, ccs_storage_costs)
-        high = AETA2012_2030High(discount, coal_price, gas_price, ccs_storage_costs)
+        low = AETA2012_2030Low(discount, coal_price, gas_price,
+                               ccs_storage_costs)
+        high = AETA2012_2030High(discount, coal_price, gas_price,
+                                 ccs_storage_costs)
         assert low.opcost_per_mwh == high.opcost_per_mwh
         assert low.fixed_om_costs == high.fixed_om_costs
 
@@ -285,7 +287,7 @@ class AETA2013_2030Low(AETA2012_2030Low):
     """AETA (2013 update) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = AETA2013_2030Low(0.05, 1.00, 9.00, 30)
         """
@@ -308,7 +310,7 @@ class AETA2013_2030High(AETA2012_2030High):
     """AETA (2013 update) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = AETA2013_2030High(0.05, 1.00, 9.00, 30)
         """
@@ -331,15 +333,17 @@ class AETA2013_2030Mid(AETA2012_2030):
     """AETA (2013) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = AETA2013_2030Mid(0.05, 1.00, 9.00, 30)
         """
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
 
-        low = AETA2013_2030Low(discount, coal_price, gas_price, ccs_storage_costs)
-        high = AETA2013_2030High(discount, coal_price, gas_price, ccs_storage_costs)
+        low = AETA2013_2030Low(discount, coal_price, gas_price,
+                               ccs_storage_costs)
+        high = AETA2013_2030High(discount, coal_price, gas_price,
+                                 ccs_storage_costs)
         assert low.opcost_per_mwh == high.opcost_per_mwh
         self.opcost_per_mwh = low.opcost_per_mwh
         assert low.fixed_om_costs == high.fixed_om_costs
@@ -362,7 +366,7 @@ class CEEM2016_2030(AETA2012_2030Mid):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object given discount rate, coal, gas and CCS costs.
+        """Construct a cost object.
 
         >>> obj = CEEM2016_2030(0.05, 1.00, 9.00, 30)
         """
