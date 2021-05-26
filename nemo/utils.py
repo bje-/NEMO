@@ -27,7 +27,8 @@ ureg = pint.UnitRegistry()
 
 def _generator_list(context):
     """Return a list of the generators of interest in this run."""
-    return [g for g in context.generators if g.region() in context.regions and g.capacity > 0]
+    return [g for g in context.generators
+            if g.region() in context.regions and g.capacity > 0]
 
 
 def _legend(context):
