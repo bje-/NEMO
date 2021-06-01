@@ -55,9 +55,9 @@ flake8:
 LINTSRC=evolve replay $(wildcard *.py nemo/*.py tests/*.py)
 
 lint:	flake8
-	pylint --disable=E1120,E1123,E1124 $(LINTSRC)
-	pylama --ignore=E501 $(LINTSRC)
-	pylava --ignore=E501 $(LINTSRC)
+	pylint --disable=E1120,E1124 $(LINTSRC)
+	pylama $(LINTSRC)
+	pylava $(LINTSRC)
 	vulture --min-confidence=100 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
 	pydocstyle $(LINTSRC)
