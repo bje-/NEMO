@@ -55,7 +55,7 @@ def reserves(ctx, args):
 
 def min_regional(ctx, _):
     """Penalty: minimum share of regional generation."""
-    regional_generation_shortfall = 0
+    shortfall = 0
     for rgn in ctx.regions:
         regional_demand = 0
         for poly in rgn.polygons:
@@ -65,9 +65,12 @@ def min_regional(ctx, _):
             if gen.region() is rgn:
                 regional_generation += sum(gen.series_power.values())
         min_regional_generation = regional_demand * ctx.min_regional_generation
-        regional_generation_shortfall += max(0, min_regional_generation - regional_generation)
-    reason = reasons['min-regional-gen'] if regional_generation_shortfall > 0 else 0
-    return pow(regional_generation_shortfall, 3), reason
+        shortfall += max(0, min_regional_generation - regional_generation)
+    if shortfall > 0:
+        reason = reasons['min-regional-gen']
+    else:
+        reason = 0
+    return pow(shortfall, 3), reason
 
 
 def emissions(ctx, args):
@@ -76,8 +79,9 @@ def emissions(ctx, args):
     for gen in ctx.generators:
         if hasattr(gen, 'intensity'):
             total_emissions += sum(gen.series_power.values()) * gen.intensity
+    emissions_limit = args.emissions_limit * pow(10, 6) * ctx.years
     # exceedance in tonnes CO2-e
-    emissions_exceedance = max(0, total_emissions - args.emissions_limit * pow(10, 6) * ctx.years)
+    emissions_exceedance = max(0, total_emissions - emissions_limit)
     reason = reasons['emissions'] if emissions_exceedance > 0 else 0
     return pow(emissions_exceedance, 3), reason
 
@@ -88,7 +92,8 @@ def fossil(ctx, args):
     for gen in ctx.generators:
         if isinstance(gen, generators.Fossil):
             fossil_energy += sum(gen.series_power.values())
-    fossil_exceedance = max(0, fossil_energy - ctx.total_demand() * args.fossil_limit * ctx.years)
+    fossil_limit = ctx.total_demand() * args.fossil_limit * ctx.years
+    fossil_exceedance = max(0, fossil_energy - fossil_limit)
     reason = reasons['fossil'] if fossil_exceedance > 0 else 0
     return pow(fossil_exceedance, 3), reason
 
@@ -99,7 +104,8 @@ def bioenergy(ctx, args):
     for gen in ctx.generators:
         if isinstance(gen, generators.Biofuel):
             biofuel_energy += sum(gen.series_power.values())
-    biofuel_exceedance = max(0, biofuel_energy - args.bioenergy_limit * _twh * ctx.years)
+    biofuel_limit = args.bioenergy_limit * _twh * ctx.years
+    biofuel_exceedance = max(0, biofuel_energy - biofuel_limit)
     reason = reasons['bioenergy'] if biofuel_exceedance > 0 else 0
     return pow(biofuel_exceedance, 3), reason
 
@@ -111,6 +117,7 @@ def hydro(ctx, args):
         if isinstance(gen, generators.Hydro) and \
            not isinstance(gen, generators.PumpedHydro):
             hydro_energy += sum(gen.series_power.values())
-    hydro_exceedance = max(0, hydro_energy - args.hydro_limit * _twh * ctx.years)
+    hydro_limit = args.hydro_limit * _twh * ctx.years
+    hydro_exceedance = max(0, hydro_energy - hydro_limit)
     reason = reasons['hydro'] if hydro_exceedance > 0 else 0
     return pow(hydro_exceedance, 3), reason

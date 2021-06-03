@@ -512,12 +512,14 @@ class Fossil(Fuelled):
         Greenhouse gas emissions intensity is given in tonnes per MWh.
         """
         Fuelled.__init__(self, polygon, capacity, label)
-        self.intensity = intensity
+        self.intensity = intensity * (ureg.t / ureg.MWh)
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        return Fuelled.summary(self, context) + ', %.1f Mt CO2' \
-            % (sum(self.series_power.values()) * self.intensity / 1000000.)
+        generation = sum(self.series_power.values()) * ureg.MWh
+        emissions = generation * self.intensity
+        return Fuelled.summary(self, context) + \
+            ', %s CO2' % emissions.to('Mt')
 
 
 class Black_Coal(Fossil):
@@ -583,12 +585,16 @@ class CCS(Fossil):
         Emissions capture rate is given in the range 0 to 1.
         """
         Fossil.__init__(self, polygon, capacity, intensity, label)
+        assert 0 <= capture <= 1
         self.capture = capture
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        return Fossil.summary(self, context) + ', %.1f Mt captured' \
-            % (sum(self.series_power.values()) * self.intensity / 1000000. * self.capture)
+        generation = sum(self.series_power.values()) * ureg.MWh
+        emissions = generation * self.intensity
+        captured = emissions * self.capture
+        return Fossil.summary(self, context) + \
+            ', %s captured' % captured.to('Mt')
 
 
 class Coal_CCS(CCS):

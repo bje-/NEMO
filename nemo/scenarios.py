@@ -10,9 +10,9 @@
 """Supply side scenarios."""
 
 from nemo import configfile, generators, polygons, regions
-from nemo.generators import (Biofuel, CentralReceiver, Hydro, PumpedHydro,
+from nemo.generators import (Biofuel, CentralReceiver, CST, Hydro, PumpedHydro,
                              PV1Axis, Wind)
-from nemo.polygons import WILDCARD
+from nemo.polygons import WILDCARD, wind_limit, pv_limit, cst_limit
 
 
 def _demand_response():
@@ -52,7 +52,8 @@ def _hydro():
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
     psh17 = generators.PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36 = generators.PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
+    psh36 = generators.PumpedHydro(36, 1740, 15000,
+                                   label='poly 36 pumped-hydro')
     return [psh17, psh36] + \
         [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39] + \
         [hydro40, hydro41, hydro42, hydro43]
@@ -149,23 +150,28 @@ def re100(context):
         if g == PumpedHydro:
             result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
         elif g == Hydro:
-            result += [h for h in _hydro() if isinstance(h, Hydro) and not isinstance(h, PumpedHydro)]
+            result += [h for h in _hydro() if not isinstance(h, PumpedHydro)]
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             for poly in range(1, 44):
                 if g == Biofuel:
                     result.append(g(poly, 0, label='polygon %d GT' % poly))
                 elif g == PV1Axis:
-                    result.append(g(poly, 0, configfile.get('generation', 'pv1axis-trace'),
-                                    poly - 1, build_limit=polygons.pv_limit[poly],
+                    cfg = configfile.get('generation', 'pv1axis-trace')
+                    limit = polygons.pv_limit[poly]
+                    result.append(g(poly, 0, cfg, poly - 1,
+                                    build_limit=limit,
                                     label='polygon %d PV' % poly))
                 elif g == CentralReceiver:
-                    result.append(g(poly, 0, 2, 6, configfile.get('generation', 'cst-trace'),
-                                    poly - 1, build_limit=polygons.cst_limit[poly],
+                    cfg = configfile.get('generation', 'cst-trace')
+                    limit = polygons.cst_limit[poly]
+                    result.append(g(poly, 0, 2, 6, cfg, poly - 1,
+                                    build_limit=limit,
                                     label='polygon %d CST' % poly))
                 elif g == Wind:
-                    result.append(g(poly, 0,
-                                    configfile.get('generation', 'wind-trace'),
-                                    poly - 1, build_limit=polygons.wind_limit[poly],
+                    cfg = configfile.get('generation', 'wind-trace')
+                    limit = polygons.wind_limit[poly]
+                    result.append(g(poly, 0, cfg, poly - 1,
+                                    build_limit=limit,
                                     label='polygon %d wind' % poly))
     context.generators = result
 
@@ -201,21 +207,22 @@ def _one_per_poly(region):
     wind = []
     cst = []
 
+    wind_cfg = configfile.get('generation', 'wind-trace')
+    pv_cfg = configfile.get('generation', 'pv1axis-trace')
+    cst_cfg = configfile.get('generation', 'cst-trace')
+
     for poly in region.polygons:
-        wind.append(generators.Wind(poly, 0,
-                                    configfile.get('generation', 'wind-trace'),
+        wind.append(generators.Wind(poly, 0, wind_cfg,
                                     poly - 1,
-                                    build_limit=polygons.wind_limit[poly],
+                                    build_limit=wind_limit[poly],
                                     label='poly %d wind' % poly))
-        pv.append(generators.PV1Axis(poly, 0,
-                                     configfile.get('generation', 'pv1axis-trace'),
+        pv.append(generators.PV1Axis(poly, 0, pv_cfg,
                                      poly - 1,
-                                     build_limit=polygons.pv_limit[poly],
+                                     build_limit=pv_limit[poly],
                                      label='poly %d PV' % poly))
-        cst.append(generators.CentralReceiver(poly, 0, 2, 6,
-                                              configfile.get('generation', 'cst-trace'),
+        cst.append(generators.CentralReceiver(poly, 0, 2, 6, cst_cfg,
                                               poly - 1,
-                                              build_limit=polygons.cst_limit[poly],
+                                              build_limit=cst_limit[poly],
                                               label='poly %d CST' % poly))
     return wind, pv, cst
 
@@ -310,10 +317,10 @@ def re100_nocst(context):
     >>> class C: pass
     >>> c = C()
     >>> re100_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, generators.CST)
+    >>> for g in c.generators: assert not isinstance(g, CST)
     """
     re100(context)
-    newlist = [g for g in context.generators if not isinstance(g, generators.CST)]
+    newlist = [g for g in context.generators if not isinstance(g, CST)]
     context.generators = newlist
 
 
@@ -356,15 +363,17 @@ def re100_south_aus(context):
     re100_one_region(context, regions.sa)
 
 
-def theworks(context):
+def theworks(context):  # pylint: disable=too-many-locals
     """All technologies."""
     re100(context)
-    egs = generators.Geothermal_EGS(WILDCARD, 0,
-                                    configfile.get('generation', 'egs-geothermal-trace'), 38)
-    hsa = generators.Geothermal_HSA(WILDCARD, 0,
-                                    configfile.get('generation', 'hsa-geothermal-trace'), 38)
-    parat = generators.ParabolicTrough(WILDCARD, 0, 2, 6,
-                                       configfile.get('generation', 'cst-trace'), 12)
+    esg_trace = configfile.get('generation', 'egs-geothermal-trace')
+    hsa_trace = configfile.get('generation', 'hsa-geothermal-trace')
+    cst_trace = configfile.get('generation', 'cst-trace')
+    rooftop_trace = configfile.get('generation', 'rooftop-pv-trace')
+
+    egs = generators.Geothermal_EGS(WILDCARD, 0, esg_trace, 38)
+    hsa = generators.Geothermal_HSA(WILDCARD, 0, hsa_trace, 38)
+    parat = generators.ParabolicTrough(WILDCARD, 0, 2, 6, cst_trace, 12)
     thermals = [generators.Black_Coal(WILDCARD, 0),
                 generators.Coal_CCS(WILDCARD, 0),
                 generators.CCGT(WILDCARD, 0),
@@ -376,9 +385,7 @@ def theworks(context):
     dem = generators.DemandResponse(WILDCARD, 0, 300)
     biomass = generators.Biomass(WILDCARD, 0)
     greenpower = generators.GreenPower(WILDCARD, 0)
-    btm_pv = generators.Behind_Meter_PV(WILDCARD, 0,
-                                        configfile.get('generation', 'rooftop-pv-trace'),
-                                        0)
+    btm_pv = generators.Behind_Meter_PV(WILDCARD, 0, rooftop_trace, 0)
 
     context.generators = [hsa, egs, parat] + thermals + \
         context.generators[:-4] + \
