@@ -9,9 +9,12 @@
 
 """Supply side scenarios."""
 
-from nemo import configfile, generators, polygons, regions
-from nemo.generators import (Biofuel, CentralReceiver, CST, Hydro, PumpedHydro,
-                             PV1Axis, Wind)
+from nemo import configfile, regions
+from nemo.generators import (Battery, Biofuel, Black_Coal,
+                             CentralReceiver, CCGT, CCGT_CCS,
+                             Coal_CCS, CST, DemandResponse, Hydro,
+                             OCGT, PV1Axis, PumpedHydro, Wind)
+
 from nemo.polygons import WILDCARD, wind_limit, pv_limit, cst_limit
 
 
@@ -23,9 +26,9 @@ def _demand_response():
     >>> len(dr)
     3
     """
-    dr1 = generators.DemandResponse(WILDCARD, 1000, 100, "DR100")
-    dr2 = generators.DemandResponse(WILDCARD, 1000, 500, "DR500")
-    dr3 = generators.DemandResponse(WILDCARD, 1000, 1000, "DR1000")
+    dr1 = DemandResponse(WILDCARD, 1000, 100, "DR100")
+    dr2 = DemandResponse(WILDCARD, 1000, 500, "DR500")
+    dr3 = DemandResponse(WILDCARD, 1000, 1000, "DR1000")
     return [dr1, dr2, dr3]
 
 
@@ -37,23 +40,22 @@ def _hydro():
     >>> len(h)
     12
     """
-    hydro24 = generators.Hydro(24, 42.5, label='poly 24 hydro')
-    hydro31 = generators.Hydro(31, 43, label='poly 31 hydro')
-    hydro35 = generators.Hydro(35, 71, label='poly 35 hydro')
-    hydro36 = generators.Hydro(36, 2513.9, label='poly 36 hydro')
-    hydro38 = generators.Hydro(38, 450, label='poly 38 hydro')
-    hydro39 = generators.Hydro(39, 13.8, label='poly 39 hydro')
-    hydro40 = generators.Hydro(40, 586.6, label='poly 40 hydro')
-    hydro41 = generators.Hydro(41, 280, label='poly 41 hydro')
-    hydro42 = generators.Hydro(42, 590.4, label='poly 42 hydro')
-    hydro43 = generators.Hydro(43, 462.5, label='poly 43 hydro')
+    hydro24 = Hydro(24, 42.5, label='poly 24 hydro')
+    hydro31 = Hydro(31, 43, label='poly 31 hydro')
+    hydro35 = Hydro(35, 71, label='poly 35 hydro')
+    hydro36 = Hydro(36, 2513.9, label='poly 36 hydro')
+    hydro38 = Hydro(38, 450, label='poly 38 hydro')
+    hydro39 = Hydro(39, 13.8, label='poly 39 hydro')
+    hydro40 = Hydro(40, 586.6, label='poly 40 hydro')
+    hydro41 = Hydro(41, 280, label='poly 41 hydro')
+    hydro42 = Hydro(42, 590.4, label='poly 42 hydro')
+    hydro43 = Hydro(43, 462.5, label='poly 43 hydro')
 
     # Pumped hydro
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    psh17 = generators.PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
+    psh17 = PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36 = generators.PumpedHydro(36, 1740, 15000,
-                                   label='poly 36 pumped-hydro')
+    psh36 = PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
     return [psh17, psh36] + \
         [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39] + \
         [hydro40, hydro41, hydro42, hydro43]
@@ -69,9 +71,8 @@ def replacement(context):
     >>> len(c.generators)
     14
     """
-    coal = generators.Black_Coal(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
-    context.generators = [coal] + _hydro() + [ocgt]
+    context.generators = \
+        [Black_Coal(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
 
 
 def _one_ccgt(context):
@@ -84,7 +85,7 @@ def _one_ccgt(context):
     >>> len(c.generators)
     1
     """
-    context.generators = [generators.CCGT(WILDCARD, 0)]
+    context.generators = [CCGT(WILDCARD, 0)]
 
 
 def ccgt(context):
@@ -97,10 +98,7 @@ def ccgt(context):
     >>> len(c.generators)
     14
     """
-    # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
-    context.generators = [ccgt] + _hydro() + [ocgt]
+    context.generators = [CCGT(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
 
 
 def ccgt_ccs(context):
@@ -114,8 +112,8 @@ def ccgt_ccs(context):
     14
     """
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT_CCS(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
+    ccgt = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
     context.generators = [ccgt] + _hydro() + [ocgt]
 
 
@@ -129,8 +127,8 @@ def coal_ccs(context):
     >>> len(c.generators)
     14
     """
-    coal = generators.Coal_CCS(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
+    coal = Coal_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
     context.generators = [coal] + _hydro() + [ocgt]
 
 
@@ -157,21 +155,18 @@ def re100(context):
                     result.append(g(poly, 0, label='polygon %d GT' % poly))
                 elif g == PV1Axis:
                     cfg = configfile.get('generation', 'pv1axis-trace')
-                    limit = polygons.pv_limit[poly]
                     result.append(g(poly, 0, cfg, poly - 1,
-                                    build_limit=limit,
+                                    build_limit=pv_limit[poly],
                                     label='polygon %d PV' % poly))
                 elif g == CentralReceiver:
                     cfg = configfile.get('generation', 'cst-trace')
-                    limit = polygons.cst_limit[poly]
                     result.append(g(poly, 0, 2, 6, cfg, poly - 1,
-                                    build_limit=limit,
+                                    build_limit=cst_limit[poly],
                                     label='polygon %d CST' % poly))
                 elif g == Wind:
                     cfg = configfile.get('generation', 'wind-trace')
-                    limit = polygons.wind_limit[poly]
                     result.append(g(poly, 0, cfg, poly - 1,
-                                    build_limit=limit,
+                                    build_limit=wind_limit[poly],
                                     label='polygon %d wind' % poly))
     context.generators = result
 
@@ -190,7 +185,7 @@ def re100_batteries(context):
     re100(context)
     # discharge between 6pm and 6am daily
     hrs = list(range(0, 7)) + list(range(18, 24))
-    battery = generators.Battery(WILDCARD, 0, 0, discharge_hours=hrs)
+    battery = Battery(WILDCARD, 0, 0, discharge_hours=hrs)
     context.generators.insert(0, battery)
 
 
@@ -212,18 +207,18 @@ def _one_per_poly(region):
     cst_cfg = configfile.get('generation', 'cst-trace')
 
     for poly in region.polygons:
-        wind.append(generators.Wind(poly, 0, wind_cfg,
-                                    poly - 1,
-                                    build_limit=wind_limit[poly],
-                                    label='poly %d wind' % poly))
-        pv.append(generators.PV1Axis(poly, 0, pv_cfg,
-                                     poly - 1,
-                                     build_limit=pv_limit[poly],
-                                     label='poly %d PV' % poly))
-        cst.append(generators.CentralReceiver(poly, 0, 2, 6, cst_cfg,
-                                              poly - 1,
-                                              build_limit=cst_limit[poly],
-                                              label='poly %d CST' % poly))
+        wind.append(Wind(poly, 0, wind_cfg,
+                         poly - 1,
+                         build_limit=wind_limit[poly],
+                         label='poly %d wind' % poly))
+        pv.append(PV1Axis(poly, 0, pv_cfg,
+                          poly - 1,
+                          build_limit=pv_limit[poly],
+                          label='poly %d PV' % poly))
+        cst.append(CentralReceiver(poly, 0, 2, 6, cst_cfg,
+                                   poly - 1,
+                                   build_limit=cst_limit[poly],
+                                   label='poly %d CST' % poly))
     return wind, pv, cst
 
 
@@ -244,10 +239,10 @@ def re100_one_region(context, region):
     newlist = wind
     newlist += pv
     newlist += [g for g in context.generators if
-                isinstance(g, generators.Hydro) and g.region() is region]
+                isinstance(g, Hydro) and g.region() is region]
     newlist += cst
     newlist += [g for g in context.generators if
-                isinstance(g, generators.Biofuel) and g.region() is region]
+                isinstance(g, Biofuel) and g.region() is region]
     context.generators = newlist
 
 
@@ -263,13 +258,13 @@ def re_plus_ccs(context):
     185
     """
     re100(context)
-    coal = generators.Black_Coal(WILDCARD, 0)
+    coal = Black_Coal(WILDCARD, 0)
     # pylint: disable=redefined-outer-name
-    coal_ccs = generators.Coal_CCS(WILDCARD, 0)
+    coal_ccs = Coal_CCS(WILDCARD, 0)
     # pylint: disable=redefined-outer-name
-    ccgt = generators.CCGT(WILDCARD, 0)
-    ccgt_ccs = generators.CCGT_CCS(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
+    ccgt = CCGT(WILDCARD, 0)
+    ccgt_ccs = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
     context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + \
         context.generators[:-4] + [ocgt]
 
@@ -286,11 +281,9 @@ def re_plus_fossil(context):
     183
     """
     re100(context)
-    # pylint: disable=redefined-outer-name
-    coal = generators.Black_Coal(WILDCARD, 0)
-    ccgt = generators.CCGT(WILDCARD, 0)
-    ocgt = generators.OCGT(WILDCARD, 0)
-    context.generators = [coal, ccgt] + context.generators[:-4] + [ocgt]
+    context.generators = \
+        [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0)] + \
+        context.generators[:-4] + [OCGT(WILDCARD, 0)]
 
 
 def re100_dsp(context):
@@ -303,7 +296,7 @@ def re100_dsp(context):
     >>> re100_dsp(c)
     >>> len(c.generators)
     187
-    >>> isinstance(c.generators[-1], generators.DemandResponse)
+    >>> isinstance(c.generators[-1], DemandResponse)
     True
     """
     re100(context)
