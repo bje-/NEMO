@@ -366,11 +366,14 @@ def re100_south_aus(context):
 def theworks(context):  # pylint: disable=too-many-locals
     """All technologies."""
     re100(context)
+    wind_trace = configfile.get('generation', 'wind-trace')
     esg_trace = configfile.get('generation', 'egs-geothermal-trace')
     hsa_trace = configfile.get('generation', 'hsa-geothermal-trace')
     cst_trace = configfile.get('generation', 'cst-trace')
     rooftop_trace = configfile.get('generation', 'rooftop-pv-trace')
 
+    offshore = generators.WindOffshore(WILDCARD, 0, wind_trace,
+                                       WILDCARD - 1)
     egs = generators.Geothermal_EGS(WILDCARD, 0, esg_trace, 38)
     hsa = generators.Geothermal_HSA(WILDCARD, 0, hsa_trace, 38)
     parat = generators.ParabolicTrough(WILDCARD, 0, 2, 6, cst_trace, 12)
@@ -387,9 +390,15 @@ def theworks(context):  # pylint: disable=too-many-locals
     greenpower = generators.GreenPower(WILDCARD, 0)
     btm_pv = generators.Behind_Meter_PV(WILDCARD, 0, rooftop_trace, 0)
 
+    # hydrogen electrolyser and gas turbine w/ shared tank
+    tank = generators.HydrogenStorage(1000)
+    electrolyser = generators.Electrolyser(tank, WILDCARD, 100)
+    h2gt = generators.HydrogenGT(tank, 1, 100, efficiency=0.5)
+
     context.generators = [hsa, egs, parat] + thermals + \
-        context.generators[:-4] + \
-        [btm_pv, ocgt, diesel, batt, dem, biomass, greenpower]
+        [offshore] + context.generators[:-4] + \
+        [btm_pv, ocgt, diesel, batt, dem, biomass,
+         electrolyser, h2gt, greenpower]
 
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
