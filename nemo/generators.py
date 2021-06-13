@@ -940,19 +940,6 @@ class HydrogenStorage():
         self.maxstorage = maxstorage
         self.storage = self.maxstorage / 2
 
-    def full_p(self):
-        """
-        Return True if the storage is full.
-
-        >>> h = HydrogenStorage(1000, 'test')
-        >>> h.full_p()
-        False
-        >>> h.storage = 1000
-        >>> h.full_p()
-        True
-        """
-        return self.storage == self.maxstorage
-
     def charge(self, amt):
         """
         Charge the storage by amt.
@@ -962,7 +949,7 @@ class HydrogenStorage():
         100
         >>> h.charge(600)
         400.0
-        >>> h.full_p()
+        >>> assert h.storage == h.maxstorage
         True
         """
         assert amt >= 0
