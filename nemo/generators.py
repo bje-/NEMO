@@ -949,7 +949,7 @@ class HydrogenStorage():
         100
         >>> h.charge(600)
         400.0
-        >>> assert h.storage == h.maxstorage
+        >>> h.storage == h.maxstorage
         True
         """
         assert amt >= 0
