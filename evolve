@@ -159,9 +159,9 @@ def setup_context():
 def list_scenarios():
     """Print out a list of the scenarios with a description."""
     for key in sorted(scenarios.supply_scenarios):
-        descr = scenarios.supply_scenarios[key].__doc__
-        print('%20s' % key, '\t', descr.split('\n')[0])
-    print()
+        doc = scenarios.supply_scenarios[key].__doc__.split('\n')
+        description = next(line for line in doc if line).strip()
+        print('%20s' % key, '\t', description)
     sys.exit(0)
 
 
