@@ -81,8 +81,6 @@ class Generator():
 
         # By default, generators have infinite ramping capability
         self.power = 0
-        self.ramp_up_mw_per_h = np.inf
-        self.ramp_down_mw_per_h = np.inf
 
     def region(self):
         """Return the region the generator is in."""
