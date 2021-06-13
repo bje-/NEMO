@@ -58,7 +58,7 @@ lint:	flake8
 	pylint --disable=E1120,E1124 $(LINTSRC)
 	pylama $(LINTSRC)
 	pylava $(LINTSRC)
-	vulture --min-confidence=100 $(LINTSRC)
+	vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
 	pydocstyle $(LINTSRC)
 
