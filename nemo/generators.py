@@ -1034,14 +1034,14 @@ class HydrogenGT(Fuelled):
         Construct a HydrogenGT object.
 
         >>> h = HydrogenStorage(1000, 'test')
-        >>> e = HydrogenGT(h, 1, 100, efficiency=0.5)
-        >>> print(e)
+        >>> gt = HydrogenGT(h, 1, 100, efficiency=0.5)
+        >>> print(gt)
         HydrogenGT (QLD1:1), 100.00 MW
-        >>> e.step(0, 100) # discharge 100 MWh-e of hydrogen
+        >>> gt.step(0, 100) # discharge 100 MWh-e of hydrogen
         (100.0, 0)
-        >>> e.step(0, 100) # discharge another 100 MWh-e of hydrogen
+        >>> gt.step(0, 100) # discharge another 100 MWh-e of hydrogen
         (100.0, 0)
-        >>> h.storage == (1000 / 2.) - (200 / e.efficiency)
+        >>> h.storage == (1000 / 2.) - (200 / gt.efficiency)
         True
         """
         assert isinstance(tank, HydrogenStorage)
