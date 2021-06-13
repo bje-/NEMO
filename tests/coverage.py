@@ -6,11 +6,20 @@ import types
 from datetime import datetime
 
 import nemo
+from nemo import configfile
 from nemo import costs
 from nemo import generators
 from nemo import regions
 from nemo import polygons
 from nemo import utils
+from nemo import scenarios
+from nemo.polygons import WILDCARD
+from nemo.generators import (Battery, Behind_Meter_PV, Biomass,
+                             Black_Coal, CCGT, CCGT_CCS, Coal_CCS,
+                             DemandResponse, Diesel, Electrolyser,
+                             Geothermal_EGS, Geothermal_HSA,
+                             GreenPower, HydrogenGT, HydrogenStorage,
+                             OCGT, ParabolicTrough, WindOffshore)
 
 # pylint: disable=no-self-use
 
@@ -77,3 +86,41 @@ class TestCoverage(unittest.TestCase):
         ctx.generators[0].summary = func
         print(ctx.generators[0].summary(None))
         print(str(ctx))
+
+    def test_006(self):
+        """Test the works (all technologies)."""
+        ctx = nemo.Context()
+        ctx.costs = costs.NullCosts()
+
+        # Set up the scenario.
+        scenarios.re100(ctx)
+
+        wind_trace = configfile.get('generation', 'wind-trace')
+        esg_trace = configfile.get('generation', 'egs-geothermal-trace')
+        hsa_trace = configfile.get('generation', 'hsa-geothermal-trace')
+        cst_trace = configfile.get('generation', 'cst-trace')
+        rooftop_trace = configfile.get('generation', 'rooftop-pv-trace')
+
+        # hydrogen electrolyser and gas turbine w/ shared tank
+        tank = HydrogenStorage(1000)
+
+        ctx.generators += \
+            [Geothermal_EGS(WILDCARD, 0, esg_trace, 38),
+             Geothermal_HSA(WILDCARD, 0, hsa_trace, 38),
+             ParabolicTrough(WILDCARD, 0, 2, 6, cst_trace, 12),
+             Black_Coal(WILDCARD, 0),
+             Coal_CCS(WILDCARD, 0),
+             CCGT(WILDCARD, 0),
+             CCGT_CCS(WILDCARD, 0),
+             WindOffshore(WILDCARD, 0, wind_trace, WILDCARD - 1),
+             Behind_Meter_PV(WILDCARD, 0, rooftop_trace, 0),
+             OCGT(WILDCARD, 0),
+             Diesel(WILDCARD, 0),
+             Battery(WILDCARD, 0, 0),
+             DemandResponse(WILDCARD, 0, 300),
+             Biomass(WILDCARD, 0),
+             Electrolyser(tank, WILDCARD, 100),
+             HydrogenGT(tank, 1, 100, efficiency=0.5),
+             GreenPower(WILDCARD, 0)]
+
+        nemo.run(ctx)
