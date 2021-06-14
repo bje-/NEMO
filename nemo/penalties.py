@@ -28,6 +28,18 @@ def unserved(ctx, _):
     return pow(use, 3), reason
 
 
+def _calculate_reserve(gen, time):
+    """Calculate headroom for each generator.
+
+    Note: except pumped hydro and CST -- tricky to calculate capacity.
+    """
+    if isinstance(gen, generators.Fuelled) and not \
+       isinstance(gen, generators.PumpedHydro) and not \
+       isinstance(gen, generators.CST):
+        return gen.capacity - gen.series_power[time]
+    return 0
+
+
 def reserves(ctx, args):
     """Penalty: minimum reserves."""
     pen, reas = 0, 0
@@ -39,13 +51,7 @@ def reserves(ctx, args):
             except KeyError:
                 # non-variable generators may not have spill data
                 pass
-
-            # Calculate headroom for each generator, except pumped hydro and
-            # CST -- tricky to calculate capacity
-            if isinstance(gen, generators.Fuelled) and not \
-               isinstance(gen, generators.PumpedHydro) and not \
-               isinstance(gen, generators.CST):
-                reserve += gen.capacity - gen.series_power[time]
+            reserve += _calculate_reserve(gen, time)
 
         if reserve + spilled < args.reserves:
             reas |= reasons['reserves']
@@ -53,19 +59,32 @@ def reserves(ctx, args):
     return pen, reas
 
 
+def _regional_generation(region, gens):
+    """Sum generation in a given region."""
+    regional_generation = 0
+    for gen in gens:
+        if gen.region() is region:
+            regional_generation += sum(gen.series_power.values())
+    return regional_generation
+
+
+def _regional_demand(region, demand):
+    """Sum demand in a given region."""
+    regional_demand = 0
+    for poly in region.polygons:
+        regional_demand += demand[poly - 1].sum()
+    return regional_demand
+
+
 def min_regional(ctx, _):
     """Penalty: minimum share of regional generation."""
     shortfall = 0
     for rgn in ctx.regions:
-        regional_demand = 0
-        for poly in rgn.polygons:
-            regional_demand += ctx.demand[poly - 1].sum()
-        regional_generation = 0
-        for gen in ctx.generators:
-            if gen.region() is rgn:
-                regional_generation += sum(gen.series_power.values())
+        regional_demand = _regional_demand(rgn, ctx.demand)
+        regional_generation = _regional_generation(rgn, ctx.generators)
         min_regional_generation = regional_demand * ctx.min_regional_generation
         shortfall += max(0, min_regional_generation - regional_generation)
+
     if shortfall > 0:
         reason = reasons['min-regional-gen']
     else:
