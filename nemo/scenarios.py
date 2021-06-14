@@ -65,8 +65,7 @@ def replacement(context):
     """
     Replace the current NEM fleet, more or less.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> replacement(c)
     >>> len(c.generators)
     14
@@ -79,8 +78,7 @@ def _one_ccgt(context):
     """
     One CCGT only.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> _one_ccgt(c)
     >>> len(c.generators)
     1
@@ -92,8 +90,7 @@ def ccgt(context):
     """
     All gas scenario.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> ccgt(c)
     >>> len(c.generators)
     14
@@ -105,8 +102,7 @@ def ccgt_ccs(context):
     """
     CCGT CCS scenario.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> ccgt_ccs(c)
     >>> len(c.generators)
     14
@@ -121,8 +117,7 @@ def coal_ccs(context):
     """
     Coal CCS scenario.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> coal_ccs(c)
     >>> len(c.generators)
     14
@@ -136,8 +131,7 @@ def re100(context):
     """
     100% renewable electricity.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> re100(c)
     >>> len(c.generators)
     184
@@ -175,8 +169,7 @@ def re100_batteries(context):
     """
     Use lots of renewables plus battery storage.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
@@ -227,8 +220,7 @@ def re100_one_region(context, region):
     100% renewables in one region only.
 
     >>> from nemo import regions
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_one_region(c, regions.tas)
     >>> for g in c.generators: assert g.region() is regions.tas
@@ -250,8 +242,7 @@ def re_plus_ccs(context):
     """
     Mostly renewables with fossil and CCS augmentation.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
@@ -273,8 +264,7 @@ def re_plus_fossil(context):
     """
     Mostly renewables with some fossil augmentation.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
@@ -290,8 +280,7 @@ def re100_dsp(context):
     """
     Mostly renewables with demand side participation.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
@@ -307,8 +296,7 @@ def re100_nocst(context):
     """
     100% renewables, but no CST.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> re100_nocst(c)
     >>> for g in c.generators: assert not isinstance(g, CST)
     """
@@ -321,8 +309,7 @@ def re100_nsw(context):
     """
     100% renewables in New South Wales only.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_nsw(c)
     >>> for g in c.generators: assert g.region() is regions.nsw
@@ -334,8 +321,7 @@ def re100_qld(context):
     """
     100% renewables in Queensland only.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_qld(c)
     >>> for g in c.generators: assert g.region() is regions.qld
@@ -347,8 +333,7 @@ def re100_south_aus(context):
     """
     100% renewables in South Australia only.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.generators = []
     >>> re100_south_aus(c)
     >>> for g in c.generators: assert g.region() is regions.sa

@@ -225,8 +225,7 @@ def _roll_demand(context, posns):
     """
     Roll demand by posns timesteps.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame(list(range(10)))
     >>> _roll_demand(c, 1)
     >>> print(c.demand)
@@ -251,8 +250,7 @@ def _scale_range_demand(context, from_hour, to_hour, factor):
     """
     Scale demand between from_hour and to_hour by factor%.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame(list(range(10)))
     >>> _scale_range_demand(c, 0, 4, 1.2)
     >>> print(c.demand)
@@ -276,8 +274,7 @@ def _scale_demand_twh(context, new_demand):
     """
     Scale demand to new_demand TWh.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame([100]*10)
     >>> _scale_demand_twh(c, 0.0002)
     >>> print(c.demand.loc[0])
@@ -293,8 +290,7 @@ def _scale_demand_by(context, factor):
     """
     Scale demand by factor%.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame([0, 1, 2])
     >>> _scale_demand_by(c, 1.2)
     >>> print(c.demand)
@@ -324,8 +320,7 @@ def _scale_peaks(context, power, factor):
     """
     Adjust demand peaks over N megawatts by factor%.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame([[0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> _scale_peaks(c, 3000, 0.5)
@@ -345,8 +340,7 @@ def _scale_npeaks(context, topn, factor):
     """
     Adjust top N demand peaks by X%.
 
-    >>> class C: pass
-    >>> c = C()
+    >>> c = type('context', (), {})
     >>> c.demand = pd.DataFrame([[0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> c.demand.loc[4] = 3000

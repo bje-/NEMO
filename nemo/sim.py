@@ -61,9 +61,7 @@ def _store_spills(context, hour, gen, generators, spl):
     """
     Store spills from a generator into any storage.
 
-    >>> class C: pass
-    >>> ctx = C()
-    >>> ctx.verbose = 0
+    >>> ctx = type('context', (), {'verbose': 0})
     >>> from nemo import generators
     >>> g = generators.Hydro(1, 100)
     >>> h = generators.HydrogenStorage(400)
