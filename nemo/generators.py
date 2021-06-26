@@ -510,12 +510,12 @@ class Fossil(Fuelled):
         Greenhouse gas emissions intensity is given in tonnes per MWh.
         """
         Fuelled.__init__(self, polygon, capacity, label)
-        self.intensity = intensity * (ureg.t / ureg.MWh)
+        self.intensity = intensity
 
     def summary(self, context):
         """Return a summary of the generator activity."""
         generation = sum(self.series_power.values()) * ureg.MWh
-        emissions = generation * self.intensity
+        emissions = generation * self.intensity * (ureg.t / ureg.MWh)
         return Fuelled.summary(self, context) + \
             ', %s CO2' % emissions.to('Mt')
 
