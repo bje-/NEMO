@@ -75,6 +75,8 @@ def process_options():
                           help='list supply scenarios and exit')
     comgroup.add_argument("-o", "--output", type=str, default='results.json',
                           help='output filename (will overwrite)')
+    comgroup.add_argument("-p", "--plot", action="store_true",
+                          help='plot hourly energy balance on completion')
     comgroup.add_argument("--reliability-std", type=float, default=0.002,
                           help='reliability standard (%% unserved)')
     comgroup.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
@@ -306,6 +308,9 @@ def run():
                   'constraints_violated': constraints_violated}
         json.dump(bundle, filehandle)
     print('Done')
+
+    if args.plot:
+        nemo.plot(context)
 
 
 if __name__ == '__main__':
