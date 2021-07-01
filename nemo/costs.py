@@ -279,8 +279,9 @@ class AETA2012_2030Mid(AETA2012_2030):
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw
         hightable = high.capcost_per_kw
-        for row in lowtable:
-            table[row] = lowtable[row] / 2 + hightable[row] / 2
+        for key, lowcost in lowtable.items():
+            highcost = hightable[key]
+            table[key] = lowcost / 2 + highcost / 2
 
 
 class AETA2013_2030Low(AETA2012_2030Low):
@@ -352,8 +353,9 @@ class AETA2013_2030Mid(AETA2012_2030):
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw
         hightable = high.capcost_per_kw
-        for row in lowtable:
-            table[row] = lowtable[row] / 2 + hightable[row] / 2
+        for key, lowcost in lowtable.items():
+            highcost = hightable[key]
+            table[key] = lowcost / 2 + highcost / 2
 
 
 class CEEM2016_2030(AETA2012_2030Mid):
