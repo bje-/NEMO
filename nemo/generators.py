@@ -683,7 +683,7 @@ class Battery(Generator):
         Round-trip efficiency (rte) defaults to 95% for good Li-ion.
         """
         Generator.__init__(self, polygon, capacity, label)
-        self.setters += [(self.set_storage, 0, 10000)]
+        self.setters += [(self.set_storage, 0, 6)]
         self.maxstorage = maxstorage
         self.stored = 0
         self.discharge_hours = discharge_hours \
@@ -694,9 +694,9 @@ class Battery(Generator):
         self.runhours = 0
         self.chargehours = 0
 
-    def set_storage(self, maxstorage):
-        """Vary the storage capacity (recorded in MWh)."""
-        self.maxstorage = maxstorage * 1000
+    def set_storage(self, hours):
+        """Vary the full load hours of battery storage (in MWh)."""
+        self.maxstorage = self.capacity * hours
         self.stored = 0
 
     def store(self, hour, power):
