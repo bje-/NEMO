@@ -49,7 +49,7 @@ def _currency(value):
     provided as the result will be locale specific.
     """
     cents = locale.localeconv()['mon_decimal_point'] + '00'
-    return locale.currency(value, grouping=True).replace(cents, '')
+    return locale.currency(round(value), grouping=True).replace(cents, '')
 
 
 class Generator():
