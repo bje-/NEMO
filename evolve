@@ -298,8 +298,7 @@ def run():
         for label, code in penalties.reasons.items():
             if reason & code:
                 constraints_violated += [label]
-                print(label, end=' ')
-        print()
+        print(str(constraints_violated).strip('[]'))
 
     with open(args.output, 'w') as filehandle:
         bundle = {'options': vars(args),
