@@ -709,6 +709,13 @@ class Battery(Generator):
         400
         >>> b.store(hour=2, power=400)
         200.0
+
+        # Test charging a battery with zero power.
+        >>> b = Battery(polygons.WILDCARD, 0, 1000)
+        >>> b.store(hour=0, power=400)
+        0
+        >>> b.chargehours
+        0
         """
         if self.last_run == hour:
             # Can't charge and discharge in the same hour.
@@ -718,7 +725,7 @@ class Battery(Generator):
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
             self.stored = self.maxstorage
-        else:
+        elif energy > 0:
             self.chargehours += 1
             self.stored += energy
         if power > 0:
