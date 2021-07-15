@@ -14,6 +14,7 @@
 # pylint: disable=invalid-name
 
 import locale
+from math import isclose
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -774,7 +775,8 @@ class Battery(Generator):
         if energy > 0:
             self.chargehours += 1
             self.last_run = hour
-        assert 0 <= self.stored <= self.maxstorage
+        assert self.stored <= self.maxstorage or \
+            isclose(self.stored, self.maxstorage)
         return energy
 
     def step(self, hour, demand):
@@ -792,7 +794,7 @@ class Battery(Generator):
         if power > 0:
             self.runhours += 1
             self.last_run = hour
-        assert 0 <= self.stored <= self.maxstorage
+        assert self.stored >= 0 or isclose(self.stored, 0)
         return power, 0
 
     def reset(self):
