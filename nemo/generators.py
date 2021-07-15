@@ -665,7 +665,44 @@ class Diesel(Fossil):
 class Battery(Generator):
     """Battery storage (of any type).
 
-    >>> b = Battery(polygons.WILDCARD, 400, 1000, rte=1.0)
+    >>> hours = range(18, 24)
+    >>> b = Battery(polygons.WILDCARD, 400, 1000, \
+                    discharge_hours=hours, rte=1)
+    >>> b.stored = 400
+
+    Cannot discharge outside of discharge hours.
+    >>> b.step(hour=0, demand=200)
+    (0, 0)
+
+    Normal operation.
+    >>> b.store(hour=0, power=400)
+    400
+    >>> b.step(hour=18, demand=200)
+    (200, 0)
+
+    Cannot store and then generate at the same time.
+    >>> b.store(hour=19, power=200)
+    200
+    >>> b.step(hour=19, demand=200)
+    (0, 0)
+
+    # Test charging a battery with zero power.
+    >>> b = Battery(polygons.WILDCARD, 0, 1000)
+    >>> b.store(hour=0, power=400)
+    0
+    >>> b.chargehours
+    0
+
+    # Test charging and discharging efficiency.
+    >>> b = Battery(polygons.WILDCARD, 100, 400, rte=0.5)
+    >>> b.store(hour=0, power=100)
+    100
+    >>> b.stored
+    100
+    >>> b.step(hour=1, demand=1000)
+    (50.0, 0)
+    >>> b.stored
+    50.0
     """
 
     patch = Patch(facecolor='grey')
@@ -699,80 +736,63 @@ class Battery(Generator):
         self.maxstorage = self.capacity * hours
         self.stored = 0
 
-    def store(self, hour, power):
-        """Store power.
+    def empty_p(self):
+        """Return True if the storage is empty.
 
-        >>> b = Battery(polygons.WILDCARD, 400, 1000, rte=1.0)
-        >>> b.store(hour=0, power=400)
-        400
-        >>> b.store(hour=1, power=700)
-        400
-        >>> b.store(hour=2, power=400)
-        200.0
-
-        # Test charging a battery with zero power.
-        >>> b = Battery(polygons.WILDCARD, 0, 1000)
-        >>> b.store(hour=0, power=400)
-        0
-        >>> b.chargehours
-        0
+        >>> b = Battery(polygons.WILDCARD, 400, 800, rte=1)
+        >>> b.stored, b.empty_p()
+        (0, True)
         """
-        if self.last_run == hour:
-            # Can't charge and discharge in the same hour.
+        return self.stored == 0
+
+    def full_p(self):
+        """Return True if the storage is full.
+
+        >>> b = Battery(polygons.WILDCARD, 800, 800, rte=1)
+        >>> b.store(hour=0, power=1000)
+        800
+        >>> b.store(hour=1, power=1000)
+        0
+        >>> b.stored, b.full_p()
+        (800, True)
+        """
+        return self.maxstorage == self.stored
+
+    def store(self, hour, power):
+        """Store power."""
+        assert power > 0
+        if self.full_p() or \
+           self.last_run == hour:
             return 0
+
         power = min(power, self.capacity)
-        energy = power * self.rte
+        energy = power
         if self.stored + energy > self.maxstorage:
-            power = (self.maxstorage - self.stored) / self.rte
-            self.stored = self.maxstorage
-        elif energy > 0:
+            energy = self.maxstorage - self.stored
+        # round-trip losses are paid when charging
+        self.stored += energy
+        if energy > 0:
             self.chargehours += 1
-            self.stored += energy
-        if power > 0:
             self.last_run = hour
-        return power
+        assert 0 <= self.stored <= self.maxstorage
+        return energy
 
     def step(self, hour, demand):
-        """
-        Specialised step method for batteries.
-
-        >>> b = Battery(polygons.WILDCARD, 400, 1000, \
-                        discharge_hours=range(18, 24), rte=1.0)
-        >>> b.stored = 400
-
-        Cannot discharge outside of discharge hours.
-        >>> b.step(hour=0, demand=200)
-        (0, 0)
-
-        Normal operation.
-        >>> b.store(hour=0, power=400)
-        400
-        >>> b.step(hour=18, demand=200)
-        (200, 0)
-
-        Cannot generate and then store at the same time.
-        >>> b.store(hour=18, power=200)
-        0
-
-        Cannot store and then generate at the same time.
-        >>> b.store(hour=19, power=200)
-        200
-        >>> b.step(hour=19, demand=200)
-        (0, 0)
-        """
-        if hour % 24 not in self.discharge_hours:
+        """Specialised step method for batteries."""
+        if self.empty_p() or \
+           hour % 24 not in self.discharge_hours or \
+           hour == self.last_run:
+            self.series_power[hour] = 0
             return 0, 0
 
-        if hour == self.last_run:
-            # Can't charge and discharge in the same hour.
-            return 0, 0
-
-        power = min(self.stored, min(self.capacity, demand))
+        assert demand > 0
+        power = min(self.stored, min(self.capacity, demand)) * self.rte
         self.series_power[hour] = power
         self.stored -= power
         if power > 0:
             self.runhours += 1
             self.last_run = hour
+        assert 0 <= self.stored <= self.maxstorage
         return power, 0
 
     def reset(self):
