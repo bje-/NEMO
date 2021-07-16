@@ -770,7 +770,6 @@ class Battery(Generator):
         energy = power
         if self.stored + energy > self.maxstorage:
             energy = self.maxstorage - self.stored
-        # round-trip losses are paid when charging
         self.stored += energy
         if energy > 0:
             self.chargehours += 1
