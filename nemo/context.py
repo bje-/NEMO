@@ -130,7 +130,7 @@ class Context():
                 string += 'WARNING: reliability standard exceeded\n'
             string += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
 
-            # A subtle trick: generate a date range and then substract
+            # A subtle trick: generate a date range and then subtract
             # it from the timestamps of unserved events.  This will
             # produce a run of time deltas (for each consecutive hour,
             # the time delta between this timestamp and the
