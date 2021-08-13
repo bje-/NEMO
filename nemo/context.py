@@ -115,7 +115,7 @@ class Context():
         total_demand = (self.total_demand() * ureg.MWh).to_compact()
         string += 'Demand energy: {}\n'.format(total_demand)
         surplus_energy = (self.surplus_energy() * ureg.MWh).to_compact()
-        string += 'Unused surplus energy: {}\n'.format(surplus_energy)
+        string += 'Unstored surplus energy: {}\n'.format(surplus_energy)
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
             string += 'Timesteps with unused surplus energy: '
