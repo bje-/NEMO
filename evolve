@@ -193,7 +193,7 @@ if args.verbose and __name__ == '__main__':
     print(context.generators)
 
 if args.trace_file is not None:
-    with open(args.trace_file, 'w') as csvfile:
+    with open(args.trace_file, 'w', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
 
@@ -237,7 +237,7 @@ def eval_func(chromosome):
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
-        with open(args.trace_file, 'a') as tracefile:
+        with open(args.trace_file, 'a', encoding='utf-8') as tracefile:
             tracer = csv.writer(tracefile)
             tracer.writerow([score, penalty, reason] + list(chromosome))
     return (score + penalty,)
@@ -300,7 +300,7 @@ def run():
                 constraints_violated += [label]
         print(str(constraints_violated).strip('[]'))
 
-    with open(args.output, 'w') as filehandle:
+    with open(args.output, 'w', encoding='utf-8') as filehandle:
         bundle = {'options': vars(args),
                   'parameters': [max(0, cap) for cap in hof[0]],
                   'score': score, 'penalty': penalty,

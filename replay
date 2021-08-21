@@ -86,7 +86,7 @@ def run_one(bundle):
 
 
 args = process_options()
-with open(args.f) as resultsfile:
+with open(args.f, 'r', encoding='utf-8') as resultsfile:
     for line in resultsfile:
         if re.search(r'^\s*$', line):
             continue
