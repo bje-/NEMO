@@ -196,7 +196,9 @@ class TraceGenerator(Generator):
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
             with urllib.request.urlopen(filename) as urlobj:  # nosec
-                self.__class__.csvdata = np.genfromtxt(urlobj, comments='#',
+                self.__class__.csvdata = np.genfromtxt(urlobj,
+                                                       encoding='UTF-8',
+                                                       comments='#',
                                                        delimiter=',')
             self.__class__.csvdata = np.maximum(0, self.__class__.csvdata)
             self.__class__.csvfilename = filename
