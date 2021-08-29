@@ -5,8 +5,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# pylint: disable=line-too-long
-
 """Support code for the 43 polygons of the AEMO study."""
 
 from math import atan2, cos, radians, sin, sqrt
