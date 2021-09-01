@@ -225,7 +225,7 @@ class Wind(TraceGenerator):
 class WindOffshore(Wind):
     """Offshore wind power."""
 
-    patch = Patch(facecolor='lightgreen')
+    patch = Patch(facecolor='darkgreen')
     """Colour for plotting"""
 
 
