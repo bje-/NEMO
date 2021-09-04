@@ -475,9 +475,17 @@ class Biofuel(Fuelled):
         """Construct a biofuel generator."""
         Fuelled.__init__(self, polygon, capacity, label)
 
+    def capcost(self, costs):
+        """Return the annual capital cost (of an OCGT)."""
+        return costs.capcost_per_kw[OCGT] * self.capacity * 1000
+
+    def fixed_om_costs(self, costs):
+        """Return the fixed O&M costs (of an OCGT)."""
+        return costs.fixed_om_costs[OCGT] * self.capacity * 1000
+
     def opcost_per_mwh(self, costs):
         """Return the variable O&M costs."""
-        vom = costs.opcost_per_mwh[type(self)]
+        vom = costs.opcost_per_mwh[OCGT]
         fuel_cost = costs.bioenergy_price_per_gj * (3.6 / .31)  # 31% heat rate
         return vom + fuel_cost
 

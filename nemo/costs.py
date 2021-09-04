@@ -81,8 +81,6 @@ class APGTR2015():
             tech.CCGT: 1.5,
             tech.OCGT: 12,
             tech.Black_Coal: 2.5}
-        # same as OCGT
-        self.opcost_per_mwh[tech.Biofuel] = self.opcost_per_mwh[tech.OCGT]
 
         # Fixed O&M (FOM) costs
         self.fixed_om_costs = {
@@ -97,8 +95,6 @@ class APGTR2015():
             tech.CCGT: 20,
             tech.OCGT: 8,
             tech.Black_Coal: 45}
-        # same as OCGT
-        self.fixed_om_costs[tech.Biofuel] = self.fixed_om_costs[tech.OCGT]
 
         table = self.capcost_per_kw
         table[tech.Wind] = 2450
@@ -108,7 +104,6 @@ class APGTR2015():
         table[tech.CCGT] = 1450
         table[tech.OCGT] = 1000
         table[tech.Black_Coal] = 3000
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class APGTR2030(APGTR2015):
@@ -131,7 +126,6 @@ class APGTR2030(APGTR2015):
         table[tech.CCGT] *= 0.9
         table[tech.OCGT] *= 1.1
         table[tech.Black_Coal] *= 0.9
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030():
@@ -178,8 +172,6 @@ class AETA2012_2030():
             tech.Black_Coal: 7 * self.escalation,
             tech.Geothermal_HSA: 0,
             tech.Geothermal_EGS: 0}
-        # same as OCGT
-        self.opcost_per_mwh[tech.Biofuel] = self.opcost_per_mwh[tech.OCGT]
 
         # Fixed O&M (FOM) costs
         self.fixed_om_costs = {
@@ -199,8 +191,6 @@ class AETA2012_2030():
             tech.Black_Coal: 50.5 * self.escalation,
             tech.Geothermal_HSA: 200 * self.escalation,
             tech.Geothermal_EGS: 170 * self.escalation}
-        # same as OCGT
-        self.fixed_om_costs[tech.Biofuel] = self.fixed_om_costs[tech.OCGT]
 
 
 class AETA2012_2030Low(AETA2012_2030):
@@ -228,7 +218,6 @@ class AETA2012_2030Low(AETA2012_2030):
         table[tech.Black_Coal] = 2947
         table[tech.Geothermal_HSA] = 6645
         table[tech.Geothermal_EGS] = 10331
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030High(AETA2012_2030):
@@ -255,7 +244,6 @@ class AETA2012_2030High(AETA2012_2030):
         table[tech.Black_Coal] = 3128
         table[tech.Geothermal_HSA] = 7822
         table[tech.Geothermal_EGS] = 11811
-        table[tech.Biofuel] = table[tech.OCGT]  # same as OCGT
 
 
 class AETA2012_2030Mid(AETA2012_2030):
