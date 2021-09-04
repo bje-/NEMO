@@ -435,7 +435,7 @@ class GenCost2021_2020(GenCost2021):
 
         >>> obj = GenCost2021_2020(0.05, 1.00, 9.00, 30)
         """
-        GenCost2021.__init__(discount, coal_price, gas_price, ccs_price)
+        GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4450
         table[tech.CCGT] = 1743
