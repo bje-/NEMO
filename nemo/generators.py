@@ -239,10 +239,11 @@ class PV(TraceGenerator):
 
 
 class PV1Axis(PV):
-    """Single-axis tracking PV."""
+    """
+    Single-axis tracking PV.
 
-    patch = Patch(facecolor='lightyellow')
-    """Colour for plotting"""
+    This stub class allows differentiated PV costs in costs.py.
+    """
 
 
 class Behind_Meter_PV(PV):
