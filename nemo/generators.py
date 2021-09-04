@@ -257,7 +257,7 @@ class Behind_Meter_PV(PV):
 class CST(TraceGenerator):
     """Concentrating solar thermal (CST) model."""
 
-    patch = Patch(facecolor='yellow')
+    patch = Patch(facecolor='gold')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, solarmult, shours, filename,
