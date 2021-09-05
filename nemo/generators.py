@@ -1097,3 +1097,15 @@ class HydrogenGT(Fuelled):
         if power > 0:
             self.runhours += 1
         return power, 0
+
+    def capcost(self, costs):
+        """Return the annual capital cost (of an OCGT)."""
+        return costs.capcost_per_kw[OCGT] * self.capacity * 1000
+
+    def fixed_om_costs(self, costs):
+        """Return the fixed O&M costs (of an OCGT)."""
+        return costs.fixed_om_costs[OCGT] * self.capacity * 1000
+
+    def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs (of an OCGT)."""
+        return costs.opcost_per_mwh[OCGT]
