@@ -189,7 +189,7 @@ if args.verbose and __name__ == '__main__':
     assert docstring is not None
     # Prune off any doctest test from the docstring.
     docstring = docstring.split('\n')[0]
-    print("supply scenario: %s (%s)" % (args.supply_scenario, docstring))
+    print(f"supply scenario: {args.supply_scenario} ({docstring})")
     print(context.generators)
 
 if args.trace_file is not None:

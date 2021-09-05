@@ -218,7 +218,7 @@ def switch(label):
         if predicate(label):
             return callback(label)
 
-    raise ValueError('invalid scenario: %s' % label)
+    raise ValueError(f'invalid scenario: {label}')
 
 
 def _roll_demand(context, posns):
@@ -313,7 +313,7 @@ def _shift_demand(context, demand, from_hour, to_hour):
                     context.demand[poly, from_hour::24] -= demand * weight
                     context.demand[poly, to_hour::24] += demand * weight
     assert np.all(context.demand >= 0), \
-        "negative load in hour %d" % from_hour
+        f"negative load in hour {from_hour}"
 
 
 def _scale_peaks(context, power, factor):

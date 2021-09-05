@@ -54,7 +54,7 @@ def run_one(bundle):
     try:
         scenarios.supply_scenarios[scenario](context)
     except KeyError:
-        print('unknown scenario: %s' % scenario)
+        print(f'unknown scenario: {scenario}')
         sys.exit(1)
     print('scenario', scenario)
 
@@ -65,7 +65,8 @@ def run_one(bundle):
     try:
         cost_class = costs.cost_scenarios[options['costs']]
     except KeyError:
-        print('unknown cost class: %s' % options['costs'])
+        cost_class = options['costs']
+        print(f'unknown cost class: {cost_class}')
         sys.exit(1)
     context.costs = cost_class(options['discount_rate'],
                                options['coal_price'], options['gas_price'],

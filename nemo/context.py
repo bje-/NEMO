@@ -95,7 +95,7 @@ class Context():
                 setter(newval)
                 num += 1
         # Check every parameter has been set.
-        assert num == len(caps), '%d != %d' % (num, len(caps))
+        assert num == len(caps), f'{num} != {len(caps)}'
 
     def __str__(self):
         """Make a human-readable representation of the context."""
@@ -111,7 +111,7 @@ class Context():
                     string += '\n\t   ' + summary + '\n'
                 else:
                     string += '\n'
-        string += 'Timesteps: %d h\n' % self.hours
+        string += f'Timesteps: {self.hours} h\n'
         total_demand = (self.total_demand() * ureg.MWh).to_compact()
         string += 'Demand energy: {}\n'.format(total_demand)
         surplus_energy = (self.surplus_energy() * ureg.MWh).to_compact()
@@ -119,7 +119,7 @@ class Context():
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
             string += 'Timesteps with unused surplus energy: '
-            string += '%d\n' % len(spill_series)
+            string += f'{len(spill_series)}\n'
 
         if self.unserved.empty:
             string += 'No unserved energy'
