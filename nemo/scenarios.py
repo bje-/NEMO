@@ -208,7 +208,7 @@ def _one_per_poly(region):
                           poly - 1,
                           build_limit=pv_limit[poly],
                           label='poly %d PV' % poly))
-        cst.append(CentralReceiver(poly, 0, 2, 6, cst_cfg,
+        cst.append(CentralReceiver(poly, 0, 2.5, 8, cst_cfg,
                                    poly - 1,
                                    build_limit=cst_limit[poly],
                                    label='poly %d CST' % poly))
