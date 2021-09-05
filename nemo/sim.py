@@ -74,7 +74,7 @@ def _store_spills(context, hour, gen, generators, spl):
     for other in list(g for g in generators if g.storage_p):
         stored = other.store(hour, spl)
         spl -= stored
-        if spl < 0 and isclose(spl, 0):
+        if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
             spl = 0
         assert spl >= 0
 
@@ -107,11 +107,11 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
 
         if not generator.synchronous_p:
             async_demand -= gen
-            assert async_demand > 0 or isclose(async_demand, 0)
+            assert async_demand > 0 or isclose(async_demand, 0, abs_tol=1e-6)
             async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
-        assert residual_hour_demand > 0 or isclose(residual_hour_demand, 0)
+        assert residual_hour_demand > 0 or isclose(residual_hour_demand, 0, abs_tol=1e-6)
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
