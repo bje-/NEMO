@@ -82,7 +82,7 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     try:
         title = configfile.get('plot', 'title')
     except (configparser.NoSectionError, configparser.NoOptionError):
-        title = 'Supply/demand balance'
+        title = 'Energy balance'
     try:
         title += '\n' + configfile.get('plot', 'subtitle')
     except (configfile.configparser.NoSectionError,
