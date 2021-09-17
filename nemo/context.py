@@ -38,7 +38,7 @@ class Context():
         # Number of timesteps is determined by the number of demand rows.
         self.hours = len(hourly_regional_demand)
         # Estimate the number of years from the number of simulation hours.
-        if self.hours == 8760 or self.hours == 8784:
+        if self.hours in (8760, 8784):
             self.years = 1
         else:
             self.years = self.hours / (365.25 * 24)
