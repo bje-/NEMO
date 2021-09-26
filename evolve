@@ -162,7 +162,7 @@ def list_scenarios():
     for key in sorted(scenarios.supply_scenarios):
         doc = scenarios.supply_scenarios[key].__doc__.split('\n')
         description = next(line for line in doc if line).strip()
-        print('%20s' % key, '\t', description)
+        print(f'{key:>20}', '\t', description)
     sys.exit(0)
 
 
@@ -289,10 +289,10 @@ def run():
     print()
     print(context)
     score, penalty, reason = cost(context)
-    print('Score: %.2f $/MWh' % score)
+    print(f'Score: {score:.2f} $/MWh')
     constraints_violated = []
     if reason > 0:
-        print('Penalty: %.2f $/MWh' % penalty)
+        print(f'Penalty: {penalty:.2f} $/MWh')
         print('Constraints violated:', end=' ')
         for label, code in penalties.reasons.items():
             if reason & code:

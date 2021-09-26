@@ -48,7 +48,7 @@ def _legend(context):
     else:
         for gen in gens:
             capacity = (gen.capacity * ureg.MW).to_compact()
-            labels.append(gen.label + ' ({:.2f~P})'.format(capacity))
+            labels.append(gen.label + f' ({capacity:.2f~P})')
             patches.append(gen.patch)
 
     legend = plt.figlegend([Patch('black', 'red')] + patches,

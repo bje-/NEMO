@@ -147,20 +147,20 @@ class Generator():
         """Return a summary of the generator activity."""
         costs = context.costs
         supplied = sum(self.series_power.values()) * ureg.MWh
-        string = 'supplied {}'.format(supplied.to_compact())
+        string = f'supplied {supplied.to_compact()}'
         if self.capacity > 0:
             if self.capfactor() > 0:
-                string += ', CF %.1f%%' % self.capfactor()
+                string += f', CF {self.capfactor():.1f}%'
         if sum(self.series_spilled.values()) > 0:
             spilled = sum(self.series_spilled.values()) * ureg.MWh
-            string += ', surplus {}'.format(spilled.to_compact())
+            string += f', surplus {spilled.to_compact()}'
         if self.capcost(costs) > 0:
-            string += ', capcost %s' % _currency(self.capcost(costs))
+            string += f', capcost {_currency(self.capcost(costs))}'
         if self.opcost(costs) > 0:
-            string += ', opcost %s' % _currency(self.opcost(costs))
+            string += f', opcost {_currency(self.opcost(costs))}'
         lcoe = self.lcoe(costs, context.years)
         if np.isfinite(lcoe) and lcoe > 0:
-            string += ', LCOE %s' % _currency(int(lcoe))
+            string += f', LCOE {_currency(int(lcoe))}'
         return string
 
     def set_capacity(self, cap):
@@ -169,9 +169,8 @@ class Generator():
 
     def __str__(self):
         """Return a short string representation of the generator."""
-        return '%s (%s:%s), %s' \
-            % (self.label, self.region(), self.polygon,
-               str(self.capacity * ureg.MW))
+        return f'{self.label} ({self.region()}:{self.polygon}), ' + \
+            str(self.capacity * ureg.MW)
 
     def __repr__(self):
         """Return a representation of the generator."""
@@ -321,8 +320,8 @@ class CST(TraceGenerator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            ', solar mult %.2f' % self.solarmult + \
-            ', %dh storage' % self.shours
+            f', solar mult {self.solarmult:.2f}' + \
+            f', {self.shours}h storage'
 
 
 class ParabolicTrough(CST):
@@ -362,8 +361,8 @@ class Fuelled(Generator):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        return Generator.summary(self, context) + ', ran %s hours' \
-            % _thousands(self.runhours)
+        return Generator.summary(self, context) + \
+            f', ran {_thousands(self.runhours)} hours'
 
 
 class Hydro(Fuelled):
@@ -454,9 +453,10 @@ class PumpedHydro(Hydro):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
+        storage = (self.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
-            ', ran %s hours' % _thousands(self.runhours) + \
-            ', %s storage' % str(self.maxstorage * ureg.MWh)
+            f', ran {_thousands(self.runhours)} hours' + \
+            f', {storage} storage'
 
     def reset(self):
         """Reset the generator."""
@@ -528,7 +528,7 @@ class Fossil(Fuelled):
         generation = sum(self.series_power.values()) * ureg.MWh
         emissions = generation * self.intensity * (ureg.t / ureg.MWh)
         return Fuelled.summary(self, context) + \
-            ', %s CO2' % emissions.to('Mt')
+            f', {emissions.to("Mt")} CO2'
 
 
 class Black_Coal(Fossil):
@@ -603,7 +603,7 @@ class CCS(Fossil):
         emissions = generation * self.intensity
         captured = emissions * self.capture
         return Fossil.summary(self, context) + \
-            ', %s captured' % captured.to('Mt')
+            f', {captured.to("Mt")} captured'
 
 
 class Coal_CCS(CCS):
@@ -841,10 +841,11 @@ class Battery(Generator):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
+        storage = (self.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
-            ', ran %s hours' % _thousands(self.runhours) + \
-            ', charged %s hours' % _thousands(self.chargehours) + \
-            ', %s storage' % str(self.maxstorage * ureg.MWh)
+            f', ran {_thousands(self.runhours)} hours' + \
+            f', charged {_thousands(self.chargehours)} hours' + \
+            f', {storage} storage'
 
 
 class Geothermal(TraceGenerator):
@@ -927,8 +928,8 @@ class DemandResponse(Generator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            ', max response %d MW' % self.maxresponse + \
-            ', ran %s hours' % _thousands(self.runhours)
+            f', max response {self.maxresponse} MW' + \
+            f', ran {_thousands(self.runhours)} hours'
 
 
 class GreenPower(Generator):

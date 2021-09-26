@@ -113,9 +113,9 @@ class Context():
                     string += '\n'
         string += f'Timesteps: {self.hours} h\n'
         total_demand = (self.total_demand() * ureg.MWh).to_compact()
-        string += 'Demand energy: {}\n'.format(total_demand)
+        string += f'Demand energy: {total_demand}\n'
         surplus_energy = (self.surplus_energy() * ureg.MWh).to_compact()
-        string += 'Unstored surplus energy: {}\n'.format(surplus_energy)
+        string += f'Unstored surplus energy: {surplus_energy}\n'
         if self.surplus_energy() > 0:
             spill_series = self.spill[self.spill.sum(axis=1) > 0]
             string += 'Timesteps with unused surplus energy: '
@@ -124,8 +124,7 @@ class Context():
         if self.unserved.empty:
             string += 'No unserved energy'
         else:
-            string += 'Unserved energy: '
-            string += '%.3f%%' % self.unserved_percent() + '\n'
+            string += f'Unserved energy: {self.unserved_percent():.3f}%\n'
             if self.unserved_percent() > self.relstd * 1.001:
                 string += 'WARNING: reliability standard exceeded\n'
             string += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
@@ -146,5 +145,5 @@ class Context():
             if not self.unserved.empty:
                 umin = (self.unserved.min() * ureg.MW).to_compact()
                 umax = (self.unserved.max() * ureg.MW).to_compact()
-                string += 'Shortfalls (min, max): ({}, {})'.format(umin, umax)
+                string += f'Shortfalls (min, max): ({umin}, {umax})'
         return string

@@ -146,22 +146,22 @@ def re100(context):
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             for poly in range(1, 44):
                 if g == Biofuel:
-                    result.append(g(poly, 0, label='polygon %d GT' % poly))
+                    result.append(g(poly, 0, label=f'polygon {poly} GT'))
                 elif g == PV1Axis:
                     cfg = configfile.get('generation', 'pv1axis-trace')
                     result.append(g(poly, 0, cfg, poly - 1,
                                     build_limit=pv_limit[poly],
-                                    label='polygon %d PV' % poly))
+                                    label=f'polygon {poly} PV'))
                 elif g == CentralReceiver:
                     cfg = configfile.get('generation', 'cst-trace')
-                    result.append(g(poly, 0, 2, 6, cfg, poly - 1,
+                    result.append(g(poly, 0, 2.0, 6, cfg, poly - 1,
                                     build_limit=cst_limit[poly],
-                                    label='polygon %d CST' % poly))
+                                    label=f'polygon {poly} CST'))
                 elif g == Wind:
                     cfg = configfile.get('generation', 'wind-trace')
                     result.append(g(poly, 0, cfg, poly - 1,
                                     build_limit=wind_limit[poly],
-                                    label='polygon %d wind' % poly))
+                                    label=f'polygon {poly} wind'))
     context.generators = result
 
 
@@ -203,15 +203,15 @@ def _one_per_poly(region):
         wind.append(Wind(poly, 0, wind_cfg,
                          poly - 1,
                          build_limit=wind_limit[poly],
-                         label='poly %d wind' % poly))
+                         label=f'poly {poly} wind'))
         pv.append(PV1Axis(poly, 0, pv_cfg,
                           poly - 1,
                           build_limit=pv_limit[poly],
-                          label='poly %d PV' % poly))
+                          label=f'poly {poly} PV'))
         cst.append(CentralReceiver(poly, 0, 2.5, 8, cst_cfg,
                                    poly - 1,
                                    build_limit=cst_limit[poly],
-                                   label='poly %d CST' % poly))
+                                   label=f'poly {poly} CST'))
     return wind, pv, cst
 
 
