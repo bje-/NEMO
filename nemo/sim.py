@@ -111,7 +111,8 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
-        assert residual_hour_demand > 0 or isclose(residual_hour_demand, 0, abs_tol=1e-6)
+        assert residual_hour_demand > 0 or \
+            isclose(residual_hour_demand, 0, abs_tol=1e-6)
         residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:

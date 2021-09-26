@@ -104,7 +104,8 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
         # Ensure accumulated generation does not exceed demand in any timestep.
         # (Due to rounding, accum can be close to demand.)
         assert all(np.logical_or(accum < demand, np.isclose(accum, demand)))
-        plt.plot(accum.index, accum, color='black', linewidth=0.4, linestyle='--')
+        plt.plot(accum.index, accum, color='black', linewidth=0.4,
+                 linestyle='--')
         plt.fill_between(accum.index, prev, accum,
                          facecolor=gen.patch.get_fc(),
                          hatch=gen.patch.get_hatch())
@@ -118,7 +119,8 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
                         g.region() in context.regions):
             idx = context.generators.index(gen)
             accum += context.spill[idx]
-            plt.plot(accum.index, accum, color='black', linewidth=0.4, linestyle='--')
+            plt.plot(accum.index, accum, color='black', linewidth=0.4,
+                     linestyle='--')
             plt.fill_between(prev.index, prev, accum,
                              facecolor=gen.patch.get_fc(), alpha=0.3)
             prev = accum.copy()
