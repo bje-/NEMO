@@ -61,6 +61,7 @@ def conditional_gooey(*pargs, **kwargs):
 def process_options():
     """Process options and return an argparse object."""
     parser = argparse.ArgumentParser(epilog='Bug reports via https://nemo.ozlabs.org/',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      add_help=False)
     comgroup = parser.add_argument_group('common', 'Commonly used options')
     costgroup = parser.add_argument_group('costs', 'Cost-related options')
@@ -80,57 +81,55 @@ def process_options():
     comgroup.add_argument("--reliability-std", type=float, default=0.002,
                           help='reliability standard (%% unserved)')
     comgroup.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
-                          help='minimum operating reserves [default: %s MW]' %
-                          cf.get('limits', 'minimum-reserves-mw'))
+                          help='minimum operating reserves (MW)')
     comgroup.add_argument("-s", "--supply-scenario", type=str, default='ccgt', metavar='SCENARIO',
                           choices=sorted(scenarios.supply_scenarios),
-                          help='generation mix scenario [default: ccgt]')
+                          help='generation mix scenario')
 
     costgroup.add_argument("-c", "--carbon-price", type=int,
                            default=cf.get('costs', 'co2-price-per-t'),
-                           help='carbon price ($/t) [default: %s]' % cf.get('costs', 'co2-price-per-t'))
+                           help='carbon price ($/t)')
     costgroup.add_argument("--costs", type=str, metavar='cost_class',
                            default=cf.get('costs', 'technology-cost-class'),
                            choices=sorted(costs.cost_scenarios),
-                           help='technology cost class [default: %s]' % cf.get('costs', 'technology-cost-class'))
+                           help='technology cost class')
     costgroup.add_argument("--ccs-storage-costs", type=float,
                            default=cf.get('costs', 'ccs-storage-costs-per-t'),
-                           help='CCS storage costs ($/t) [default: %s]' % cf.get('costs', 'ccs-storage-costs-per-t'))
-    costgroup.add_argument("--coal-price", type=float, default=cf.get('costs', 'coal-price-per-gj'),
-                           help='black coal price ($/GJ) [default: %s]' % cf.get('costs', 'coal-price-per-gj'))
-    costgroup.add_argument("--gas-price", type=float, default=cf.get('costs', 'gas-price-per-gj'),
-                           help='gas price ($/GJ) [default: %s]' % cf.get('costs', 'gas-price-per-gj'))
+                           help='CCS storage costs ($/t)')
+    costgroup.add_argument("--coal-price", type=float,
+                           default=cf.get('costs', 'coal-price-per-gj'),
+                           help='black coal price ($/GJ)')
+    costgroup.add_argument("--gas-price", type=float,
+                           default=cf.get('costs', 'gas-price-per-gj'),
+                           help='gas price ($/GJ)')
     costgroup.add_argument("-r", "--discount-rate", type=float,
                            default=cf.get('costs', 'discount-rate'),
-                           help='discount rate [default: %s]' % cf.get('costs', 'discount-rate'))
+                           help='discount rate')
 
     limitgroup.add_argument("--bioenergy-limit", type=float,
                             default=cf.get('limits', 'bioenergy-twh-per-yr'),
-                            help='Limit on annual energy from bioenergy (TWh/y) [default: %s]' %
-                            cf.get('limits', 'bioenergy-twh-per-yr'))
+                            help='Limit on annual energy from bioenergy (TWh/y)')
     limitgroup.add_argument("--emissions-limit", type=float, default=np.inf,
-                            help='CO2 emissions limit (Mt/y) [default: infinity]')
+                            help='CO2 emissions limit (Mt/y)')
     limitgroup.add_argument("--fossil-limit", type=float, default=1.0,
-                            help='Maximum share of energy from fossil fuel [default: 1.0]')
+                            help='Maximum share of energy from fossil fuel')
     limitgroup.add_argument("--hydro-limit", type=float,
                             default=cf.get('limits', 'hydro-twh-per-yr'),
-                            help='Limit on annual energy from hydro (TWh/y) [default: %s]' %
-                            cf.get('limits', 'hydro-twh-per-yr'))
+                            help='Limit on annual energy from hydro (TWh/y)')
     limitgroup.add_argument("--min-regional-generation", type=float, default=0.0,
-                            help='minimum share of energy generated intra-region [default: 0]')
+                            help='minimum share of energy generated intra-region')
     limitgroup.add_argument("--nsp-limit", type=float,
                             default=cf.get('limits', 'nonsync-penetration'),
-                            help='Non-synchronous penetration limit [default: %s]' %
-                            cf.get('limits', 'nonsync-penetration'))
+                            help='Non-synchronous penetration limit')
 
     optgroup.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
     optgroup.add_argument("--seed", type=int, help='seed for random number generator')
     optgroup.add_argument("--sigma", type=float,
                           default=cf.get('optimiser', 'sigma'),
-                          help='CMA-ES sigma value [default: %s]' % cf.get('optimiser', 'sigma'))
+                          help='CMA-ES sigma value')
     optgroup.add_argument("-g", "--generations", type=int,
                           default=cf.get('optimiser', 'generations'),
-                          help='generations [default: %s]' % cf.get('optimiser', 'generations'))
+                          help='generations')
     optgroup.add_argument("--trace-file", type=str,
                           help='Filename for evaluation trace (CSV format)')
     optgroup.add_argument("-v", "--verbose", action="store_true", help="be verbose")
