@@ -60,7 +60,7 @@ def conditional_gooey(*pargs, **kwargs):
                    disable_progress_bar_animation=True)
 def process_options():
     """Process options and return an argparse object."""
-    parser = argparse.ArgumentParser(description='Bug reports via https://nemo.ozlabs.org/',
+    parser = argparse.ArgumentParser(epilog='Bug reports via https://nemo.ozlabs.org/',
                                      add_help=False)
     comgroup = parser.add_argument_group('common', 'Commonly used options')
     costgroup = parser.add_argument_group('costs', 'Cost-related options')
