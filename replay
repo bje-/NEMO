@@ -32,13 +32,18 @@ if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
        optional_cols=1)
 def process_options():
     """Process command line options."""
-    parser = argparse.ArgumentParser(epilog='Bug reports via via https://nemo.ozlabs.org')
-    parser.add_argument("-f", type=str, help='filename of results file', metavar='FILE',
-                        default='results.json')
-    parser.add_argument("-p", "--plot", action="store_true", help='plot an energy balance')
-    parser.add_argument("-v", action="count", help='verbosity level', default=0)
-    parser.add_argument("--spills", action="store_true", help='plot surplus generation')
-    parser.add_argument("--no-legend", action="store_false", help="hide legend")
+    epilog = 'Bug reports via https://nemo.ozlabs.org/'
+    parser = argparse.ArgumentParser(epilog=epilog)
+    parser.add_argument("-f", type=str, help='filename of results file',
+                        metavar='FILE', default='results.json')
+    parser.add_argument("-p", "--plot", action="store_true",
+                        help='plot an energy balance')
+    parser.add_argument("-v", action="count", help='verbosity level',
+                        default=0)
+    parser.add_argument("--spills", action="store_true",
+                        help='plot surplus generation')
+    parser.add_argument("--no-legend", action="store_false",
+                        help="hide legend")
     return parser.parse_args()
 
 

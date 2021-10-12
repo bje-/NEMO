@@ -15,6 +15,7 @@ import sys
 import csv
 import json
 import argparse
+from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
 import warnings
 import numpy as np
 import wx
@@ -45,7 +46,8 @@ if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
 
 
 def conditional_gooey(*pargs, **kwargs):
-    """Conditional decorator that wraps the Gooey decorator if the display can be found."""
+    """Conditional decorator that wraps the Gooey decorator if the display
+    can be found."""
     def decorator(func):
         if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
             return func
@@ -60,12 +62,14 @@ def conditional_gooey(*pargs, **kwargs):
                    disable_progress_bar_animation=True)
 def process_options():
     """Process options and return an argparse object."""
-    parser = argparse.ArgumentParser(epilog='Bug reports via https://nemo.ozlabs.org/',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    epilog = 'Bug reports via https://nemo.ozlabs.org/'
+    parser = argparse.ArgumentParser(epilog=epilog,
+                                     formatter_class=HelpFormatter,
                                      add_help=False)
     comgroup = parser.add_argument_group('common', 'Commonly used options')
     costgroup = parser.add_argument_group('costs', 'Cost-related options')
-    limitgroup = parser.add_argument_group('limits', 'Limits/constraints for the model')
+    limitgroup = parser.add_argument_group('limits',
+                                           'Limits/constraints for the model')
     optgroup = parser.add_argument_group('optimiser', 'CMA-ES controls')
 
     comgroup.add_argument("-d", "--demand-modifier", action="append",
@@ -80,9 +84,11 @@ def process_options():
                           help='plot hourly energy balance on completion')
     comgroup.add_argument("--reliability-std", type=float, default=0.002,
                           help='reliability standard (%% unserved)')
-    comgroup.add_argument("--reserves", type=int, default=cf.get('limits', 'minimum-reserves-mw'),
+    comgroup.add_argument("--reserves", type=int,
+                          default=cf.get('limits', 'minimum-reserves-mw'),
                           help='minimum operating reserves (MW)')
-    comgroup.add_argument("-s", "--supply-scenario", type=str, default='ccgt', metavar='SCENARIO',
+    comgroup.add_argument("-s", "--supply-scenario", type=str,
+                          default='ccgt', metavar='SCENARIO',
                           choices=sorted(scenarios.supply_scenarios),
                           help='generation mix scenario')
 
@@ -108,7 +114,7 @@ def process_options():
 
     limitgroup.add_argument("--bioenergy-limit", type=float,
                             default=cf.get('limits', 'bioenergy-twh-per-yr'),
-                            help='Limit on annual energy from bioenergy (TWh/y)')
+                            help='Limit on annual bioenergy use (TWh/y)')
     limitgroup.add_argument("--emissions-limit", type=float, default=np.inf,
                             help='CO2 emissions limit (Mt/y)')
     limitgroup.add_argument("--fossil-limit", type=float, default=1.0,
@@ -116,14 +122,17 @@ def process_options():
     limitgroup.add_argument("--hydro-limit", type=float,
                             default=cf.get('limits', 'hydro-twh-per-yr'),
                             help='Limit on annual energy from hydro (TWh/y)')
-    limitgroup.add_argument("--min-regional-generation", type=float, default=0.0,
-                            help='minimum share of energy generated intra-region')
+    limitgroup.add_argument("--min-regional-generation", type=float,
+                            default=0.0,
+                            help='minimum share of intra-region generation')
     limitgroup.add_argument("--nsp-limit", type=float,
                             default=cf.get('limits', 'nonsync-penetration'),
                             help='Non-synchronous penetration limit')
 
-    optgroup.add_argument("--lambda", type=int, dest='lambda_', help='override CMA-ES lambda value')
-    optgroup.add_argument("--seed", type=int, help='seed for random number generator')
+    optgroup.add_argument("--lambda", type=int, dest='lambda_',
+                          help='override CMA-ES lambda value')
+    optgroup.add_argument("--seed", type=int,
+                          help='seed for random number generator')
     optgroup.add_argument("--sigma", type=float,
                           default=cf.get('optimiser', 'sigma'),
                           help='CMA-ES sigma value')
@@ -132,7 +141,8 @@ def process_options():
                           help='generations')
     optgroup.add_argument("--trace-file", type=str,
                           help='Filename for evaluation trace (CSV format)')
-    optgroup.add_argument("-v", "--verbose", action="store_true", help="be verbose")
+    optgroup.add_argument("-v", "--verbose", action="store_true",
+                          help="be verbose")
     return parser.parse_args()
 
 
@@ -194,7 +204,8 @@ if args.verbose and __name__ == '__main__':
 if args.trace_file is not None:
     with open(args.trace_file, 'w', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['# score', 'penalty', 'reasoncode', 'parameter values'])
+        writer.writerow(['# score', 'penalty', 'reasoncode',
+                         'parameter values'])
 
 
 # Build list of penalty functions based on command line args, etc.
@@ -258,7 +269,8 @@ if args.lambda_ is None:
     # let DEAP choose
     strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
 else:
-    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma, lambda_=args.lambda_)
+    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma,
+                            lambda_=args.lambda_)
 
 toolbox.register("generate", strategy.generate, creator.Individual)
 toolbox.register("update", strategy.update)

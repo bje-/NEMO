@@ -49,7 +49,7 @@ lineprof:
 	kernprof -v -l stub.py
 
 flake8:
-	flake8 evolve replay nemo tests --max-line-length=127 --ignore=N801
+	flake8 evolve replay nemo tests --ignore=N801
 
 LINTSRC=evolve replay $(wildcard *.py nemo/*.py tests/*.py)
 
