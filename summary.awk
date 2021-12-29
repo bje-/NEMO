@@ -141,6 +141,7 @@ function addcap(tech)
 	printf ("%12s%8s\t%5s\t%5.1f\t%.3f\n", "surplus", "N/A", "N/A", surplus, surplus / total_demand)
 
     print ""
+    total_generation = 0
     co2 = 0
     surplus = 0
     params = ""
