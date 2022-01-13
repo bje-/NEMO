@@ -49,9 +49,9 @@ lineprof:
 	kernprof -v -l stub.py
 
 flake8:
-	flake8 evolve replay nemo tests --ignore=N801
+	flake8 evolve replay awklite nemo tests --ignore=N801
 
-LINTSRC=evolve replay $(wildcard *.py nemo/*.py tests/*.py)
+LINTSRC=evolve replay $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
 
 lint:	flake8
 	pylint --disable=E1120,E1124 $(LINTSRC)
