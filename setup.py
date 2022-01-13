@@ -6,7 +6,7 @@ from setuptools import setup
 setup(name='nemopt',
       # Use a datestamp as the version.
       version=time.strftime('%Y%m%d'),
-      packages=['nemo'],
+      packages=['awklite', 'nemo'],
       description='National Electricity Market Optimiser',
       author='Ben Elliston',
       author_email='bje@air.net.au',
