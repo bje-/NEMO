@@ -81,7 +81,7 @@ class Undefined():
         return False
 
 
-class Namespace():  # pylint: disable=too-many-instance-attributes
+class Namespace():
     """
     An object that returns an Undefined for undefined attributes.
 
