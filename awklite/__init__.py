@@ -12,21 +12,39 @@ scripts in Python. There are several features:
 
   * a specialised version of 'list', used for holding fields of a
     line, that can be indexed from one and not zero. In AWK, the first
-    field is $1.
+    field is $1. A simple example:
 
-  * a namespace class that returns an Undefined type (see below) for
-    variables that are not defined. This mimics AWK's behaviour of
-    giving undefined variables a null value.
+        >>> f = Fields("1.0 2 three".split())
+        >>> f[1], f[2], f[3]
+        (1.0, 2, 'three')
+
+  * a Namespace class that returns an Undefined type (see below) for
+    variables that are not attributes of the object. This mimics AWK's
+    behaviour of giving undefined variables a null value, eg:
+
+        >>> a = Namespace()
+        >>> a.foo = 10
+        >>> a.foo
+        10
+        >>> int(a.bar)
+        0
 
   * a new Undefined type, which mimics an undefined variable in
     AWK. This variable is 0 in an integer context, 0.0 in a float
     context, and the empty string in a string context. As soon as the
-    variable is overwritten with a value, it is no longer
-    undefined. eg:
+    variable is overwritten with a value, it is no longer undefined.
+    Some examples to demonstrate the semantics:
 
-        u = Undefined()
-        u += 1
-
+        >>> ud = Undefined()
+        >>> int(ud), float(ud), str(ud)
+        (0, 0.0, '')
+        >>> ud + 1, ud + 1.1, ud + 'hello'
+        (1, 1.1, 'hello')
+        >>> ud > 0
+        False
+        >>> ud += 1
+        >>> ud
+        1
 """
 
 
@@ -34,11 +52,6 @@ class Fields(list):
     """A list which uses one-based indexing."""
 
     def __getitem__(self, key):
-        """
-        >>> f = Fields("1.0 2 three".split())
-        >>> f[1], f[2], f[3]
-        (1.0, 2, 'three')
-        """
         assert key > 0
         value = list.__getitem__(self, key - 1)
         try:
@@ -51,20 +64,7 @@ class Fields(list):
 
 
 class Undefined():
-    """
-    An undefined object mimics an undefined variable in AWK.
-
-    When not otherwise defined, it is 0 in an integer context, 0.0 in
-    a float context, and the empty string in a string context.
-
-    >>> ud = Undefined()
-    >>> int(ud), float(ud), str(ud)
-    (0, 0.0, '')
-    >>> ud + 1, ud + 1.1, ud + 'hello'
-    (1, 1.1, 'hello')
-    >>> ud > 0
-    False
-    """
+    """An undefined object mimics an undefined variable in AWK."""
     def __int__(self):
         return 0
 
@@ -82,21 +82,9 @@ class Undefined():
 
 
 class Namespace():
-    """
-    An object that returns an Undefined for undefined attributes.
+    """An object that returns an Undefined for undefined attributes."""
 
-    >>> a = Namespace()
-    >>> a.foo = 10
-    >>> a.foo
-    10
-    >>> int(a.bar)
-    0
-    >>> a.clear()
-    >>> int(a.foo)
-    0
-    """
     def __getattr__(self, name):
-        """Return the empty string if undefined."""
         try:
             return super.__getattr__(self, name)
         except AttributeError:
