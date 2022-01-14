@@ -16,7 +16,7 @@ scripts in Python. There are several features:
 
         >>> f = Fields("1.0 2 three".split())
         >>> f[1], f[2], f[3]
-        (1.0, 2, 'three')
+        ('1.0', '2', 'three')
 
   * a Namespace class that returns an Undefined type (see below) for
     variables that are not attributes of the object. This mimics AWK's
