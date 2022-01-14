@@ -50,17 +50,9 @@ scripts in Python. There are several features:
 
 class Fields(list):
     """A list which uses one-based indexing."""
-
     def __getitem__(self, key):
-        assert key > 0
-        value = list.__getitem__(self, key - 1)
-        try:
-            return int(value)
-        except ValueError:
-            try:
-                return float(value)
-            except ValueError:
-                return value
+        assert 0 < key <= len(self)
+        return list.__getitem__(self, key - 1)
 
 
 class Undefined():
