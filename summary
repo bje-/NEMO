@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2022 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+# pylint: disable=no-member
+
+"""This script, hand translated into Python from the original AWK
+version, processes the output of evolve into a summary table. An
+example of its usage:
+
+python3 summary < evolve-output.txt
+
+The script is capable of processing a file containing multiple runs.
+Multiple summary tables will be output."""
+
+from re import search
+import sys
+
+import awklite
+
+
+def convert_to_gw(amt, suffix):
+    """Convert any unit of power to gigawatts (GW)"""
+
+    amt = float(amt)
+    if suffix == 'kW':
+        return amt / 10**6
+    if suffix == 'MW':
+        return amt / 10**3
+    if suffix == "GW":
+        return amt
+    print(f'ERROR: unrecognised suffix {suffix}')
+    sys.exit(1)
+
+
+def twh(amt, suffix):
+    """Convert any energy unit to TWh"""
+
+    amt = float(amt)
+    if suffix == 'MWh':
+        return amt / 10**6
+    if suffix == 'GWh':
+        return amt / 10**3
+    if suffix == 'TWh':
+        return amt
+    print(f'ERROR: unrecognised suffix {suffix}')
+    sys.exit(1)
+
+
+def addcap(tech, flds):
+    """Add to the capacity total for technology TECH."""
+    nfields = len(flds)
+    amt = convert_to_gw(flds[nfields - 1], flds[nfields])
+    try:
+        av.caps[tech] += amt
+    except KeyError:
+        av.caps[tech] = amt
+    av.last = tech
+
+
+MERIT = "battery HSA EGS PV wind CST Coal Coal-CCS CCGT CCGT-CCS hydro "
+MERIT += "PSH GT OCGT diesel DR"
+MERIT = MERIT.split()
+
+# A namespace for AWK-like variables
+av = awklite.Namespace()
+av.energy = {}
+av.caps = {}
+
+scenario_num = 0  # pylint: disable=invalid-name
+
+patterns = {
+    '[Bb]attery.*[kMG]W.?$': lambda f: addcap("battery", f),
+    'HSA.*[kMG]W.?$': lambda f: addcap("HSA", f),
+    'EGS.*[kMG]W.?$': lambda f: addcap("EGS", f),
+    'PV.*[kMG]W.?$': lambda f: addcap("PV", f),
+    'wind.*[kMG]W.?$': lambda f: addcap("wind", f),
+    ' S?CST.*[kMG]W.?$': lambda f: addcap("CST", f),
+    ' hydro.*[kMG]W.?$': lambda f: addcap("hydro", f),
+    'pumped-hydro.*[kMG]W.?$': lambda f: addcap("PSH", f),
+    'PSH.*[kMG]W.?$': lambda f: addcap("PSH", f),
+    ' GT.*[kMG]W.?$': lambda f: addcap("GT", f),
+    'CCGT-CCS.*[kMG]W.?$': lambda f: addcap("CCGT-CCS", f),
+    'CCGT .*[kMG]W.?$': lambda f: addcap("CCGT", f),
+    'coal.*[kMG]W.?$': lambda f: addcap("Coal", f),
+    'Coal-CCS.*[kMG]W.?$': lambda f: addcap("Coal-CCS", f),
+    'OCGT.*[kMG]W.?$': lambda f: addcap("OCGT", f),
+    'diesel.*[kMG]W.?$': lambda f: addcap("diesel", f),
+    '(DR|demand, f).*[kMG]W.?$': lambda f: addcap("DR", f),
+    'HydrogenGT.*[kMG]W.?$': lambda f: addcap("HydrogenGT", f)
+}
+
+for line in sys.stdin:  # noqa: C901
+    fields = awklite.Fields(line.split())
+    nf = len(fields)
+
+    # AWK-style processing loop
+    for pattern, action in patterns.items():
+        if search(pattern, line):
+            action(fields)
+
+    if search(r'supplied [\d\.]+ [MGT]Wh', line):
+        fld3 = fields[3]
+        if isinstance(fld3, str):
+            fld3 = fld3.replace(',', '')  # strip trailing comma
+        twhs = twh(fields[2], fld3)
+        try:
+            av.energy[av.last] += twhs
+        except KeyError:
+            av.energy[av.last] = twhs
+        av.total_generation += twhs
+
+    # "spilled" may appear in old log files
+    if search(r'spilled [\d\.]+ TWh', line):
+        av.surplus += fields[5]
+
+    # now it's "surplus"
+    if search(r'surplus [\d\.]+ [MGT]Wh', line):
+        fld8 = fields[8]
+        if isinstance(fld8, str):
+            fld8 = fld8.replace(',', '')  # strip trailing comma
+        av.surplus += twh(fields[7], fld8)
+
+    if search(r'Mt CO2.?$', line):
+        av.CO2 += float(fields[nf - 2])
+
+    if search('Mt CO2,', line):
+        av.CO2 += float(fields[nf - 5]) - float(fields[nf - 2])
+
+    if search('Unserved energy', line):
+        av.unserved = fields[3]
+
+    if search('Score:', line):
+        av.cost = fields[2]
+
+    if search('Penalty:', line):
+        av.penalty = fields[2]
+
+    if search('Constraints violated', line):
+        line = line.replace('Constraints violated: ', '').strip('\n')
+        line = line.replace(' ', ',')
+        constraints = line
+
+    if search('Timesteps:', line):
+        av.timesteps = int(fields[2])
+
+    if search(r'^{.*}', line):
+        av.params = line.strip('\n')
+
+    if search('Demand energy:', line):
+        av.total_demand = float(fields[nf - 1])
+
+    if search(r'^Done', line):
+        scenario_num += 1
+        av.total_capacity = sum(av.caps.values())
+        if scenario_num > 1:
+            print()
+        print(f"# scenario {scenario_num}")
+        if av.params:
+            print(f"# options {av.params}")
+        print(f"# demand {av.total_demand:.2f} TWh")
+        if av.CO2 > 0:
+            print(f"# emissions {av.CO2:.2f} Mt")
+        if av.unserved:
+            print(f"# unserved {str(av.unserved)}")
+        print(f"# score {av.cost} $/MWh")
+        if av.penalty:
+            print(f"# penalty {av.penalty} $/MWh")
+            print(f"# constraints <{constraints}> violated")
+        print(f"# {'tech':>10}\t  GW\tshare\t  TWh\tshare\tCF")
+        for c in MERIT:
+            if c not in av.caps:
+                continue
+            capfactor = \
+                (av.energy[c] * 1000) / (av.caps[c] * av.timesteps) \
+                if av.caps[c] > 0 else 0
+            print(f"{c:>12}\t"
+                  f"{av.caps[c]:4.1f}\t"
+                  f"{av.caps[c] / av.total_capacity:.3f}\t"
+                  f"{av.energy[c]:5.1f}\t"
+                  f"{av.energy[c] / av.total_generation:.3f}\t"
+                  f"{capfactor:02.3f}")
+
+        if av.surplus > 0:
+            print(f"{'av.surplus':>12}{'N/A':>8}\t{'N/A':>5}\t"
+                  f"{av.surplus:5.1f}\t"
+                  f"{av.surplus / av.total_demand:.3f}")
+
+        print()
+        # clear everything ready for the next scenario
+        av.clear()
+        av.energy = {}
+        av.caps = {}

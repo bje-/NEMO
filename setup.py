@@ -23,7 +23,7 @@ setup(name='nemopt',
           'Topic :: Scientific/Engineering'
       ],
       data_files=[('etc', ['nemo.cfg'])],
-      scripts=['evolve', 'replay'],
+      scripts=['evolve', 'replay', 'summary'],
       install_requires=[
           'deap',
           'Gooey>=1.0.4',
