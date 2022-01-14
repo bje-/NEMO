@@ -144,7 +144,7 @@ for line in sys.stdin:  # noqa: C901
     if search('Constraints violated', line):
         line = line.replace('Constraints violated: ', '').strip('\n')
         line = line.replace(' ', ',')
-        constraints = line
+        av.constraints = line
 
     if search('Timesteps:', line):
         av.timesteps = int(fields[2])
@@ -171,7 +171,7 @@ for line in sys.stdin:  # noqa: C901
         print(f"# score {av.cost} $/MWh")
         if av.penalty:
             print(f"# penalty {av.penalty} $/MWh")
-            print(f"# constraints <{constraints}> violated")
+            print(f"# constraints <{av.constraints}> violated")
         print(f"# {'tech':>10}\t  GW\tshare\t  TWh\tshare\tCF")
         for c in MERIT:
             if c not in av.caps:
