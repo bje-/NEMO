@@ -321,7 +321,7 @@ def _scale_peaks(context, power, factor):
     Adjust demand peaks over N megawatts by factor%.
 
     >>> c = type('context', (), {})
-    >>> c.demand = pd.DataFrame([[0]*5]*5)
+    >>> c.demand = pd.DataFrame([[0.0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> _scale_peaks(c, 3000, 0.5)
     >>> c.demand.loc[3]
@@ -341,7 +341,7 @@ def _scale_npeaks(context, topn, factor):
     Adjust top N demand peaks by X%.
 
     >>> c = type('context', (), {})
-    >>> c.demand = pd.DataFrame([[0]*5]*5)
+    >>> c.demand = pd.DataFrame([[0.0]*5]*5)
     >>> c.demand.loc[3] = 5000
     >>> c.demand.loc[4] = 3000
     >>> _scale_npeaks(c, 1, 0.5)
