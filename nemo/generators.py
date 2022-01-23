@@ -14,10 +14,10 @@
 # pylint: disable=invalid-name
 
 import locale
-from math import isclose
 import urllib.error
 import urllib.parse
 import urllib.request
+from math import isclose
 
 import numpy as np
 import pint

@@ -10,12 +10,10 @@
 """Supply side scenarios."""
 
 from nemo import configfile, regions
-from nemo.generators import (Battery, Biofuel, Black_Coal,
-                             CentralReceiver, CCGT, CCGT_CCS,
-                             Coal_CCS, CST, DemandResponse, Hydro,
-                             OCGT, PV1Axis, PumpedHydro, Wind)
-
-from nemo.polygons import WILDCARD, wind_limit, pv_limit, cst_limit
+from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
+                             Black_Coal, CentralReceiver, Coal_CCS,
+                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind)
+from nemo.polygons import WILDCARD, cst_limit, pv_limit, wind_limit
 
 
 def _demand_response():

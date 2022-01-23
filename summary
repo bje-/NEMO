@@ -18,8 +18,8 @@ python3 summary < evolve-output.txt
 The script is capable of processing a file containing multiple runs.
 Multiple summary tables will be output."""
 
-from re import search
 import sys
+from re import search
 
 import awklite
 

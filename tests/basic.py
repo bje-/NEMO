@@ -13,9 +13,7 @@ import math
 import unittest
 
 import nemo
-from nemo import regions
-from nemo import polygons
-from nemo import generators
+from nemo import generators, polygons, regions
 
 
 class SuperGenerator(generators.Generator):

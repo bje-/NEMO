@@ -15,11 +15,9 @@ import re
 import sys
 
 from gooey import Gooey
+
 import nemo
-from nemo import costs
-from nemo import demand
-from nemo import scenarios
-from nemo import utils
+from nemo import costs, demand, scenarios, utils
 
 if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
     sys.argv.append('--ignore-gooey')

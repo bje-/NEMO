@@ -1,25 +1,19 @@
 """A stub for profiling tools to run one basic simulation."""
 
 import os
-import unittest
 import types
+import unittest
 from datetime import datetime
 
 import nemo
-from nemo import configfile
-from nemo import costs
-from nemo import generators
-from nemo import regions
-from nemo import polygons
-from nemo import utils
-from nemo import scenarios
+from nemo import (configfile, costs, generators, polygons, regions, scenarios,
+                  utils)
+from nemo.generators import (CCGT, CCGT_CCS, OCGT, Battery, Behind_Meter_PV,
+                             Biomass, Black_Coal, Coal_CCS, DemandResponse,
+                             Diesel, Electrolyser, Geothermal_EGS,
+                             Geothermal_HSA, GreenPower, HydrogenGT,
+                             HydrogenStorage, ParabolicTrough, WindOffshore)
 from nemo.polygons import WILDCARD
-from nemo.generators import (Battery, Behind_Meter_PV, Biomass,
-                             Black_Coal, CCGT, CCGT_CCS, Coal_CCS,
-                             DemandResponse, Diesel, Electrolyser,
-                             Geothermal_EGS, Geothermal_HSA,
-                             GreenPower, HydrogenGT, HydrogenStorage,
-                             OCGT, ParabolicTrough, WindOffshore)
 
 # pylint: disable=no-self-use
 

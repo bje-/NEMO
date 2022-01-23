@@ -11,32 +11,26 @@
 
 """Evolutionary programming applied to NEM optimisations."""
 
-import sys
+import argparse
 import csv
 import json
-import argparse
-from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
+import sys
 import warnings
+from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
+
 import numpy as np
 import wx
+from deap import algorithms, base, cma, creator, tools
 from gooey import Gooey
 
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
-from deap import cma
 try:
     from scoop import futures
 except ImportError:  # pragma: no cover
     print('WARNING: scoop not loaded')
 
 import nemo
-from nemo import scenarios
-from nemo import costs
 from nemo import configfile as cf
-from nemo import demand
-from nemo import penalties
+from nemo import costs, demand, penalties, scenarios
 
 # Ignore possible runtime warnings from SCOOP
 warnings.simplefilter('ignore', RuntimeWarning)
