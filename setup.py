@@ -1,6 +1,7 @@
 """Setup script."""
 
 import time
+
 from setuptools import setup
 
 setup(name='nemopt',
@@ -20,7 +21,7 @@ setup(name='nemopt',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Programming Language :: Python :: 3 :: Only',
-          'Topic :: Scientific/Engineering'
+          'Topic :: Scientific/Engineering',
       ],
       data_files=[('etc', ['nemo.cfg'])],
       scripts=['evolve', 'replay', 'summary'],
