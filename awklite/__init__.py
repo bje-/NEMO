@@ -78,7 +78,7 @@ class Namespace():
 
     def __getattr__(self, name):
         try:
-            return super.__getattr__(self, name)
+            return super().__getattr__(self, name)
         except AttributeError:
             return Undefined()
 

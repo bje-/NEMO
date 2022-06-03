@@ -1050,7 +1050,6 @@ class Electrolyser(Generator):
         self.setters += [(self.tank.set_storage, 0, 10000)]
 
     def step(self, hour, demand):
-        # pylint: disable=no-self-use
         # pylint: disable=unused-argument
         """Return 0 as this is not a generator."""
         return 0, 0

@@ -15,8 +15,6 @@ from nemo.generators import (CCGT, CCGT_CCS, OCGT, Battery, Behind_Meter_PV,
                              HydrogenStorage, ParabolicTrough, WindOffshore)
 from nemo.polygons import WILDCARD
 
-# pylint: disable=no-self-use
-
 
 class TestCoverage(unittest.TestCase):
     """A handful of miscellaneous tests to ensure good coverage."""
