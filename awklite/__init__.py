@@ -84,7 +84,16 @@ class Undefined():
 
 
 class Namespace():
-    """An object that returns an Undefined for undefined attributes."""
+    """An object that returns an Undefined for undefined attributes.
+
+    >>> ns = Namespace()
+    >>> ns.value = 10
+    >>> ns.value, type(ns.novalue)
+    (10, <class 'awklite.Undefined'>)
+    >>> ns.clear()
+    >>> type(ns.value)
+    <class 'awklite.Undefined'>
+    """
 
     def __getattr__(self, name):
         """Return Undefined for undefined attributes."""
