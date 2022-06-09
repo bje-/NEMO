@@ -178,7 +178,7 @@ def re100(context):
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind, WindOffshore]:
             result += _every_poly(g)
         else:
-            raise ValueError('unhandled generator type')
+            raise ValueError('unhandled generator type')  # pragma: no cover
     context.generators = result
 
 
