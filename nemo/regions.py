@@ -10,7 +10,23 @@
 
 
 class Region():
-    """Each region is described by a Region object."""
+    """Each region is described by a Region object.
+
+    >>> r = Region(0, 'NSW1', 'New South Wales')
+    >>> r
+    NSW1
+    >>> x = range(5)
+    >>> x[r]
+    0
+
+    >>> import copy
+    >>> sacopy = copy.copy(sa)
+    >>> sa is sacopy
+    True
+    >>> sacopy = copy.deepcopy(sa)
+    >>> sa is sacopy
+    True
+    """
 
     def __init__(self, ordinal, regionid, descr):
         """
@@ -24,46 +40,19 @@ class Region():
         self.polygons = None
 
     def __repr__(self):
-        """
-        Return region code.
-
-        >>> r = Region(1, 'QLD1', 'Queensland')
-        >>> r
-        QLD1
-        """
+        """Return region code."""
         return self.id
 
     def __index__(self):
-        """
-        Return region number.
-
-        >>> r = Region(1, 'QLD1', 'Queensland')
-        >>> x = [0,1,2,3,4]
-        >>> x[r]
-        1
-        """
+        """Return region number."""
         return self.num
 
     def __copy__(self):
-        """
-        Prevent copying.
-
-        >>> import copy
-        >>> sacopy = copy.copy(sa)
-        >>> sa is sacopy
-        True
-        """
+        """Prevent copying."""
         return self
 
     def __deepcopy__(self, _):
-        """
-        Prevent deepcopying.
-
-        >>> import copy
-        >>> sacopy = copy.deepcopy(sa)
-        >>> sa is sacopy
-        True
-        """
+        """Prevent deepcopying."""
         return self
 
 
