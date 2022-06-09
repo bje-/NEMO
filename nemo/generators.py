@@ -203,7 +203,7 @@ class TraceGenerator(Generator):
         self.generation = self.__class__.csvdata[::, column]
 
     def step(self, hour, demand):
-        """Step method for wind generators."""
+        """Step method for any generator using traces."""
         generation = self.generation[hour] * self.capacity
         power = min(generation, demand)
         spilled = generation - power
