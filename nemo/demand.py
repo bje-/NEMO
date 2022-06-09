@@ -303,7 +303,22 @@ def _scale_demand_by(context, factor):
 
 
 def _shift_demand(context, demand, from_hour, to_hour):
-    """Move n MW of demand from from_hour to to_hour."""
+    """Move n MW of demand from from_hour to to_hour.
+
+    >>> from nemo import context, regions
+    >>> ctx = context.Context()
+    >>> ctx.regions = [regions.sa]
+    >>> ctx.demand = np.zeros((43, 24 * 7))
+    >>> ctx.demand[26][0::24] = 100  # polygon 27
+    >>> ctx.demand[31][0::24] = 100  # polygon 32
+    >>> saved_sum = ctx.demand.sum()
+    >>> _shift_demand(ctx, 50, 0, 12) # shift 50MW from midnight to noon
+    >>> assert ctx.demand.sum() == saved_sum  # verify no change
+    >>> ctx.demand[26][0], ctx.demand[26][12]  # 5MW -> noon
+    (95.0, 5.0)
+    >>> ctx.demand[31][0], ctx.demand[31][12]  # 45MW -> noon
+    (55.0, 45.0)
+    """
     # Shift demand within in each polygon
     for poly in range(43):
         for regn in context.regions:
