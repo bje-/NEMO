@@ -7,8 +7,10 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""Awklite is a tiny support library to assist in writing AWK-style
-scripts in Python. There are several features:
+"""Awklite assists in writing AWK-style scripts in Python.
+
+Awklite is a tiny support library to assist in writing AWK-style
+scripts. There are several features:
 
   * a specialised version of 'list', used for holding fields of a
     line, that can be indexed from one and not zero. In AWK, the first
@@ -50,26 +52,34 @@ scripts in Python. There are several features:
 
 class Fields(list):
     """A list which uses one-based indexing."""
+
     def __getitem__(self, key):
+        """Use 1..n list indexing."""
         assert 0 < key <= len(self)
         return list.__getitem__(self, key - 1)
 
 
 class Undefined():
     """An undefined object mimics an undefined variable in AWK."""
+
     def __int__(self):
+        """Undefined is zero."""
         return 0
 
     def __float__(self):
+        """Undefined is zero."""
         return 0.0
 
     def __str__(self):
+        """Undefined is the empty string."""
         return ""
 
     def __add__(self, other):
+        """X plus Undefined is X."""
         return other
 
     def __gt__(self, other):
+        """Undefined > X is always false."""
         return False
 
 
@@ -77,6 +87,7 @@ class Namespace():
     """An object that returns an Undefined for undefined attributes."""
 
     def __getattr__(self, name):
+        """Return Undefined for undefined attributes."""
         try:
             return super().__getattr__(self, name)
         except AttributeError:
