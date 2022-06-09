@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2013, 2014 Ben Elliston
+# Copyright (C) 2012, 2013, 2014, 2022 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
 # Copyright (C) 2016 IT Power (Australia)
 #
@@ -12,8 +12,10 @@
 from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind)
-from nemo.polygons import WILDCARD, cst_limit, pv_limit, wind_limit
+                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind,
+                             WindOffshore)
+from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit,
+                           offshore_wind_limit)
 
 
 def _demand_response():
@@ -125,6 +127,30 @@ def coal_ccs(context):
     context.generators = [coal] + _hydro() + [ocgt]
 
 
+def _every_poly(gentype):
+    """Create a generator of type gentype in each of the 44 polygons."""
+    result = []
+    for poly in range(1, 44):
+        if gentype == Biofuel:
+            result.append(gentype(poly, 0, label=f'polygon {poly} GT'))
+        elif gentype == PV1Axis:
+            cfg = configfile.get('generation', 'pv1axis-trace')
+            result.append(gentype(poly, 0, cfg, poly - 1,
+                                  build_limit=pv_limit[poly],
+                                  label=f'polygon {poly} PV'))
+        elif gentype == CentralReceiver:
+            cfg = configfile.get('generation', 'cst-trace')
+            result.append(gentype(poly, 0, 2.0, 6, cfg, poly - 1,
+                                  build_limit=cst_limit[poly],
+                                  label=f'polygon {poly} CST'))
+        elif gentype == Wind:
+            cfg = configfile.get('generation', 'wind-trace')
+            result.append(gentype(poly, 0, cfg, poly - 1,
+                                  build_limit=wind_limit[poly],
+                                  label=f'polygon {poly} wind'))
+    return result
+
+
 def re100(context):
     """
     100% renewable electricity.
@@ -132,34 +158,27 @@ def re100(context):
     >>> c = type('context', (), {})
     >>> re100(c)
     >>> len(c.generators)
-    184
+    185
     """
     result = []
     # The following list is in merit order.
-    for g in [PV1Axis, Wind, PumpedHydro, Hydro, CentralReceiver, Biofuel]:
+    for g in [PV1Axis, Wind, WindOffshore, PumpedHydro, Hydro,
+              CentralReceiver, Biofuel]:
         if g == PumpedHydro:
             result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
         elif g == Hydro:
             result += [h for h in _hydro() if not isinstance(h, PumpedHydro)]
-        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
-            for poly in range(1, 44):
-                if g == Biofuel:
-                    result.append(g(poly, 0, label=f'polygon {poly} GT'))
-                elif g == PV1Axis:
-                    cfg = configfile.get('generation', 'pv1axis-trace')
-                    result.append(g(poly, 0, cfg, poly - 1,
-                                    build_limit=pv_limit[poly],
-                                    label=f'polygon {poly} PV'))
-                elif g == CentralReceiver:
-                    cfg = configfile.get('generation', 'cst-trace')
-                    result.append(g(poly, 0, 2.0, 6, cfg, poly - 1,
-                                    build_limit=cst_limit[poly],
-                                    label=f'polygon {poly} CST'))
-                elif g == Wind:
-                    cfg = configfile.get('generation', 'wind-trace')
-                    result.append(g(poly, 0, cfg, poly - 1,
-                                    build_limit=wind_limit[poly],
-                                    label=f'polygon {poly} wind'))
+        elif g == WindOffshore:
+            # just zone 1 (Newcastle, polygon 31) for now
+            poly = 31
+            cfg = configfile.get('generation', 'offshore-wind-trace')
+            result.append(g(poly, 0, cfg, 0,
+                            build_limit=offshore_wind_limit[poly],
+                            label=f'polygon {poly} wind'))
+        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind, WindOffshore]:
+            result += _every_poly(g)
+        else:
+            raise ValueError('unhandled generator type')
     context.generators = result
 
 
@@ -171,7 +190,7 @@ def re100_batteries(context):
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
-    185
+    186
     """
     re100(context)
     # discharge between 6pm and 6am daily
@@ -244,7 +263,7 @@ def re_plus_ccs(context):
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
-    185
+    186
     """
     re100(context)
     coal = Black_Coal(WILDCARD, 0)
@@ -266,7 +285,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    183
+    184
     """
     re100(context)
     context.generators = \
@@ -282,7 +301,7 @@ def re100_dsp(context):
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    187
+    188
     >>> isinstance(c.generators[-1], DemandResponse)
     True
     """
