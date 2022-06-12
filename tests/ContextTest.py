@@ -18,6 +18,7 @@ import nemo
 
 class TestContextMethods(unittest.TestCase):
     """Tests for Context methods."""
+
     def setUp(self):
         """Test harness setup."""
         self.context = nemo.Context()
