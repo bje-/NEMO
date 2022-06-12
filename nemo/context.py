@@ -68,17 +68,7 @@ class Context():
         return self.spill.values.sum()
 
     def unserved_percent(self):
-        """
-        Return the total unserved energy as a percentage of total demand.
-
-        >>> import pandas as pd
-        >>> c = Context()
-        >>> c.unserved_percent()
-        0.0
-        >>> c.demand = pd.DataFrame()
-        >>> c.unserved_percent()
-        nan
-        """
+        """Return the total unserved energy as a percentage of total demand."""
         # We can't catch ZeroDivision because numpy emits a warning
         # (which we would rather not suppress).
         if self.total_demand() == 0:
