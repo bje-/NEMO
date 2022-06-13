@@ -12,10 +12,8 @@
 from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind,
-                             WindOffshore)
-from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit,
-                           offshore_wind_limit)
+                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind)
+from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit)
 
 
 def _demand_response():
@@ -158,24 +156,17 @@ def re100(context):
     >>> c = type('context', (), {})
     >>> re100(c)
     >>> len(c.generators)
-    185
+    184
     """
     result = []
     # The following list is in merit order.
-    for g in [PV1Axis, Wind, WindOffshore, PumpedHydro, Hydro,
-              CentralReceiver, Biofuel]:
+    for g in [PV1Axis, Wind, PumpedHydro, Hydro, CentralReceiver,
+              Biofuel]:
         if g == PumpedHydro:
             result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
         elif g == Hydro:
             result += [h for h in _hydro() if not isinstance(h, PumpedHydro)]
-        elif g == WindOffshore:
-            # just zone 1 (Newcastle, polygon 31) for now
-            poly = 31
-            cfg = configfile.get('generation', 'offshore-wind-trace')
-            result.append(g(poly, 0, cfg, 0,
-                            build_limit=offshore_wind_limit[poly],
-                            label=f'polygon {poly} wind'))
-        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind, WindOffshore]:
+        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             result += _every_poly(g)
         else:
             raise ValueError('unhandled generator type')  # pragma: no cover
@@ -190,7 +181,7 @@ def re100_batteries(context):
     >>> c.generators = []
     >>> re100_batteries(c)
     >>> len(c.generators)
-    186
+    185
     """
     re100(context)
     # discharge between 6pm and 6am daily
@@ -263,7 +254,7 @@ def re_plus_ccs(context):
     >>> c.generators = []
     >>> re_plus_ccs(c)
     >>> len(c.generators)
-    186
+    185
     """
     re100(context)
     coal = Black_Coal(WILDCARD, 0)
@@ -285,7 +276,7 @@ def re_plus_fossil(context):
     >>> c.generators = []
     >>> re_plus_fossil(c)
     >>> len(c.generators)
-    184
+    183
     """
     re100(context)
     context.generators = \
@@ -301,7 +292,7 @@ def re100_dsp(context):
     >>> c.generators = []
     >>> re100_dsp(c)
     >>> len(c.generators)
-    188
+    187
     >>> isinstance(c.generators[-1], DemandResponse)
     True
     """
