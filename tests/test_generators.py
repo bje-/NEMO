@@ -7,6 +7,7 @@
 
 """A testsuite for the generators module."""
 
+import os
 import unittest
 import inspect
 import numpy as np
@@ -18,7 +19,7 @@ hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")
 dummy_arguments = {'self': None,
                    'polygon': 31,
                    'capacity': 100,
-                   'filename': 'file:wind2010.csv',
+                   'filename': 'file:tracedata.csv',
                    'column': 0,
                    'label': 'a label',
                    'build_limit': 1000,
@@ -41,6 +42,11 @@ class TestGenerators(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
+        self.tracefile = 'tracedata.csv'
+        with open(self.tracefile, 'w', encoding='utf-8') as tracefile:
+            for i in range(100):
+                print(f'{0.01 * i:.2f},', file=tracefile)
+
         self.years = 1
         self.costs = costs.NullCosts()
         self.classes = inspect.getmembers(generators, inspect.isclass)
@@ -57,6 +63,10 @@ class TestGenerators(unittest.TestCase):
                     arglist.append(dummy_arguments[arg])
             obj = clstype(*arglist)
             self.generators.append(obj)
+
+    def tearDown(self):
+        """Remove tracefile on teardown."""
+        os.unlink(self.tracefile)
 
     def test_step(self):
         """Test step() method."""
