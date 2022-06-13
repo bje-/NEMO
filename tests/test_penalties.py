@@ -27,6 +27,7 @@ class Args:
     fossil_limit = 0.5  # 50%
     bioenergy_limit = 1e-6  # 1 MWh
     hydro_limit = 1e-6  # 1 MWh
+    reserves = 50  # MW
 
 
 args = Args()
@@ -38,7 +39,8 @@ class TestPenalties(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.context = nemo.Context()
-        # Override standard methods for testing
+        # Override standard attributes and methods for testing
+        self.context.demand = np.ones((43, 100))
         self.context.total_demand = lambda: 100
         self.context.unserved_energy = lambda: 0.01
         self.context.relstd = 0
@@ -58,6 +60,16 @@ class TestPenalties(unittest.TestCase):
         psh = generators.PumpedHydro(WILDCARD, 0, 0)
         self.assertEqual(penalties._calculate_reserve(psh, 0), 0)
 
+    def test_reserves(self):
+        """Test reserves() function."""
+        self.context.timesteps = 100
+        del self.context.generators[1:]
+        # 55 MW x 100 hours, 5 MW over reserve level
+        self.context.generators[0].series_power = {n: 55 for n in range(100)}
+        self.context.generators[0].capacity = 100
+        self.assertEqual(penalties.reserves(self.context, args),
+                         (pow(5, 3) * 100, reasons['reserves']))
+
     def test_regional_generation(self):
         """Test _regional_generation() function."""
         # Gen 1: 1,000 MWh, Gen 2: 1,000 MWh, total 2,000 MWh
@@ -73,8 +85,6 @@ class TestPenalties(unittest.TestCase):
 
     def test_regional_demand(self):
         """Test _regional_demand() function."""
-        # 1 MWh of demand in each polygon
-        self.context.demand = np.ones((43, 100))
         for rgn in regions.All:
             # Check that there is X00 MWh of demand per region,
             # 100 MWh per polygon
@@ -82,6 +92,19 @@ class TestPenalties(unittest.TestCase):
             self.assertEqual(penalties._regional_demand(rgn,
                                                         self.context.demand),
                              polycount)
+
+    def test_min_regional_0(self):
+        """Test min_regional() function at 0%."""
+        self.context.min_regional_generation = 0
+        self.assertEqual(penalties.min_regional(self.context, args), (0, 0))
+
+    def test_min_regional_50(self):
+        """Test min_regional() function at 50%."""
+        self.context.min_regional_generation = 0.5
+        # just two regions: NSW and SA
+        self.context.regions = [regions.nsw, regions.sa]
+        self.assertEqual(penalties.min_regional(self.context, args),
+                         (pow(1050, 3), reasons['min-regional-gen']))
 
     def test_emissions(self):
         """Test emissions() function."""
