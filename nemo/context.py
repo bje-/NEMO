@@ -91,14 +91,14 @@ class Context():
         """Make a human-readable representation of the context."""
         string = ""
         if self.regions != regions.All:
-            string += 'Regions: {self.regions}\n'
+            string += f'Regions: {self.regions}\n'
         if self.verbose:
             string += 'Generators:' + '\n'
             for gen in self.generators:
-                string += '\t{gen}'
+                string += f'\t{gen}'
                 summary = gen.summary(self)
                 if summary is not None:
-                    string += '\n\t   {summary}\n'
+                    string += f'\n\t   {summary}\n'
                 else:
                     string += '\n'
         string += f'Timesteps: {self.hours} h\n'
