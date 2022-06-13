@@ -7,19 +7,26 @@ check:  replay.json flake8
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
+	#  these tests are needed because we need to control external
+	#  environment variables
 	NEMORC=nemo.cfg $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
 	unset NEMORC && $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
 	$(COVRUN) evolve --lambda 2 -g1 -s __one_ccgt__ -d scale:10 -d scaletwh:100 -d scalex:0:6:10 --fossil-limit=0 > /dev/null
-	$(COVRUN) evolve --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 --costs=PGTR2030 > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
-	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 --costs=AETA2013-in2030-high -v > /dev/null
+	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 > /dev/null
 	$(COVRUN) evolve -s nonexistent 2> /dev/null > /dev/null || true
 	$(COVRUN) evolve --costs=nonexistent 2> /dev/null > /dev/null || true
+	timeout 15s $(COVRUN) evolve -g1 -s __one_ccgt__ -p > /dev/null
 	$(COVRUN) replay -f replay.json -v -v > /dev/null
 	$(COVRUN) replay -f replay-noscenario.json -v > /dev/null || true
 	$(COVRUN) replay -f replay-nocost.json -v > /dev/null || true
 	rm trace.out results.json
 	rm replay.json replay-noscenario.json replay-nocost.json
+	make html
+
+.PHONY:
+html:
 	coverage html
 
 replay.json:
@@ -57,7 +64,7 @@ lint:	flake8
 	pylint --disable=E1120,E1124 $(LINTSRC)
 	pylama $(LINTSRC)
 	pylava $(LINTSRC)
-	vulture --min-confidence=50 $(LINTSRC)
+	-vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
 	pydocstyle $(LINTSRC)
 
