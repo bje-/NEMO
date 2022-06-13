@@ -91,14 +91,14 @@ class Context():
         """Make a human-readable representation of the context."""
         string = ""
         if self.regions != regions.All:
-            string += 'Regions: ' + str(self.regions) + '\n'
+            string += 'Regions: {self.regions}\n'
         if self.verbose:
             string += 'Generators:' + '\n'
             for gen in self.generators:
-                string += '\t' + str(gen)
+                string += '\t{gen}'
                 summary = gen.summary(self)
                 if summary is not None:
-                    string += '\n\t   ' + summary + '\n'
+                    string += '\n\t   {summary}\n'
                 else:
                     string += '\n'
         string += f'Timesteps: {self.hours} h\n'
@@ -117,7 +117,7 @@ class Context():
             string += f'Unserved energy: {self.unserved_percent():.3f}%\n'
             if self.unserved_percent() > self.relstd * 1.001:
                 string += 'WARNING: reliability standard exceeded\n'
-            string += 'Unserved total hours: ' + str(len(self.unserved)) + '\n'
+            string += f'Unserved total hours: {len(self.unserved)}\n'
 
             # A subtle trick: generate a date range and then subtract
             # it from the timestamps of unserved events.  This will
@@ -131,7 +131,7 @@ class Context():
             deltas = self.unserved.groupby(self.unserved.index - date_range)
             unserved_events = [k for k, g in deltas]
             string += 'Number of unserved energy events: '
-            string += str(len(unserved_events)) + '\n'
+            string += f'{len(unserved_events)}\n'
             if not self.unserved.empty:
                 umin = (self.unserved.min() * ureg.MW).to_compact()
                 umax = (self.unserved.max() * ureg.MW).to_compact()
