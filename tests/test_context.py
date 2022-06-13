@@ -54,3 +54,27 @@ class TestContextMethods(unittest.TestCase):
         self.context.set_capacities([0.1, 0.2])
         self.assertEqual(self.context.generators[0].capacity, 100)
         self.assertEqual(self.context.generators[1].capacity, 200)
+
+    def test_str_no_unserved(self):
+        """Test __str__ method (no unserved energy)."""
+        output = str(self.context)
+        self.assertIn('No unserved energy', output)
+
+    def test_str_with_unserved(self):
+        """Test __str__ method (with some unserved energy)."""
+        self.context.verbose = True
+        # Dummy lambda functions for testing
+        self.context.surplus_energy = lambda: 300
+        self.context.unserved_percent = lambda: 0.5
+        rng = pd.date_range(start='2022-01-01', end='2022-01-02', freq='H')
+        self.context.unserved = pd.Series(index=rng, data=range(len(rng)))
+        output = str(self.context)
+
+        self.assertIn('Generators:', output)
+        self.assertIn(f'Timesteps: {self.context.timesteps} h', output)
+        self.assertIn('Demand energy:', output)
+        self.assertIn('Unstored surplus energy: 300.00 MWh', output)
+        self.assertIn('WARNING: reliability standard exceeded', output)
+        self.assertIn('Unserved total hours: 25', output)
+        self.assertIn('Number of unserved energy events: 1', output)
+        self.assertIn('Shortfalls (min, max): (0.00 MW, 24.00 MW)', output)
