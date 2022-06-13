@@ -594,7 +594,7 @@ class CCS(Fossil):
     def summary(self, context):
         """Return a summary of the generator activity."""
         generation = sum(self.series_power.values()) * ureg.MWh
-        emissions = generation * self.intensity
+        emissions = generation * self.intensity * (ureg.t / ureg.MWh)
         captured = emissions * self.capture
         return Fossil.summary(self, context) + \
             f', {captured.to("Mt")} captured'
