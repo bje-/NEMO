@@ -1,6 +1,9 @@
 
 name: Python application
 
+env:
+  LC_ALL=en_AU.UTF-8
+  
 on: [push]
 
 jobs:
