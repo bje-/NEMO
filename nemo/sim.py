@@ -58,21 +58,7 @@ def _sim(context, date_range):
 
 
 def _store_spills(context, hour, gen, generators, spl):
-    """
-    Store spills from a generator into any storage.
-
-    >>> ctx = type('context', (), {'verbose': 0})
-    >>> ctx.verbose = True
-    >>> from nemo import generators
-    >>> g = generators.Hydro(1, 100)
-    >>> h = generators.HydrogenStorage(400)
-    >>> e = generators.Electrolyser(h, 1, 100, efficiency=1.0)
-    >>> _store_spills(ctx, 0, g, [e], 50)
-    STORE: 1 -> 1 (50.0)
-    0.0
-    >>> h.storage
-    250.0
-    """
+    """Store spills from a generator into any storage."""
     for other in list(g for g in generators if g.storage_p):
         stored = other.store(hour, spl)
         spl -= stored
@@ -130,15 +116,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
 
 
 def run(context, starthour=None, endhour=None):
-    """Run the simulation.
-
-    >>> from nemo import Context
-    >>> c = Context()
-    >>> c.regions = None
-    >>> run(c)
-    Traceback (most recent call last):
-    ValueError: regions is not a list
-    """
+    """Run the simulation."""
     if not isinstance(context.regions, list):
         raise ValueError('regions is not a list')
 
