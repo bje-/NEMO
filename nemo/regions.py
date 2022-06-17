@@ -10,23 +10,7 @@
 
 
 class Region():
-    """Each region is described by a Region object.
-
-    >>> r = Region(0, 'NSW1', 'New South Wales')
-    >>> r
-    NSW1
-    >>> x = range(5)
-    >>> x[r]
-    0
-
-    >>> import copy
-    >>> sacopy = copy.copy(sa)
-    >>> sa is sacopy
-    True
-    >>> sacopy = copy.deepcopy(sa)
-    >>> sa is sacopy
-    True
-    """
+    """Each region is described by a Region object."""
 
     def __init__(self, ordinal, regionid, descr):
         """
