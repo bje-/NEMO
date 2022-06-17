@@ -685,6 +685,14 @@ class Battery(Generator):
     >>> b.step(hour=18, demand=200)
     (200, 0)
 
+    Test to full.
+    >>> b.stored = 900
+    >>> b.store(hour=1, power=200)
+    100
+    >>> b.stored
+    1000
+    >>> b.stored = 0
+
     Cannot store and then generate at the same time.
     >>> b.store(hour=19, power=200)
     200
