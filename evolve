@@ -44,7 +44,7 @@ def conditional_gooey(*pargs, **kwargs):
     can be found."""
     def decorator(func):
         if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
-            return func
+            return func  # pragma: no cover
         return Gooey(*pargs, **kwargs)(func)
     return decorator
 
