@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 import nemo
+from nemo import regions
 
 
 class TestContextMethods(unittest.TestCase):
@@ -59,6 +60,19 @@ class TestContextMethods(unittest.TestCase):
         """Test __str__ method (no unserved energy)."""
         output = str(self.context)
         self.assertIn('No unserved energy', output)
+
+    def test_str_with_regions_subset(self):
+        """Test __str__ method with only two regions."""
+        self.context.regions = [regions.nsw, regions.sa]
+        output = str(self.context)
+        self.assertIn('Regions: [NSW1, SA1]', output)
+
+    def test_str_no_summary(self):
+        """Test __str__ method with a generator that has no summary."""
+        self.context.generators[1].summary = lambda x: None
+        self.context.verbose = True
+        output = str(self.context)
+        self.assertIn('OCGT (NSW1:31), 20000.00 MW\nTimesteps:', output)
 
     def test_str_with_unserved(self):
         """Test __str__ method (with some unserved energy)."""
