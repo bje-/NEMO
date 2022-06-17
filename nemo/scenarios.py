@@ -17,13 +17,7 @@ from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit)
 
 
 def _demand_response():
-    """
-    Return a list of DR 'generators'.
-
-    >>> dr = _demand_response()
-    >>> len(dr)
-    3
-    """
+    """Return a list of DR 'generators'."""
     dr1 = DemandResponse(WILDCARD, 1000, 100, "DR100")
     dr2 = DemandResponse(WILDCARD, 1000, 500, "DR500")
     dr3 = DemandResponse(WILDCARD, 1000, 1000, "DR1000")
@@ -31,13 +25,7 @@ def _demand_response():
 
 
 def _hydro():
-    """
-    Return a list of existing hydroelectric generators.
-
-    >>> h = _hydro()
-    >>> len(h)
-    12
-    """
+    """Return a list of existing hydroelectric generators."""
     hydro24 = Hydro(24, 42.5, label='poly 24 hydro')
     hydro31 = Hydro(31, 43, label='poly 31 hydro')
     hydro35 = Hydro(35, 71, label='poly 35 hydro')
@@ -60,51 +48,23 @@ def _hydro():
 
 
 def replacement(context):
-    """
-    Replace the current NEM fleet, more or less.
-
-    >>> c = type('context', (), {})
-    >>> replacement(c)
-    >>> len(c.generators)
-    14
-    """
+    """Replace the current NEM fleet, more or less."""
     context.generators = \
         [Black_Coal(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
 
 
 def _one_ccgt(context):
-    """
-    One CCGT only.
-
-    >>> c = type('context', (), {})
-    >>> _one_ccgt(c)
-    >>> len(c.generators)
-    1
-    """
+    """One CCGT only."""
     context.generators = [CCGT(WILDCARD, 0)]
 
 
 def ccgt(context):
-    """
-    All gas scenario.
-
-    >>> c = type('context', (), {})
-    >>> ccgt(c)
-    >>> len(c.generators)
-    14
-    """
+    """All gas scenario."""
     context.generators = [CCGT(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
 
 
 def ccgt_ccs(context):
-    """
-    CCGT CCS scenario.
-
-    >>> c = type('context', (), {})
-    >>> ccgt_ccs(c)
-    >>> len(c.generators)
-    14
-    """
+    """CCGT CCS scenario."""
     # pylint: disable=redefined-outer-name
     ccgt = CCGT_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
@@ -112,14 +72,7 @@ def ccgt_ccs(context):
 
 
 def coal_ccs(context):
-    """
-    Coal CCS scenario.
-
-    >>> c = type('context', (), {})
-    >>> coal_ccs(c)
-    >>> len(c.generators)
-    14
-    """
+    """Coal CCS scenario."""
     coal = Coal_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
     context.generators = [coal] + _hydro() + [ocgt]
@@ -150,14 +103,7 @@ def _every_poly(gentype):
 
 
 def re100(context):
-    """
-    100% renewable electricity.
-
-    >>> c = type('context', (), {})
-    >>> re100(c)
-    >>> len(c.generators)
-    184
-    """
+    """100% renewable electricity."""
     result = []
     # The following list is in merit order.
     for g in [PV1Axis, Wind, PumpedHydro, Hydro, CentralReceiver,
@@ -174,15 +120,7 @@ def re100(context):
 
 
 def re100_batteries(context):
-    """
-    Use lots of renewables plus battery storage.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_batteries(c)
-    >>> len(c.generators)
-    185
-    """
+    """Use lots of renewables plus battery storage."""
     re100(context)
     # discharge between 6pm and 6am daily
     hrs = list(range(0, 7)) + list(range(18, 24))
@@ -191,14 +129,7 @@ def re100_batteries(context):
 
 
 def _one_per_poly(region):
-    """
-    Return three lists of wind, PV and CST generators, one per polygon.
-
-    >>> from nemo import regions
-    >>> wind, pv, cst = _one_per_poly(regions.tas)
-    >>> len(wind), len(pv), len(cst)
-    (4, 4, 4)
-    """
+    """Return three lists of wind, PV and CST generators, one per polygon."""
     pv = []
     wind = []
     cst = []
@@ -224,15 +155,7 @@ def _one_per_poly(region):
 
 
 def re100_one_region(context, region):
-    """
-    100% renewables in one region only.
-
-    >>> from nemo import regions
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_one_region(c, regions.tas)
-    >>> for g in c.generators: assert g.region() is regions.tas
-    """
+    """100% renewables in one region only."""
     re100(context)
     context.regions = [region]
     wind, pv, cst = _one_per_poly(region)
@@ -247,15 +170,7 @@ def re100_one_region(context, region):
 
 
 def re_plus_ccs(context):
-    """
-    Mostly renewables with fossil and CCS augmentation.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re_plus_ccs(c)
-    >>> len(c.generators)
-    185
-    """
+    """Mostly renewables with fossil and CCS augmentation."""
     re100(context)
     coal = Black_Coal(WILDCARD, 0)
     # pylint: disable=redefined-outer-name
@@ -269,15 +184,7 @@ def re_plus_ccs(context):
 
 
 def re_plus_fossil(context):
-    """
-    Mostly renewables with some fossil augmentation.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re_plus_fossil(c)
-    >>> len(c.generators)
-    183
-    """
+    """Mostly renewables with some fossil augmentation."""
     re100(context)
     context.generators = \
         [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0)] + \
@@ -285,67 +192,30 @@ def re_plus_fossil(context):
 
 
 def re100_dsp(context):
-    """
-    Mostly renewables with demand side participation.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_dsp(c)
-    >>> len(c.generators)
-    187
-    >>> isinstance(c.generators[-1], DemandResponse)
-    True
-    """
+    """Mostly renewables with demand side participation."""
     re100(context)
     context.generators += _demand_response()
 
 
 def re100_nocst(context):
-    """
-    100% renewables, but no CST.
-
-    >>> c = type('context', (), {})
-    >>> re100_nocst(c)
-    >>> for g in c.generators: assert not isinstance(g, CST)
-    """
+    """100% renewables, but no CST."""
     re100(context)
     newlist = [g for g in context.generators if not isinstance(g, CST)]
     context.generators = newlist
 
 
 def re100_nsw(context):
-    """
-    100% renewables in New South Wales only.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_nsw(c)
-    >>> for g in c.generators: assert g.region() is regions.nsw
-    """
+    """100% renewables in New South Wales only."""
     re100_one_region(context, regions.nsw)
 
 
 def re100_qld(context):
-    """
-    100% renewables in Queensland only.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_qld(c)
-    >>> for g in c.generators: assert g.region() is regions.qld
-    """
+    """100% renewables in Queensland only."""
     re100_one_region(context, regions.qld)
 
 
 def re100_south_aus(context):
-    """
-    100% renewables in South Australia only.
-
-    >>> c = type('context', (), {})
-    >>> c.generators = []
-    >>> re100_south_aus(c)
-    >>> for g in c.generators: assert g.region() is regions.sa
-    """
+    """100% renewables in South Australia only."""
     re100_one_region(context, regions.sa)
 
 
