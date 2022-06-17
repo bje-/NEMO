@@ -11,6 +11,7 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	#  environment variables
 	NEMORC=nemo.cfg $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
 	unset NEMORC && $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
+	unset DISPLAY && $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
 	if test -f trace.out; then rm trace.out; fi
 	$(COVRUN) evolve -v --lambda 2 -g1 -s __one_ccgt__ \
 		--trace-file=trace.out --emissions-limit=0 \
