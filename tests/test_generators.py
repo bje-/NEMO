@@ -108,7 +108,13 @@ class TestGenerators(unittest.TestCase):
     def test_reset(self):
         """Test reset() method."""
         for gen in self.generators:
+            gen.series_power = {n: 10 for n in range(10)}
+            gen.series_spilled = {n: 10 for n in range(10)}
+        for gen in self.generators:
             gen.reset()
+        for gen in self.generators:
+            self.assertEqual(len(gen.series_power), 0)
+            self.assertEqual(len(gen.series_spilled), 0)
 
     def test_summary(self):
         """Test summary() method."""
