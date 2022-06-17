@@ -69,7 +69,7 @@ class TestContextMethods(unittest.TestCase):
 
     def test_str_no_summary(self):
         """Test __str__ method with a generator that has no summary."""
-        self.context.generators[1].summary = lambda x: None
+        self.context.generators[1].summary = lambda _: None
         self.context.verbose = True
         output = str(self.context)
         self.assertIn('OCGT (NSW1:31), 20000.00 MW\nTimesteps:', output)
