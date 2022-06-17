@@ -37,11 +37,8 @@ class Context():
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
         self.hours = len(hourly_regional_demand)
-        # Estimate the number of years from the number of simulation hours.
-        if self.hours in (8760, 8784):
-            self.years = 1
-        else:
-            self.years = self.hours / (365.25 * 24)
+        # Calculate the number of years from the number of simulation hours.
+        self.years = self.hours / (365 * 24)
 
         self.relstd = 0.002  # 0.002% unserved energy
         self.generators = [generators.CCGT(polygons.WILDCARD, 20000),
