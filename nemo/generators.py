@@ -362,10 +362,7 @@ class Hydro(Fuelled):
 
 
 class PumpedHydro(Hydro):
-    """Pumped storage hydro (PSH) model.
-
-    >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
-    """
+    """Pumped storage hydro (PSH) model."""
 
     patch = Patch(facecolor='powderblue')
     """Colour for plotting"""
@@ -924,13 +921,7 @@ class DemandResponse(Generator):
 
 
 class GreenPower(Generator):
-    """
-    A simple GreenPower generator.
-
-    >>> g = GreenPower(1, 100)
-    >>> g.step(0, 200)
-    (100, 0)
-    """
+    """A simple block GreenPower generator."""
 
     patch = Patch(facecolor='darkgreen')
     """Colour for plotting"""
