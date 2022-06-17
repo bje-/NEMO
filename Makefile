@@ -11,17 +11,19 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	#  environment variables
 	NEMORC=nemo.cfg $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
 	unset NEMORC && $(COVRUN) evolve -g1 -s __one_ccgt__ > /dev/null
-	$(COVRUN) evolve --lambda 2 -g1 -s __one_ccgt__ -d scale:10 -d scaletwh:100 -d scalex:0:6:10 --fossil-limit=0 > /dev/null
-	$(COVRUN) evolve --lambda 2 -g1 -s ccgt --emissions-limit=0 --fossil-limit=0.1 --reserves=1000 > /dev/null
 	if test -f trace.out; then rm trace.out; fi
-	$(COVRUN) evolve --lambda 2 -g1 --reliability-std=0.002 --min-regional-generation=0.5 --seed 0 --trace-file=trace.out --bioenergy-limit=0 > /dev/null
-	$(COVRUN) evolve -s nonexistent 2> /dev/null > /dev/null || true
-	$(COVRUN) evolve --costs=nonexistent 2> /dev/null > /dev/null || true
-	timeout 15s $(COVRUN) evolve -g1 -s __one_ccgt__ -p > /dev/null
+	$(COVRUN) evolve -v --lambda 2 -g1 -s __one_ccgt__ \
+		--trace-file=trace.out --emissions-limit=0 \
+		--fossil-limit=0.1 --reserves=1000 \
+		--reliability-std=0.002 --min-regional-generation=0.5 \
+		-d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
+	test -f trace.out && rm trace.out
 	$(COVRUN) replay -f replay.json -v -v > /dev/null
 	$(COVRUN) replay -f replay-noscenario.json -v > /dev/null || true
 	$(COVRUN) replay -f replay-nocost.json -v > /dev/null || true
-	rm trace.out results.json
+	$(COVRUN) evolve -g1 -s __one_ccgt__ -p > /dev/null
+	$(COVRUN) replay -p -f replay.json > /dev/null
+	rm results.json
 	rm replay.json replay-noscenario.json replay-nocost.json
 	make html
 
