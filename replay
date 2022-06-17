@@ -85,7 +85,7 @@ def run_one(bundle):
     print(context)
     print()
 
-    if args.plot:  # pragma: no cover
+    if args.plot:
         utils.plot(context, spills=args.spills, showlegend=args.no_legend)
 
 
