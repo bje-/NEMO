@@ -197,11 +197,7 @@ class AETA2012_2030Low(AETA2012_2030):
     """AETA (2012) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """
-        Construct a cost object given discount rate, coal, gas and CCS costs.
-
-        >>> obj = AETA2012_2030Low(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         # capital costs in $/kW
@@ -224,10 +220,7 @@ class AETA2012_2030High(AETA2012_2030):
     """AETA (2012) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = AETA2012_2030High(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
         # capital costs in $/kW
@@ -250,10 +243,7 @@ class AETA2012_2030Mid(AETA2012_2030):
     """AETA (2012) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = AETA2012_2030Mid(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
 
@@ -276,10 +266,7 @@ class AETA2013_2030Low(AETA2012_2030Low):
     """AETA (2013 update) costs for 2030, low end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = AETA2013_2030Low(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030Low.__init__(self, discount, coal_price, gas_price,
                                   ccs_storage_costs)
 
@@ -299,10 +286,7 @@ class AETA2013_2030High(AETA2012_2030High):
     """AETA (2013 update) costs for 2030, high end of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = AETA2013_2030High(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030High.__init__(self, discount, coal_price, gas_price,
                                    ccs_storage_costs)
 
@@ -322,10 +306,7 @@ class AETA2013_2030Mid(AETA2012_2030):
     """AETA (2013) costs for 2030, middle of the range."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = AETA2013_2030Mid(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030.__init__(self, discount, coal_price, gas_price,
                                ccs_storage_costs)
 
@@ -356,10 +337,7 @@ class CEEM2016_2030(AETA2012_2030Mid):
     """
 
     def __init__(self, discount, coal_price, gas_price, ccs_storage_costs):
-        """Construct a cost object.
-
-        >>> obj = CEEM2016_2030(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         AETA2012_2030Mid.__init__(self, discount, coal_price, gas_price,
                                   ccs_storage_costs)
 
@@ -431,10 +409,7 @@ class GenCost2021_2020(GenCost2021):
     """GenCost 2020-21 costs for 2020."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2020(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4450
@@ -451,10 +426,7 @@ class GenCost2021_2030Low(GenCost2021):
     """GenCost 2020-21 costs for 2030 (low end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2030Low(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4362
@@ -471,10 +443,7 @@ class GenCost2021_2030High(GenCost2021):
     """GenCost 2020-21 costs for 2030 (high end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2030High(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4362
@@ -491,10 +460,7 @@ class GenCost2021_2040Low(GenCost2021):
     """GenCost 2020-21 costs for 2040 (low end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2040Low(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4275
@@ -511,10 +477,7 @@ class GenCost2021_2040High(GenCost2021):
     """GenCost 2020-21 costs for 2040 (high end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2040High(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4275
@@ -531,10 +494,7 @@ class GenCost2021_2050Low(GenCost2021):
     """GenCost 2020-21 costs for 2050 (low end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2050Low(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4195
@@ -551,10 +511,7 @@ class GenCost2021_2050High(GenCost2021):
     """GenCost 2020-21 costs for 2050 (high end of the range)."""
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
-        """Construct a cost object.
-
-        >>> obj = GenCost2021_2050High(0.05, 1.00, 9.00, 30)
-        """
+        """Construct a cost object."""
         GenCost2021.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 4195
