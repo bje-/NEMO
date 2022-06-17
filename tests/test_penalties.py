@@ -5,7 +5,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# pylint: disable=too-many-public-methods
 # pylint: disable=protected-access
 
 """A testsuite for the penalties module."""
