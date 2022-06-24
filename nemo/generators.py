@@ -759,7 +759,7 @@ class Battery(Generator):
 
     def store(self, hour, power):
         """Store power."""
-        assert power > 0
+        assert power > 0, f'{power} is <= 0'
         if self.full_p() or \
            self.last_run == hour:
             return 0
