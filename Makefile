@@ -63,8 +63,10 @@ flake8:
 
 LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
 
-lint:	flake8
+pylint:
 	pylint --disable=E1120,E1124 --enable=useless-suppression $(LINTSRC)
+
+lint:	flake8 pylint
 	pylama $(LINTSRC)
 	pylava $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
