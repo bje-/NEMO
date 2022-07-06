@@ -396,14 +396,15 @@ def region(polygon):
     return _region_table[polygon]
 
 
+# These build limits come from the ROAM Consulting report on wind and
+# solar modelling for the AEMO 100% Renewables project. See
+# nemo.ozlabs.org for a link to this report.
+
 wind_limit = [None, 80.3, 0, 36.9, 6.5, 15.6, 1.5, 6.9, 2.6, 0, 4.1,
               1.5, 2.1, 0.9, 30.3, 0, 0, 40.5, 0.2, 0, 49.1, 2.3, 0,
               1.7, 116.3, 3.3, 71.9, 128.3, 11.7, 0.5, 0.6, 52.5,
               20.0, 0, 0, 0.9, 101.0, 9.15, 10.2, 15.6, 11.4, 14.1,
               0.5, 29.1]
-
-# Only these four polygons have been chosen for off-shore wind farm siting.
-offshore_wind_limit = {31: 10, 36: 10, 38: 10, 40: 10}
 
 pv_limit = [None, 133, 1072, 217, 266, 1343, 1424, 287, 1020, 657,
             175, 47, 488, 749, 1338, 1497, 1093, 243, 558, 647, 639,
@@ -414,6 +415,9 @@ cst_limit = [None, 102, 822, 166, 204, 1030, 1092, 220, 782, 504, 134,
              36, 374, 574, 1026, 1148, 838, 186, 428, 496, 490, 706,
              1004, 906, 96, 62, 378, 528, 718, 564, 400, 24, 404, 410,
              474, 260, 20, 514, 60, 266, 10, 16, 0.16, 4]
+
+# Only these four polygons have been chosen for off-shore wind farm siting.
+offshore_wind_limit = {31: 10, 36: 10, 38: 10, 40: 10}
 
 
 def _centroid(vertices):
