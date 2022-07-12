@@ -105,7 +105,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
 
         if context.verbose:
             print(f'GENERATOR: {generator},',
-                  f'generation: {generation[hour, gidx]:.1f}',
+                  f'generation: {gen:.1f}',
                   f'spill: {spl:.1f}',
                   f'residual-demand: {residual_hour_demand:.1f}',
                   f'async-demand: {async_demand:.1f}')
