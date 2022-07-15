@@ -524,6 +524,193 @@ class GenCost2021_2050High(GenCost2021):
         table[tech.Wind] = 1830
 
 
+class GenCost2022:
+    """GenCost 2021-22 costs.
+
+    Source:
+    CSIRO GenCost 2021-22 report
+    https://data.csiro.au/collections/collection/CIcsiro:44228
+    """
+
+    lifetime = 30
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        self.discount_rate = discount
+        self.ccs_storage_per_t = ccs_price
+        # bioenergy costs taken from CSIRO energy storage report for AEMO
+        self.bioenergy_price_per_gj = 12
+        self.coal_price_per_gj = coal_price
+        self.gas_price_per_gj = gas_price
+        self.diesel_price_per_litre = 1.50
+        self.annuityf = annuity_factor(self.lifetime, discount)
+
+        # Fixed O&M (FOM) costs
+        # Note: These are the same for all years (2030, 2040, 2050),
+        # so we can set them once here.
+        self.fixed_om_costs = {
+            tech.Black_Coal: 53.2,
+            tech.CCGT: 10.9,
+            tech.CCGT_CCS: 16.4,
+            tech.CentralReceiver: 120.0,
+            tech.Coal_CCS: 77.8,
+            tech.Hydro: 0,
+            tech.OCGT: 10.2,
+            tech.PV1Axis: 17.0,
+            tech.PumpedHydro: 0,
+            tech.Wind: 25.0,
+            tech.WindOffshore: 149.9
+        }
+
+        # Variable O&M (VOM) costs
+        # Likewise, these are the same for all years (2030, 2040, 2050).
+        self.opcost_per_mwh = {
+            tech.Black_Coal: 4.2,
+            tech.CCGT: 3.7,
+            tech.CCGT_CCS: 7.2,
+            tech.CentralReceiver: 0,
+            tech.Coal_CCS: 8.0,
+            tech.Hydro: 0,
+            tech.OCGT: 7.3,
+            tech.PV1Axis: 0,
+            tech.PumpedHydro: 0,
+            tech.Wind: 0,
+            tech.WindOffshore: 0
+        }
+
+        # Common capital costs
+        self.capcost_per_kw = {
+            tech.Hydro: 0,
+            tech.PumpedHydro: 0,
+        }
+
+
+class GenCost2022_2021(GenCost2022):
+    """GenCost 2020-21 costs for 2021 (low assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 4343
+        table[tech.CCGT] = 1559
+        table[tech.CCGT_CCS] = 4011
+        table[tech.CentralReceiver] = 6693
+        table[tech.Coal_CCS] = 9077
+        table[tech.OCGT] = 873
+        table[tech.PV1Axis] = 1441
+        table[tech.Wind] = 1960
+        table[tech.WindOffshore] = 4649
+
+
+class GenCost2022_2030Low(GenCost2022):
+    """GenCost 2021-22 costs for 2030 (low assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 4208
+        table[tech.CCGT] = 1511
+        table[tech.CCGT_CCS] = 3784
+        table[tech.CentralReceiver] = 4657
+        table[tech.Coal_CCS] = 8747
+        table[tech.OCGT] = 741
+        table[tech.PV1Axis] = 785
+        table[tech.Wind] = 1633
+        table[tech.WindOffshore] = 2967
+
+
+class GenCost2022_2030High(GenCost2022):
+    """GenCost 2021-22 costs for 2030 (high end of the range)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 4223
+        table[tech.CCGT] = 1516
+        table[tech.CCGT_CCS] = 3957
+        table[tech.CentralReceiver] = 5660
+        table[tech.Coal_CCS] = 8884
+        table[tech.OCGT] = 741
+        table[tech.PV1Axis] = 1013
+        table[tech.Wind] = 1897
+        table[tech.WindOffshore] = 4545
+
+
+class GenCost2022_2040Low(GenCost2022):
+    """GenCost 2021-22 costs for 2040 (low assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 4063
+        table[tech.CCGT] = 1459
+        table[tech.CCGT_CCS] = 3276
+        table[tech.CentralReceiver] = 3620
+        table[tech.Coal_CCS] = 8025
+        table[tech.OCGT] = 716
+        table[tech.PV1Axis] = 578
+        table[tech.Wind] = 1553
+        table[tech.WindOffshore] = 2653
+
+
+class GenCost2022_2040High(GenCost2022):
+    """GenCost 2021-22 costs for 2040 (high assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 4078
+        table[tech.CCGT] = 1464
+        table[tech.CCGT_CCS] = 3892
+        table[tech.CentralReceiver] = 4894
+        table[tech.Coal_CCS] = 8650
+        table[tech.OCGT] = 716
+        table[tech.PV1Axis] = 733
+        table[tech.Wind] = 1868
+        table[tech.WindOffshore] = 4482
+
+
+class GenCost2022_2050Low(GenCost2022):
+    """GenCost 2021-22 costs for 2050 (low assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 3930
+        table[tech.CCGT] = 1411
+        table[tech.CCGT_CCS] = 2978
+        table[tech.CentralReceiver] = 2911
+        table[tech.Coal_CCS] = 7552
+        table[tech.OCGT] = 691
+        table[tech.PV1Axis] = 521
+        table[tech.Wind] = 1521
+        table[tech.WindOffshore] = 2506
+
+
+class GenCost2022_2050High(GenCost2022):
+    """GenCost 2021-22 costs for 2040 (high assumption)."""
+
+    def __init__(self, discount, coal_price, gas_price, ccs_price):
+        """Construct a cost object."""
+        GenCost2022.__init__(self, discount, coal_price, gas_price, ccs_price)
+        table = self.capcost_per_kw
+        table[tech.Black_Coal] = 3937
+        table[tech.CCGT] = 1413
+        table[tech.CCGT_CCS] = 3324
+        table[tech.CentralReceiver] = 4103
+        table[tech.Coal_CCS] = 7958
+        table[tech.OCGT] = 691
+        table[tech.PV1Axis] = 644
+        table[tech.Wind] = 1828
+        table[tech.WindOffshore] = 4431
+
+
 cost_scenarios = {'Null': NullCosts,
                   'AETA2012-in2030-low': AETA2012_2030Low,
                   'AETA2012-in2030-mid': AETA2012_2030Mid,
@@ -539,5 +726,12 @@ cost_scenarios = {'Null': NullCosts,
                   'GenCost2021-in2040-high': GenCost2021_2040High,
                   'GenCost2021-in2050-low': GenCost2021_2050Low,
                   'GenCost2021-in2050-high': GenCost2021_2050High,
+                  'GenCost2022_in2021': GenCost2022_2021,
+                  'GenCost2022-in2030-low': GenCost2022_2030Low,
+                  'GenCost2022-in2030-high': GenCost2022_2030High,
+                  'GenCost2022-in2040-low': GenCost2022_2040Low,
+                  'GenCost2022-in2040-high': GenCost2022_2040High,
+                  'GenCost2022-in2050-low': GenCost2022_2050Low,
+                  'GenCost2022-in2050-high': GenCost2022_2050High,
                   'PGTR2015': APGTR2015,
                   'PGTR2030': APGTR2030}
