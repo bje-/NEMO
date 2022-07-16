@@ -8,6 +8,7 @@
 
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
+# pylint: disable=too-many-instance-attributes
 
 """Generation technology costs."""
 from nemo import generators as tech
@@ -22,10 +23,14 @@ class NullCosts():
     """All costs are zero. Useful for debugging."""
 
     class _ZeroDict(dict):
-        """Return 0 for any key."""
+        """Return a fixed value (eg, 0) for any key."""
+
+        def __init__(self, value=0):
+            dict.__init__(self)
+            self.value = value
 
         def __getitem__(self, key):
-            return dict.get(self, key, 0)
+            return dict.get(self, key, self.value)
 
     # pylint: disable=unused-argument
     def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
@@ -33,6 +38,8 @@ class NullCosts():
         self.capcost_per_kw = self._ZeroDict()
         self.fixed_om_costs = self._ZeroDict()
         self.opcost_per_mwh = self._ZeroDict()
+        # a dictionary of dictionary of zeros
+        self.totcost_per_kwh = self._ZeroDict(self._ZeroDict())
         self.annuityf = 1
         self.ccs_storage_per_t = 0
         self.bioenergy_price_per_gj = 0
@@ -584,6 +591,11 @@ class GenCost2022:
             tech.PumpedHydro: 0,
         }
 
+        # Storage is expressed on a total cost basis (GenCost 2022, p. 18)
+        # Figures are entered in the classes in $/kWh, but these are
+        # converted to $/kW in capcost().
+        self.totcost_per_kwh = {}
+
 
 class GenCost2022_2021(GenCost2022):
     """GenCost 2020-21 costs for 2021 (low assumption)."""
@@ -601,6 +613,9 @@ class GenCost2022_2021(GenCost2022):
         table[tech.PV1Axis] = 1441
         table[tech.Wind] = 1960
         table[tech.WindOffshore] = 4649
+
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 790, 2: 527, 4: 407, 8: 357}
 
 
 class GenCost2022_2030Low(GenCost2022):
@@ -620,6 +635,9 @@ class GenCost2022_2030Low(GenCost2022):
         table[tech.Wind] = 1633
         table[tech.WindOffshore] = 2967
 
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 687, 2: 452, 4: 343, 8: 298}
+
 
 class GenCost2022_2030High(GenCost2022):
     """GenCost 2021-22 costs for 2030 (high end of the range)."""
@@ -637,6 +655,9 @@ class GenCost2022_2030High(GenCost2022):
         table[tech.PV1Axis] = 1013
         table[tech.Wind] = 1897
         table[tech.WindOffshore] = 4545
+
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 687, 2: 452, 4: 343, 8: 298}
 
 
 class GenCost2022_2040Low(GenCost2022):
@@ -656,6 +677,9 @@ class GenCost2022_2040Low(GenCost2022):
         table[tech.Wind] = 1553
         table[tech.WindOffshore] = 2653
 
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 565, 2: 363, 4: 269, 8: 230}
+
 
 class GenCost2022_2040High(GenCost2022):
     """GenCost 2021-22 costs for 2040 (high assumption)."""
@@ -673,6 +697,9 @@ class GenCost2022_2040High(GenCost2022):
         table[tech.PV1Axis] = 733
         table[tech.Wind] = 1868
         table[tech.WindOffshore] = 4482
+
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 565, 2: 363, 4: 269, 8: 230}
 
 
 class GenCost2022_2050Low(GenCost2022):
@@ -692,6 +719,9 @@ class GenCost2022_2050Low(GenCost2022):
         table[tech.Wind] = 1521
         table[tech.WindOffshore] = 2506
 
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 485, 2: 315, 4: 236, 8: 203}
+
 
 class GenCost2022_2050High(GenCost2022):
     """GenCost 2021-22 costs for 2040 (high assumption)."""
@@ -709,6 +739,9 @@ class GenCost2022_2050High(GenCost2022):
         table[tech.PV1Axis] = 644
         table[tech.Wind] = 1828
         table[tech.WindOffshore] = 4431
+
+        table = self.totcost_per_kwh
+        table[tech.Battery] = {1: 485, 2: 315, 4: 236, 8: 203}
 
 
 cost_scenarios = {'Null': NullCosts,
