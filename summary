@@ -187,7 +187,7 @@ for line in sys.stdin:  # noqa: C901
                   f"{capfactor:02.3f}")
 
         if av.surplus > 0:
-            print(f"{'av.surplus':>12}{'N/A':>8}\t{'N/A':>5}\t"
+            print(f"{'surplus':>12}{'N/A':>8}\t{'N/A':>5}\t"
                   f"{av.surplus:5.1f}\t"
                   f"{av.surplus / av.total_demand:.3f}")
 
