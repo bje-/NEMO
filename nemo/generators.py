@@ -659,6 +659,8 @@ class Battery(Generator):
     >>> hours = range(18, 24)
     >>> b = Battery(polygons.WILDCARD, 400, 2, \
                     discharge_hours=hours, rte=1)
+    >>> b.maxstorage
+    800
     >>> b.stored = 400
 
     Cannot discharge outside of discharge hours.
@@ -728,6 +730,11 @@ class Battery(Generator):
         self.storage_p = True
         self.runhours = 0
         self.chargehours = 0
+
+    def set_capacity(self, cap):
+        """Change the capacity of the generator to cap GW."""
+        Generator.set_capacity(self, cap)
+        self.set_storage(self.shours)
 
     def set_storage(self, shours):
         """Vary the full load hours of battery storage."""
