@@ -657,7 +657,7 @@ class Battery(Generator):
     """Battery storage (of any type).
 
     >>> hours = range(18, 24)
-    >>> b = Battery(polygons.WILDCARD, 400, 1000, \
+    >>> b = Battery(polygons.WILDCARD, 400, 2, \
                     discharge_hours=hours, rte=1)
     >>> b.stored = 400
 
@@ -672,11 +672,11 @@ class Battery(Generator):
     (200, 0)
 
     Test to full.
-    >>> b.stored = 900
+    >>> b.stored = 700
     >>> b.store(hour=1, power=200)
     100
     >>> b.stored
-    1000
+    800
     >>> b.stored = 0
 
     Cannot store and then generate at the same time.
@@ -686,14 +686,14 @@ class Battery(Generator):
     (0, 0)
 
     # Test charging a battery with zero power.
-    >>> b = Battery(polygons.WILDCARD, 0, 1000)
+    >>> b = Battery(polygons.WILDCARD, 0, 1)
     >>> b.store(hour=0, power=400)
     0
     >>> b.chargehours
     0
 
     # Test charging and discharging efficiency.
-    >>> b = Battery(polygons.WILDCARD, 100, 400, rte=0.5)
+    >>> b = Battery(polygons.WILDCARD, 100, 4, rte=0.5)
     >>> b.store(hour=0, power=100)
     100
     >>> b.stored
@@ -709,19 +709,19 @@ class Battery(Generator):
     synchronous_p = False
     """Is this a synchronous generator?"""
 
-    def __init__(self, polygon, capacity, maxstorage, label=None,
+    def __init__(self, polygon, capacity, shours, label=None,
                  discharge_hours=None, rte=0.95):
         """
         Construct a Battery 'generator'.
 
-        Maximum storage (maxstorage) is specified in MWh.
+        Storage (shours) is specified in duration hours at full power.
         Discharge hours is a list of hours when discharging can occur.
         Round-trip efficiency (rte) defaults to 95% for good Li-ion.
         """
         Generator.__init__(self, polygon, capacity, label)
-        self.setters += [(self.set_storage, 0, 6)]
-        self.maxstorage = maxstorage
         self.stored = 0
+        assert shours in [1, 2, 4, 8]
+        self.set_storage(shours)
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(24)
         self.rte = rte
@@ -730,15 +730,17 @@ class Battery(Generator):
         self.runhours = 0
         self.chargehours = 0
 
-    def set_storage(self, hours):
-        """Vary the full load hours of battery storage (in MWh)."""
-        self.maxstorage = self.capacity * hours
+    def set_storage(self, shours):
+        """Vary the full load hours of battery storage."""
+        assert shours in [1, 2, 4, 8]
+        self.shours = shours
+        self.maxstorage = self.capacity * shours
         self.stored = 0
 
     def empty_p(self):
         """Return True if the storage is empty.
 
-        >>> b = Battery(polygons.WILDCARD, 400, 800, rte=1)
+        >>> b = Battery(polygons.WILDCARD, 400, 2, rte=1)
         >>> b.stored, b.empty_p()
         (0, True)
         """
@@ -747,7 +749,7 @@ class Battery(Generator):
     def full_p(self):
         """Return True if the storage is full.
 
-        >>> b = Battery(polygons.WILDCARD, 800, 800, rte=1)
+        >>> b = Battery(polygons.WILDCARD, 800, 1, rte=1)
         >>> b.store(hour=0, power=1000)
         800
         >>> b.store(hour=1, power=1000)
@@ -803,14 +805,11 @@ class Battery(Generator):
         self.last_run = None
 
     def capcost(self, costs):
-        """Return the annual capital cost.
-
-        Capital cost of batteries has power and energy components. Set
-        to $400/kW and $400/kWh, initially.
-        """
-        power = 400 * self.capacity * 1000
-        energy = 400 * self.maxstorage * 1000
-        return power + energy
+        """Return the annual capital cost."""
+        assert self.shours in [1, 2, 4, 8]
+        cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
+        capcost = cost_per_kwh * self.shours
+        return capcost * self.capacity * 1000
 
     def fixed_om_costs(self, costs):
         """Return the fixed O&M costs.

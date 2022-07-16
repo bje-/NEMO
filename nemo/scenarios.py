@@ -132,7 +132,7 @@ def re100_batteries(context):
     re100(context)
     # discharge between 6pm and 6am daily
     hrs = list(range(0, 7)) + list(range(18, 24))
-    battery = Battery(WILDCARD, 0, 0, discharge_hours=hrs)
+    battery = Battery(WILDCARD, 0, 1, discharge_hours=hrs)
     context.generators.insert(0, battery)
 
 

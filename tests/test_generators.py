@@ -30,7 +30,7 @@ dummy_arguments = {'self': None,
                    'intensity': 0.7,
                    'capture': 0.85,
                    'solarmult': 2.5,
-                   'shours': 15,
+                   'shours': 8,
                    'cost_per_mwh': 1000,
                    'kwh_per_litre': 10,
                    'tank': hydrogen_storage,
@@ -151,7 +151,7 @@ class TestGenerators(unittest.TestCase):
                 self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
                 self.assertEqual(gen.stored, 0.5 * gen.maxstorage)
             elif isinstance(gen, generators.Battery):
-                testvalue = 10
+                testvalue = 4
                 gen.set_storage(testvalue)
                 self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
                 self.assertEqual(gen.stored, 0)
