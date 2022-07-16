@@ -812,12 +812,8 @@ class Battery(Generator):
         return capcost * self.capacity * 1000
 
     def fixed_om_costs(self, costs):
-        """Return the fixed O&M costs.
-
-        Assume $20/kW/yr.
-        """
-        fom = 28 * self.capacity * 1000
-        return fom
+        """Return the fixed O&M costs."""
+        return 0
 
     def opcost_per_mwh(self, costs):
         """Return the variable O&M costs.
