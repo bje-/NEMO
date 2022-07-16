@@ -726,7 +726,6 @@ class Battery(Generator):
             if discharge_hours is not None else range(24)
         self.rte = rte
         self.storage_p = True
-        self.last_run = None
         self.runhours = 0
         self.chargehours = 0
 
@@ -762,8 +761,7 @@ class Battery(Generator):
     def store(self, hour, power):
         """Store power."""
         assert power > 0, f'{power} is <= 0'
-        if self.full_p() or \
-           self.last_run == hour:
+        if self.full_p():
             return 0
 
         power = min(power, self.capacity)
@@ -773,7 +771,6 @@ class Battery(Generator):
         self.stored += energy
         if energy > 0:
             self.chargehours += 1
-            self.last_run = hour
         assert self.stored <= self.maxstorage or \
             isclose(self.stored, self.maxstorage)
         return energy
@@ -781,8 +778,7 @@ class Battery(Generator):
     def step(self, hour, demand):
         """Specialised step method for batteries."""
         if self.empty_p() or \
-           hour % 24 not in self.discharge_hours or \
-           hour == self.last_run:
+           hour % 24 not in self.discharge_hours:
             self.series_power[hour] = 0
             return 0, 0
 
@@ -792,7 +788,6 @@ class Battery(Generator):
         self.stored -= power
         if power > 0:
             self.runhours += 1
-            self.last_run = hour
         assert self.stored >= 0 or isclose(self.stored, 0)
         return power, 0
 
@@ -802,7 +797,6 @@ class Battery(Generator):
         self.runhours = 0
         self.chargehours = 0
         self.stored = 0
-        self.last_run = None
 
     def capcost(self, costs):
         """Return the annual capital cost."""
