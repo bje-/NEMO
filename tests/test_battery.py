@@ -40,24 +40,29 @@ class TestBattery(unittest.TestCase):
         batt.stored = 800
         self.assertTrue(batt.full_p())
 
-    def test_discharge_outside_hours(self):
+    def test_discharge(self):
         """Test discharging outside of discharge hours."""
-        batt = generators.Battery(polygons.WILDCARD, 400, 2, rte=1)
+        # Test discontiguous hour range
+        hrs = [0, 1] + list(range(18, 24))
+        batt = generators.Battery(WILDCARD, 400, 8, discharge_hours=hrs, rte=1)
         batt.stored = 400
-        result = batt.step(hour=0, demand=200)
-        self.assertEqual(result, (0, 0))
+        for hr in range(24):
+            result = batt.step(hour=hr, demand=50)
+            # 0,0 if no discharging permitted, 50,0 otherwise
+            self.assertEqual(result, (50, 0) if hr in hrs else (0, 0),
+                             f'discharge failed in hour {hr}')
+        self.assertTrue(batt.empty_p())
 
-    def test_normal_charging(self):
-        """Test (normal) charging outside of discharge hours."""
-        batt = generators.Battery(polygons.WILDCARD, 400, 2, rte=1)
-        result = batt.store(hour=0, power=400)
-        self.assertEqual(result, 400)
-
-    def test_charging_in_hours(self):
-        """Test charging during discharge hours."""
-        batt = generators.Battery(polygons.WILDCARD, 400, 2, rte=1)
-        result = batt.store(hour=19, power=200)
-        self.assertEqual(result, 0)
+    def test_charge(self):
+        """Test (normal) charging inside and outside of discharge hours."""
+        # Test discontiguous hour range
+        hrs = [0, 1] + list(range(18, 24))
+        batt = generators.Battery(WILDCARD, 400, 8, discharge_hours=hrs, rte=1)
+        for hr in range(24):
+            result = batt.store(hour=hr, power=50)
+            # 0 if no charging permitted, 50 otherwise
+            self.assertEqual(result, 0 if hr in hrs else 50)
+        self.assertEqual(batt.stored, 50 * (24 - len(hrs)))
 
     def test_to_full(self):
         """Test charging to full."""
