@@ -87,5 +87,5 @@ class TestSim(unittest.TestCase):
             sim.run(self.context)
 
     def test_run_2(self):
-        """Test run() nornmally."""
+        """Test run() normally."""
         sim.run(self.context)
