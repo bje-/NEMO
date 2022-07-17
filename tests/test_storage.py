@@ -48,8 +48,12 @@ class TestPumpedHydro(unittest.TestCase):
         self.psh.stored = 800
         result = self.psh.store(hour=1, power=200)
         self.assertEqual(result, 100)
-        result = self.psh.store(hour=2, power=100)
+        self.assertEqual(self.psh.stored, 900)
+        result = self.psh.store(hour=2, power=200)
         self.assertEqual(result, 100)
+        self.assertEqual(self.psh.stored, 1000)
+        result = self.psh.store(hour=3, power=200)
+        self.assertEqual(result, 0)
         self.assertEqual(self.psh.stored, 1000)
 
     def test_store_multiple(self):
