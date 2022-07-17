@@ -9,7 +9,7 @@
 
 import unittest
 from nemo import generators
-from nemo import polygons
+from nemo.polygons import WILDCARD
 
 
 class TestBattery(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestBattery(unittest.TestCase):
 
     def test_initialisation(self):
         """Test Battery constructor."""
-        batt = generators.Battery(polygons.WILDCARD, 400, 2, rte=1)
+        batt = generators.Battery(WILDCARD, 400, 2, rte=1)
         self.assertEqual(batt.maxstorage, 800)
         self.assertEqual(batt.discharge_hours, range(18, 24))
         self.assertTrue(batt.empty_p())
@@ -29,13 +29,13 @@ class TestBattery(unittest.TestCase):
 
     def test_empty_p(self):
         """Test the empty_p() method."""
-        batt = generators.Battery(polygons.WILDCARD, 800, 1, rte=1)
+        batt = generators.Battery(WILDCARD, 800, 1, rte=1)
         self.assertEqual(batt.stored, 0)
         self.assertTrue(batt.empty_p())
 
     def test_full_p(self):
         """Test the full_p() method."""
-        batt = generators.Battery(polygons.WILDCARD, 800, 1, rte=1)
+        batt = generators.Battery(WILDCARD, 800, 1, rte=1)
         self.assertFalse(batt.full_p())
         batt.stored = 800
         self.assertTrue(batt.full_p())
@@ -61,7 +61,7 @@ class TestBattery(unittest.TestCase):
 
     def test_to_full(self):
         """Test charging to full."""
-        batt = generators.Battery(polygons.WILDCARD, 400, 2, rte=1)
+        batt = generators.Battery(WILDCARD, 400, 2, rte=1)
         batt.stored = 700
         result = batt.store(hour=1, power=200)
         self.assertEqual(result, 100)
@@ -69,7 +69,7 @@ class TestBattery(unittest.TestCase):
 
     def test_zero_power(self):
         """Test a battery with zero capacity."""
-        batt = generators.Battery(polygons.WILDCARD, 0, 1)
+        batt = generators.Battery(WILDCARD, 0, 1)
         result = batt.store(hour=0, power=400)
         self.assertEqual(result, 0)
         result = batt.step(hour=0, demand=400)
@@ -79,7 +79,7 @@ class TestBattery(unittest.TestCase):
 
     def test_round_trip_efficiency(self):
         """Test a battery with 50% round trip efficiency."""
-        batt = generators.Battery(polygons.WILDCARD, 100, 4, rte=0.5)
+        batt = generators.Battery(WILDCARD, 100, 4, rte=0.5)
         self.assertEqual(batt.stored, 0)
         result = batt.store(hour=0, power=100)
         self.assertEqual(result, 100)
