@@ -25,7 +25,7 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.rte, 1)
         self.assertEqual(batt.stored, 0)
         self.assertEqual(batt.runhours, 0)
-        self.assertEqual(batt.chargehours, 0)
+        self.assertEqual(len(batt.chargehours), 0)
 
     def test_empty_p(self):
         """Test the empty_p() method."""
@@ -74,7 +74,7 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(result, 0)
         result = batt.step(hour=0, demand=400)
         self.assertEqual(result, (0, 0))
-        self.assertEqual(batt.chargehours, 0)
+        self.assertEqual(len(batt.chargehours), 0)
         self.assertEqual(batt.runhours, 0)
 
     def test_round_trip_efficiency(self):
