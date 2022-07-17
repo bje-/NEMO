@@ -69,8 +69,7 @@ def _store_spills(context, hour, gen, generators, spl):
         # energy stored <= energy transferred, according to store's RTE
         if context.verbose:
             # show the energy transferred, not stored
-            print('STORE:', gen.polygon, '->', end=' ')
-            print(other.polygon, f'({stored:.1f})')
+            print('STORE:', gen, '->', other, f'({stored:.1f})')
     return spl
 
 
