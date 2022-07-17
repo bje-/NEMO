@@ -5,12 +5,63 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""A testsuite for the Battery generator."""
+"""A testsuite for generators that have storage."""
 
 import unittest
 from nemo import configfile
 from nemo import generators
 from nemo.polygons import WILDCARD
+
+
+class TestPumpedHydro(unittest.TestCase):
+    """Test pumped hydro class in detail."""
+    def setUp(self):
+        self.psh = generators.PumpedHydro(WILDCARD, 100, 1000, rte=1)
+
+    def test_initialisation(self):
+        self.assertTrue(self.psh.storage_p)
+        self.assertEqual(self.psh.last_run, None)
+        self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
+        self.assertEqual(self.psh.rte, 1.0)
+        self.assertEqual(self.psh.maxstorage, 1000)
+
+    def test_pump_and_generate(self):
+        # Cannot pump and generate at the same time.
+        result = self.psh.store(hour=0, power=100)
+        self.assertEqual(result, 100)
+        result = self.psh.step(hour=0, demand=50)
+        self.assertEqual(result, (0, 0))
+
+    def test_step(self):
+        for i in range(10):
+            result = self.psh.step(hour=i, demand=50)
+            self.assertEqual(result, (50, 0))
+        self.assertEqual(self.psh.stored, 0)
+
+    def test_store(self):
+        result = self.psh.step(hour=0, demand=100)
+        self.assertEqual(result, (100, 0))
+        # Can't pump and generate in the same hour.
+        result = self.psh.store(hour=0, power=250)
+        self.assertEqual(result, 0)
+
+        self.psh.stored = 800
+        result = self.psh.store(hour=1, power=200)
+        self.assertEqual(result, 100)
+        result = self.psh.store(hour=2, power=100)
+        self.assertEqual(result, 100)
+        self.assertEqual(self.psh.stored, 1000)
+
+    def test_store_multiple(self):
+        # For now.
+        pass
+
+    def test_reset(self):
+        self.psh.stored = 0
+        self.psh.last_run = 123
+        self.psh.reset()
+        self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
+        self.assertEqual(self.psh.last_run, None)
 
 
 class TestCST(unittest.TestCase):

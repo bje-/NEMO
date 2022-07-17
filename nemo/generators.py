@@ -378,22 +378,7 @@ class PumpedHydro(Hydro):
         self.last_run = None
 
     def store(self, hour, power):
-        """Pump water uphill for one hour.
-
-        >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
-
-        Test not pumping and generating at the same time.
-        >>> psh.step(hour=0, demand=100)
-        (100, 0)
-        >>> psh.store(hour=0, power=250)
-        0
-
-        Test filling the store.
-        >>> for hour in range(1, 4): psh.store(hour=hour, power=250)
-        250
-        250
-        100.0
-        """
+        """Pump water uphill for one hour."""
         if self.last_run == hour:
             # Can't pump and generate in the same hour.
             return 0
@@ -409,17 +394,7 @@ class PumpedHydro(Hydro):
         return power
 
     def step(self, hour, demand):
-        """
-        Step method for pumped hydro storage.
-
-        >>> psh = PumpedHydro(polygons.WILDCARD, 250, 1000, rte=1.0)
-
-        Cannot pump and generate at the same time.
-        >>> psh.store(hour=0, power=250)
-        250
-        >>> psh.step(hour=0, demand=100)
-        (0, 0)
-        """
+        """Step method for pumped hydro storage."""
         power = min(self.stored, min(self.capacity, demand))
         if self.last_run == hour:
             # Can't pump and generate in the same hour.
