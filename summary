@@ -169,7 +169,7 @@ for line in sys.stdin:  # noqa: C901
         if av.unserved:
             print(f"# unserved {str(av.unserved)}")
         print(f"# score {av.cost} $/MWh")
-        if av.penalty:
+        if av.penalty > 0:
             print(f"# penalty {av.penalty} $/MWh")
             print(f"# constraints <{av.constraints}> violated")
         print(f"# {'tech':>10}\t  GW\tshare\t  TWh\tshare\tCF")
