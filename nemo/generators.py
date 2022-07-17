@@ -654,57 +654,7 @@ class Diesel(Fossil):
 
 
 class Battery(Generator):
-    """Battery storage (of any type).
-
-    >>> hours = range(18, 24)
-    >>> b = Battery(polygons.WILDCARD, 400, 2, \
-                    discharge_hours=hours, rte=1)
-    >>> b.maxstorage
-    800
-    >>> b.stored = 400
-
-    Cannot discharge outside of discharge hours.
-    >>> b.step(hour=0, demand=200)
-    (0, 0)
-
-    Normal operation.
-    >>> b.store(hour=0, power=400)
-    400
-    >>> b.step(hour=18, demand=200)
-    (200, 0)
-
-    Test to full.
-    >>> b.stored = 700
-    >>> b.store(hour=1, power=200)
-    100
-    >>> b.stored
-    800
-    >>> b.stored = 0
-
-    Cannot store and then generate at the same time.
-    >>> b.store(hour=19, power=200)
-    200
-    >>> b.step(hour=19, demand=200)
-    (0, 0)
-
-    # Test charging a battery with zero power.
-    >>> b = Battery(polygons.WILDCARD, 0, 1)
-    >>> b.store(hour=0, power=400)
-    0
-    >>> b.chargehours
-    0
-
-    # Test charging and discharging efficiency.
-    >>> b = Battery(polygons.WILDCARD, 100, 4, rte=0.5)
-    >>> b.store(hour=0, power=100)
-    100
-    >>> b.stored
-    100
-    >>> b.step(hour=1, demand=1000)
-    (50.0, 0)
-    >>> b.stored
-    50.0
-    """
+    """Battery storage (of any type)."""
 
     patch = Patch(facecolor='grey')
     """Colour for plotting"""
@@ -714,7 +664,7 @@ class Battery(Generator):
     def __init__(self, polygon, capacity, shours, label=None,
                  discharge_hours=None, rte=0.95):
         """
-        Construct a Battery 'generator'.
+        Construct a battery generator.
 
         Storage (shours) is specified in duration hours at full power.
         Discharge hours is a list of hours when discharging can occur.
@@ -725,7 +675,7 @@ class Battery(Generator):
         assert shours in [1, 2, 4, 8]
         self.set_storage(shours)
         self.discharge_hours = discharge_hours \
-            if discharge_hours is not None else range(24)
+            if discharge_hours is not None else range(18, 24)
         self.rte = rte
         self.storage_p = True
         self.runhours = 0
@@ -744,31 +694,19 @@ class Battery(Generator):
         self.stored = 0
 
     def empty_p(self):
-        """Return True if the storage is empty.
-
-        >>> b = Battery(polygons.WILDCARD, 400, 2, rte=1)
-        >>> b.stored, b.empty_p()
-        (0, True)
-        """
+        """Return True if the storage is empty."""
         return self.stored == 0
 
     def full_p(self):
-        """Return True if the storage is full.
-
-        >>> b = Battery(polygons.WILDCARD, 800, 1, rte=1)
-        >>> b.store(hour=0, power=1000)
-        800
-        >>> b.store(hour=1, power=1000)
-        0
-        >>> b.stored, b.full_p()
-        (800, True)
-        """
+        """Return True if the storage is full."""
         return self.maxstorage == self.stored
 
     def store(self, hour, power):
         """Store power."""
         assert power > 0, f'{power} is <= 0'
-        if self.full_p():
+
+        if self.full_p() or \
+           hour % 24 in self.discharge_hours:
             return 0
 
         power = min(power, self.capacity)
