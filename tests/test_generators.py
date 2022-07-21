@@ -53,7 +53,7 @@ class TestGenerators(unittest.TestCase):
         self.generators = []
 
         for (cls, clstype) in self.classes:
-            if cls in ['Generator', 'Patch', 'HydrogenStorage']:
+            if cls in ['Generator', 'Storage', 'Patch', 'HydrogenStorage']:
                 # imported via matplotlib
                 continue
             args = inspect.getfullargspec(clstype.__init__).args

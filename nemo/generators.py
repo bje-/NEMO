@@ -60,6 +60,9 @@ class Generator():
     synchronous_p = True
     """Is this a synchronous generator?"""
 
+    storage_p = False
+    """A generator is not capable of storage by default."""
+
     def __init__(self, polygon, capacity, label=None):
         """
         Construct a base Generator.
@@ -67,7 +70,6 @@ class Generator():
         Arguments: installed polygon, installed capacity, descriptive label.
         """
         self.setters = [(self.set_capacity, 0, 40)]
-        self.storage_p = False
         self.label = self.__class__.__name__ if label is None else label
         self.capacity = capacity
         self.polygon = polygon
@@ -81,7 +83,7 @@ class Generator():
         self.series_spilled = {}
 
     def step(self, hour, demand):
-        # pylint: disable=unused-argument
+        """Step the generator by one hour."""
         raise NotImplementedError
 
     def region(self):
@@ -162,6 +164,17 @@ class Generator():
     def __repr__(self):
         """Return a representation of the generator."""
         return self.__str__()
+
+
+class Storage():
+    """A class to give a generator storage capability."""
+
+    storage_p = True
+    """This generator is capable of storage."""
+
+    def store(self, hour, power):
+        """Abstract method to ensure that dervied classes define this."""
+        raise NotImplementedError
 
 
 class TraceGenerator(Generator):
@@ -365,7 +378,7 @@ class Hydro(Fuelled):
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
 
-class PumpedHydro(Hydro):
+class PumpedHydro(Storage, Hydro):
     """Pumped storage hydro (PSH) model."""
 
     patch = Patch(facecolor='powderblue')
@@ -378,7 +391,6 @@ class PumpedHydro(Hydro):
         # Half the water starts in the lower reservoir.
         self.stored = self.maxstorage * .5
         self.rte = rte
-        self.storage_p = True
         self.last_run = None
 
     def store(self, hour, power):
@@ -632,7 +644,7 @@ class Diesel(Fossil):
         return total_opcost
 
 
-class Battery(Generator):
+class Battery(Storage, Generator):
     """Battery storage (of any type)."""
 
     patch = Patch(facecolor='grey')
@@ -656,7 +668,6 @@ class Battery(Generator):
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
         self.rte = rte
-        self.storage_p = True
         self.runhours = 0
         self.chargehours = {}
 
@@ -906,7 +917,7 @@ class HydrogenStorage():
         return delta
 
 
-class Electrolyser(Generator):
+class Electrolyser(Storage, Generator):
     """A hydrogen electrolyser."""
 
     patch = Patch()
@@ -938,13 +949,11 @@ class Electrolyser(Generator):
         """
         assert isinstance(tank, HydrogenStorage)
         Generator.__init__(self, polygon, capacity, label)
-        self.storage_p = True
         self.efficiency = efficiency
         self.tank = tank
         self.setters += [(self.tank.set_storage, 0, 10000)]
 
     def step(self, hour, demand):
-        # pylint: disable=unused-argument
         """Return 0 as this is not a generator."""
         return 0, 0
 
