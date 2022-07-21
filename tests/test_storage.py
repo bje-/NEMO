@@ -15,10 +15,12 @@ from nemo.polygons import WILDCARD
 
 class TestPumpedHydro(unittest.TestCase):
     """Test pumped hydro class in detail."""
+
     def setUp(self):
         self.psh = generators.PumpedHydro(WILDCARD, 100, 1000, rte=1)
 
     def test_initialisation(self):
+        """Test constructor."""
         self.assertTrue(self.psh.storage_p)
         self.assertEqual(self.psh.last_run, None)
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
@@ -79,6 +81,7 @@ class TestCST(unittest.TestCase):
                                               trace_file, 0)
 
     def test_initialisation(self):
+        """Test CST constructor."""
         self.assertEqual(self.cst.capacity, 100)
         self.assertEqual(self.cst.shours, 8)
         self.assertEqual(self.cst.maxstorage,
@@ -87,21 +90,25 @@ class TestCST(unittest.TestCase):
         self.assertEqual(self.cst.solarmult, 2.5)
 
     def test_set_capacity(self):
+        """Test set_capacity() method."""
         self.cst.set_capacity(0.2)
         self.assertEqual(self.cst.capacity, 200)
         self.assertEqual(self.cst.maxstorage, 200 * self.cst.shours)
 
     def test_set_multiple(self):
+        """Test set_multiple() method."""
         self.cst.set_multiple(3)
         self.assertEqual(self.cst.solarmult, 3)
 
     def test_set_storage(self):
+        """Test set_storage() method."""
         self.cst.set_storage(6)
         self.assertEqual(self.cst.maxstorage,
                          self.cst.capacity * self.cst.shours)
         self.assertEqual(self.cst.stored, 0.5 * self.cst.maxstorage)
 
     def test_reset(self):
+        """Test reset() method."""
         self.cst.stored = 0
         self.cst.reset()
         self.assertEqual(self.cst.stored, 0.5 * self.cst.maxstorage)
@@ -160,6 +167,7 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.stored, 50 * (24 - len(hrs)))
 
     def test_charge_multiple(self):
+        """Test multiple calls to store()."""
         # 125 MW x 8h = 1000 MWh
         batt = generators.Battery(WILDCARD, 125, 8, discharge_hours=[], rte=1)
         result = batt.store(hour=12, power=100)
