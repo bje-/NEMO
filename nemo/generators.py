@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012, 2013, 2014 Ben Elliston
+# Copyright (C) 2011, 2012, 2013, 2014, 2022 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
 # Copyright (C) 2016, 2017 IT Power (Australia)
 #
@@ -172,9 +172,23 @@ class Storage():
     storage_p = True
     """This generator is capable of storage."""
 
+    def __init__(self):
+        # Time series of charges
+        self.series_charge = {}
+
+    def record(self, hour, power):
+        """Record storage."""
+        if hour not in self.series_charge:
+            self.series_charge[hour] = 0
+        self.series_charge[hour] += power
+
     def store(self, hour, power):
         """Abstract method to ensure that dervied classes define this."""
         raise NotImplementedError
+
+    def reset(self):
+        """Reset a generator with storage."""
+        self.series_charge.clear()
 
 
 class TraceGenerator(Generator):
@@ -387,6 +401,7 @@ class PumpedHydro(Storage, Hydro):
     def __init__(self, polygon, capacity, maxstorage, rte=0.8, label=None):
         """Construct a pumped hydro storage generator."""
         Hydro.__init__(self, polygon, capacity, label)
+        Storage.__init__(self)
         self.maxstorage = maxstorage
         # Half the water starts in the lower reservoir.
         self.stored = self.maxstorage * .5
@@ -661,6 +676,7 @@ class Battery(Storage, Generator):
         Discharge hours is a list of hours when discharging can occur.
         Round-trip efficiency (rte) defaults to 95% for good Li-ion.
         """
+        Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
         self.stored = 0
         assert shours in [1, 2, 4, 8]
@@ -948,6 +964,7 @@ class Electrolyser(Storage, Generator):
         0.0
         """
         assert isinstance(tank, HydrogenStorage)
+        Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
         self.efficiency = efficiency
         self.tank = tank

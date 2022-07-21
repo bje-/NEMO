@@ -165,3 +165,27 @@ class TestGenerators(unittest.TestCase):
         """Test __repr__() method."""
         for gen in self.generators:
             repr(gen)
+
+
+class TestStorage(unittest.TestCase):
+    """Test Storage class."""
+
+    def test_initialisation(self):
+        """Test constructor."""
+        storage = generators.Storage()
+        self.assertEqual(storage.series_charge, {})
+
+    def test_record(self):
+        """Test record() method."""
+        storage = generators.Storage()
+        storage.record(0, 100)
+        storage.record(0, 50)
+        storage.record(1, 75)
+        self.assertEqual(storage.series_charge, {0: 150, 1: 75})
+
+    def test_reset(self):
+        """Test reset() method."""
+        storage = generators.Storage()
+        storage.series_charge = {0: 150}
+        storage.reset()
+        self.assertEqual(storage.series_charge, {})
