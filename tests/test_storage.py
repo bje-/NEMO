@@ -26,19 +26,21 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(self.psh.maxstorage, 1000)
 
     def test_pump_and_generate(self):
-        # Cannot pump and generate at the same time.
+        """Test that pumping and generating cannot happen at the same time."""
         result = self.psh.store(hour=0, power=100)
         self.assertEqual(result, 100)
         result = self.psh.step(hour=0, demand=50)
         self.assertEqual(result, (0, 0))
 
     def test_step(self):
+        """Test step() method."""
         for i in range(10):
             result = self.psh.step(hour=i, demand=50)
             self.assertEqual(result, (50, 0))
         self.assertEqual(self.psh.stored, 0)
 
     def test_store(self):
+        """Test store() method."""
         result = self.psh.step(hour=0, demand=100)
         self.assertEqual(result, (100, 0))
         # Can't pump and generate in the same hour.
@@ -57,10 +59,11 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(self.psh.stored, 1000)
 
     def test_store_multiple(self):
+        """Test store() called multiple times."""
         # For now.
-        pass
 
     def test_reset(self):
+        """Test reset() method."""
         self.psh.stored = 0
         self.psh.last_run = 123
         self.psh.reset()
