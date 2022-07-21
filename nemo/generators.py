@@ -80,6 +80,10 @@ class Generator():
         self.series_power = {}
         self.series_spilled = {}
 
+    def step(self, hour, demand):
+        # pylint: disable=unused-argument
+        raise NotImplementedError
+
     def region(self):
         """Return the region the generator is in."""
         return polygons.region(self.polygon)
