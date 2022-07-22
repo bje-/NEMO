@@ -19,9 +19,6 @@ def _sim(context, date_range):
     # reset generator internal state
     for gen in context.generators:
         gen.reset()
-        # every generator must be assigned to a polygon
-        assert gen.polygon is not None, \
-            'every generator must be assigned a polygon'
 
     generation = np.zeros((len(date_range), len(context.generators)))
     spill = np.zeros((len(date_range), len(context.generators)))

@@ -69,6 +69,7 @@ class Generator():
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
+        assert capacity >= 0
         self.setters = [(self.set_capacity, 0, 40)]
         self.label = self.__class__.__name__ if label is None else label
         self.capacity = capacity
