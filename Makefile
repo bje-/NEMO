@@ -3,7 +3,7 @@ all:
 COVRUN=coverage run -a --source=. --omit=setup.py
 
 check:  replay.json flake8
-	PYTHONOPTIMIZE=0 nosetests --with-doctest --with-coverage --cover-package=awklite,nemo
+	PYTHONOPTIMIZE=0 pytest --cov=awklite --cov nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
