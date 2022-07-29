@@ -975,6 +975,10 @@ class Electrolyser(Storage, Generator):
         """Return 0 as this is not a generator."""
         return 0, 0
 
+    def reset(self):
+        Storage.reset(self)
+        Generator.reset(self)
+
     def store(self, _, power):
         """Store power."""
         power = min(power, self.capacity)
