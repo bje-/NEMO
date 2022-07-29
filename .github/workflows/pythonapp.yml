@@ -39,4 +39,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest pytest-doc
-        nosetests --doctest-modules
+        pytest --doctest-modules
