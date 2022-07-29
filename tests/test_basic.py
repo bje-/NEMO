@@ -32,7 +32,7 @@ class SuperGenerator(generators.Generator):
         """Step the super generator."""
         self.runhours += 1
         self.energy += demand
-        if self.capacity is None:
+        if self.capacity == 0:
             # meet demand exactly
             return demand, 0
         # meet demand, spill surplus capacity
@@ -80,7 +80,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_005(self):
         """Super generator runs every hour."""
-        gen = SuperGenerator(None)
+        gen = SuperGenerator(0)
         self.context.generators = [gen]
         nemo.run(self.context)
         self.assertEqual(gen.runhours, self.context.timesteps)
@@ -101,7 +101,7 @@ class TestSequenceFunctions(unittest.TestCase):
         """A NSW generator runs in NSW only."""
         for rgn in regions.All:
             self.context.regions = [rgn]
-            gen = SuperGenerator(None)
+            gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
             if rgn == regions.nsw:
@@ -115,7 +115,7 @@ class TestSequenceFunctions(unittest.TestCase):
         for rgn in regions.All:
             rgnset.append(rgn)
             self.context.regions = rgnset
-            gen = SuperGenerator(None)
+            gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
             self.assertEqual(gen.runhours, self.context.timesteps)
@@ -127,7 +127,7 @@ class TestSequenceFunctions(unittest.TestCase):
         for rgn in regions.All[1:]:
             rgnset.append(rgn)
             self.context.regions = rgnset
-            gen = SuperGenerator(None)
+            gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
             self.assertEqual(gen.runhours, 0)
