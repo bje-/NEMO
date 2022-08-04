@@ -184,7 +184,7 @@ class Storage():
         self.series_charge[hour] += power
 
     def store(self, hour, power):
-        """Abstract method to ensure that dervied classes define this."""
+        """Abstract method to ensure that derived classes define this."""
         raise NotImplementedError
 
     def reset(self):
