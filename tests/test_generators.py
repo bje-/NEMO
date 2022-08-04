@@ -68,6 +68,11 @@ class TestGenerators(unittest.TestCase):
         """Remove tracefile on teardown."""
         os.unlink(self.tracefile)
 
+    def test_step_abstract(self):
+        gen = generators.Generator(1, 0, 'label')
+        with self.assertRaises(NotImplementedError):
+            gen.step(0, 100)
+
     def test_step(self):
         """Test step() method."""
         for gen in self.generators:
@@ -128,7 +133,10 @@ class TestGenerators(unittest.TestCase):
         for gen in self.generators:
             gen.series_power = {n: 10 for n in range(10)}  # 10 MW * 10 h
             gen.series_spilled = {n: 1 for n in range(10)}  # 1 MW * 10 h
+            # fake up a capcost() method for testing summary()
+            gen.capcost = lambda costs: 100
             output = gen.summary(context)
+            self.assertIn('capcost $100,', output)
             self.assertIn('supplied 100.00 MWh', output)
             self.assertIn('surplus 10.00 MWh', output)
             self.assertIn('CF 10.0%', output)
@@ -165,27 +173,3 @@ class TestGenerators(unittest.TestCase):
         """Test __repr__() method."""
         for gen in self.generators:
             repr(gen)
-
-
-class TestStorage(unittest.TestCase):
-    """Test Storage class."""
-
-    def test_initialisation(self):
-        """Test constructor."""
-        storage = generators.Storage()
-        self.assertEqual(storage.series_charge, {})
-
-    def test_record(self):
-        """Test record() method."""
-        storage = generators.Storage()
-        storage.record(0, 100)
-        storage.record(0, 50)
-        storage.record(1, 75)
-        self.assertEqual(storage.series_charge, {0: 150, 1: 75})
-
-    def test_reset(self):
-        """Test reset() method."""
-        storage = generators.Storage()
-        storage.series_charge = {0: 150}
-        storage.reset()
-        self.assertEqual(storage.series_charge, {})
