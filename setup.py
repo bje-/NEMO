@@ -26,7 +26,7 @@ setup(name='nemopt',
       data_files=[('etc', ['nemo.cfg'])],
       scripts=['evolve', 'replay', 'summary'],
       install_requires=[
-          'deap @ https://github.com/bje-/deap@2to3#egg=deap',
+          'deap @ git+https://github.com/bje-/deap@2to3#egg=deap',
           'Gooey>=1.0.4',
           'matplotlib',
           'numpy',
