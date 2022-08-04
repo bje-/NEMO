@@ -372,6 +372,7 @@ class Fuelled(Generator):
         if power > 0:
             self.runhours += 1
         self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         return power, 0
 
     def summary(self, context):
@@ -432,6 +433,7 @@ class PumpedHydro(Storage, Hydro):
             # Can't pump and generate in the same hour.
             return 0, 0
         self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         self.stored -= power
         if power > 0:
             self.runhours += 1
@@ -732,11 +734,13 @@ class Battery(Storage, Generator):
         if self.empty_p() or \
            hour % 24 not in self.discharge_hours:
             self.series_power[hour] = 0
+            self.series_spilled[hour] = 0
             return 0, 0
 
         assert demand > 0
         power = min(self.stored, min(self.capacity, demand)) * self.rte
         self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         self.stored -= power
         if power > 0:
             self.runhours += 1
@@ -870,6 +874,7 @@ class GreenPower(Generator):
         """Step method for GreenPower."""
         power = min(self.capacity, demand)
         self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         return power, 0
 
 
@@ -1019,6 +1024,7 @@ class HydrogenGT(Fuelled):
         # discharge that amount of hydrogen
         power = self.tank.discharge(hydrogen) * self.efficiency
         self.series_power[hour] = power
+        self.series_spilled[hour] = 0
         if power > 0:
             self.runhours += 1
         return power, 0
