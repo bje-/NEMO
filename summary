@@ -139,7 +139,7 @@ for line in sys.stdin:  # noqa: C901
         av.cost = fields[2]
 
     if search('Penalty:', line):
-        av.penalty = fields[2]
+        av.penalty = float(fields[2])
 
     if search('Constraints violated', line):
         line = line.replace('Constraints violated: ', '').strip('\n')
