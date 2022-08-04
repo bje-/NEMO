@@ -25,11 +25,9 @@ setup(name='nemopt',
       ],
       data_files=[('etc', ['nemo.cfg'])],
       scripts=['evolve', 'replay', 'summary'],
-      extras_require={
-          "GUI": ['Gooey>=1.0.4']
-      },
       install_requires=[
           'deap',
+          'Gooey>=1.0.4',
           'matplotlib',
           'numpy',
           'pandas',
