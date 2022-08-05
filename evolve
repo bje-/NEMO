@@ -128,6 +128,7 @@ def process_options():
     optgroup.add_argument("--lambda", type=int, dest='lambda_',
                           help='override CMA-ES lambda value')
     optgroup.add_argument("--seed", type=int,
+                          default=cf.get('optimiser', 'seed'),
                           help='seed for random number generator')
     optgroup.add_argument("--sigma", type=float,
                           default=cf.get('optimiser', 'sigma'),
