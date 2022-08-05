@@ -276,10 +276,12 @@ class TestElectrolyser(unittest.TestCase):
                                     efficiency=1)
 
     def test_type_error(self):
+        """Check that the wrong type raises a TypeError."""
         with self.assertRaises(TypeError):
             generators.Electrolyser(None, 1, 100, 'test')
 
     def test_series(self):
+        """Test series() method."""
         series = self.electrolyser.series()
         keys = series.keys()
         self.assertEqual(len(series), 3)
@@ -288,6 +290,7 @@ class TestElectrolyser(unittest.TestCase):
         self.assertTrue('charge' in keys)
 
     def test_step(self):
+        """Test step() method."""
         # an electrolyser is not a generator
         self.assertEqual(self.electrolyser.step(0, 100), (0, 0))
         # store 100 MWh of hydrogen
