@@ -431,6 +431,8 @@ class PumpedHydro(Storage, Hydro):
         power = min(self.stored, min(self.capacity, demand))
         if self.last_run == hour:
             # Can't pump and generate in the same hour.
+            self.series_power[hour] = 0
+            self.series_spilled[hour] = 0
             return 0, 0
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
