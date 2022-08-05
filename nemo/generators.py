@@ -991,7 +991,8 @@ class Electrolyser(Storage, Generator):
         >>> e.store(0, 100) # tank is full, none stored
         0.0
         """
-        assert isinstance(tank, HydrogenStorage)
+        if not isinstance(tank, HydrogenStorage):
+            raise TypeError
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
         self.efficiency = efficiency
