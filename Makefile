@@ -67,7 +67,7 @@ pylint:
 	pylint --disable=E1120,E1124 --enable=useless-suppression $(LINTSRC)
 
 lint:	flake8 pylint
-	pylama $(LINTSRC)
+	# pylama $(LINTSRC)
 	pylava $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
