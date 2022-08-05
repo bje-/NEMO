@@ -1,6 +1,17 @@
+coverage
+pytest
+pytest-cov
+flake8
+pylint
+pylava
+vulture
+bandit
+pydocstyle
+pdoc3
 numpy
 pandas
 matplotlib
 pint
 Gooey>=1.0.4
 git+https://github.com/bje-/deap@2to3#egg=deap
+twine
