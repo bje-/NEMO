@@ -36,6 +36,13 @@ class TestStorage(unittest.TestCase):
         storage.record(1, 75)
         self.assertEqual(storage.series_charge, {0: 150, 1: 75})
 
+    def test_series(self):
+        """Test series() method."""
+        storage = generators.Storage()
+        value = {0: 150}
+        storage.series_charge = value
+        self.assertEqual(storage.series(), {'charge': value})
+
     def test_store(self):
         """Test store() method."""
         storage = generators.Storage()
@@ -56,6 +63,15 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
         self.assertEqual(self.psh.rte, 1.0)
         self.assertEqual(self.psh.maxstorage, 1000)
+
+    def test_series(self):
+        """Test series() method."""
+        series = self.psh.series()
+        keys = series.keys()
+        self.assertEqual(len(series), 3)
+        self.assertTrue('power' in keys)
+        self.assertTrue('spilled' in keys)
+        self.assertTrue('charge' in keys)
 
     def test_pump_and_generate(self):
         """Test that pumping and generating cannot happen at the same time."""
@@ -159,6 +175,16 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.runhours, 0)
         self.assertEqual(len(batt.chargehours), 0)
 
+    def test_series(self):
+        """Test series() method."""
+        batt = generators.Battery(WILDCARD, 400, 2)
+        series = batt.series()
+        keys = series.keys()
+        self.assertEqual(len(series), 3)
+        self.assertTrue('power' in keys)
+        self.assertTrue('spilled' in keys)
+        self.assertTrue('charge' in keys)
+
     def test_empty_p(self):
         """Test the empty_p() method."""
         batt = generators.Battery(WILDCARD, 800, 1, rte=1)
@@ -238,3 +264,35 @@ class TestBattery(unittest.TestCase):
         result = batt.step(hour=18, demand=1000)
         self.assertEqual(result, (50, 0))
         self.assertEqual(batt.stored, 50)
+
+
+class TestElectrolyser(unittest.TestCase):
+    """Test Electrolyser class in detail."""
+
+    def setUp(self):
+        self.tank = generators.HydrogenStorage(400, 'test')
+        self.electrolyser = \
+            generators.Electrolyser(self.tank, WILDCARD, 100,
+                                    efficiency=1)
+
+    def test_type_error(self):
+        with self.assertRaises(TypeError):
+            generators.Electrolyser(None, 1, 100, 'test')
+
+    def test_series(self):
+        series = self.electrolyser.series()
+        keys = series.keys()
+        self.assertEqual(len(series), 3)
+        self.assertTrue('power' in keys)
+        self.assertTrue('spilled' in keys)
+        self.assertTrue('charge' in keys)
+
+    def test_step(self):
+        # an electrolyser is not a generator
+        self.assertEqual(self.electrolyser.step(0, 100), (0, 0))
+        # store 100 MWh of hydrogen
+        self.assertEqual(self.electrolyser.store(0, 100), 100)
+        # store another 100 MWh of hydrogen
+        self.assertEqual(self.electrolyser.store(0, 100), 100)
+        # tank is full, none stored
+        self.assertEqual(self.electrolyser.store(0, 100), 0)

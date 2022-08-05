@@ -68,6 +68,16 @@ class TestGenerators(unittest.TestCase):
         """Remove tracefile on teardown."""
         os.unlink(self.tracefile)
 
+    def test_series(self):
+        """Test series() method."""
+        gen = generators.Generator(1, 0, 'label')
+        # fake up these attributes
+        gen.series_power = {1: 100}
+        gen.series_spilled = {1: 200}
+        # .. and then call gen.series()
+        self.assertEqual(gen.series(), {'power': {1: 100},
+                                        'spilled': {1: 200}})
+
     def test_step_abstract(self):
         """Test step() method in the abstract Generator class."""
         gen = generators.Generator(1, 0, 'label')

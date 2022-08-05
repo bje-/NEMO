@@ -74,11 +74,13 @@ class TestSim(unittest.TestCase):
         due to floating point arithmetic.
         """
         self.context = Context()
-        ccgt = generators.CCGT(31, 200)
-        psh = generators.PumpedHydro(1, 250, 1000)
-        psh.store = lambda hour, spl: 1e-9  # return tiny value
+        gen = generators.CCGT(31, 200)
+        psh1 = generators.PumpedHydro(1, 250, 1000)
+        psh1.store = lambda hour, spl: spl
+        psh2 = generators.PumpedHydro(1, 250, 1000)
+        others = [psh1, psh2]
         self.assertEqual(sim._store_spills(self.context, 0,
-                                           ccgt, [psh], 0), 0)
+                                           gen, others, 10), 0)
 
     def test_run_1(self):
         """Test run() with region not a list."""
