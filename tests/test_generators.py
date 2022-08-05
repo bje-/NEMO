@@ -69,6 +69,7 @@ class TestGenerators(unittest.TestCase):
         os.unlink(self.tracefile)
 
     def test_step_abstract(self):
+        """Test step() method in the abstract Generator class."""
         gen = generators.Generator(1, 0, 'label')
         with self.assertRaises(NotImplementedError):
             gen.step(0, 100)
