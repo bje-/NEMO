@@ -1,6 +1,6 @@
 numpy
 pandas
 matplotlib
-deap
 pint
 Gooey>=1.0.4
+git+https://github.com/bje-/deap@2to3#egg=deap
