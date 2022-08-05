@@ -83,6 +83,7 @@ def run_one(bundle):
     nemo.run(context)
     context.verbose = args.v > 0
     print(context)
+    print("Done")
     print()
 
     if args.plot:
