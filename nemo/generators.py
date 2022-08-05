@@ -974,22 +974,6 @@ class Electrolyser(Storage, Generator):
         Arguments include the associated storage vessel (the 'tank'),
         the capacity of the electrolyser (in MW) and electrolysis
         conversion efficiency.
-
-        >>> e = Electrolyser(None, 1, 100, 'test')
-        Traceback (most recent call last):
-        AssertionError
-        >>> h = HydrogenStorage(400, 'test')
-        >>> e = Electrolyser(h, 1, 100, efficiency=1.0)
-        >>> print(e)
-        Electrolyser (QLD1:1), 100.00 MW
-        >>> e.step(0, 100)
-        (0, 0)
-        >>> e.store(0, 100) # store 100 MWh of hydrogen
-        100.0
-        >>> e.store(0, 100) # store another 100 MWh of hydrogen
-        100.0
-        >>> e.store(0, 100) # tank is full, none stored
-        0.0
         """
         if not isinstance(tank, HydrogenStorage):
             raise TypeError
