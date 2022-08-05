@@ -33,6 +33,15 @@ def get(section, option):
     return config.get(section, option)
 
 
+def has_p(section, option):
+    """
+    Does this section have this option?
+
+    This works the same as ConfigParser.has_option.
+    """
+    return config.has_option(section, option)
+
+
 config = configparser.ConfigParser()
 
 # If $NEMORC is set, use that as the config filename.
