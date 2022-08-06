@@ -63,14 +63,15 @@ def _store_spills(context, hour, gen, generators, spl):
         if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
             spl = 0
         assert spl >= 0
-        if spl == 0:
-            # early exit
-            break
 
         # energy stored <= energy transferred, according to store's RTE
         if context.verbose:
             # show the energy transferred, not stored
             print('STORE:', gen, '->', other, f'({stored:.1f})')
+
+        if spl == 0:
+            # early exit
+            break
     return spl
 
 

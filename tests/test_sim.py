@@ -70,17 +70,22 @@ class TestSim(unittest.TestCase):
     def test_store_spills_negative(self):
         """Test _store_spills().
 
-        This test checks proper handling of a small negative residual
-        due to floating point arithmetic.
+        This test checks proper handling of the case where spl becomes
+        very slightly negative. The first pumped hydro generator below
+        stores all of the spilled energy, producing a small negative
+        residual. The second generator should not be called with zero
+        spilled.
         """
         self.context = Context()
         gen = generators.CCGT(31, 200)
         psh1 = generators.PumpedHydro(1, 250, 1000)
-        psh1.store = lambda hour, spl: spl
+        psh1.store = lambda hour, spl: spl + 1e-9
         psh2 = generators.PumpedHydro(1, 250, 1000)
+        # this will raise an exception if we try calling store()
+        psh2.store = None
         others = [psh1, psh2]
-        self.assertEqual(sim._store_spills(self.context, 0,
-                                           gen, others, 10), 0)
+        self.assertEqual(sim._store_spills(self.context, 0, gen,
+                                           others, 10), 0)
 
     def test_run_1(self):
         """Test run() with region not a list."""
