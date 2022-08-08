@@ -19,6 +19,7 @@ import urllib.parse
 import urllib.request
 from math import isclose
 
+import pandas as pd
 import numpy as np
 import pint
 from matplotlib.patches import Patch
@@ -85,7 +86,8 @@ class Generator():
 
     def series(self):
         """Return generation and spills series."""
-        return {'power': self.series_power, 'spilled': self.series_spilled}
+        return {'power': pd.Series(self.series_power, dtype=int),
+                'spilled': pd.Series(self.series_spilled, dtype=int)}
 
     def step(self, hour, demand):
         """Step the generator by one hour."""
@@ -189,7 +191,7 @@ class Storage():
 
     def series(self):
         """Return generation and spills series."""
-        return {'charge': self.series_charge}
+        return {'charge': pd.Series(self.series_charge, dtype=int)}
 
     def store(self, hour, power):
         """Abstract method to ensure that derived classes define this."""

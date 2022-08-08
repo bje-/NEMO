@@ -10,6 +10,7 @@
 import os
 import unittest
 import inspect
+import pandas as pd
 import numpy as np
 from nemo import generators
 from nemo import costs
@@ -75,8 +76,10 @@ class TestGenerators(unittest.TestCase):
         gen.series_power = {1: 100}
         gen.series_spilled = {1: 200}
         # .. and then call gen.series()
-        self.assertEqual(gen.series(), {'power': {1: 100},
-                                        'spilled': {1: 200}})
+        series1 = pd.Series(gen.series_power, dtype=int)
+        self.assertTrue(gen.series()['power'].equals(other=series1))
+        series2 = pd.Series(gen.series_spilled, dtype=int)
+        self.assertTrue(gen.series()['spilled'].equals(other=series2))
 
     def test_step_abstract(self):
         """Test step() method in the abstract Generator class."""

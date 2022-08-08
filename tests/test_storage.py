@@ -8,6 +8,7 @@
 """A testsuite for generators that have storage."""
 
 import unittest
+import pandas as pd
 from nemo import configfile
 from nemo import generators
 from nemo.polygons import WILDCARD
@@ -41,7 +42,8 @@ class TestStorage(unittest.TestCase):
         storage = generators.Storage()
         value = {0: 150}
         storage.series_charge = value
-        self.assertEqual(storage.series(), {'charge': value})
+        series = pd.Series(value, dtype=int)
+        self.assertTrue(storage.series()['charge'].equals(series))
 
     def test_store(self):
         """Test store() method."""
