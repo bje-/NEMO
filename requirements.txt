@@ -1,6 +1,4 @@
 coverage
-pytest
-pytest-cov
 flake8
 pylint
 pylava
@@ -15,3 +13,6 @@ pint
 Gooey>=1.0.4
 deap
 twine
+pyflakes
+pytest
+pytest-cov
