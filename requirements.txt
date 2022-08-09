@@ -1,7 +1,8 @@
+attrdict
 coverage
 flake8
 pylint
-pylava
+pylama
 vulture
 bandit
 pydocstyle
