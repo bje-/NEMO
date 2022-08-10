@@ -35,7 +35,7 @@ def get(section, option):
 
 def has_p(section, option):
     """
-    Does this section have this option?
+    Check if this section has a given option.
 
     This works the same as ConfigParser.has_option.
     """

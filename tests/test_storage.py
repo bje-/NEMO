@@ -56,6 +56,7 @@ class TestPumpedHydro(unittest.TestCase):
     """Test pumped hydro class in detail."""
 
     def setUp(self):
+        """Test harness setup."""
         self.psh = generators.PumpedHydro(WILDCARD, 100, 1000, rte=1)
 
     def test_initialisation(self):
@@ -123,7 +124,9 @@ class TestPumpedHydro(unittest.TestCase):
 
 class TestCST(unittest.TestCase):
     """Test CST class in detail."""
+
     def setUp(self):
+        """Test harness setup."""
         trace_file = configfile.get('generation', 'cst-trace')
         self.cst = generators.CentralReceiver(WILDCARD, 100, 2.5, 8,
                                               trace_file, 0)
@@ -274,6 +277,7 @@ class TestElectrolyser(unittest.TestCase):
     """Test Electrolyser class in detail."""
 
     def setUp(self):
+        """Test harness setup."""
         self.tank = generators.HydrogenStorage(400, 'test')
         self.electrolyser = \
             generators.Electrolyser(self.tank, WILDCARD, 100,

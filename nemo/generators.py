@@ -180,6 +180,7 @@ class Storage():
     """This generator is capable of storage."""
 
     def __init__(self):
+        """Storage constructor."""
         # Time series of charges
         self.series_charge = {}
 
@@ -421,6 +422,7 @@ class PumpedHydro(Storage, Hydro):
         self.last_run = None
 
     def series(self):
+        """Return the combined series."""
         dict1 = Hydro.series(self)
         dict2 = Storage.series(self)
         # combine dictionaries
@@ -708,6 +710,7 @@ class Battery(Storage, Generator):
         self.runhours = 0
 
     def series(self):
+        """Return the combined series."""
         dict1 = Generator.series(self)
         dict2 = Storage.series(self)
         # combine dictionaries
@@ -984,6 +987,7 @@ class Electrolyser(Storage, Generator):
         self.setters += [(self.tank.set_storage, 0, 10000)]
 
     def series(self):
+        """Return the combined series."""
         dict1 = Generator.series(self)
         dict2 = Storage.series(self)
         # combine dictionaries
@@ -994,6 +998,7 @@ class Electrolyser(Storage, Generator):
         return 0, 0
 
     def reset(self):
+        """Reset the generator."""
         Storage.reset(self)
         Generator.reset(self)
 
