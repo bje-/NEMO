@@ -1,4 +1,3 @@
-attrdict
 coverage
 flake8
 pylint
