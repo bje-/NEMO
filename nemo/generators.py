@@ -86,8 +86,8 @@ class Generator():
 
     def series(self):
         """Return generation and spills series."""
-        return {'power': pd.Series(self.series_power, dtype=int),
-                'spilled': pd.Series(self.series_spilled, dtype=int)}
+        return {'power': pd.Series(self.series_power, dtype=float),
+                'spilled': pd.Series(self.series_spilled, dtype=float)}
 
     def step(self, hour, demand):
         """Step the generator by one hour."""
@@ -191,7 +191,7 @@ class Storage():
 
     def series(self):
         """Return generation and spills series."""
-        return {'charge': pd.Series(self.series_charge, dtype=int)}
+        return {'charge': pd.Series(self.series_charge, dtype=float)}
 
     def store(self, hour, power):
         """Abstract method to ensure that derived classes define this."""

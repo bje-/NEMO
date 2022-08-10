@@ -76,9 +76,9 @@ class TestGenerators(unittest.TestCase):
         gen.series_power = {1: 100}
         gen.series_spilled = {1: 200}
         # .. and then call gen.series()
-        series1 = pd.Series(gen.series_power, dtype=int)
+        series1 = pd.Series(gen.series_power, dtype=float)
         self.assertTrue(gen.series()['power'].equals(other=series1))
-        series2 = pd.Series(gen.series_spilled, dtype=int)
+        series2 = pd.Series(gen.series_spilled, dtype=float)
         self.assertTrue(gen.series()['spilled'].equals(other=series2))
 
     def test_step_abstract(self):

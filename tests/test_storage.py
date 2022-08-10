@@ -42,7 +42,7 @@ class TestStorage(unittest.TestCase):
         storage = generators.Storage()
         value = {0: 150}
         storage.series_charge = value
-        series = pd.Series(value, dtype=int)
+        series = pd.Series(value, dtype=float)
         self.assertTrue(storage.series()['charge'].equals(series))
 
     def test_store(self):
