@@ -1,3 +1,5 @@
+attrdict3
+codespell
 coverage
 flake8
 pylint
