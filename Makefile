@@ -12,7 +12,7 @@ venv: $(VENV)/bin/activate
 
 COVRUN=coverage run -a --source=. --omit=setup.py
 
-check:  replay.json flake8
+check:  flake8
 	PYTHONOPTIMIZE=0 pytest --cov=awklite --cov nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
@@ -77,8 +77,7 @@ pylint:
 	pylint --disable=E1120,E1124 --enable=useless-suppression $(LINTSRC)
 
 lint:	flake8 pylint
-	# pylama $(LINTSRC)
-	pylava $(LINTSRC)
+	pylama $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
 	pydocstyle $(LINTSRC)
