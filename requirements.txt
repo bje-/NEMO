@@ -18,3 +18,4 @@ twine
 pyflakes
 pytest
 pytest-cov
+twine
