@@ -19,3 +19,4 @@ pyflakes
 pytest
 pytest-cov
 twine
+wheel
