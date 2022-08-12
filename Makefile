@@ -4,7 +4,7 @@ all: venv
 VENV=myenv
 
 $(VENV)/bin/activate: requirements.txt
-	python3.9 -m venv $(VENV)
+	python3.10 -m venv $(VENV)
 	./$(VENV)/bin/pip install -r requirements.txt
 
 # env is a shortcut target
