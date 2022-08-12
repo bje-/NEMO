@@ -127,7 +127,7 @@ def process_options():
 
     optgroup.add_argument("--lambda", type=int, dest='lambda_',
                           help='override CMA-ES lambda value')
-    if cf.has_p('optimiser', 'seed'):
+    if cf.has_option_p('optimiser', 'seed'):
         seed_default = cf.get('optimiser', 'seed')
     else:
         seed_default = None
