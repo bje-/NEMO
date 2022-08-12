@@ -33,7 +33,7 @@ def get(section, option):
     return config.get(section, option)
 
 
-def has_p(section, option):
+def has_option_p(section, option):
     """
     Check if this section has a given option.
 

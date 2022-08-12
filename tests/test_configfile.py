@@ -24,8 +24,8 @@ class TestConfigfile(unittest.TestCase):
         with self.assertRaises(configparser.NoOptionError):
             configfile.get('optimiser', 'nooption')
 
-    def test_has_p(self):
-        """Test has_p() function."""
-        self.assertTrue(configfile.has_p('optimiser', 'sigma'))
-        self.assertFalse(configfile.has_p('optimiser', 'nooption'))
-        self.assertFalse(configfile.has_p('nosection', 'sigma'))
+    def test_has_option_p(self):
+        """Test has_option_p() function."""
+        self.assertTrue(configfile.has_option_p('optimiser', 'sigma'))
+        self.assertFalse(configfile.has_option_p('optimiser', 'nooption'))
+        self.assertFalse(configfile.has_option_p('nosection', 'sigma'))
