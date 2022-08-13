@@ -4,6 +4,9 @@ import time
 
 from setuptools import setup
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(name='nemopt',
       # Use a datestamp as the version.
       version=time.strftime('%Y%m%d'),
@@ -13,12 +16,14 @@ setup(name='nemopt',
       author_email='bje@air.net.au',
       license='GPLv3',
       url='https://nemo.ozlabs.org',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       keywords=['electricity', 'model', 'scenarios'],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
+          'Environment :: X11 Applications',
           'Intended Audience :: Science/Research',
-          'Intended Audience :: Developers',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Programming Language :: Python :: 3 :: Only',
           'Topic :: Scientific/Engineering',
