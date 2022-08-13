@@ -74,7 +74,7 @@ flake8:
 LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
 
 pylint:
-	pylint --disable=E1120,E1124 --enable=useless-suppression $(LINTSRC)
+	pylint --enable=useless-suppression $(LINTSRC)
 
 lint:	flake8 pylint
 	codespell -d -L trough,hsa $(LINTSRC) || true
