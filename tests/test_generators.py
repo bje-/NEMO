@@ -37,6 +37,30 @@ dummy_arguments = {'self': None,
                    'tank': hydrogen_storage,
                    'efficiency': 30}
 
+# This list should contain every generator class in generators.py.
+# This ensures that the linters will not report any classes as unused
+# because they do not feature in any scenario (eg, GreenPower). They
+# are, however, tested below via Python introspection (and hence not
+# named explicitly in source code).
+
+classlist = [generators.Battery, generators.Behind_Meter_PV,
+             generators.Biofuel, generators.Biomass,
+             generators.Black_Coal, generators.CCGT,
+             generators.CCGT_CCS, generators.CCS, generators.CST,
+             generators.CentralReceiver, generators.Coal_CCS,
+             generators.DemandResponse, generators.Diesel,
+             generators.Electrolyser, generators.Fossil,
+             generators.Fuelled, generators.Generator,
+             generators.Geothermal, generators.Geothermal_EGS,
+             generators.Geothermal_HSA, generators.GreenPower,
+             generators.Hydro, generators.HydrogenGT,
+             generators.HydrogenStorage, generators.OCGT,
+             generators.PV, generators.PV1Axis,
+             generators.ParabolicTrough, generators.Patch,
+             generators.PumpedHydro, generators.Storage,
+             generators.TraceGenerator, generators.Wind,
+             generators.WindOffshore]
+
 
 class TestGenerators(unittest.TestCase):
     """Test generators.py."""
@@ -54,9 +78,13 @@ class TestGenerators(unittest.TestCase):
         self.generators = []
 
         for (cls, clstype) in self.classes:
+            # Patch is imported via matplotlib
             if cls in ['Generator', 'Storage', 'Patch', 'HydrogenStorage']:
-                # imported via matplotlib
                 continue
+
+            # check that every class in generators.py is in classlist
+            self.assertIn(clstype, classlist)
+
             args = inspect.getfullargspec(clstype.__init__).args
             arglist = []
             for arg in args:
