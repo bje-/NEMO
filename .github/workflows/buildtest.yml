@@ -1,5 +1,5 @@
 
-name: Python application
+name: Build and test
 
 env:
   LC_ALL: en_US.UTF-8
