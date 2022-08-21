@@ -47,15 +47,15 @@ classlist = [generators.Battery, generators.Behind_Meter_PV,
              generators.Biofuel, generators.Biomass,
              generators.Black_Coal, generators.CCGT,
              generators.CCGT_CCS, generators.CCS, generators.CST,
-             generators.CentralReceiver, generators.Coal_CCS,
-             generators.DemandResponse, generators.Diesel,
-             generators.Electrolyser, generators.Fossil,
-             generators.Fuelled, generators.Generator,
-             generators.Geothermal, generators.Geothermal_EGS,
-             generators.Geothermal_HSA, generators.GreenPower,
-             generators.Hydro, generators.HydrogenGT,
-             generators.HydrogenStorage, generators.OCGT,
-             generators.PV, generators.PV1Axis,
+             generators.CSVTraceGenerator, generators.CentralReceiver,
+             generators.Coal_CCS, generators.DemandResponse,
+             generators.Diesel, generators.Electrolyser,
+             generators.Fossil, generators.Fuelled,
+             generators.Generator, generators.Geothermal,
+             generators.Geothermal_EGS, generators.Geothermal_HSA,
+             generators.GreenPower, generators.Hydro,
+             generators.HydrogenGT, generators.HydrogenStorage,
+             generators.OCGT, generators.PV, generators.PV1Axis,
              generators.ParabolicTrough, generators.Patch,
              generators.PumpedHydro, generators.Storage,
              generators.TraceGenerator, generators.Wind,
@@ -78,8 +78,10 @@ class TestGenerators(unittest.TestCase):
         self.generators = []
 
         for (cls, clstype) in self.classes:
-            # Patch is imported via matplotlib
-            if cls in ['Generator', 'Storage', 'Patch', 'HydrogenStorage']:
+            # Skip abstract classes, plus Patch which is imported via
+            # matplotlib
+            if cls in ['Generator', 'TraceGenerator', 'CSVTraceGenerator',
+                       'Storage', 'Patch', 'HydrogenStorage']:
                 continue
 
             # check that every class in generators.py is in classlist

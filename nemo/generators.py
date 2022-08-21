@@ -209,14 +209,36 @@ class TraceGenerator(Generator):
     csvfilename = None
     csvdata = None
 
-    def __init__(self, polygon, capacity, filename, column, label=None,
-                 build_limit=None):
+    def __init__(self, polygon, capacity, label=None, build_limit=None):
         """Construct a generator with a specified trace file."""
         Generator.__init__(self, polygon, capacity, label)
         if build_limit is not None:
             # Override default capacity limit with build_limit
             _, _, limit = self.setters[0]
             self.setters = [(self.set_capacity, 0, min(build_limit, limit))]
+
+    def step(self, hour, demand):
+        """Step method for any generator using traces."""
+        # self.generation must be defined by derived classes
+        # pylint: disable=no-member
+        generation = self.generation[hour] * self.capacity
+        power = min(generation, demand)
+        spilled = generation - power
+        self.series_power[hour] = power
+        self.series_spilled[hour] = spilled
+        return power, spilled
+
+
+class CSVTraceGenerator(TraceGenerator):
+    """A generator that gets its hourly dispatch from a CSV trace file."""
+
+    csvfilename = None
+    csvdata = None
+
+    def __init__(self, polygon, capacity, filename, column, label=None,
+                 build_limit=None):
+        """Construct a generator with a specified trace file."""
+        TraceGenerator.__init__(self, polygon, capacity, label, build_limit)
         if self.__class__.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
@@ -228,17 +250,8 @@ class TraceGenerator(Generator):
             self.__class__.csvfilename = filename
         self.generation = self.__class__.csvdata[::, column]
 
-    def step(self, hour, demand):
-        """Step method for any generator using traces."""
-        generation = self.generation[hour] * self.capacity
-        power = min(generation, demand)
-        spilled = generation - power
-        self.series_power[hour] = power
-        self.series_spilled[hour] = spilled
-        return power, spilled
 
-
-class Wind(TraceGenerator):
+class Wind(CSVTraceGenerator):
     """Wind power."""
 
     patch = Patch(facecolor='green')
@@ -254,7 +267,7 @@ class WindOffshore(Wind):
     """Colour for plotting"""
 
 
-class PV(TraceGenerator):
+class PV(CSVTraceGenerator):
     """Solar photovoltaic (PV) model."""
 
     patch = Patch(facecolor='yellow')
@@ -279,7 +292,7 @@ class Behind_Meter_PV(PV):
     """
 
 
-class CST(TraceGenerator):
+class CST(CSVTraceGenerator):
     """Concentrating solar thermal (CST) model."""
 
     patch = Patch(facecolor='gold')
@@ -293,8 +306,8 @@ class CST(TraceGenerator):
         Arguments include capacity (in MW), sm (solar multiple) and
         shours (hours of storage).
         """
-        TraceGenerator.__init__(self, polygon, capacity, filename, column,
-                                label)
+        CSVTraceGenerator.__init__(self, polygon, capacity, filename, column,
+                                   label)
         self.maxstorage = None
         self.stored = None
         self.set_storage(shours)
@@ -805,7 +818,7 @@ class Battery(Storage, Generator):
             f', {self.shours}h storage'
 
 
-class Geothermal(TraceGenerator):
+class Geothermal(CSVTraceGenerator):
     """Geothermal power plant."""
 
     patch = Patch(facecolor='brown')
