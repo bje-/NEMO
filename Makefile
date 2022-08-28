@@ -77,7 +77,7 @@ pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
 
 lint:	flake8 pylint
-	codespell -d -L trough,hsa $(LINTSRC) || true
+	codespell -d -L fom,hsa,trough $(LINTSRC) || true
 	pylama $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
