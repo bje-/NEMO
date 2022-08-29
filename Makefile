@@ -38,7 +38,8 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	rm replay.json replay-noscenario.json replay-nocost.json
 	make html
 
-.PHONY:
+.PHONY: html
+
 html:
 	coverage html
 
