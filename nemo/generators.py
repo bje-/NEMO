@@ -262,7 +262,7 @@ class RenewablesNinja(TraceGenerator):
             'format': 'csv'
         }
 
-    def fetch(self, url):
+    def fetch(url):
         """Fetch the CSV data from the web server and parse it."""
         headers = {
             'User-Agent': 'Mozilla'
