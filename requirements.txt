@@ -20,3 +20,4 @@ pytest
 pytest-cov
 twine
 wheel
+requests

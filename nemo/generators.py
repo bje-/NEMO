@@ -14,14 +14,13 @@
 # pylint: disable=invalid-name
 
 import locale
-from urllib.parse import urlencode
-from urllib.request import urlopen, Request
 from math import isclose
 
 import pandas as pd
 import numpy as np
 import pint
 from matplotlib.patches import Patch
+import requests
 
 from nemo import polygons
 
@@ -237,6 +236,7 @@ class RenewablesNinja(TraceGenerator):
     """
 
     URLBASE = 'https://www.renewables.ninja/api/data'
+    session = requests.Session()
 
     def __init__(self, polygon, capacity, latlong, daterange, label,
                  build_limit):
@@ -262,16 +262,14 @@ class RenewablesNinja(TraceGenerator):
             'format': 'csv'
         }
 
-    @staticmethod
-    def fetch(url):
+    @classmethod
+    def fetch(cls, url, params):
         """Fetch the CSV data from the web server and parse it."""
-        headers = {
-            'User-Agent': 'Mozilla'
-        }
-        req = Request(url, headers=headers)
-        with urlopen(req) as urlobj:  # nosec
-            return np.genfromtxt(urlobj, usecols=(1), delimiter=',',
-                                 skip_header=4, encoding='UTF-8')
+        resp = cls.session.get(url, params=params)
+        if not resp.ok:
+            raise RuntimeError(f'HTTP {resp.status_code}: {url}')
+        return np.genfromtxt(resp.text.splitlines(), usecols=(1),
+                             delimiter=',', skip_header=4, encoding='UTF-8')
 
     def summary(self, context):
         """Return a summary of the generator activity."""
@@ -308,8 +306,7 @@ class NinjaPV(RenewablesNinja):
         for key, value in (('system_loss', 0.1), ('tracking', axes),
                            ('tilt', self.tilt), ('azim', azimuth)):
             self.params[key] = value
-        url = self.URLBASE + '/pv?' + urlencode(self.params)
-        self.generation = self.fetch(url)
+        self.generation = self.fetch(self.URLBASE + '/pv', self.params)
 
     def summary(self, context):
         """Return a summary of the generator activity."""
@@ -342,8 +339,7 @@ class NinjaWind(RenewablesNinja):
         for key, value in (('turbine', self.machine),
                            ('height', height)):
             self.params[key] = value
-        url = self.URLBASE + '/wind?' + urlencode(self.params)
-        self.generation = self.fetch(url)
+        self.generation = self.fetch(self.URLBASE + '/wind', self.params)
 
     def summary(self, context):
         """Return a summary of the generator activity."""
@@ -361,16 +357,26 @@ class CSVTraceGenerator(TraceGenerator):
                  build_limit=None):
         """Construct a generator with a specified trace file."""
         TraceGenerator.__init__(self, polygon, capacity, label, build_limit)
-        if self.__class__.csvfilename != filename:
+        cls = self.__class__
+        if cls.csvfilename != filename:
             # Optimisation:
             # Only if the filename changes do we invoke genfromtxt.
-            with urlopen(filename) as urlobj:  # nosec
-                self.__class__.csvdata = np.genfromtxt(urlobj,
-                                                       encoding='UTF-8',
-                                                       delimiter=',')
-            self.__class__.csvdata = np.maximum(0, self.__class__.csvdata)
-            self.__class__.csvfilename = filename
-        self.generation = self.__class__.csvdata[::, column]
+            if not filename.startswith('http'):
+                # Local file path
+                traceinput = filename
+            else:
+                try:
+                    resp = requests.request('GET', filename, timeout=5)
+                except requests.exceptions.Timeout as exc:
+                    raise RuntimeError(f'timeout fetching {filename}') from exc
+                if not resp.ok:
+                    raise RuntimeError(f'HTTP {resp.status_code}: {filename}')
+                traceinput = resp.text.splitlines()
+            cls.csvdata = np.genfromtxt(traceinput, encoding='UTF-8',
+                                        delimiter=',')
+            cls.csvdata = np.maximum(0, cls.csvdata)
+            cls.csvfilename = filename
+        self.generation = cls.csvdata[::, column]
 
 
 class Wind(CSVTraceGenerator):

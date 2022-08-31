@@ -36,4 +36,5 @@ setup(name='nemopt',
           'matplotlib',
           'numpy',
           'pandas',
-          'pint'])
+          'pint',
+          'requests'])
