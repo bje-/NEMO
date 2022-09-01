@@ -8,12 +8,10 @@
 
 """A National Electricity Market (NEM) simulation."""
 
-import urllib.error
-import urllib.parse
-import urllib.request
-
+import io
 import numpy as np
 import pandas as pd
+import requests
 
 from nemo import configfile, polygons, regions
 
@@ -21,9 +19,21 @@ from nemo import configfile, polygons, regions
 # demand file now dictates the number of timesteps in the simulation.
 
 url = configfile.get('demand', 'demand-trace')
-with urllib.request.urlopen(url) as urlobj:  # nosec
-    demand = pd.read_csv(urlobj, comment='#', sep=',',
-                         parse_dates=[['Date', 'Time']], index_col='Date_Time')
+
+if not url.startswith('http'):
+    # Local file path
+    traceinput = filename
+else:
+    try:
+        resp = requests.request('GET', url, timeout=5)
+    except requests.exceptions.Timeout as exc:
+        raise RuntimeError(f'timeout fetching {url}') from exc
+    if not resp.ok:
+        raise RuntimeError(f'HTTP {resp.status_code}: {url}')
+    traceinput = io.StringIO(resp.text)
+
+demand = pd.read_csv(traceinput, comment='#', sep=',',
+                     parse_dates=[['Date', 'Time']], index_col='Date_Time')
 
 # Check for date, time and n demand columns (for n regions).
 assert len(demand.columns) == regions.NUMREGIONS
