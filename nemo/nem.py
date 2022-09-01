@@ -22,7 +22,7 @@ url = configfile.get('demand', 'demand-trace')
 
 if not url.startswith('http'):
     # Local file path
-    traceinput = filename
+    traceinput = url
 else:
     try:
         resp = requests.request('GET', url, timeout=5)
