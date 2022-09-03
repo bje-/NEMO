@@ -12,7 +12,10 @@ venv: $(VENV)/bin/activate
 
 COVRUN=coverage run -a --source=. --omit=setup.py
 
-check:  flake8
+envset:
+	test -n "$$VIRTUAL_ENV" || (echo "Python env is not activated" && false)
+
+check:  envset flake8
 	PYTHONOPTIMIZE=0 pytest --cov=awklite --cov nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
@@ -69,7 +72,7 @@ prof: nemo.prof
 lineprof:
 	kernprof -v -l stub.py
 
-flake8:
+flake8: envset
 	flake8 evolve replay summary awklite nemo tests --ignore=N801
 
 LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
@@ -77,7 +80,7 @@ LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
 pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
 
-lint:	flake8 pylint
+lint:	envset flake8 pylint
 	codespell -d -L fom,hsa,trough $(LINTSRC) || true
 	pylama $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
