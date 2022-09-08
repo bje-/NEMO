@@ -8,7 +8,6 @@
 """A testsuite for the generators module."""
 
 import os
-import time
 import unittest
 import inspect
 import pandas as pd
@@ -92,7 +91,8 @@ class TestGenerators(unittest.TestCase):
             # Skip abstract classes
             if cls in ['Generator', 'TraceGenerator',
                        'CSVTraceGenerator', 'RenewablesNinja',
-                       'Storage', 'HydrogenStorage']:
+                       'NinjaPV', 'NinjaWind', 'Storage',
+                       'HydrogenStorage']:
                 continue
 
             # check that every class in generators.py is in classlist
@@ -105,8 +105,6 @@ class TestGenerators(unittest.TestCase):
                     arglist.append(dummy_arguments[arg])
             obj = clstype(*arglist)
             self.generators.append(obj)
-            if cls.startswith("Ninja"):
-                time.sleep(10)  # observe 6/min rate limit
 
     def tearDown(self):
         """Remove tracefile on teardown."""
