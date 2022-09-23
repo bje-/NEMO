@@ -18,31 +18,25 @@ from nemo import costs
 hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")
 
 dummy_arguments = {'axes': 0,
-                   'azimuth': 180,
                    'build_limit': 1000,
                    'capacity': 100,
                    'capture': 0.85,
                    'column': 0,
                    'cost_per_mwh': 1000,
-                   'daterange': ('2019-01-01', '2019-01-07'),
                    'discharge_hours': range(18, 21),
                    'efficiency': 30,
                    'filename': 'tracedata.csv',
                    'heatrate': 0.3,
-                   'height': 100,
                    'intensity': 0.7,
                    'kwh_per_litre': 10,
                    'label': 'a label',
-                   'latlong': (-35, 149),
-                   'machine': 'Vestas V90 2000',
                    'maxstorage': 1000,
                    'polygon': 31,
                    'rte': 0.8,
                    'self': None,
                    'shours': 8,
                    'solarmult': 2.5,
-                   'tank': hydrogen_storage,
-                   'tilt': 0}
+                   'tank': hydrogen_storage}
 
 # This list should contain every generator class in generators.py.
 # This ensures that the linters will not report any classes as unused
@@ -64,10 +58,9 @@ classlist = [generators.Battery, generators.Behind_Meter_PV,
              generators.HydrogenGT, generators.HydrogenStorage,
              generators.OCGT, generators.PV, generators.PV1Axis,
              generators.ParabolicTrough, generators.Patch,
-             generators.PumpedHydro, generators.RenewablesNinja,
-             generators.NinjaPV, generators.NinjaWind,
-             generators.Storage, generators.TraceGenerator,
-             generators.Wind, generators.WindOffshore]
+             generators.PumpedHydro, generators.Storage,
+             generators.TraceGenerator, generators.Wind,
+             generators.WindOffshore]
 
 
 class TestGenerators(unittest.TestCase):
@@ -90,8 +83,7 @@ class TestGenerators(unittest.TestCase):
         for (cls, clstype) in self.classes:
             # Skip abstract classes
             if cls in ['Generator', 'TraceGenerator',
-                       'CSVTraceGenerator', 'RenewablesNinja',
-                       'NinjaPV', 'NinjaWind', 'Storage',
+                       'CSVTraceGenerator', 'Storage',
                        'HydrogenStorage']:
                 continue
 
