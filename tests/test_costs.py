@@ -55,9 +55,6 @@ class TestCosts(unittest.TestCase):
             obj = cls(self.discount, self.coal_price, self.gas_price,
                       self.ccs_price)
 
-            if isinstance(obj, costs.NullCosts):
-                continue  # skip
-
             for table in [obj.capcost_per_kw, obj.fixed_om_costs,
                           obj.opcost_per_mwh]:
                 self.assertTrue(all(value >= 0 for value in table.values()))
