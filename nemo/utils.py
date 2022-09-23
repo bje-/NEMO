@@ -51,9 +51,10 @@ def _legend(context):
             labels.append(gen.label + f' ({capacity:.2f~P})')
             patches.append(gen.patch)
 
-    legend = plt.figlegend([Patch('black', 'red')] + patches,
+    red_patch = Patch(facecolor='red', edgecolor='black')
+    legend = plt.figlegend([red_patch] + patches,
                            ['unserved'] + labels,
-                           'upper right')
+                           loc='upper right')
     plt.setp(legend.get_texts(), fontsize='small')
 
 
