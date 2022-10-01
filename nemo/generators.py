@@ -467,7 +467,7 @@ class PumpedHydro(Storage, Hydro):
 
     def step(self, hour, demand):
         """Step method for pumped hydro storage."""
-        power = min(self.stored, min(self.capacity, demand))
+        power = min(self.stored, self.capacity, demand)
         if self.last_run == hour:
             # Can't pump and generate in the same hour.
             self.series_power[hour] = 0
@@ -785,7 +785,7 @@ class Battery(Storage, Generator):
             return 0, 0
 
         assert demand > 0
-        power = min(self.stored, min(self.capacity, demand)) * self.rte
+        power = min(self.stored, self.capacity, demand) * self.rte
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
         self.stored -= power
