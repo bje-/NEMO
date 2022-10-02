@@ -12,6 +12,7 @@ import unittest
 import inspect
 import pandas as pd
 import numpy as np
+
 from nemo import generators
 from nemo import costs
 
