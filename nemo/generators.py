@@ -188,6 +188,21 @@ class Storage():
             self.series_charge[hour] = 0
         self.series_charge[hour] += power
 
+    def charge_capacity(self, gen, hour):
+        """Return available storage capacity.
+
+        Since a storage-capable generator can be called on multiple
+        times to store energy in a single timestep, we keep track of
+        how much remaining capacity is available for charging in the
+        given timestep.
+        """
+        try:
+            result = gen.capacity - self.series_charge[hour]
+            assert result >= 0
+            return result
+        except KeyError:
+            return gen.capacity
+
     def series(self):
         """Return generation and spills series."""
         return {'charge': pd.Series(self.series_charge, dtype=float)}
@@ -454,7 +469,8 @@ class PumpedHydro(Storage, Hydro):
         if self.last_run == hour:
             # Can't pump and generate in the same hour.
             return 0
-        power = min(power, self.capacity)
+        power = min(self.charge_capacity(self, hour), power,
+                    self.capacity)
         energy = power * self.rte
         if self.stored + energy > self.maxstorage:
             power = (self.maxstorage - self.stored) / self.rte
@@ -765,7 +781,8 @@ class Battery(Storage, Generator):
            hour % 24 in self.discharge_hours:
             return 0
 
-        power = min(power, self.capacity)
+        power = min(self.charge_capacity(self, hour), power,
+                    self.capacity)
         energy = power
         if self.stored + energy > self.maxstorage:
             energy = self.maxstorage - self.stored
