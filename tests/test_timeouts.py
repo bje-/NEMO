@@ -23,7 +23,7 @@ class TestTraceGenerator(unittest.TestCase):
 
     def setUp(self):
         """Start the simple TCP server."""
-        self.child = tcpserver.run(PORT)
+        self.child = tcpserver.run(PORT, "block")
         self.url = f'http://localhost:{PORT}/data.csv'
 
     def tearDown(self):
@@ -50,7 +50,7 @@ class TestDemandTimeout(unittest.TestCase):
 
     def setUp(self):
         """Start the simple TCP server."""
-        self.child = tcpserver.run(PORT)
+        self.child = tcpserver.run(PORT, "block")
         self.oldget = configparser.ConfigParser.get
         configparser.ConfigParser.get = self.NewConfigParser.newget
 

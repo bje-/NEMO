@@ -13,6 +13,8 @@ import inspect
 import pandas as pd
 import numpy as np
 
+import tcpserver
+
 from nemo import generators
 from nemo import costs
 
@@ -221,3 +223,23 @@ class TestGenerators(unittest.TestCase):
         """Test __repr__() method."""
         for gen in self.generators:
             repr(gen)
+
+
+class TestTraceGenerator(unittest.TestCase):
+    """Test HTTP error handling for a trace generator."""
+
+    PORT = 9998
+
+    def setUp(self):
+        """Start the simple TCP server."""
+        self.child = tcpserver.run(self.PORT, "http400")
+        self.url = f'http://localhost:{self.PORT}/data.csv'
+
+    def tearDown(self):
+        """Terminate TCP server on teardown."""
+        self.child.terminate()
+
+    def test_timeout(self):
+        """Test fetching trace data from a dud server."""
+        with self.assertRaisesRegex(RuntimeError, "HTTP 400"):
+            generators.Wind(1, 100, self.url, column=0)

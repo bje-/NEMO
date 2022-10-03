@@ -12,29 +12,38 @@ import time
 from multiprocessing import Process
 
 
-class MyTCPHandler(socketserver.BaseRequestHandler):
-    """
-    The request handler class for our server.
-
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
+class HTTP400Handler(socketserver.BaseRequestHandler):
+    """A socket server that returns HTTP error 400."""
 
     def handle(self):
-        """Hang."""
+        """Send error 400 and quit."""
+        self.request.recv(1024)
+        self.request.sendall(b'HTTP/1.1 400 Bad Request\n')
+
+
+class BlockingTCPHandler(socketserver.BaseRequestHandler):
+    """A socket server that just blocks."""
+
+    def handle(self):
+        """Just block."""
         while True:
             time.sleep(60)
 
 
-def func(host, port):
+def func(host, port, action):
     """Create the server, binding to host and port."""
-    with socketserver.TCPServer((host, port), MyTCPHandler) as server:
-        server.serve_forever()
+    if action == 'block':
+        with socketserver.TCPServer((host, port),
+                                    BlockingTCPHandler) as server:
+            server.serve_forever()
+    elif action == 'http400':
+        with socketserver.TCPServer((host, port),
+                                    HTTP400Handler) as server:
+            server.serve_forever()
 
 
-def run(port):
+def run(port, action):
     """Start the TCP server."""
-    proc = Process(target=func, args=('localhost', port))
+    proc = Process(target=func, args=('localhost', port, action))
     proc.start()
     return proc
