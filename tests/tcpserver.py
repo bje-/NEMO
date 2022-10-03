@@ -32,6 +32,7 @@ class BlockingTCPHandler(socketserver.BaseRequestHandler):
 
 def func(host, port, action):
     """Create the server, binding to host and port."""
+    socketserver.TCPServer.allow_reuse_address = True
     if action == 'block':
         with socketserver.TCPServer((host, port),
                                     BlockingTCPHandler) as server:
