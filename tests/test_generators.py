@@ -18,6 +18,7 @@ import tcpserver
 from nemo import generators
 from nemo import costs
 
+PORT = 9998
 hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")
 
 dummy_arguments = {'axes': 0,
@@ -225,15 +226,31 @@ class TestGenerators(unittest.TestCase):
             repr(gen)
 
 
-class TestTraceGenerator(unittest.TestCase):
-    """Test HTTP error handling for a trace generator."""
-
-    PORT = 9998
+class TestTraceGeneratorTimeout(unittest.TestCase):
+    """Test timeout handling for a trace generator (Wind)."""
 
     def setUp(self):
         """Start the simple TCP server."""
-        self.child = tcpserver.run(self.PORT, "http400")
-        self.url = f'http://localhost:{self.PORT}/data.csv'
+        self.child = tcpserver.run(PORT, "block")
+        self.url = f'http://localhost:{PORT}/data.csv'
+
+    def tearDown(self):
+        """Terminate TCP server on teardown."""
+        self.child.terminate()
+
+    def test_timeout(self):
+        """Test fetching trace data from a dud server."""
+        with self.assertRaises(RuntimeError):
+            generators.Wind(1, 100, self.url, column=0)
+
+
+class TestTraceGeneratorError(unittest.TestCase):
+    """Test HTTP error handling for a trace generator."""
+
+    def setUp(self):
+        """Start the simple TCP server."""
+        self.child = tcpserver.run(PORT, "http400")
+        self.url = f'http://localhost:{PORT}/data.csv'
 
     def tearDown(self):
         """Terminate TCP server on teardown."""
