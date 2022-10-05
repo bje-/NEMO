@@ -240,7 +240,7 @@ class TestTraceGeneratorTimeout(unittest.TestCase):
 
     def test_timeout(self):
         """Test fetching trace data from a dud server."""
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(TimeoutError):
             generators.Wind(1, 100, self.url, column=0)
 
 
@@ -258,5 +258,5 @@ class TestTraceGeneratorError(unittest.TestCase):
 
     def test_timeout(self):
         """Test fetching trace data from a dud server."""
-        with self.assertRaisesRegex(RuntimeError, "HTTP 400"):
+        with self.assertRaisesRegex(ConnectionError, "HTTP 400"):
             generators.Wind(1, 100, self.url, column=0)

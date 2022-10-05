@@ -263,9 +263,10 @@ class CSVTraceGenerator(TraceGenerator):
                 try:
                     resp = requests.request('GET', filename, timeout=5)
                 except requests.exceptions.Timeout as exc:
-                    raise RuntimeError(f'timeout fetching {filename}') from exc
+                    raise TimeoutError(f'timeout fetching {filename}') from exc
                 if not resp.ok:
-                    raise RuntimeError(f'HTTP {resp.status_code}: {filename}')
+                    msg = f'HTTP {resp.status_code}: {filename}'
+                    raise ConnectionError(msg)
                 traceinput = resp.text.splitlines()
             cls.csvdata = np.genfromtxt(traceinput, encoding='UTF-8',
                                         delimiter=',')

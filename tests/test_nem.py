@@ -48,7 +48,7 @@ class TestDemandError(unittest.TestCase):
 
     def test_http_error(self):
         """Test fetching demand data from a dud server."""
-        with self.assertRaisesRegex(RuntimeError, "HTTP 400"):
+        with self.assertRaisesRegex(ConnectionError, "HTTP 400"):
             importlib.reload(nem)
 
 
@@ -68,7 +68,7 @@ class TestDemandTimeout(unittest.TestCase):
 
     def test_timeout(self):
         """Test fetching demand data from a dud server."""
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(TimeoutError):
             importlib.reload(nem)
 
 

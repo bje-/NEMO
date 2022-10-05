@@ -14,7 +14,8 @@ import os
 def load(filename):
     """Load a configuration file (or files)."""
     result = config.read(filename)
-    assert result, f"config file {filename} not found"
+    if not result:
+        raise FileNotFoundError(f"config file {filename} not found")
     # Verify
     config.get('generation', 'cst-trace')
     config.get('generation', 'egs-geothermal-trace')
