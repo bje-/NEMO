@@ -5,7 +5,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""A testsuite for the utils.py module."""
+"""A testsuite for the utils module."""
 
 import os
 import unittest

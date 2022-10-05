@@ -7,7 +7,7 @@
 
 # pylint: disable=protected-access
 
-"""A testsuite for the penalties module."""
+"""A testsuite for the sim module."""
 
 import unittest
 import numpy as np

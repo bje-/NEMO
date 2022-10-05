@@ -7,7 +7,7 @@
 
 # pylint: disable=protected-access
 
-"""A testsuite for the penalties module."""
+"""A testsuite for the costs module."""
 
 import unittest
 from nemo import costs
