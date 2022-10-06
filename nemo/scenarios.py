@@ -16,6 +16,7 @@ from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit,
                            offshore_wind_limit)
+from nemo.types import UnreachableError
 
 
 def _demand_response():
@@ -123,7 +124,7 @@ def re100(context):
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             result += _every_poly(g)
         else:
-            raise ValueError('unhandled generator type')  # pragma: no cover
+            raise UnreachableError('unhandled generator type')
     context.generators = result
 
 
