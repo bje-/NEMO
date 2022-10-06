@@ -90,7 +90,7 @@ class TestSim(unittest.TestCase):
     def test_run_1(self):
         """Test run() with region not a list."""
         self.context.regions = None
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             sim.run(self.context)
 
     def test_run_2(self):
