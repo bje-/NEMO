@@ -119,7 +119,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
 def run(context, starthour=None, endhour=None):
     """Run the simulation."""
     if not isinstance(context.regions, list):
-        raise ValueError('regions is not a list')
+        raise TypeError
 
     if starthour is None:
         starthour = context.demand.index.min()
