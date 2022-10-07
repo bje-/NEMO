@@ -47,6 +47,6 @@ config = configparser.ConfigParser()
 
 # If $NEMORC is set, use that as the config filename.
 if os.getenv('NEMORC') is not None:
-    load(os.getenv('NEMORC'))  # pragma: no cover
+    load(os.getenv('NEMORC'))
 else:
-    load('nemo.cfg')  # pragma: no cover
+    load('nemo.cfg')

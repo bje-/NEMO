@@ -7,6 +7,8 @@
 
 """A testsuite for the configfile module."""
 
+import os
+import importlib
 import configparser
 import unittest
 
@@ -29,3 +31,54 @@ class TestConfigfile(unittest.TestCase):
         self.assertTrue(configfile.has_option_p('optimiser', 'sigma'))
         self.assertFalse(configfile.has_option_p('optimiser', 'nooption'))
         self.assertFalse(configfile.has_option_p('nosection', 'sigma'))
+
+
+class TestConfigFileSet(unittest.TestCase):
+    """Test with NEMORC set."""
+
+    def setUp(self):
+        """Set NEMORC."""
+        try:
+            self.old = os.environ['NEMORC']
+        except KeyError:
+            self.old = None
+        os.environ['NEMORC'] = '/file/not/found'
+
+    def tearDown(self):
+        """Clean up the environment."""
+        if self.old is None:
+            del os.environ['NEMORC']
+        else:
+            os.environ['NEMORC'] = self.old
+        importlib.reload(configfile)
+
+    def test_open(self):
+        """Test opening a non-existent config file."""
+        with self.assertRaises(FileNotFoundError):
+            importlib.reload(configfile)
+
+
+class TestConfigFileUnset(unittest.TestCase):
+    """Test with NEMORC unset."""
+
+    def setUp(self):
+        """Unset NEMORC."""
+        try:
+            self.old = os.environ['NEMORC']
+            del os.environ['NEMORC']
+        except KeyError:
+            self.old = None
+        assert 'NEMORC' not in os.environ
+        importlib.reload(configfile)
+
+    def tearDown(self):
+        """Reset the environment."""
+        if self.old:
+            os.environ['NEMORC'] = self.old
+        importlib.reload(configfile)
+
+    def test_open(self):
+        """Test opening the default configuration file."""
+        reference = configparser.ConfigParser()
+        reference.read('nemo.cfg')
+        self.assertEqual(reference, configfile.config)
