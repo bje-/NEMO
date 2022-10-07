@@ -120,6 +120,6 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
              "v", markersize=10, color='red', markeredgecolor='black')
 
     if not filename:
-        plt.show()  # pragma: no cover
+        plt.show()
     else:
         plt.savefig(filename)

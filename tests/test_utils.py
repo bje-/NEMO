@@ -7,7 +7,8 @@
 
 """A testsuite for the utils module."""
 
-import os
+import io
+import hashlib
 import unittest
 
 from nemo import context, scenarios, sim, utils
@@ -17,42 +18,36 @@ class TestUtils(unittest.TestCase):
     """Tests for utils.py functions."""
 
     def setUp(self):
-        """Test harness setup."""
+        """Set up a context and run the CCGT scenario."""
         self.context = context.Context()
-
-    def test_plot_1(self):
-        """Test plot() function."""
-        try:
-            os.unlink('foo.png')
-        except FileNotFoundError:
-            pass
         scenarios.ccgt(self.context)
         sim.run(self.context)
-        utils.plot(self.context, spills=True, filename='foo.png',
-                   showlegend=True)
-        try:
-            os.stat('foo.png')
-            exists = True
-        except FileNotFoundError:
-            exists = False
-        self.assertTrue(exists)
-        os.unlink('foo.png')
 
-    def test_plot_2(self):
+    def test_plot(self):
+        """Test plotting to the display."""
+        utils.plot(self.context, spills=True)
+
+    def test_plot_to_file(self):
+        """Test plotting to file."""
+        imgdata = io.BytesIO()
+        utils.plot(self.context, spills=True, filename=imgdata,
+                   showlegend=True)
+        # rewind the stream
+        imgdata.seek(0)
+        hashval = hashlib.sha224(imgdata.getbuffer()).hexdigest()
+        expected = '506de0f6c9f3349ae83e59c7de59cdff8465cd8bbeab29ca90d8be3c'
+        self.assertEqual(hashval, expected)
+
+    def test_plot_many(self):
         """Test plot() function with many generators."""
-        try:
-            os.unlink('foo.png')
-        except FileNotFoundError:
-            pass
         scenarios.ccgt(self.context)
         self.context.generators *= 2  # double list length
         sim.run(self.context)
-        utils.plot(self.context, spills=True, filename='foo.png',
+        imgdata = io.BytesIO()
+        utils.plot(self.context, spills=True, filename=imgdata,
                    showlegend=True)
-        try:
-            os.stat('foo.png')
-            exists = True
-        except FileNotFoundError:
-            exists = False
-        self.assertTrue(exists)
-        os.unlink('foo.png')
+        # rewind the stream
+        imgdata.seek(0)
+        hashval = hashlib.sha224(imgdata.getbuffer()).hexdigest()
+        expected = 'f295c962b522825dc337bcc64447f994f44cbddc79b08009a08b42a1'
+        self.assertEqual(hashval, expected)
