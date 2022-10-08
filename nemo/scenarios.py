@@ -14,8 +14,8 @@ from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              Black_Coal, CentralReceiver, Coal_CCS,
                              DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind,
                              WindOffshore)
-from nemo.polygons import (WILDCARD, cst_limit, pv_limit, wind_limit,
-                           offshore_wind_limit)
+from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
+                           wind_limit)
 from nemo.types import UnreachableError
 
 

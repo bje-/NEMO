@@ -10,9 +10,11 @@
 """A testsuite for the sim module."""
 
 import unittest
+
 import numpy as np
 import pandas as pd
-from nemo import sim, generators, configfile
+
+from nemo import configfile, generators, sim
 from nemo.context import Context
 
 

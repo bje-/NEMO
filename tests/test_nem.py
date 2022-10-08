@@ -7,10 +7,12 @@
 
 """A testsuite for the nem module."""
 
-import importlib
 import configparser
+import importlib
 import unittest
+
 import tcpserver
+
 from nemo import nem
 
 PORT = 9998

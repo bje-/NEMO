@@ -7,9 +7,9 @@
 
 """A testsuite for the configfile module."""
 
-import os
-import importlib
 import configparser
+import importlib
+import os
 import unittest
 
 from nemo import configfile

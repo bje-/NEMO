@@ -8,9 +8,10 @@
 """A testsuite for generators that have storage."""
 
 import unittest
+
 import pandas as pd
-from nemo import configfile
-from nemo import generators
+
+from nemo import configfile, generators
 from nemo.polygons import WILDCARD
 
 

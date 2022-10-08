@@ -10,6 +10,7 @@
 """A testsuite for the costs module."""
 
 import unittest
+
 from nemo import costs
 
 

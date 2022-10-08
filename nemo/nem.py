@@ -9,6 +9,7 @@
 """A National Electricity Market (NEM) simulation."""
 
 import io
+
 import numpy as np
 import pandas as pd
 import requests

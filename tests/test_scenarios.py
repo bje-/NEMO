@@ -8,6 +8,7 @@
 """A testsuite for the scenarios module."""
 
 import unittest
+
 from nemo import context, scenarios
 
 

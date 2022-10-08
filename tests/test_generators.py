@@ -7,16 +7,15 @@
 
 """A testsuite for the generators module."""
 
+import inspect
 import os
 import unittest
-import inspect
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import pandas as pd
 import tcpserver
 
-from nemo import generators
-from nemo import costs
+from nemo import costs, generators
 
 PORT = 9998
 hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")

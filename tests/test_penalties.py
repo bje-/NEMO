@@ -10,11 +10,11 @@
 """A testsuite for the penalties module."""
 
 import unittest
+
 import numpy as np
 
-
 import nemo
-from nemo import penalties, generators, regions
+from nemo import generators, penalties, regions
 from nemo.penalties import reasons
 from nemo.polygons import WILDCARD
 
