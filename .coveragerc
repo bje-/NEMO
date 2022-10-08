@@ -9,3 +9,6 @@ exclude_lines =
 
     # Don't complain if tests don't run unreachable code
     raise UnreachableError
+
+    # pyplot show() needs a display, so no tests run it
+    plt.show()

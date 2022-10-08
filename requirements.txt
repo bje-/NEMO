@@ -19,6 +19,7 @@ twine
 pyflakes
 pytest
 pytest-cov
+pytest-mpl
 twine
 wheel
 requests

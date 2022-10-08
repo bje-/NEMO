@@ -58,8 +58,8 @@ def _legend(context):
     plt.setp(legend.get_texts(), fontsize='small')
 
 
-def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
-    """Produce a pretty plot of supply and demand."""
+def _figure(context, spills, showlegend, xlim):
+    """Provide a helper function for plot() to faciltiate testing."""
     # aggregate demand
     demand = context.demand.sum(axis=1)
 
@@ -119,7 +119,11 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     plt.plot(context.unserved.index, [ymax] * len(context.unserved),
              "v", markersize=10, color='red', markeredgecolor='black')
 
+
+def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
+    """Produce a pretty plot of supply and demand."""
+    _figure(context, spills, showlegend, xlim)
     if not filename:
-        plt.show()  # pragma: no cover
+        plt.show()
     else:
         plt.savefig(filename)
