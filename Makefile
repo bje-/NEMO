@@ -82,6 +82,7 @@ pylint:
 
 lint:	envset flake8 pylint
 	codespell -d -L fom,hsa,trough $(LINTSRC) || true
+	isort --check $(LINTSRC)
 	pylama $(LINTSRC)
 	-vulture --min-confidence=50 $(LINTSRC)
 	bandit -q -s B101 $(LINTSRC)
