@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
@@ -26,6 +26,10 @@ jobs:
       run: |
         sudo apt-get update -q
         sudo apt-get install -y libgtk-3-0 libgtk-3-dev libglu1-mesa-dev
+    - name: Configure MacOS
+      if ${{ runner.os == 'MacOS' }}
+      run: |
+        run: sudo networksetup -setdnsservers Ethernet 9.9.9.9
     - name: Install dependencies
       run: |
         host localhost
