@@ -85,7 +85,7 @@ lint:	envset flake8 pylint
 	isort --check $(LINTSRC)
 	pylama $(LINTSRC)
 	-vulture --min-confidence=70 $(LINTSRC)
-	bandit -q -s B101 $(LINTSRC)
+	bandit -qq -s B101 $(LINTSRC)
 	pydocstyle $(LINTSRC)
 
 coveralls:
