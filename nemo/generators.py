@@ -198,6 +198,8 @@ class Storage():
         """
         try:
             result = gen.capacity - self.series_charge[hour]
+            if result < 0 and isclose(result, 0):
+                result = 0
             assert result >= 0
             return result
         except KeyError:
