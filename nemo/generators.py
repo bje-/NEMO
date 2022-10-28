@@ -182,11 +182,11 @@ class Storage():
         # Time series of charges
         self.series_charge = {}
 
-    def record(self, hour, power):
+    def record(self, hour, energy):
         """Record storage."""
         if hour not in self.series_charge:
             self.series_charge[hour] = 0
-        self.series_charge[hour] += power
+        self.series_charge[hour] += energy
 
     def charge_capacity(self, gen, hour):
         """Return available storage capacity.
@@ -198,7 +198,7 @@ class Storage():
         """
         try:
             result = gen.capacity - self.series_charge[hour]
-            if result < 0 and isclose(result, 0):
+            if result < 0 or isclose(result, 0, abs_tol=1e-6):
                 result = 0
             assert result >= 0
             return result
