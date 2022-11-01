@@ -63,7 +63,8 @@ class TestPumpedHydro(unittest.TestCase):
     def test_initialisation(self):
         """Test constructor."""
         self.assertTrue(self.psh.storage_p)
-        self.assertEqual(self.psh.last_run, None)
+        self.assertEqual(self.psh.last_gen, None)
+        self.assertEqual(self.psh.last_pump, None)
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
         self.assertEqual(self.psh.rte, 1.0)
         self.assertEqual(self.psh.maxstorage, 1000)
@@ -83,6 +84,14 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(result, 100)
         result = self.psh.step(hour=0, demand=50)
         self.assertEqual(result, (0, 0))
+
+    def test_pump_multiple(self):
+        """Test that pump can run more than once per timestep."""
+        result = self.psh.store(hour=0, power=100)
+        self.assertEqual(result, 100)
+        result = self.psh.store(hour=0, power=50)
+        self.assertEqual(result, 50)
+        self.assertEqual(self.psh.stored, 650)
 
     def test_step(self):
         """Test step() method."""
@@ -117,7 +126,8 @@ class TestPumpedHydro(unittest.TestCase):
     def test_reset(self):
         """Test reset() method."""
         self.psh.stored = 0
-        self.psh.last_run = 123
+        self.psh.last_gen = 123
+        self.psh.last_pump = 456
         self.psh.reset()
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
         self.assertEqual(self.psh.last_run, None)
