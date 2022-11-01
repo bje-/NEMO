@@ -512,7 +512,8 @@ class PumpedHydro(Storage, Hydro):
         """Reset the generator."""
         Fuelled.reset(self)
         self.stored = self.maxstorage * .5
-        self.last_run = None
+        self.last_gen = None
+        self.last_pump = None
 
 
 class Biofuel(Fuelled):
