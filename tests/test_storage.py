@@ -130,7 +130,8 @@ class TestPumpedHydro(unittest.TestCase):
         self.psh.last_pump = 456
         self.psh.reset()
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
-        self.assertEqual(self.psh.last_run, None)
+        self.assertEqual(self.psh.last_gen, None)
+        self.assertEqual(self.psh.last_pump, None)
 
 
 class TestCST(unittest.TestCase):
