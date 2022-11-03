@@ -90,8 +90,8 @@ class TestPumpedHydro(unittest.TestCase):
         result = self.psh.store(hour=0, power=100)
         self.assertEqual(result, 100)
         result = self.psh.store(hour=0, power=50)
-        self.assertEqual(result, 50)
-        self.assertEqual(self.psh.stored, 650)
+        self.assertEqual(result, 0)
+        self.assertEqual(self.psh.stored, 600)
 
     def test_step(self):
         """Test step() method."""
@@ -99,6 +99,8 @@ class TestPumpedHydro(unittest.TestCase):
             result = self.psh.step(hour=i, demand=50)
             self.assertEqual(result, (50, 0))
         self.assertEqual(self.psh.stored, 0)
+        self.assertEqual(sum(self.psh.series_power.values()), 500)
+        self.assertEqual(len(self.psh.series_power), 10)
 
     def test_store(self):
         """Test store() method."""
@@ -118,6 +120,8 @@ class TestPumpedHydro(unittest.TestCase):
         result = self.psh.store(hour=3, power=200)
         self.assertEqual(result, 0)
         self.assertEqual(self.psh.stored, 1000)
+        self.assertEqual(sum(self.psh.series_charge.values()), 200)
+        self.assertEqual(len(self.psh.series_charge), 2)
 
     def test_store_multiple(self):
         """Test store() called multiple times."""
