@@ -482,6 +482,7 @@ class PumpedHydro(Storage, Hydro):
         else:
             self.stored += energy
         if power > 0:
+            self.record(hour, power)
             self.last_pump = hour
         return power
 
@@ -505,6 +506,7 @@ class PumpedHydro(Storage, Hydro):
         """Return a summary of the generator activity."""
         storage = (self.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
+            f', charged {_thousands(len(self.series_charge))} hours' + \
             f', ran {_thousands(self.runhours)} hours' + \
             f', {storage} storage'
 
