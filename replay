@@ -52,6 +52,8 @@ def run_one(bundle):
     context = nemo.Context()
     context.nsp_limit = options['nsp_limit']
     assert 0 <= context.nsp_limit <= 1
+    context.min_regional_generation = options['min_regional_generation']
+    assert 0 <= context.min_regional_generation <= 1
 
     scenario = options['supply_scenario']
     try:
