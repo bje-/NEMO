@@ -510,7 +510,8 @@ class PumpedHydro(Storage, Hydro):
 
     def reset(self):
         """Reset the generator."""
-        Fuelled.reset(self)
+        Hydro.reset(self)
+        Storage.reset(self)
         self.stored = self.maxstorage * .5
         self.last_gen = None
         self.last_pump = None
@@ -819,6 +820,7 @@ class Battery(Storage, Generator):
     def reset(self):
         """Reset the generator."""
         Generator.reset(self)
+        Storage.reset(self)
         self.runhours = 0
         self.stored = 0
 

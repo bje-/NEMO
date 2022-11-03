@@ -125,6 +125,8 @@ class TestPumpedHydro(unittest.TestCase):
 
     def test_reset(self):
         """Test reset() method."""
+        self.psh.series_power = {0: 200}
+        self.psh.series_charge = {0: 150}
         self.psh.stored = 0
         self.psh.last_gen = 123
         self.psh.last_pump = 456
@@ -132,6 +134,8 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
         self.assertEqual(self.psh.last_gen, None)
         self.assertEqual(self.psh.last_pump, None)
+        self.assertEqual(len(self.psh.series_charge), 0)
+        self.assertEqual(len(self.psh.series_power), 0)
 
 
 class TestCST(unittest.TestCase):
@@ -186,6 +190,7 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.maxstorage, 800)
         self.assertEqual(batt.discharge_hours, range(18, 24))
         self.assertTrue(batt.empty_p())
+        self.assertFalse(batt.full_p())
         self.assertTrue(batt.storage_p)
         self.assertEqual(batt.rte, 1)
         self.assertEqual(batt.stored, 0)
@@ -270,6 +275,14 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(result, (0, 0))
         self.assertEqual(len(batt.series_charge), 0)
         self.assertEqual(batt.runhours, 0)
+
+    def test_reset(self):
+        batt = generators.Battery(WILDCARD, 400, 2, rte=1)
+        batt.series_power = {0: 200}
+        batt.series_charge = {0: 150}
+        batt.reset()
+        self.assertEqual(len(batt.series_charge), 0)
+        self.assertEqual(len(batt.series_power), 0)
 
     def test_round_trip_efficiency(self):
         """Test a battery with 50% round trip efficiency."""
