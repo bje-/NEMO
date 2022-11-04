@@ -281,6 +281,7 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.runhours, 0)
 
     def test_reset(self):
+        """Test battery reset() method."""
         batt = generators.Battery(WILDCARD, 400, 2, rte=1)
         batt.series_power = {0: 200}
         batt.series_charge = {0: 150}
