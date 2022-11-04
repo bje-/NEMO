@@ -48,6 +48,8 @@ def twh(amt, suffix):
         return amt / 10**3
     if suffix == 'TWh':
         return amt
+    if suffix == 'PWh':
+        return amt * 10**3
     print(f'ERROR: unrecognised suffix {suffix}')
     sys.exit(1)
 
@@ -104,7 +106,7 @@ for line in sys.stdin:  # noqa: C901
         if search(pattern, line):
             action(fields)
 
-    if search(r'supplied [\d\.]+ [MGT]Wh', line):
+    if search(r'supplied [\d\.]+ [MGTP]Wh', line):
         fld3 = fields[3]
         if isinstance(fld3, str):
             fld3 = fld3.replace(',', '')  # strip trailing comma
@@ -120,7 +122,7 @@ for line in sys.stdin:  # noqa: C901
         av.surplus += fields[5]
 
     # now it's "surplus"
-    if search(r'surplus [\d\.]+ [MGT]Wh', line):
+    if search(r'surplus [\d\.]+ [MGTP]Wh', line):
         fld8 = fields[8]
         if isinstance(fld8, str):
             fld8 = fld8.replace(',', '')  # strip trailing comma
@@ -152,8 +154,8 @@ for line in sys.stdin:  # noqa: C901
     if search(r'^{.*}', line):
         av.params = line.strip('\n')
 
-    if search('Demand energy:', line):
-        av.total_demand = float(fields[nf - 1])
+    if search(r'Demand energy: [\d\.]+ [MGTP]Wh', line):
+        av.total_demand = twh(fields[3], fields[4])
 
     if search(r'^Done', line):
         scenario_num += 1
