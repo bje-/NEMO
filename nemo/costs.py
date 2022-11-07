@@ -387,7 +387,8 @@ class GenCost2021:
             tech.OCGT: 10.2,
             tech.PV1Axis: 17.0,
             tech.PumpedHydro: 0,
-            tech.Wind: 25.0
+            tech.Wind: 25.0,
+            tech.DemandResponse: 0
         }
 
         # Variable O&M (VOM) costs
@@ -409,6 +410,7 @@ class GenCost2021:
         self.capcost_per_kw = {
             tech.Hydro: 0,
             tech.PumpedHydro: 0,
+            tech.DemandResponse: 0
         }
 
 
@@ -566,7 +568,8 @@ class GenCost2022:
             tech.PV1Axis: 17.0,
             tech.PumpedHydro: 0,
             tech.Wind: 25.0,
-            tech.WindOffshore: 149.9
+            tech.WindOffshore: 149.9,
+            tech.DemandResponse: 0
         }
 
         # Variable O&M (VOM) costs
@@ -589,6 +592,7 @@ class GenCost2022:
         self.capcost_per_kw = {
             tech.Hydro: 0,
             tech.PumpedHydro: 0,
+            tech.DemandResponse: 0
         }
 
         # Storage is expressed on a total cost basis (GenCost 2022, p. 18)
