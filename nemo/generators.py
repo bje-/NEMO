@@ -809,7 +809,6 @@ class Battery(Storage, Generator):
             self.series_spilled[hour] = 0
             return 0, 0
 
-        assert demand > 0
         power = min(self.stored, self.capacity, demand) * self.rte
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
