@@ -74,7 +74,7 @@ class TestGenerators(unittest.TestCase):
         self.tracefile = 'tracedata.csv'
         with open(self.tracefile, 'w', encoding='utf-8') as tracefile:
             for i in range(100):
-                print(f'{0.01 * i:.2f},', file=tracefile)
+                print(f'{0.01 * i:.2f}, 0', file=tracefile)
 
         self.years = 1
         self.costs = costs.NullCosts()

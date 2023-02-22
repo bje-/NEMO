@@ -273,6 +273,9 @@ class CSVTraceGenerator(TraceGenerator):
             cls.csvdata = np.genfromtxt(traceinput, encoding='UTF-8',
                                         delimiter=',')
             cls.csvdata = np.maximum(0, cls.csvdata)
+            # check all elements are not NaNs
+            assert np.all(~np.isnan(cls.csvdata)), \
+                f'Trace file {filename} contains NaNs; inspect file'
             cls.csvfilename = filename
         self.generation = cls.csvdata[::, column]
 
