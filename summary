@@ -81,7 +81,7 @@ patterns = {
     'HSA.*[kMG]W.?$': lambda f: addcap("HSA", f),
     'EGS.*[kMG]W.?$': lambda f: addcap("EGS", f),
     'PV.*[kMG]W.?$': lambda f: addcap("PV", f),
-    'wind.*[kMG]W.?$': lambda f: addcap("wind", f),
+    '[Ww]ind.*[kMG]W.?$': lambda f: addcap("wind", f),
     ' S?CST.*[kMG]W.?$': lambda f: addcap("CST", f),
     ' hydro.*[kMG]W.?$': lambda f: addcap("hydro", f),
     'pumped-hydro.*[kMG]W.?$': lambda f: addcap("PSH", f),
