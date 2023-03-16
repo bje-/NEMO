@@ -59,9 +59,9 @@ replay-nocost.json: replay.json
 	sed 's/Null/noexist/' < $< > $@
 
 stub.py:
-	printf 'import nemo' > $@
-	printf 'c = nemo.Context()' >> $@
-	printf 'nemo.run(c)' >> $@
+	printf 'import nemo\n' > $@
+	printf 'c = nemo.Context()\n' >> $@
+	printf 'nemo.run(c)\n' >> $@
 
 nemo.prof: stub.py
 	python3 -m cProfile -o $@ $<
@@ -69,7 +69,7 @@ nemo.prof: stub.py
 prof: nemo.prof
 	snakeviz $<
 
-lineprof:
+lineprof: stub.py
 	kernprof -v -l stub.py
 
 flake8: envset
