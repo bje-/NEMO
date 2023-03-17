@@ -237,7 +237,9 @@ class TraceGenerator(Generator):
         # self.generation must be defined by derived classes
         # pylint: disable=no-member
         generation = self.generation[hour] * self.capacity
-        power = min(generation, demand)
+        # optimised version of min() because TraceGenerator is a
+        # heavily used class
+        power = generation if generation < demand else demand
         spilled = generation - power
         self.series_power[hour] = power
         self.series_spilled[hour] = spilled

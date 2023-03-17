@@ -101,12 +101,14 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         if not generator.synchronous_p:
             async_demand -= gen
             assert async_demand > 0 or isclose(async_demand, 0, abs_tol=1e-6)
-            async_demand = max(0, async_demand)
+            # optimised version of max()
+            async_demand = async_demand if async_demand > 0 else 0
 
         residual_hour_demand -= gen
         assert residual_hour_demand > 0 or \
             isclose(residual_hour_demand, 0, abs_tol=1e-6)
-        residual_hour_demand = max(0, residual_hour_demand)
+        # optimised version of max()
+        residual_hour_demand = residual_hour_demand if residual_hour_demand > 0 else 0
 
         if context.verbose:
             print(f'GENERATOR: {generator},',
