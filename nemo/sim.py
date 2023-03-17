@@ -48,7 +48,7 @@ def _sim(context, date_range):
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
         if context.verbose:
-            print('ENDSTEP:', date)
+            print('ENDSTEP:', date_range[hour])
 
     # Change the numpy arrays to dataframes for human consumption
     context.generation = pd.DataFrame(index=date_range, data=generation)
