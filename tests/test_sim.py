@@ -58,7 +58,7 @@ class TestSim(unittest.TestCase):
 
     def test_store_spills(self):
         """Test _store_spills()."""
-        self.context = type('context', (), {'verbose': 0})
+        self.context = type('context', (), {'verbose': 0, 'storages': None})
         self.context.verbose = True
         hydro = generators.Hydro(1, 100)
         h2store = generators.HydrogenStorage(400)
