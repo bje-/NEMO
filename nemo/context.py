@@ -43,6 +43,7 @@ class Context():
         self.relstd = 0.002  # 0.002% unserved energy
         self.generators = [generators.CCGT(polygons.WILDCARD, 20000),
                            generators.OCGT(polygons.WILDCARD, 20000)]
+        self.storages = None
         self.demand = hourly_demand.copy()
         self.timesteps = len(self.demand)
         self.spill = pd.DataFrame()

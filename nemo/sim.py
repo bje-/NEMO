@@ -57,7 +57,10 @@ def _sim(context, date_range):
 def _store_spills(context, hour, gen, generators, spl):
     """Store spills from a generator into any storage."""
     assert spl > 0, f'{spl} is <= 0'
-    for other in list(g for g in generators if g.storage_p):
+    if context.storages is None:
+        # compute this just once and cache it in the context object
+        context.storages = list(g for g in generators if g.storage_p)
+    for other in context.storages:
         stored = other.store(hour, spl)
         spl -= stored
         if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
