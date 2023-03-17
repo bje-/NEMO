@@ -20,8 +20,9 @@ def _sim(context, date_range):
     for gen in context.generators:
         gen.reset()
 
-    generation = np.zeros((len(date_range), len(context.generators)))
-    spill = np.zeros((len(date_range), len(context.generators)))
+    timesteps = len(date_range)
+    generation = np.zeros((timesteps, len(context.generators)))
+    spill = np.zeros((timesteps, len(context.generators)))
 
     # Extract generators in the regions of interest.
     gens = [g for g in context.generators if g.region() in context.regions]
@@ -35,12 +36,12 @@ def _sim(context, date_range):
     demand_copy = context.demand.copy().values
     residual_demand = demand_copy.sum(axis=1)
 
-    for hour, date in enumerate(date_range):
+    for hour in range(timesteps):
         hour_demand = demand_copy[hour]
         residual_hour_demand = residual_demand[hour]
 
         if context.verbose:
-            print('STEP:', date)
+            print('STEP:', date_range[hour])
             print('DEMAND:', {a: round(b, 2) for a, b in
                               enumerate(hour_demand)})
 
