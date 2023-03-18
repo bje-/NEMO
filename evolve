@@ -131,6 +131,9 @@ def process_options():
         seed_default = cf.get('optimiser', 'seed')
     else:
         seed_default = None
+    optgroup.add_argument("-n", "--ncpus", type=int,
+                          default=cf.get('optimiser', 'num-cpus'),
+                          help='number of CPUs to use for parallel execution')
     optgroup.add_argument("--seed", type=int,
                           default=seed_default,
                           help='seed for random number generator')
