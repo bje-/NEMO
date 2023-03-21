@@ -17,16 +17,12 @@ import json
 import sys
 import warnings
 from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
+from multiprocessing.pool import Pool
 
 import numpy as np
 import wx
 from deap import algorithms, base, cma, creator, tools
 from gooey import Gooey
-
-try:
-    from scoop import futures
-except ImportError:  # pragma: no cover
-    print('WARNING: scoop not installed')
 
 import nemo
 from nemo import configfile as cf
@@ -261,7 +257,7 @@ creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 toolbox = base.Toolbox()
 try:
-    toolbox.register("map", futures.map)
+    toolbox.register("map", pool.map)
 except NameError:  # pragma: no cover
     pass
 
@@ -329,4 +325,5 @@ def run():
 
 
 if __name__ == '__main__':
+    pool = Pool(cf.get('optimiser', 'jobs')
     run()
