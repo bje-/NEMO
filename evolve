@@ -322,5 +322,4 @@ def run():
 
 if __name__ == '__main__':
     pool = Pool(args.ncpus if args.ncpus else None)
-    print(pool)
     run()
