@@ -15,7 +15,6 @@ import argparse
 import csv
 import json
 import sys
-import warnings
 from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
 from multiprocessing.pool import Pool
 
@@ -28,8 +27,8 @@ import nemo
 from nemo import configfile as cf
 from nemo import costs, demand, penalties, scenarios
 
-# Ignore possible runtime warnings from SCOOP
-warnings.simplefilter('ignore', RuntimeWarning)
+if __name__ == '__main__':
+    pool = Pool(cf.get('optimiser', 'num-cpus'))
 
 # pylint: disable=no-member
 if wx.PyApp.IsDisplayAvailable() and len(sys.argv) > 1 \
@@ -325,5 +324,4 @@ def run():
 
 
 if __name__ == '__main__':
-    pool = Pool(cf.get('optimiser', 'jobs')
     run()
