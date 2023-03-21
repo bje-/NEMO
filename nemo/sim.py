@@ -20,6 +20,9 @@ def _sim(context, date_range):
     for gen in context.generators:
         gen.reset()
 
+    # clear possible cached value
+    context.storages = None
+
     timesteps = len(date_range)
     generation = np.zeros((timesteps, len(context.generators)))
     spill = np.zeros((timesteps, len(context.generators)))
@@ -108,7 +111,8 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         assert residual_hour_demand > 0 or \
             isclose(residual_hour_demand, 0, abs_tol=1e-6)
         # optimised version of max()
-        residual_hour_demand = residual_hour_demand if residual_hour_demand > 0 else 0
+        residual_hour_demand = residual_hour_demand \
+            if residual_hour_demand > 0 else 0
 
         if context.verbose:
             print(f'GENERATOR: {generator},',
