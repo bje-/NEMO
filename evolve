@@ -16,7 +16,8 @@ import csv
 import json
 import sys
 from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
-from multiprocessing.pool import Pool, set_start_method
+from multiprocessing.pool import Pool
+from multiprocessing import set_start_method
 
 import numpy as np
 import wx
