@@ -1018,7 +1018,7 @@ class HydrogenStorage():
 class Electrolyser(Storage, Generator):
     """A hydrogen electrolyser."""
 
-    patch = Patch()
+    patch = Patch(facecolor='teal')
     """Colour for plotting"""
 
     def __init__(self, tank, polygon, capacity, efficiency=0.8, label=None):

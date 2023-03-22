@@ -275,7 +275,7 @@ toolbox.register("evaluate", eval_func)
 
 def run():
     """Run the evolution."""
-    if args.verbose and __name__ == '__main__':
+    if args.verbose:
         print("objective: minimise", eval_func.__doc__)
 
     np.random.seed(args.seed)
