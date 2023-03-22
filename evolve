@@ -28,10 +28,11 @@ import nemo
 from nemo import configfile as cf
 from nemo import costs, demand, penalties, scenarios
 
-# pylint: disable=no-member
-if wx.PyApp.IsDisplayAvailable() and len(sys.argv) > 1 \
-   and '--ignore-gooey' not in sys.argv:
-    sys.argv.append('--ignore-gooey')
+if __name__ == '__main__':
+    # pylint: disable=no-member
+    if wx.PyApp.IsDisplayAvailable() and len(sys.argv) > 1 \
+       and '--ignore-gooey' not in sys.argv:
+        sys.argv.append('--ignore-gooey')
 
 
 def conditional_gooey(*pargs, **kwargs):
