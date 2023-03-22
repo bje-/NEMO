@@ -174,12 +174,10 @@ def list_scenarios():
     sys.exit(0)
 
 
-args = process_options()
-
-if __name__ == '__main__' and args.list_scenarios:
-    list_scenarios()
-
 if __name__ == '__main__':
+    args = process_options()
+    if args.list_scenarios:
+        list_scenarios()
     print(vars(args))
 
 context = setup_context()
@@ -322,4 +320,8 @@ def run():
 
 
 if __name__ == '__main__':
+    set_start_method('spawn')
+    pool = Pool(args.ncpus if args.ncpus else None,
+                initializer=init_worker, initargs=(args,))
+    toolbox.register("map", pool.map)
     run()
