@@ -16,8 +16,8 @@ import csv
 import json
 import sys
 from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
-from multiprocessing.pool import Pool
 from multiprocessing import set_start_method
+from multiprocessing.pool import Pool
 
 import numpy as np
 import wx
@@ -29,10 +29,21 @@ from nemo import configfile as cf
 from nemo import costs, demand, penalties, scenarios
 
 if __name__ == '__main__':
-    # pylint: disable=no-member
     if wx.PyApp.IsDisplayAvailable() and len(sys.argv) > 1 \
        and '--ignore-gooey' not in sys.argv:
         sys.argv.append('--ignore-gooey')
+
+
+def init_worker(arguments):
+    """Initialise worker processes."""
+    # pylint: disable=global-statement
+    global args
+    global penaltyfns
+    # pylint: disable=global-variable-undefined
+    global context
+    args = arguments
+    context = setup_context(args)
+    penaltyfns = penaltyfn_list(context)
 
 
 def conditional_gooey(*pargs, **kwargs):
@@ -144,8 +155,9 @@ def process_options():
     return parser.parse_args()
 
 
-def setup_context():
+def setup_context(args):
     """Set up the context object based on command line arguments."""
+    # pylint: disable=redefined-outer-name
     ctx = nemo.Context()
     ctx.relstd = args.reliability_std
 
@@ -162,6 +174,13 @@ def setup_context():
     ctx.costs = cost_class(args.discount_rate, args.coal_price,
                            args.gas_price, args.ccs_storage_costs)
     ctx.costs.carbon = args.carbon_price
+
+    # Set up supply scenario.
+    scenarios.supply_scenarios[args.supply_scenario](ctx)
+
+    # Apply each demand modifier argument (if any) in the given order.
+    for arg in args.demand_modifier or []:
+        demand.switch(arg)(ctx)
     return ctx
 
 
@@ -174,46 +193,18 @@ def list_scenarios():
     sys.exit(0)
 
 
-if __name__ == '__main__':
-    args = process_options()
-    if args.list_scenarios:
-        list_scenarios()
-    print(vars(args))
-
-context = setup_context()
-
-# Set up the scenario.
-scenarios.supply_scenarios[args.supply_scenario](context)
-
-# Apply each demand modifier argument (if any) in the given order.
-for arg in args.demand_modifier or []:
-    demand.switch(arg)(context)
-
-if args.verbose and __name__ == '__main__':
-    docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
-    assert docstring is not None
-    # Prune off any doctest test from the docstring.
-    docstring = docstring.split('\n')[0]
-    print(f"supply scenario: {args.supply_scenario} ({docstring})")
-    print(context.generators)
-
-if args.trace_file is not None:
-    with open(args.trace_file, 'w', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['# score', 'penalty', 'reasoncode',
-                         'parameter values'])
-
-
-# Build list of penalty functions based on command line args, etc.
-penaltyfns = [penalties.unserved, penalties.bioenergy, penalties.hydro]
-if args.reserves > 0:
-    penaltyfns.append(penalties.reserves)
-if args.emissions_limit < np.inf:
-    penaltyfns.append(penalties.emissions)
-if args.fossil_limit < 1:
-    penaltyfns.append(penalties.fossil)
-if context.min_regional_generation > 0:
-    penaltyfns.append(penalties.min_regional)
+def penaltyfn_list(ctx):
+    """Build list of penalty functions based on command line args, etc."""
+    lst = [penalties.unserved, penalties.bioenergy, penalties.hydro]
+    if args.reserves > 0:
+        lst.append(penalties.reserves)
+    if args.emissions_limit < np.inf:
+        lst.append(penalties.emissions)
+    if args.fossil_limit < 1:
+        lst.append(penalties.fossil)
+    if ctx.min_regional_generation > 0:
+        lst.append(penalties.min_regional)
+    return lst
 
 
 def cost(ctx):
@@ -249,32 +240,41 @@ def eval_func(chromosome):
     return (score + penalty,)
 
 
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMin)
-toolbox = base.Toolbox()
-set_start_method('fork')
-pool = Pool(args.ncpus if args.ncpus else None)
-toolbox.register("map", pool.map)
+def run_final(best):
+    """Run the simulation with the best candidate."""
+    main_context.set_capacities(best)
+    nemo.run(main_context)
+    main_context.verbose = True
+    print()
+    print(main_context)
+    score, penalty, reason = cost(main_context)
+    print(f'Score: {score:.2f} $/MWh')
+    constraints_violated = []
+    if reason > 0:
+        print(f'Penalty: {penalty:.2f} $/MWh')
+        print('Constraints violated:', end=' ')
+        for label, code in penalties.reasons.items():
+            if reason & code:
+                constraints_violated += [label]
+                print(label, end=' ')
+        print()
 
-# See:
-# https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
-# for additional parameters that can be passed to cma.Strategy.
-numparams = sum(list(len(g.setters) for g in context.generators))
-if args.lambda_ is None:
-    # let DEAP choose
-    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
-else:
-    strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma,
-                            lambda_=args.lambda_)
-
-toolbox.register("generate", strategy.generate, creator.Individual)
-toolbox.register("update", strategy.update)
-toolbox.register("evaluate", eval_func)
+    with open(args.output, 'w', encoding='utf-8') as filehandle:
+        bundle = {'options': vars(args),
+                  'parameters': [max(0, cap) for cap in best],
+                  'score': score, 'penalty': penalty,
+                  'constraints_violated': constraints_violated}
+        json.dump(bundle, filehandle)
 
 
 def run():
     """Run the evolution."""
     if args.verbose:
+        docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
+        assert docstring is not None
+        # Prune off any doctest test from the docstring.
+        docstring = docstring.split('\n')[0]
+        print(f"supply scenario: {args.supply_scenario} ({docstring})")
         print("objective: minimise", eval_func.__doc__)
 
     np.random.seed(args.seed)
@@ -290,36 +290,42 @@ def run():
     except KeyboardInterrupt:  # pragma: no cover
         print('user terminated early')
 
-    context.set_capacities(hof[0])
-    nemo.run(context)
-    context.verbose = True
-    print()
-    print(context)
-    score, penalty, reason = cost(context)
-    print(f'Score: {score:.2f} $/MWh')
-    constraints_violated = []
-    if reason > 0:
-        print(f'Penalty: {penalty:.2f} $/MWh')
-        print('Constraints violated:', end=' ')
-        for label, code in penalties.reasons.items():
-            if reason & code:
-                constraints_violated += [label]
-                print(label, end=' ')
-        print()
-
-    with open(args.output, 'w', encoding='utf-8') as filehandle:
-        bundle = {'options': vars(args),
-                  'parameters': [max(0, cap) for cap in hof[0]],
-                  'score': score, 'penalty': penalty,
-                  'constraints_violated': constraints_violated}
-        json.dump(bundle, filehandle)
+    run_final(hof[0])
     print('Done')
 
     if args.plot:
-        nemo.plot(context)
+        nemo.plot(main_context)
 
+
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
+creator.create("Individual", list, fitness=creator.FitnessMin)
 
 if __name__ == '__main__':
+    args = process_options()
+    if args.list_scenarios:
+        list_scenarios()
+    print(vars(args))
+
+    # See:
+    # https://deap.readthedocs.org/en/master/api/algo.html#deap.cma.Strategy
+    # for additional parameters that can be passed to cma.Strategy.
+    main_context = setup_context(args)
+    scenarios.supply_scenarios[args.supply_scenario](main_context)
+    penaltyfns = penaltyfn_list(main_context)
+
+    numparams = sum(list(len(g.setters) for g in main_context.generators))
+    if args.lambda_ is None:
+        # let DEAP choose
+        strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
+    else:
+        strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma,
+                                lambda_=args.lambda_)
+
+    toolbox = base.Toolbox()
+    toolbox.register("generate", strategy.generate, creator.Individual)
+    toolbox.register("update", strategy.update)
+    toolbox.register("evaluate", eval_func)
+
     set_start_method('spawn')
     pool = Pool(args.ncpus if args.ncpus else None,
                 initializer=init_worker, initargs=(args,))
