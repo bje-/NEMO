@@ -327,7 +327,9 @@ if __name__ == '__main__':
     toolbox.register("evaluate", eval_func)
 
     set_start_method('spawn')
-    pool = Pool(args.ncpus if args.ncpus else None,
-                initializer=init_worker, initargs=(args,))
-    toolbox.register("map", pool.map)
-    run()
+    with Pool(args.ncpus if args.ncpus else None,
+              initializer=init_worker, initargs=(args,)) as pool:
+        toolbox.register("map", pool.map)
+        run()
+        pool.close()
+        pool.join()
