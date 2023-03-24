@@ -834,8 +834,8 @@ class Battery(Storage, Generator):
         """Return the annual capital cost."""
         assert self.shours in [1, 2, 4, 8]
         cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
-        capcost = cost_per_kwh * self.shours
-        return capcost * self.capacity * 1000
+        kwh = self.capacity * 1000 * self.shours
+        return kwh * cost_per_kwh
 
     def fixed_om_costs(self, costs):
         """Return the fixed O&M costs."""
