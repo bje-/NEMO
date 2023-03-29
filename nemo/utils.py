@@ -17,6 +17,10 @@ from pandas.plotting import register_matplotlib_converters
 from nemo import configfile
 from nemo.configfile import configparser
 
+# The maximum number of generators before we only show a consolidated
+# list of generator types and not individual generator names.
+MAX_LEGEND_GENERATORS = 20
+
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
 register_matplotlib_converters()
@@ -38,7 +42,7 @@ def _legend(context):
     labels = []
     patches = []
 
-    if len(gens) > 20:
+    if len(gens) > MAX_LEGEND_GENERATORS:
         unique = []
         for gen in gens:
             if type(gen) not in unique:
