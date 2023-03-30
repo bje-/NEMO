@@ -940,8 +940,8 @@ class DemandResponse(Generator):
             f', ran {_thousands(self.runhours)} hours'
 
 
-class GreenPower(Generator):
-    """A simple block GreenPower generator."""
+class Block(Generator):
+    """A simple block generator."""
 
     patch = Patch(facecolor='darkgreen')
     """Colour for plotting"""
