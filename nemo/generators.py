@@ -285,7 +285,7 @@ class CSVTraceGenerator(TraceGenerator):
 class Wind(CSVTraceGenerator):
     """Wind power."""
 
-    patch = Patch(facecolor='green')
+    patch = Patch(facecolor='#417505')
     """Patch for plotting"""
     synchronous_p = False
     """Is this a synchronous generator?"""
@@ -301,26 +301,21 @@ class WindOffshore(Wind):
 class PV(CSVTraceGenerator):
     """Solar photovoltaic (PV) model."""
 
-    patch = Patch(facecolor='yellow')
-    """Colour for plotting"""
     synchronous_p = False
     """Is this a synchronous generator?"""
 
 
 class PV1Axis(PV):
-    """
-    Single-axis tracking PV.
+    """Single-axis tracking PV."""
 
-    This stub class allows differentiated PV costs in costs.py.
-    """
+    patch = Patch(facecolor='#fed500')
+    """Colour for plotting"""
 
 
 class Behind_Meter_PV(PV):
-    """
-    Behind the meter PV.
+    """Behind the meter PV."""
 
-    This stub class allows differentiated PV costs in costs.py.
-    """
+    patch = Patch(facecolor='#ffe03d')
 
 
 class CST(CSVTraceGenerator):
@@ -439,7 +434,7 @@ class Fuelled(Generator):
 class Hydro(Fuelled):
     """Hydro power stations."""
 
-    patch = Patch(facecolor='lightskyblue')
+    patch = Patch(facecolor='#4582b4')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, label=None):
@@ -552,7 +547,7 @@ class Biofuel(Fuelled):
 class Biomass(Fuelled):
     """Model of steam turbine burning solid biomass."""
 
-    patch = Patch(facecolor='greenyellow')
+    patch = Patch(facecolor='#1d7a7a')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, label=None, heatrate=0.3):
@@ -570,7 +565,7 @@ class Biomass(Fuelled):
 class Fossil(Fuelled):
     """Base class for GHG emitting power stations."""
 
-    patch = Patch(facecolor='brown')
+    patch = Patch(facecolor='grey')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity, label=None):
@@ -593,7 +588,7 @@ class Fossil(Fuelled):
 class Black_Coal(Fossil):
     """Black coal power stations with no CCS."""
 
-    patch = Patch(facecolor='black')
+    patch = Patch(facecolor='#121212')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.773, label=None):
@@ -611,7 +606,7 @@ class Black_Coal(Fossil):
 class OCGT(Fossil):
     """Open cycle gas turbine (OCGT) model."""
 
-    patch = Patch(facecolor='purple')
+    patch = Patch(facecolor='#ffcd96')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.7, label=None):
@@ -629,7 +624,7 @@ class OCGT(Fossil):
 class CCGT(Fossil):
     """Combined cycle gas turbine (CCGT) model."""
 
-    patch = Patch(facecolor='purple')
+    patch = Patch(facecolor='#fdb462')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=0.4, label=None):
@@ -714,7 +709,7 @@ class CCGT_CCS(CCS):
 class Diesel(Fossil):
     """Diesel genset model."""
 
-    patch = Patch(facecolor='dimgrey')
+    patch = Patch(facecolor='#f35020')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity=1.0, kwh_per_litre=3.3,
@@ -735,7 +730,7 @@ class Diesel(Fossil):
 class Battery(Storage, Generator):
     """Battery storage (of any type)."""
 
-    patch = Patch(facecolor='grey')
+    patch = Patch(facecolor='#00a2fa')
     """Colour for plotting"""
     synchronous_p = False
     """Is this a synchronous generator?"""
@@ -859,7 +854,7 @@ class Battery(Storage, Generator):
 class Geothermal(CSVTraceGenerator):
     """Geothermal power plant."""
 
-    patch = Patch(facecolor='brown')
+    patch = Patch(facecolor='pink')
     """Colour for plotting"""
 
     def step(self, hour, demand):
