@@ -84,7 +84,7 @@ def _figure(context, spills, showlegend, xlim):
         _legend(context)
 
     # Plot demand first.
-    plt.plot(demand.index, demand, color='black', linewidth=3 if spills else 2)
+    plt.plot(demand.index, demand, color='black', linewidth=2)
 
     accum = pd.Series(data=0, index=demand.index)
     prev = accum.copy()
