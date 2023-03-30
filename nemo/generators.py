@@ -854,7 +854,7 @@ class Battery(Storage, Generator):
 class Geothermal(CSVTraceGenerator):
     """Geothermal power plant."""
 
-    patch = Patch(facecolor='pink')
+    patch = Patch(facecolor='indianred')
     """Colour for plotting"""
 
     def step(self, hour, demand):
