@@ -7,6 +7,8 @@
 
 """Utility functions (eg, plotting)."""
 
+from datetime import timedelta
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -126,7 +128,16 @@ def _figure(context, spills, showlegend, xlim):
 
 def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     """Produce a pretty plot of supply and demand."""
-    _figure(context, spills, showlegend, xlim)
+    if xlim is None:
+        ninety_days = 24 * 90
+        if context.timesteps > ninety_days:
+            starttime = context.demand.index[0]
+            endtime = starttime + timedelta(days=90)
+            timerange = (starttime, endtime)
+    else:
+        timerange = None
+
+    _figure(context, spills, showlegend, timerange)
     if not filename:
         plt.show()
     else:
