@@ -321,7 +321,7 @@ class Behind_Meter_PV(PV):
 class CST(CSVTraceGenerator):
     """Concentrating solar thermal (CST) model."""
 
-    patch = Patch(facecolor='gold')
+    patch = Patch(facecolor='orange')
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, solarmult, shours, filename,
