@@ -8,9 +8,9 @@
 """Utility functions (eg, plotting)."""
 
 from datetime import timedelta
+from itertools import tee
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import pint
 from matplotlib.patches import Patch
@@ -22,6 +22,11 @@ from nemo.configfile import configparser
 # The maximum number of generators before we only show a consolidated
 # list of generator types and not individual generator names.
 MAX_LEGEND_GENERATORS = 20
+
+# The maximum number of generators before we only show the generator
+# traces as a consolidated set (and not indiviudal traces). This
+# speeds up the plotting dramatically.
+MAX_PLOT_GENERATORS = 50
 
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
@@ -35,6 +40,22 @@ def _generator_list(context):
     """Return a list of the generators of interest in this run."""
     return [g for g in context.generators
             if g.region() in context.regions and g.capacity > 0]
+
+
+def _pairwise(lst):
+    """Return pairwise elements of a list.
+
+    An implementation of pairwise() appears in the Python 3.10
+    itertools module. At some point, we can switch to the standard
+    library version and remove this definition.
+
+    >>> list(_pairwise([1,2,3,4,5]))
+    [(1, 2), (2, 3), (3, 4), (4, 5)]
+
+    """
+    iter1, iter2 = tee(lst)
+    next(iter2, None)
+    return zip(iter1, iter2)
 
 
 def _legend(context):
@@ -64,6 +85,33 @@ def _legend(context):
     plt.setp(legend.get_texts(), fontsize='small')
 
 
+def _plot_areas(context, category, prev=None, alpha=None):
+    assert category in ['generation', 'spill']
+
+    demand = context.demand.sum(axis=1)
+    timeseries = getattr(context, category)
+    genlist = _generator_list(context)
+    numgens = len(genlist)
+
+    accum = prev.copy()
+    for gen, nextgen in _pairwise(genlist + [None]):
+        index = context.generators.index(gen)
+        accum += timeseries[index]
+        if type(gen) is type(nextgen) and numgens > MAX_PLOT_GENERATORS:
+            # don't plot individual traces lines when there are too
+            # many generators
+            continue
+        plt.plot(accum.index, accum, color='black', linewidth=0.4,
+                 linestyle='--')
+        plt.fill_between(prev.index, prev, accum,
+                         facecolor=gen.patch.get_fc(), alpha=alpha)
+        prev = accum.copy()
+
+    # Unmet demand is shaded red.
+    if category == 'generation':
+        plt.fill_between(accum.index, accum, demand, facecolor='red')
+
+
 def _figure(context, spills, showlegend, xlim):
     """Provide a helper function for plot() to faciltiate testing."""
     # aggregate demand
@@ -88,34 +136,13 @@ def _figure(context, spills, showlegend, xlim):
     # Plot demand first.
     plt.plot(demand.index, demand, color='black', linewidth=2)
 
-    accum = pd.Series(data=0, index=demand.index)
-    prev = accum.copy()
-    for gen in _generator_list(context):
-        idx = context.generators.index(gen)
-        accum += context.generation[idx]
-        # Ensure accumulated generation does not exceed demand in any timestep.
-        # (Due to rounding, accum can be close to demand.)
-        assert all(np.logical_or(accum < demand, np.isclose(accum, demand)))
-        plt.plot(accum.index, accum, color='black', linewidth=0.4,
-                 linestyle='--')
-        plt.fill_between(accum.index, prev, accum,
-                         facecolor=gen.patch.get_fc(),
-                         hatch=gen.patch.get_hatch())
-        prev = accum.copy()
-    # Unmet demand is shaded red.
-    plt.fill_between(accum.index, accum, demand, facecolor='red')
+    # Plot generation.
+    zeros = pd.Series(data=0, index=demand.index)
+    _plot_areas(context, 'generation', prev=zeros)
 
+    # Optionally plot spills.
     if spills:
-        prev = demand.copy()
-        for gen in list(g for g in context.generators if
-                        g.region() in context.regions):
-            idx = context.generators.index(gen)
-            accum += context.spill[idx]
-            plt.plot(accum.index, accum, color='black', linewidth=0.4,
-                     linestyle='--')
-            plt.fill_between(prev.index, prev, accum,
-                             facecolor=gen.patch.get_fc(), alpha=0.3)
-            prev = accum.copy()
+        _plot_areas(context, 'spill', prev=demand, alpha=0.3)
 
     plt.gca().set_xlim(xlim)  # set_xlim accepts None
     plt.gca().xaxis_date()
