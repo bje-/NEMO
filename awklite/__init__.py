@@ -54,9 +54,25 @@ class Fields(list):
     """A list which uses one-based indexing."""
 
     def __getitem__(self, key):
-        """Use 1..n list indexing."""
+        """Get a list item using one-based indexing.
+
+        >>> flds = Fields([1,2,3])
+        >>> flds[1]
+        1
+        """
         assert 0 < key <= len(self)
         return list.__getitem__(self, key - 1)
+
+    def __setitem__(self, key, value):
+        """Set a list item using one-based indexing.
+
+        >>> flds = Fields([1,2,3])
+        >>> flds[1] = 10
+        >>> flds == [10,2,3]
+        True
+        """
+        assert 0 < key <= len(self)
+        return list.__setitem__(self, key - 1, value)
 
 
 class Undefined():
