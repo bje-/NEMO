@@ -39,10 +39,13 @@ class TestStorage(unittest.TestCase):
     def test_record(self):
         """Test record() method."""
         storage = generators.Storage()
+        # redefine base soc() method to avoid NotImplementedError
+        storage.soc = lambda: 0.5
         storage.record(0, 100)
         storage.record(0, 50)
         storage.record(1, 75)
         self.assertEqual(storage.series_charge, {0: 150, 1: 75})
+        self.assertEqual(storage.series_soc, {0: 0.5, 1: 0.5})
 
     def test_series(self):
         """Test series() method."""
@@ -83,10 +86,9 @@ class TestPumpedHydro(unittest.TestCase):
         """Test series() method."""
         series = self.psh.series()
         keys = series.keys()
-        self.assertEqual(len(series), 3)
-        self.assertTrue('power' in keys)
-        self.assertTrue('spilled' in keys)
-        self.assertTrue('charge' in keys)
+        self.assertEqual(len(keys), 4)
+        # use a set comparison
+        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
 
     def test_pump_and_generate(self):
         """Test that pumping and generating cannot happen at the same time."""
@@ -216,10 +218,9 @@ class TestBattery(unittest.TestCase):
         batt = generators.Battery(WILDCARD, 400, 2)
         series = batt.series()
         keys = series.keys()
-        self.assertEqual(len(series), 3)
-        self.assertTrue('power' in keys)
-        self.assertTrue('spilled' in keys)
-        self.assertTrue('charge' in keys)
+        self.assertEqual(len(keys), 4)
+        # use a set comparison
+        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
 
     def test_soc(self):
         """Test soc() method."""
@@ -343,10 +344,9 @@ class TestElectrolyser(unittest.TestCase):
         """Test series() method."""
         series = self.electrolyser.series()
         keys = series.keys()
-        self.assertEqual(len(series), 3)
-        self.assertTrue('power' in keys)
-        self.assertTrue('spilled' in keys)
-        self.assertTrue('charge' in keys)
+        self.assertEqual(len(keys), 4)
+        # use a set comparison
+        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
 
     def test_step(self):
         """Test step() method."""

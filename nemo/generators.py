@@ -181,6 +181,7 @@ class Storage():
         """Storage constructor."""
         # Time series of charges
         self.series_charge = {}
+        self.series_soc = {}
 
     def soc(self):
         """Return the storage SOC (state of charge)."""
@@ -191,6 +192,7 @@ class Storage():
         if hour not in self.series_charge:
             self.series_charge[hour] = 0
         self.series_charge[hour] += energy
+        self.series_soc[hour] = self.soc()
 
     def charge_capacity(self, gen, hour):
         """Return available storage capacity.
@@ -211,7 +213,8 @@ class Storage():
 
     def series(self):
         """Return generation and spills series."""
-        return {'charge': pd.Series(self.series_charge, dtype=float)}
+        return {'charge': pd.Series(self.series_charge, dtype=float),
+                'soc': pd.Series(self.series_soc, dtype=float)}
 
     def store(self, hour, power):
         """Abstract method to ensure that derived classes define this."""
@@ -220,6 +223,7 @@ class Storage():
     def reset(self):
         """Reset a generator with storage."""
         self.series_charge.clear()
+        self.series_soc.clear()
 
 
 class TraceGenerator(Generator):
