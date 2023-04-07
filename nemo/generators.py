@@ -182,6 +182,10 @@ class Storage():
         # Time series of charges
         self.series_charge = {}
 
+    def soc(self):
+        """Return the storage SOC (state of charge)."""
+        raise NotImplementedError
+
     def record(self, hour, energy):
         """Record storage."""
         if hour not in self.series_charge:
@@ -460,6 +464,10 @@ class PumpedHydro(Storage, Hydro):
         self.rte = rte
         self.last_gen = None
         self.last_pump = None
+
+    def soc(self):
+        """Return the pumped hydro SOC (state of charge)."""
+        return self.stored / self.maxstorage
 
     def series(self):
         """Return the combined series."""
@@ -754,6 +762,10 @@ class Battery(Storage, Generator):
         self.rte = rte
         self.runhours = 0
 
+    def soc(self):
+        """Return the battery SOC (state of charge)."""
+        return self.stored / self.maxstorage
+
     def series(self):
         """Return the combined series."""
         dict1 = Generator.series(self)
@@ -963,6 +975,10 @@ class HydrogenStorage():
         self.set_storage(maxstorage)
         self.label = label
 
+    def soc(self):
+        """Return how full the vessel is."""
+        return self.storage / self.maxstorage
+
     def set_storage(self, maxstorage):
         """
         Change the storage capacity.
@@ -1031,6 +1047,10 @@ class Electrolyser(Storage, Generator):
         self.efficiency = efficiency
         self.tank = tank
         self.setters += [(self.tank.set_storage, 0, 10000)]
+
+    def soc(self):
+        """Return the hydrogen tank state of charge (SOC)."""
+        return self.tank.soc()
 
     def series(self):
         """Return the combined series."""

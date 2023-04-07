@@ -30,6 +30,12 @@ class TestStorage(unittest.TestCase):
         storage.reset()
         self.assertEqual(storage.series_charge, {})
 
+    def test_soc(self):
+        """Test soc() method in the base class."""
+        storage = generators.Storage()
+        with self.assertRaises(NotImplementedError):
+            storage.soc()
+
     def test_record(self):
         """Test record() method."""
         storage = generators.Storage()
@@ -68,6 +74,10 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
         self.assertEqual(self.psh.rte, 1.0)
         self.assertEqual(self.psh.maxstorage, 1000)
+
+    def test_soc(self):
+        """Test soc() method."""
+        self.assertEqual(self.psh.soc(), 0.5)
 
     def test_series(self):
         """Test series() method."""
@@ -211,6 +221,13 @@ class TestBattery(unittest.TestCase):
         self.assertTrue('spilled' in keys)
         self.assertTrue('charge' in keys)
 
+    def test_soc(self):
+        """Test soc() method."""
+        batt = generators.Battery(WILDCARD, 400, 2)
+        self.assertEqual(batt.soc(), 0)
+        batt.stored = 200
+        self.assertEqual(batt.soc(), 0.25)
+
     def test_empty_p(self):
         """Test the empty_p() method."""
         batt = generators.Battery(WILDCARD, 800, 1, rte=1)
@@ -310,6 +327,12 @@ class TestElectrolyser(unittest.TestCase):
         self.electrolyser = \
             generators.Electrolyser(self.tank, WILDCARD, 100,
                                     efficiency=1)
+
+    def test_soc(self):
+        """Test tank and electrolyser soc() method."""
+        tank_soc = self.tank.soc()
+        self.assertEqual(tank_soc, 0.5)
+        self.assertEqual(self.electrolyser.soc(), tank_soc)
 
     def test_type_error(self):
         """Check that the wrong type raises a TypeError."""
