@@ -37,8 +37,6 @@ class Context():
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
         self.hours = len(hourly_regional_demand)
-        # Calculate the number of years from the number of simulation hours.
-        self.years = self.hours / (365 * 24)
 
         self.relstd = 0.002  # 0.002% unserved energy
         self.generators = [generators.CCGT(polygons.WILDCARD, 20000),
@@ -52,6 +50,10 @@ class Context():
         # System non-synchronous penetration limit
         self.nsp_limit = float(configfile.get('limits', 'nonsync-penetration'))
         self.costs = costs.NullCosts()
+
+    def years(self):
+        """Return the number of years from the number of simulation hours."""
+        return self.hours / (365 * 24)
 
     def total_demand(self):
         """Return the total demand from the data frame."""

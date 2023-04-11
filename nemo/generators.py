@@ -152,7 +152,7 @@ class Generator():
             string += f', capcost {_currency(self.capcost(costs))}'
         if self.opcost(costs) > 0:
             string += f', opcost {_currency(self.opcost(costs))}'
-        lcoe = self.lcoe(costs, context.years)
+        lcoe = self.lcoe(costs, context.years())
         if np.isfinite(lcoe) and lcoe > 0:
             string += f', LCOE {_currency(int(lcoe))}'
         return string

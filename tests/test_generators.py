@@ -76,7 +76,7 @@ class TestGenerators(unittest.TestCase):
             for i in range(100):
                 print(f'{0.01 * i:.2f}, 0', file=tracefile)
 
-        self.years = 1
+        self.years = lambda: 1
         self.costs = costs.NullCosts()
         self.classes = [cls for cls in
                         inspect.getmembers(generators, inspect.isclass)
@@ -158,7 +158,7 @@ class TestGenerators(unittest.TestCase):
         for gen in self.generators:
             # 10 MWh for 10 hours = 100 MWh
             gen.series_power = {n: 10 for n in range(10)}
-            gen.lcoe(self.costs, self.years)
+            gen.lcoe(self.costs, self.years())
 
     def test_reset(self):
         """Test reset() method."""
@@ -177,7 +177,10 @@ class TestGenerators(unittest.TestCase):
             """A mocked up Context class."""
 
             costs = self.costs
-            years = self.years
+
+            def years(self):
+                """A mocked up version of the Context years() method."""
+                return 1
 
         context = MyContext()
         for gen in self.generators:

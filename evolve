@@ -211,7 +211,7 @@ def cost(ctx):
     """Sum up the costs."""
     score = 0
     for gen in ctx.generators:
-        score += (gen.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years) \
+        score += (gen.capcost(ctx.costs) / ctx.costs.annuityf * ctx.years()) \
             + gen.opcost(ctx.costs)
 
     # Run through all of the penalty functions.
