@@ -61,7 +61,7 @@ class TestPenalties(unittest.TestCase):
 
     def test_reserves(self):
         """Test reserves() function."""
-        self.context.timesteps = 100
+        self.context.timesteps = lambda: 100
         del self.context.generators[1:]
         # 55 MW x 100 hours, 5 MW over reserve level
         self.context.generators[0].series_power = {n: 55 for n in range(100)}

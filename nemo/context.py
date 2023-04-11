@@ -43,7 +43,6 @@ class Context():
                            generators.OCGT(polygons.WILDCARD, 20000)]
         self.storages = None
         self.demand = hourly_demand.copy()
-        self.timesteps = len(self.demand)
         self.spill = pd.DataFrame()
         self.generation = pd.DataFrame()
         self.unserved = pd.DataFrame()
@@ -54,6 +53,10 @@ class Context():
     def years(self):
         """Return the number of years from the number of simulation hours."""
         return self.hours / (365 * 24)
+
+    def timesteps(self):
+        """Return the number of timesteps."""
+        return len(self.demand)
 
     def total_demand(self):
         """Return the total demand from the data frame."""

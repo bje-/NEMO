@@ -72,7 +72,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.context.generators = [ccgt]
         nemo.run(self.context)
         total_generation = sum(ccgt.series_power.values())
-        expected_generation = self.context.timesteps * 100
+        expected_generation = self.context.timesteps() * 100
         self.assertEqual(total_generation, expected_generation)
 
     # Create a super generator that always meets demand.
@@ -83,7 +83,7 @@ class TestSequenceFunctions(unittest.TestCase):
         gen = SuperGenerator(0)
         self.context.generators = [gen]
         nemo.run(self.context)
-        self.assertEqual(gen.runhours, self.context.timesteps)
+        self.assertEqual(gen.runhours, self.context.timesteps())
 
     def test_006(self):
         """Generation to meet minimum load leads to no spills."""
@@ -105,7 +105,7 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = [gen]
             nemo.run(self.context)
             if rgn == regions.nsw:
-                self.assertEqual(gen.runhours, self.context.timesteps)
+                self.assertEqual(gen.runhours, self.context.timesteps())
             else:
                 self.assertEqual(gen.runhours, 0)
 
@@ -118,7 +118,7 @@ class TestSequenceFunctions(unittest.TestCase):
             gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
-            self.assertEqual(gen.runhours, self.context.timesteps)
+            self.assertEqual(gen.runhours, self.context.timesteps())
 
     def test_012(self):
         """A NSW generator does not run in other regions."""

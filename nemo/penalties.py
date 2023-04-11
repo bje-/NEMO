@@ -43,7 +43,7 @@ def _calculate_reserve(gen, time):
 def reserves(ctx, args):
     """Penalty: minimum reserves."""
     pen, reas = 0, 0
-    for time in range(ctx.timesteps):
+    for time in range(ctx.timesteps()):
         reserve, spilled = 0, 0
         for gen in ctx.generators:
             try:

@@ -84,7 +84,7 @@ class TestContextMethods(unittest.TestCase):
         output = str(self.context)
 
         self.assertIn('Generators:', output)
-        self.assertIn(f'Timesteps: {self.context.timesteps} h', output)
+        self.assertIn(f'Timesteps: {self.context.timesteps()} h', output)
         self.assertIn('Demand energy:', output)
         self.assertIn('Unstored surplus energy: 300.00 MWh', output)
         self.assertIn('WARNING: reliability standard exceeded', output)
