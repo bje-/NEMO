@@ -18,18 +18,14 @@ from math import isclose
 
 import numpy as np
 import pandas as pd
-import pint
 import requests
 from matplotlib.patches import Patch
 
 from nemo import polygons
+from nemo.utils import ureg
 
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
-
-# Default to abbreviated units when formatting
-ureg = pint.UnitRegistry()
-ureg.default_format = '.2f~P'
 
 
 def _thousands(value):

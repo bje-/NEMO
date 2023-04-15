@@ -19,6 +19,10 @@ from pandas.plotting import register_matplotlib_converters
 from nemo import configfile
 from nemo.configfile import configparser
 
+# Default to abbreviated units when formatting
+ureg = pint.UnitRegistry()
+ureg.default_format = '.2f~P'
+
 # The maximum number of generators before we only show a consolidated
 # list of generator types and not individual generator names.
 MAX_LEGEND_GENERATORS = 20
@@ -31,9 +35,6 @@ MAX_PLOT_GENERATORS = 50
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
 register_matplotlib_converters()
-
-# SI units
-ureg = pint.UnitRegistry()
 
 
 def _generator_list(context):

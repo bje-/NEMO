@@ -17,13 +17,10 @@ simulation runs.
 
 import numpy as np
 import pandas as pd
-import pint
 
 from nemo import configfile, costs, generators, polygons, regions
 from nemo.nem import hourly_demand, hourly_regional_demand, startdate
-
-ureg = pint.UnitRegistry()
-ureg.default_format = '.2f~P'
+from nemo.utils import ureg
 
 
 class Context():
