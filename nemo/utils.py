@@ -19,8 +19,9 @@ from pandas.plotting import register_matplotlib_converters
 from nemo import configfile
 from nemo.configfile import configparser
 
-# Default to abbreviated units when formatting
-ureg = pint.UnitRegistry()
+# Default to abbreviated units when formatting.
+# Caching is not yet the default.
+ureg = pint.UnitRegistry(cache_folder=':auto')
 ureg.default_format = '.2f~P'
 
 # The maximum number of generators before we only show a consolidated
