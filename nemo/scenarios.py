@@ -27,6 +27,15 @@ def _demand_response():
     return [dr1, dr2, dr3]
 
 
+def _pumped_hydro():
+    """Return a list of existing pumped hydro generators."""
+    # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
+    psh17 = PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
+    # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
+    psh36 = PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
+    return [psh17, psh36]
+
+
 def _hydro():
     """Return a list of existing hydroelectric generators."""
     hydro24 = Hydro(24, 42.5, label='poly 24 hydro')
@@ -40,12 +49,7 @@ def _hydro():
     hydro42 = Hydro(42, 590.4, label='poly 42 hydro')
     hydro43 = Hydro(43, 462.5, label='poly 43 hydro')
 
-    # Pumped hydro
-    # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    psh17 = PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
-    # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36 = PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
-    return [psh17, psh36] + \
+    return _pumped_hydro() + \
         [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39] + \
         [hydro40, hydro41, hydro42, hydro43]
 
