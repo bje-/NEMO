@@ -17,7 +17,7 @@ import sys
 from gooey import Gooey
 
 import nemo
-from nemo import costs, demand, scenarios, utils
+from nemo import costs, scenarios, utils
 
 if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:
     sys.argv.append('--ignore-gooey')
@@ -62,10 +62,6 @@ def run_one(bundle):
         print(f'unknown scenario: {scenario}')
         sys.exit(1)
     print('scenario', scenario)
-
-    # Apply each demand modifier argument (if any) in the given order.
-    for arg in options['demand_modifier'] or []:
-        demand.switch(arg)(context)
 
     try:
         cost_class = costs.cost_scenarios[options['costs']]
