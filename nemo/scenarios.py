@@ -1,6 +1,7 @@
 # Copyright (C) 2012, 2013, 2014, 2022 Ben Elliston
 # Copyright (C) 2014, 2015, 2016 The University of New South Wales
 # Copyright (C) 2016 IT Power (Australia)
+# Copyright (C) 2023 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -49,15 +50,15 @@ def _hydro():
     hydro42 = Hydro(42, 590.4, label='poly 42 hydro')
     hydro43 = Hydro(43, 462.5, label='poly 43 hydro')
 
-    return _pumped_hydro() + \
-        [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39] + \
-        [hydro40, hydro41, hydro42, hydro43]
+    return [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39,
+            hydro40, hydro41, hydro42, hydro43]
 
 
 def replacement(context):
     """Replace the current NEM fleet, more or less."""
     context.generators = \
-        [Black_Coal(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
+        [Black_Coal(WILDCARD, 0)] + _pumped_hydro() + _hydro() + \
+        [OCGT(WILDCARD, 0)]
 
 
 def _one_ccgt(context):
@@ -67,7 +68,8 @@ def _one_ccgt(context):
 
 def ccgt(context):
     """All gas scenario."""
-    context.generators = [CCGT(WILDCARD, 0)] + _hydro() + [OCGT(WILDCARD, 0)]
+    context.generators = [CCGT(WILDCARD, 0)] + _pumped_hydro() + \
+        _hydro() + [OCGT(WILDCARD, 0)]
 
 
 def ccgt_ccs(context):
@@ -75,14 +77,14 @@ def ccgt_ccs(context):
     # pylint: disable=redefined-outer-name
     ccgt = CCGT_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
-    context.generators = [ccgt] + _hydro() + [ocgt]
+    context.generators = [ccgt] + _pumped_hydro() + _hydro() + [ocgt]
 
 
 def coal_ccs(context):
     """Coal CCS scenario."""
     coal = Coal_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
-    context.generators = [coal] + _hydro() + [ocgt]
+    context.generators = [coal] + _pumped_hydro() + _hydro() + [ocgt]
 
 
 def _every_poly(gentype):
@@ -116,9 +118,9 @@ def re100(context):
     for g in [PV1Axis, Wind, WindOffshore, PumpedHydro, Hydro,
               CentralReceiver, Biofuel]:
         if g == PumpedHydro:
-            result += [h for h in _hydro() if isinstance(h, PumpedHydro)]
+            result += _pumped_hydro()
         elif g == Hydro:
-            result += [h for h in _hydro() if not isinstance(h, PumpedHydro)]
+            result += _hydro()
         elif g == WindOffshore:
             cfg = configfile.get('generation', 'offshore-wind-trace')
             for column, poly in enumerate([31, 36, 38, 40]):
