@@ -13,7 +13,6 @@
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
 
-import locale
 from math import isclose
 
 import numpy as np
@@ -22,30 +21,7 @@ import requests
 from matplotlib.patches import Patch
 
 from nemo import polygons
-from nemo.utils import ureg
-
-# Needed for currency formatting.
-locale.setlocale(locale.LC_ALL, '')
-
-
-def _thousands(value):
-    """
-    Format a value with thousands separator(s).
-
-    No doctest provided as the result will be locale specific.
-    """
-    return locale.format_string('%d', value, grouping=True)
-
-
-def _currency(value):
-    """
-    Format a value into currency with thousands separator(s).
-
-    If there are zero cents, remove .00 for brevity.  No doctest
-    provided as the result will be locale specific.
-    """
-    cents = locale.localeconv()['mon_decimal_point'] + '00'
-    return locale.currency(round(value), grouping=True).replace(cents, '')
+from nemo.utils import currency, thousands, ureg
 
 
 class Generator():
@@ -145,12 +121,12 @@ class Generator():
             spilled = sum(self.series_spilled.values()) * ureg.MWh
             string += f', surplus {spilled.to_compact()}'
         if self.capcost(costs) > 0:
-            string += f', capcost {_currency(self.capcost(costs))}'
+            string += f', capcost {currency(self.capcost(costs))}'
         if self.opcost(costs) > 0:
-            string += f', opcost {_currency(self.opcost(costs))}'
+            string += f', opcost {currency(self.opcost(costs))}'
         lcoe = self.lcoe(costs, context.years())
         if np.isfinite(lcoe) and lcoe > 0:
-            string += f', LCOE {_currency(int(lcoe))}'
+            string += f', LCOE {currency(int(lcoe))}'
         return string
 
     def set_capacity(self, cap):
@@ -432,7 +408,7 @@ class Fuelled(Generator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            f', ran {_thousands(self.runhours)} hours'
+            f', ran {thousands(self.runhours)} hours'
 
 
 class Hydro(Fuelled):
@@ -592,7 +568,7 @@ class PumpedHydroPump(Storage, Generator):
         """Return a summary of the generator activity."""
         storage = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
-            f', charged {_thousands(len(self.series_charge))} hours' + \
+            f', charged {thousands(len(self.series_charge))} hours' + \
             f', {storage} storage'
 
 
@@ -630,7 +606,7 @@ class PumpedHydroTurbine(Hydro):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            f', ran {_thousands(self.runhours)} hours'
+            f', ran {thousands(self.runhours)} hours'
 
     def reset(self):
         """Reset the generator."""
@@ -968,8 +944,8 @@ class Battery(Storage, Generator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
-            f', ran {_thousands(self.runhours)} hours' + \
-            f', charged {_thousands(len(self.series_charge))} hours' + \
+            f', ran {thousands(self.runhours)} hours' + \
+            f', charged {thousands(len(self.series_charge))} hours' + \
             f', {self.shours}h storage'
 
 
@@ -1054,7 +1030,7 @@ class DemandResponse(Generator):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
             f', max response {self.maxresponse} MW' + \
-            f', ran {_thousands(self.runhours)} hours'
+            f', ran {thousands(self.runhours)} hours'
 
 
 class Block(Generator):

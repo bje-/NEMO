@@ -7,6 +7,7 @@
 
 """Utility functions (eg, plotting)."""
 
+import locale
 from datetime import timedelta
 from itertools import tee
 
@@ -18,6 +19,9 @@ from pandas.plotting import register_matplotlib_converters
 
 from nemo import configfile
 from nemo.configfile import configparser
+
+# Needed for currency formatting.
+locale.setlocale(locale.LC_ALL, '')
 
 # Default to abbreviated units when formatting.
 # Caching is not yet the default.
@@ -36,6 +40,26 @@ MAX_PLOT_GENERATORS = 50
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
 register_matplotlib_converters()
+
+
+def thousands(value):
+    """
+    Format a value with thousands separator(s).
+
+    No doctest provided as the result will be locale specific.
+    """
+    return locale.format_string('%d', value, grouping=True)
+
+
+def currency(value):
+    """
+    Format a value into currency with thousands separator(s).
+
+    If there are zero cents, remove .00 for brevity.  No doctest
+    provided as the result will be locale specific.
+    """
+    cents = locale.localeconv()['mon_decimal_point'] + '00'
+    return locale.currency(round(value), grouping=True).replace(cents, '')
 
 
 def _generator_list(context):
