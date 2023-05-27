@@ -56,8 +56,9 @@ class TestPenalties(unittest.TestCase):
         capacity = generator.capacity
         self.assertEqual(penalties._calculate_reserve(generator, 0),
                          capacity - 1)
-        psh = generators.PumpedHydro(WILDCARD, 0, 0)
-        self.assertEqual(penalties._calculate_reserve(psh, 0), 0)
+        psh_reservoir = generators.PumpedHydroReservoirs(0)
+        psh_turbine = generators.PumpedHydroTurbine(WILDCARD, 0, psh_reservoir)
+        self.assertEqual(penalties._calculate_reserve(psh_turbine, 0), 0)
 
     def test_reserves(self):
         """Test reserves() function."""

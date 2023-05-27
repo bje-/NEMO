@@ -19,6 +19,7 @@ from nemo import costs, generators
 
 PORT = 9998
 hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")
+pumped_storage = generators.PumpedHydroReservoirs(1000, "PSH store")
 
 dummy_arguments = {'axes': 0,
                    'build_limit': 1000,
@@ -35,6 +36,7 @@ dummy_arguments = {'axes': 0,
                    'label': 'a label',
                    'maxstorage': 1000,
                    'polygon': 31,
+                   'reservoirs': pumped_storage,
                    'rte': 0.8,
                    'self': None,
                    'shours': 8,
@@ -61,7 +63,9 @@ classlist = [generators.Battery, generators.Behind_Meter_PV,
              generators.HydrogenStorage, generators.OCGT,
              generators.PV, generators.PV1Axis,
              generators.ParabolicTrough, generators.Patch,
-             generators.PumpedHydro, generators.Storage,
+             generators.PumpedHydroReservoirs,
+             generators.PumpedHydroPump,
+             generators.PumpedHydroTurbine, generators.Storage,
              generators.TraceGenerator, generators.Wind,
              generators.WindOffshore]
 
@@ -87,7 +91,7 @@ class TestGenerators(unittest.TestCase):
             # Skip abstract classes
             if cls in ['Generator', 'TraceGenerator',
                        'CSVTraceGenerator', 'Storage',
-                       'HydrogenStorage']:
+                       'HydrogenStorage', 'PumpedHydroReservoirs']:
                 continue
 
             # check that every class in generators.py is in classlist

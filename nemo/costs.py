@@ -72,14 +72,16 @@ class APGTR2015():
         # Common capital costs
         self.capcost_per_kw = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Diesel: 0,
             tech.DemandResponse: 0}
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Diesel: 0,
             tech.Wind: 0,
             tech.CentralReceiver: 4,
@@ -94,7 +96,8 @@ class APGTR2015():
             tech.DemandResponse: 0,
             tech.Diesel: 0,
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 55,
             tech.CentralReceiver: 65,
             tech.PV: 30,
@@ -158,14 +161,16 @@ class AETA2012_2030():
         # Common capital costs
         self.capcost_per_kw = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Diesel: 0,
             tech.DemandResponse: 0}
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Diesel: 0,
             tech.Wind: 12 * self.escalation,
             tech.CentralReceiver: 15 * self.escalation,
@@ -185,7 +190,8 @@ class AETA2012_2030():
             tech.DemandResponse: 0,
             tech.Diesel: 0,
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 40 * self.escalation,
             tech.CentralReceiver: 60 * self.escalation,
             tech.ParabolicTrough: 65 * self.escalation,
@@ -386,7 +392,8 @@ class GenCost2021:
             tech.Hydro: 0,
             tech.OCGT: 10.2,
             tech.PV1Axis: 17.0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 25.0,
             tech.DemandResponse: 0
         }
@@ -402,14 +409,16 @@ class GenCost2021:
             tech.Hydro: 0,
             tech.OCGT: 2.4,
             tech.PV1Axis: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 0
         }
 
         # Common capital costs
         self.capcost_per_kw = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.DemandResponse: 0
         }
 
@@ -566,7 +575,8 @@ class GenCost2022:
             tech.Hydro: 0,
             tech.OCGT: 10.2,
             tech.PV1Axis: 17.0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 25.0,
             tech.WindOffshore: 149.9,
             tech.DemandResponse: 0
@@ -583,7 +593,8 @@ class GenCost2022:
             tech.Hydro: 0,
             tech.OCGT: 7.3,
             tech.PV1Axis: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.Wind: 0,
             tech.WindOffshore: 0
         }
@@ -591,7 +602,8 @@ class GenCost2022:
         # Common capital costs
         self.capcost_per_kw = {
             tech.Hydro: 0,
-            tech.PumpedHydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
             tech.DemandResponse: 0
         }
 

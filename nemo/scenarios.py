@@ -13,8 +13,9 @@
 from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, PumpedHydro, PV1Axis, Wind,
-                             WindOffshore)
+                             DemandResponse, Hydro, PumpedHydroPump,
+                             PumpedHydroReservoirs, PumpedHydroTurbine,
+                             PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
 from nemo.types import UnreachableError
@@ -31,10 +32,19 @@ def _demand_response():
 def _pumped_hydro():
     """Return a list of existing pumped hydro generators."""
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    psh17 = PumpedHydro(17, 500, 5000, label='poly 17 pumped-hydro')
+    # r = reservoir, p = pump, t = turbine
+    psh17resv = PumpedHydroReservoirs(5000, label='poly 17 pumped storage')
+    psh17pump = PumpedHydroPump(17, 500, psh17resv, label='poly 17 PSH pump')
+    psh17turb = PumpedHydroTurbine(17, 500, psh17resv,
+                                   label='poly 17 PSH generator')
+
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36 = PumpedHydro(36, 1740, 15000, label='poly 36 pumped-hydro')
-    return [psh17, psh36]
+    psh36resv = PumpedHydroReservoirs(15000, label='Tumut 3 reservoir')
+    psh36pump = PumpedHydroPump(36, 1740, psh36resv, label='Tumut 3 pump')
+    psh36turb = PumpedHydroTurbine(36, 1740, psh36resv,
+                                   label='Tumut 3 generator')
+
+    return [psh17pump, psh36pump, psh17turb, psh36turb]
 
 
 def _hydro():
@@ -115,9 +125,9 @@ def re100(context):
     """100% renewable electricity."""
     result = []
     # The following list is in merit order.
-    for g in [PV1Axis, Wind, WindOffshore, PumpedHydro, Hydro,
+    for g in [PV1Axis, Wind, WindOffshore, PumpedHydroTurbine, Hydro,
               CentralReceiver, Biofuel]:
-        if g == PumpedHydro:
+        if g == PumpedHydroTurbine:
             result += _pumped_hydro()
         elif g == Hydro:
             result += _hydro()

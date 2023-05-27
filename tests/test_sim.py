@@ -80,12 +80,19 @@ class TestSim(unittest.TestCase):
         """
         self.context = Context()
         gen = generators.CCGT(31, 200)
-        psh1 = generators.PumpedHydro(1, 250, 1000)
-        psh1.store = lambda hour, spl: spl + 1e-9
-        psh2 = generators.PumpedHydro(1, 250, 1000)
+        reservoir1 = generators.PumpedHydroReservoirs(1000)
+        # symmetric 250 MW PSH pump/generator
+        psh1p = generators.PumpedHydroPump(1, 250, reservoir1)
+        psh1t = generators.PumpedHydroTurbine(1, 250, reservoir1)
+        psh1p.store = lambda hour, spl: spl + 1e-9
+
+        reservoir2 = generators.PumpedHydroReservoirs(1000)
+        psh2p = generators.PumpedHydroPump(1, 250, reservoir2)
+        psh2t = generators.PumpedHydroTurbine(1, 250, reservoir2)
+
         # this will raise an exception if we try calling store()
-        psh2.store = None
-        others = [psh1, psh2]
+        psh2p.store = None
+        others = [psh1p, psh1t, psh2p, psh2t]
         self.assertEqual(sim._store_spills(self.context, 0, gen,
                                            others, 10), 0)
 

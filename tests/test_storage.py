@@ -67,73 +67,87 @@ class TestPumpedHydro(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
-        self.psh = generators.PumpedHydro(WILDCARD, 100, 1000, rte=1)
+
+        # Attach the reservroir to the pump and the turbine.
+        # In this case, the pump and turbine are symmetric at 100 MW.
+        self.reservoir = generators.PumpedHydroReservoirs(1000)
+        self.pump = generators.PumpedHydroPump(WILDCARD, 100, self.reservoir,
+                                               rte=1)
+        self.turbine = generators.PumpedHydroTurbine(WILDCARD, 100,
+                                                     self.reservoir)
 
     def test_initialisation(self):
         """Test constructor."""
-        self.assertTrue(self.psh.storage_p)
-        self.assertEqual(self.psh.last_gen, None)
-        self.assertEqual(self.psh.last_pump, None)
-        self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
-        self.assertEqual(self.psh.rte, 1.0)
-        self.assertEqual(self.psh.maxstorage, 1000)
+        self.assertTrue(self.pump.storage_p)
+        self.assertEqual(self.reservoir.last_gen, None)
+        self.assertEqual(self.reservoir.last_pump, None)
+        self.assertEqual(self.reservoir.storage,
+                         .5 * self.reservoir.maxstorage)
+        self.assertEqual(self.pump.rte, 1.0)
+        self.assertEqual(self.reservoir.maxstorage, 1000)
 
     def test_soc(self):
         """Test soc() method."""
-        self.assertEqual(self.psh.soc(), 0.5)
+        self.assertEqual(self.pump.soc(), 0.5)
 
     def test_series(self):
         """Test series() method."""
-        series = self.psh.series()
+        series = self.pump.series()
         keys = series.keys()
         self.assertEqual(len(keys), 4)
         # use a set comparison
         self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
 
+        series = self.turbine.series()
+        keys = series.keys()
+        self.assertEqual(len(keys), 2)
+        # use a set comparison
+        self.assertLessEqual({'power', 'spilled'}, keys)
+
     def test_pump_and_generate(self):
         """Test that pumping and generating cannot happen at the same time."""
-        result = self.psh.store(hour=0, power=100)
+        result = self.pump.store(hour=0, power=100)
         self.assertEqual(result, 100)
-        result = self.psh.step(hour=0, demand=50)
+        result = self.turbine.step(hour=0, demand=50)
         self.assertEqual(result, (0, 0))
 
     def test_pump_multiple(self):
         """Test that pump can run more than once per timestep."""
-        result = self.psh.store(hour=0, power=100)
+        result = self.pump.store(hour=0, power=100)
         self.assertEqual(result, 100)
-        result = self.psh.store(hour=0, power=50)
+        result = self.pump.store(hour=0, power=50)
         self.assertEqual(result, 0)
-        self.assertEqual(self.psh.stored, 600)
+        self.assertEqual(self.reservoir.storage, 600)
 
     def test_step(self):
         """Test step() method."""
         for i in range(10):
-            result = self.psh.step(hour=i, demand=50)
+            result = self.turbine.step(hour=i, demand=50)
             self.assertEqual(result, (50, 0))
-        self.assertEqual(self.psh.stored, 0)
-        self.assertEqual(sum(self.psh.series_power.values()), 500)
-        self.assertEqual(len(self.psh.series_power), 10)
+        self.assertEqual(self.reservoir.storage, 0)
+        self.assertEqual(sum(self.turbine.series_power.values()), 500)
+        self.assertEqual(len(self.turbine.series_power), 10)
 
     def test_store(self):
         """Test store() method."""
-        result = self.psh.step(hour=0, demand=100)
+        result = self.turbine.step(hour=0, demand=100)
         self.assertEqual(result, (100, 0))
         # Can't pump and generate in the same hour.
-        result = self.psh.store(hour=0, power=250)
+        result = self.pump.store(hour=0, power=250)
         self.assertEqual(result, 0)
 
-        self.psh.stored = 800
-        result = self.psh.store(hour=1, power=200)
+        self.reservoir.storage = 800
+        result = self.pump.store(hour=1, power=200)
         self.assertEqual(result, 100)
-        self.assertEqual(self.psh.stored, 900)
-        result = self.psh.store(hour=2, power=200)
+        self.assertEqual(self.reservoir.storage, 900)
+        result = self.pump.store(hour=2, power=200)
         self.assertEqual(result, 100)
-        self.assertEqual(self.psh.stored, 1000)
-        result = self.psh.store(hour=3, power=200)
+        self.assertEqual(self.reservoir.storage, 1000)
+        result = self.pump.store(hour=3, power=200)
         self.assertEqual(result, 0)
-        self.assertEqual(self.psh.stored, 1000)
-        self.assertEqual(sum(self.psh.series_charge.values()), 200)
-        self.assertEqual(len(self.psh.series_charge), 2)
+        self.assertEqual(self.reservoir.storage, 1000)
+        self.assertEqual(sum(self.pump.series_charge.values()), 200)
+        self.assertEqual(len(self.pump.series_charge), 2)
 
     def test_store_multiple(self):
         """Test store() called multiple times."""
@@ -141,17 +155,19 @@ class TestPumpedHydro(unittest.TestCase):
 
     def test_reset(self):
         """Test reset() method."""
-        self.psh.series_power = {0: 200}
-        self.psh.series_charge = {0: 150}
-        self.psh.stored = 0
-        self.psh.last_gen = 123
-        self.psh.last_pump = 456
-        self.psh.reset()
-        self.assertEqual(self.psh.stored, 0.5 * self.psh.maxstorage)
-        self.assertEqual(self.psh.last_gen, None)
-        self.assertEqual(self.psh.last_pump, None)
-        self.assertEqual(len(self.psh.series_charge), 0)
-        self.assertEqual(len(self.psh.series_power), 0)
+        self.turbine.series_power = {0: 200}
+        self.pump.series_charge = {0: 150}
+        self.reservoir.storage = 0
+        self.reservoir.last_gen = 123
+        self.reservoir.last_pump = 456
+        self.pump.reset()
+        self.turbine.reset()
+        self.assertEqual(self.reservoir.storage,
+                         .5 * self.reservoir.maxstorage)
+        self.assertEqual(self.reservoir.last_gen, None)
+        self.assertEqual(self.reservoir.last_pump, None)
+        self.assertEqual(len(self.pump.series_charge), 0)
+        self.assertEqual(len(self.turbine.series_power), 0)
 
 
 class TestCST(unittest.TestCase):

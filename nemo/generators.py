@@ -448,26 +448,104 @@ class Hydro(Fuelled):
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
 
-class PumpedHydro(Storage, Hydro):
-    """Pumped storage hydro (PSH) model."""
+class PumpedHydroReservoirs():
+    """A lower and upper reservoir for pumped storage."""
 
-    patch = Patch(facecolor='powderblue')
-    """Colour for plotting"""
+    def __init__(self, maxstorage, label=None):
+        """Construct a pumped hydro storage reservoir pair.
 
-    def __init__(self, polygon, capacity, maxstorage, rte=0.8, label=None):
-        """Construct a pumped hydro storage generator."""
-        Hydro.__init__(self, polygon, capacity, label)
-        Storage.__init__(self)
-        self.maxstorage = maxstorage
-        # Half the water starts in the lower reservoir.
-        self.stored = self.maxstorage * .5
-        self.rte = rte
+        The storage capacity (in MWh) is specified by maxstorage.
+        """
+        # initialise these for good measure
+        self.maxstorage = None
+        self.storage = None
+        self.set_storage(maxstorage)
+        self.label = label
+
+        # Communicate between pump and turbine here to prevent both
+        # generators running in the same hour.
         self.last_gen = None
         self.last_pump = None
 
     def soc(self):
-        """Return the pumped hydro SOC (state of charge)."""
-        return self.stored / self.maxstorage
+        """Return how full the vessel is."""
+        return self.storage / self.maxstorage
+
+    def empty_p(self):
+        """Return True if the storage is empty."""
+        return self.storage == 0
+
+    def full_p(self):
+        """Return True if the storage is full."""
+        return self.maxstorage == self.storage
+
+    def set_storage(self, maxstorage):
+        """
+        Change the storage capacity.
+
+        >>> r = PumpedHydroReservoirs(1000, 'test')
+        >>> r.set_storage(1200)
+        >>> r.maxstorage
+        1200
+        >>> r.storage
+        600.0
+        """
+        self.maxstorage = maxstorage
+        self.storage = self.maxstorage / 2
+
+    def charge(self, amt):
+        """
+        Charge the pumped storage by amt.
+
+        >>> r = PumpedHydroReservoirs(1000, 'test')
+        >>> r.charge(100)
+        100
+        >>> r.charge(600)
+        400.0
+        >>> r.storage == r.maxstorage
+        True
+        """
+        assert amt >= 0
+        delta = min(self.maxstorage - self.storage, amt)
+        self.storage = min(self.maxstorage, self.storage + amt)
+        return delta
+
+    def discharge(self, amt):
+        """
+        Discharge the pumped storage by 'amt'.
+
+        >>> r = PumpedHydroReservoirs(1000, 'test')
+        >>> r.discharge(100)
+        100
+        >>> r.discharge(600)
+        400.0
+        """
+        assert amt >= 0
+        delta = min(self.storage, amt)
+        self.storage = max(0, self.storage - amt)
+        return delta
+
+
+class PumpedHydroPump(Storage, Generator):
+    """Pumped hydro (pump side) model."""
+
+    patch = Patch(facecolor='darkblue')
+    """Colour for plotting"""
+
+    def __init__(self, polygon, capacity, reservoirs, rte=0.8, label=None):
+        """Construct a pumped hydro storage generator."""
+        if not isinstance(reservoirs, PumpedHydroReservoirs):
+            raise TypeError
+        Storage.__init__(self)
+        Generator.__init__(self, polygon, capacity, label)
+        self.reservoirs = reservoirs
+        self.rte = rte
+        self.last_gen = None
+        self.last_pump = None
+
+    def step(self, hour, demand):
+        """Return 0 as this is not a generator."""
+        return 0, 0
 
     def series(self):
         """Return the combined series."""
@@ -476,55 +554,88 @@ class PumpedHydro(Storage, Hydro):
         # combine dictionaries
         return {**dict1, **dict2}
 
+    def soc(self):
+        """Return the pumped hydro SOC (state of charge)."""
+        return self.reservoirs.soc()
+
     def store(self, hour, power):
         """Pump water uphill for one hour."""
-        if self.last_gen == hour:
+        if self.reservoirs.last_gen == hour:
             # Can't pump and generate in the same hour.
             return 0
         power = min(self.charge_capacity(self, hour), power,
                     self.capacity)
         energy = power * self.rte
-        if self.stored + energy > self.maxstorage:
-            power = (self.maxstorage - self.stored) / self.rte
-            self.stored = self.maxstorage
+
+        if self.reservoirs.storage + energy > self.reservoirs.maxstorage:
+            power = (self.reservoirs.maxstorage - self.reservoirs.storage) \
+                / self.rte
+            self.reservoirs.storage = self.reservoirs.maxstorage
         else:
-            self.stored += energy
+            self.reservoirs.storage += energy
         if power > 0:
             self.record(hour, power)
-            self.last_pump = hour
+            self.reservoirs.last_pump = hour
         return power
+
+    def reset(self):
+        """Reset the generator."""
+        Generator.reset(self)
+        Storage.reset(self)
+
+        # Only the pump (not the turbine) needs to reset the reservoir
+        self.reservoirs.storage = self.reservoirs.maxstorage * .5
+        self.reservoirs.last_gen = None
+        self.reservoirs.last_pump = None
+
+    def summary(self, context):
+        """Return a summary of the generator activity."""
+        storage = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
+        return Generator.summary(self, context) + \
+            f', charged {_thousands(len(self.series_charge))} hours' + \
+            f', {storage} storage'
+
+
+class PumpedHydroTurbine(Hydro):
+    """Pumped storage hydro (generator side) model."""
+
+    patch = Patch(facecolor='powderblue')
+    """Colour for plotting"""
+
+    def __init__(self, polygon, capacity, reservoirs, rte=0.8, label=None):
+        """Construct a pumped hydro storage generator."""
+        if not isinstance(reservoirs, PumpedHydroReservoirs):
+            raise TypeError
+        Hydro.__init__(self, polygon, capacity, label)
+        self.reservoirs = reservoirs
+        self.rte = rte
 
     def step(self, hour, demand):
         """Step method for pumped hydro storage."""
-        power = min(self.stored, self.capacity, demand)
-        if self.last_pump == hour:
+        power = min(self.reservoirs.storage, self.capacity, demand)
+        if self.reservoirs.last_pump == hour:
             # Can't pump and generate in the same hour.
             self.series_power[hour] = 0
             self.series_spilled[hour] = 0
             return 0, 0
+
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
-        self.stored -= power
+        self.reservoirs.storage -= power
         if power > 0:
             self.runhours += 1
-            self.last_gen = hour
+            self.reservoirs.last_gen = hour
         return power, 0
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        storage = (self.maxstorage * ureg.MWh).to_compact()
+        storage = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
-            f', charged {_thousands(len(self.series_charge))} hours' + \
-            f', ran {_thousands(self.runhours)} hours' + \
-            f', {storage} storage'
+            f', ran {_thousands(self.runhours)} hours'
 
     def reset(self):
         """Reset the generator."""
         Hydro.reset(self)
-        Storage.reset(self)
-        self.stored = self.maxstorage * .5
-        self.last_gen = None
-        self.last_pump = None
 
 
 class Biofuel(Fuelled):

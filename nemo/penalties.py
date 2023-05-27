@@ -34,7 +34,7 @@ def _calculate_reserve(gen, time):
     Note: except pumped hydro and CST -- tricky to calculate capacity.
     """
     if isinstance(gen, generators.Fuelled) and not \
-       isinstance(gen, generators.PumpedHydro) and not \
+       isinstance(gen, generators.PumpedHydroTurbine) and not \
        isinstance(gen, generators.CST):
         return gen.capacity - gen.series_power[time]
     return 0
@@ -134,7 +134,7 @@ def hydro(ctx, args):
     hydro_energy = 0
     for gen in ctx.generators:
         if isinstance(gen, generators.Hydro) and \
-           not isinstance(gen, generators.PumpedHydro):
+           not isinstance(gen, generators.PumpedHydroTurbine):
             hydro_energy += sum(gen.series_power.values())
     hydro_limit = args.hydro_limit * _twh * ctx.years()
     hydro_exceedance = max(0, hydro_energy - hydro_limit)
