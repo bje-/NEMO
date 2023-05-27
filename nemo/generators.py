@@ -629,7 +629,6 @@ class PumpedHydroTurbine(Hydro):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        storage = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
             f', ran {_thousands(self.runhours)} hours'
 
