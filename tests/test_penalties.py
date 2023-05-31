@@ -14,7 +14,7 @@ import unittest
 import numpy as np
 
 import nemo
-from nemo import generators, penalties, regions
+from nemo import generators, penalties, regions, storage
 from nemo.penalties import reasons
 from nemo.polygons import WILDCARD
 
@@ -56,8 +56,8 @@ class TestPenalties(unittest.TestCase):
         capacity = generator.capacity
         self.assertEqual(penalties._calculate_reserve(generator, 0),
                          capacity - 1)
-        psh_reservoir = generators.PumpedHydroReservoirs(0)
-        psh_turbine = generators.PumpedHydroTurbine(WILDCARD, 0, psh_reservoir)
+        psh_storage = storage.PumpedHydroStorage(0)
+        psh_turbine = generators.PumpedHydroTurbine(WILDCARD, 0, psh_storage)
         self.assertEqual(penalties._calculate_reserve(psh_turbine, 0), 0)
 
     def test_reserves(self):

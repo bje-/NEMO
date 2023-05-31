@@ -14,10 +14,10 @@ from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
                              Black_Coal, CentralReceiver, Coal_CCS,
                              DemandResponse, Hydro, PumpedHydroPump,
-                             PumpedHydroReservoirs, PumpedHydroTurbine,
-                             PV1Axis, Wind, WindOffshore)
+                             PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
+from nemo.storage import PumpedHydroStorage
 from nemo.types import UnreachableError
 
 
@@ -32,16 +32,15 @@ def _demand_response():
 def _pumped_hydro():
     """Return a list of existing pumped hydro generators."""
     # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
-    # r = reservoir, p = pump, t = turbine
-    psh17resv = PumpedHydroReservoirs(5000, label='poly 17 pumped storage')
-    psh17pump = PumpedHydroPump(17, 500, psh17resv, label='poly 17 PSH pump')
-    psh17turb = PumpedHydroTurbine(17, 500, psh17resv,
+    psh17stg = PumpedHydroStorage(5000, label='poly 17 pumped storage')
+    psh17pump = PumpedHydroPump(17, 500, psh17stg, label='poly 17 PSH pump')
+    psh17turb = PumpedHydroTurbine(17, 500, psh17stg,
                                    label='poly 17 PSH generator')
 
     # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36resv = PumpedHydroReservoirs(15000, label='Tumut 3 reservoir')
-    psh36pump = PumpedHydroPump(36, 1740, psh36resv, label='Tumut 3 pump')
-    psh36turb = PumpedHydroTurbine(36, 1740, psh36resv,
+    psh36stg = PumpedHydroStorage(15000, label='Tumut 3 storage')
+    psh36pump = PumpedHydroPump(36, 1740, psh36stg, label='Tumut 3 pump')
+    psh36turb = PumpedHydroTurbine(36, 1740, psh36stg,
                                    label='Tumut 3 generator')
 
     return [psh17pump, psh36pump, psh17turb, psh36turb]

@@ -15,11 +15,11 @@ import numpy as np
 import pandas as pd
 import tcpserver
 
-from nemo import costs, generators
+from nemo import costs, generators, storage
 
 PORT = 9998
-hydrogen_storage = generators.HydrogenStorage(1000, "H2 store")
-pumped_storage = generators.PumpedHydroReservoirs(1000, "PSH store")
+hydrogen_storage = storage.HydrogenStorage(1000, "H2 store")
+pumped_storage = storage.PumpedHydroStorage(1000, "PSH store")
 
 dummy_arguments = {'axes': 0,
                    'build_limit': 1000,
@@ -59,11 +59,9 @@ classlist = [generators.Battery, generators.Behind_Meter_PV,
              generators.Fossil, generators.Fuelled,
              generators.Generator, generators.Geothermal,
              generators.Geothermal_EGS, generators.Geothermal_HSA,
-             generators.Hydro, generators.HydrogenGT,
-             generators.HydrogenStorage, generators.OCGT,
+             generators.Hydro, generators.HydrogenGT, generators.OCGT,
              generators.PV, generators.PV1Axis,
              generators.ParabolicTrough, generators.Patch,
-             generators.PumpedHydroReservoirs,
              generators.PumpedHydroPump,
              generators.PumpedHydroTurbine, generators.Storage,
              generators.TraceGenerator, generators.Wind,
@@ -90,8 +88,7 @@ class TestGenerators(unittest.TestCase):
         for (cls, clstype) in self.classes:
             # Skip abstract classes
             if cls in ['Generator', 'TraceGenerator',
-                       'CSVTraceGenerator', 'Storage',
-                       'HydrogenStorage', 'PumpedHydroReservoirs']:
+                       'CSVTraceGenerator', 'Storage']:
                 continue
 
             # check that every class in generators.py is in classlist

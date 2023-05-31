@@ -20,7 +20,7 @@ import pandas as pd
 import requests
 from matplotlib.patches import Patch
 
-from nemo import polygons
+from nemo import polygons, storage
 from nemo.utils import currency, thousands, ureg
 
 
@@ -424,84 +424,6 @@ class Hydro(Fuelled):
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
 
-class PumpedHydroReservoirs():
-    """A lower and upper reservoir for pumped storage."""
-
-    def __init__(self, maxstorage, label=None):
-        """Construct a pumped hydro storage reservoir pair.
-
-        The storage capacity (in MWh) is specified by maxstorage.
-        """
-        # initialise these for good measure
-        self.maxstorage = None
-        self.storage = None
-        self.set_storage(maxstorage)
-        self.label = label
-
-        # Communicate between pump and turbine here to prevent both
-        # generators running in the same hour.
-        self.last_gen = None
-        self.last_pump = None
-
-    def soc(self):
-        """Return how full the vessel is."""
-        return self.storage / self.maxstorage
-
-    def empty_p(self):
-        """Return True if the storage is empty."""
-        return self.storage == 0
-
-    def full_p(self):
-        """Return True if the storage is full."""
-        return self.maxstorage == self.storage
-
-    def set_storage(self, maxstorage):
-        """
-        Change the storage capacity.
-
-        >>> r = PumpedHydroReservoirs(1000, 'test')
-        >>> r.set_storage(1200)
-        >>> r.maxstorage
-        1200
-        >>> r.storage
-        600.0
-        """
-        self.maxstorage = maxstorage
-        self.storage = self.maxstorage / 2
-
-    def charge(self, amt):
-        """
-        Charge the pumped storage by amt.
-
-        >>> r = PumpedHydroReservoirs(1000, 'test')
-        >>> r.charge(100)
-        100
-        >>> r.charge(600)
-        400.0
-        >>> r.storage == r.maxstorage
-        True
-        """
-        assert amt >= 0
-        delta = min(self.maxstorage - self.storage, amt)
-        self.storage = min(self.maxstorage, self.storage + amt)
-        return delta
-
-    def discharge(self, amt):
-        """
-        Discharge the pumped storage by 'amt'.
-
-        >>> r = PumpedHydroReservoirs(1000, 'test')
-        >>> r.discharge(100)
-        100
-        >>> r.discharge(600)
-        400.0
-        """
-        assert amt >= 0
-        delta = min(self.storage, amt)
-        self.storage = max(0, self.storage - amt)
-        return delta
-
-
 class PumpedHydroPump(Storage, Generator):
     """Pumped hydro (pump side) model."""
 
@@ -510,7 +432,7 @@ class PumpedHydroPump(Storage, Generator):
 
     def __init__(self, polygon, capacity, reservoirs, rte=0.8, label=None):
         """Construct a pumped hydro storage generator."""
-        if not isinstance(reservoirs, PumpedHydroReservoirs):
+        if not isinstance(reservoirs, storage.PumpedHydroStorage):
             raise TypeError
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
@@ -566,10 +488,10 @@ class PumpedHydroPump(Storage, Generator):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        storage = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
+        stg = (self.reservoirs.maxstorage * ureg.MWh).to_compact()
         return Generator.summary(self, context) + \
             f', charged {thousands(len(self.series_charge))} hours' + \
-            f', {storage} storage'
+            f', {stg} storage'
 
 
 class PumpedHydroTurbine(Hydro):
@@ -580,7 +502,7 @@ class PumpedHydroTurbine(Hydro):
 
     def __init__(self, polygon, capacity, reservoirs, rte=0.8, label=None):
         """Construct a pumped hydro storage generator."""
-        if not isinstance(reservoirs, PumpedHydroReservoirs):
+        if not isinstance(reservoirs, storage.PumpedHydroStorage):
             raise TypeError
         Hydro.__init__(self, polygon, capacity, label)
         self.reservoirs = reservoirs
@@ -1047,71 +969,6 @@ class Block(Generator):
         return power, 0
 
 
-class HydrogenStorage():
-    """A simple hydrogen storage vessel."""
-
-    def __init__(self, maxstorage, label=None):
-        """Construct a hydrogen storage vessel.
-
-        The storage capacity (in MWh) is specified by maxstorage.
-        """
-        # initialise these for good measure
-        self.maxstorage = None
-        self.storage = None
-        self.set_storage(maxstorage)
-        self.label = label
-
-    def soc(self):
-        """Return how full the vessel is."""
-        return self.storage / self.maxstorage
-
-    def set_storage(self, maxstorage):
-        """
-        Change the storage capacity.
-
-        >>> h = HydrogenStorage(1000, 'test')
-        >>> h.set_storage(1200)
-        >>> h.maxstorage
-        1200
-        >>> h.storage
-        600.0
-        """
-        self.maxstorage = maxstorage
-        self.storage = self.maxstorage / 2
-
-    def charge(self, amt):
-        """
-        Charge the storage by amt.
-
-        >>> h = HydrogenStorage(1000, 'test')
-        >>> h.charge(100)
-        100
-        >>> h.charge(600)
-        400.0
-        >>> h.storage == h.maxstorage
-        True
-        """
-        assert amt >= 0
-        delta = min(self.maxstorage - self.storage, amt)
-        self.storage = min(self.maxstorage, self.storage + amt)
-        return delta
-
-    def discharge(self, amt):
-        """
-        Discharge the storage by 'amt'.
-
-        >>> h = HydrogenStorage(1000, 'test')
-        >>> h.discharge(100)
-        100
-        >>> h.discharge(600)
-        400.0
-        """
-        assert amt >= 0
-        delta = min(self.storage, amt)
-        self.storage = max(0, self.storage - amt)
-        return delta
-
-
 class Electrolyser(Storage, Generator):
     """A hydrogen electrolyser."""
 
@@ -1126,7 +983,7 @@ class Electrolyser(Storage, Generator):
         the capacity of the electrolyser (in MW) and electrolysis
         conversion efficiency.
         """
-        if not isinstance(tank, HydrogenStorage):
+        if not isinstance(tank, storage.HydrogenStorage):
             raise TypeError
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
@@ -1171,7 +1028,7 @@ class HydrogenGT(Fuelled):
         """
         Construct a HydrogenGT object.
 
-        >>> h = HydrogenStorage(1000, 'test')
+        >>> h = storage.HydrogenStorage(1000, 'test')
         >>> gt = HydrogenGT(h, 1, 100, efficiency=0.5)
         >>> print(gt)
         HydrogenGT (QLD1:1), 100.00 MW
@@ -1182,7 +1039,7 @@ class HydrogenGT(Fuelled):
         >>> h.storage == (1000 / 2.) - (200 / gt.efficiency)
         True
         """
-        assert isinstance(tank, HydrogenStorage)
+        assert isinstance(tank, storage.HydrogenStorage)
         Fuelled.__init__(self, polygon, capacity, label)
         self.tank = tank
         self.efficiency = efficiency

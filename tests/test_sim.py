@@ -14,7 +14,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from nemo import configfile, generators, sim
+from nemo import configfile, generators, sim, storage
 from nemo.context import Context
 
 
@@ -61,7 +61,7 @@ class TestSim(unittest.TestCase):
         self.context = type('context', (), {'verbose': 0, 'storages': None})
         self.context.verbose = True
         hydro = generators.Hydro(1, 100)
-        h2store = generators.HydrogenStorage(400)
+        h2store = storage.HydrogenStorage(400)
         electrolyser = generators.Electrolyser(h2store, 1, 100,
                                                efficiency=1.0)
         result = sim._store_spills(self.context, 0, hydro,
@@ -80,15 +80,15 @@ class TestSim(unittest.TestCase):
         """
         self.context = Context()
         gen = generators.CCGT(31, 200)
-        reservoir1 = generators.PumpedHydroReservoirs(1000)
+        storage1 = storage.PumpedHydroStorage(1000)
         # symmetric 250 MW PSH pump/generator
-        psh1p = generators.PumpedHydroPump(1, 250, reservoir1)
-        psh1t = generators.PumpedHydroTurbine(1, 250, reservoir1)
+        psh1p = generators.PumpedHydroPump(1, 250, storage1)
+        psh1t = generators.PumpedHydroTurbine(1, 250, storage1)
         psh1p.store = lambda hour, spl: spl + 1e-9
 
-        reservoir2 = generators.PumpedHydroReservoirs(1000)
-        psh2p = generators.PumpedHydroPump(1, 250, reservoir2)
-        psh2t = generators.PumpedHydroTurbine(1, 250, reservoir2)
+        storage2 = storage.PumpedHydroStorage(1000)
+        psh2p = generators.PumpedHydroPump(1, 250, storage2)
+        psh2t = generators.PumpedHydroTurbine(1, 250, storage2)
 
         # this will raise an exception if we try calling store()
         psh2p.store = None

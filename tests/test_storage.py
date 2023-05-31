@@ -11,7 +11,7 @@ import unittest
 
 import pandas as pd
 
-from nemo import configfile, generators
+from nemo import configfile, generators, storage
 from nemo.polygons import WILDCARD
 
 
@@ -20,46 +20,46 @@ class TestStorage(unittest.TestCase):
 
     def test_initialisation(self):
         """Test constructor."""
-        storage = generators.Storage()
-        self.assertEqual(storage.series_charge, {})
+        stg = generators.Storage()
+        self.assertEqual(stg.series_charge, {})
 
     def test_reset(self):
         """Test reset() method."""
-        storage = generators.Storage()
-        storage.series_charge = {0: 150}
-        storage.reset()
-        self.assertEqual(storage.series_charge, {})
+        stg = generators.Storage()
+        stg.series_charge = {0: 150}
+        stg.reset()
+        self.assertEqual(stg.series_charge, {})
 
     def test_soc(self):
         """Test soc() method in the base class."""
-        storage = generators.Storage()
+        stg = generators.Storage()
         with self.assertRaises(NotImplementedError):
-            storage.soc()
+            stg.soc()
 
     def test_record(self):
         """Test record() method."""
-        storage = generators.Storage()
+        stg = generators.Storage()
         # redefine base soc() method to avoid NotImplementedError
-        storage.soc = lambda: 0.5
-        storage.record(0, 100)
-        storage.record(0, 50)
-        storage.record(1, 75)
-        self.assertEqual(storage.series_charge, {0: 150, 1: 75})
-        self.assertEqual(storage.series_soc, {0: 0.5, 1: 0.5})
+        stg.soc = lambda: 0.5
+        stg.record(0, 100)
+        stg.record(0, 50)
+        stg.record(1, 75)
+        self.assertEqual(stg.series_charge, {0: 150, 1: 75})
+        self.assertEqual(stg.series_soc, {0: 0.5, 1: 0.5})
 
     def test_series(self):
         """Test series() method."""
-        storage = generators.Storage()
+        stg = generators.Storage()
         value = {0: 150}
-        storage.series_charge = value
+        stg.series_charge = value
         series = pd.Series(value, dtype=float)
-        self.assertTrue(storage.series()['charge'].equals(series))
+        self.assertTrue(stg.series()['charge'].equals(series))
 
     def test_store(self):
         """Test store() method."""
-        storage = generators.Storage()
+        stg = generators.Storage()
         with self.assertRaises(NotImplementedError):
-            storage.store(0, 100)
+            stg.store(0, 100)
 
 
 class TestPumpedHydro(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestPumpedHydro(unittest.TestCase):
 
         # Attach the reservroir to the pump and the turbine.
         # In this case, the pump and turbine are symmetric at 100 MW.
-        self.reservoir = generators.PumpedHydroReservoirs(1000)
+        self.reservoir = storage.PumpedHydroStorage(1000)
         self.pump = generators.PumpedHydroPump(WILDCARD, 100, self.reservoir,
                                                rte=1)
         self.turbine = generators.PumpedHydroTurbine(WILDCARD, 100,
@@ -340,7 +340,7 @@ class TestElectrolyser(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
-        self.tank = generators.HydrogenStorage(400, 'test')
+        self.tank = storage.HydrogenStorage(400, 'test')
         self.electrolyser = \
             generators.Electrolyser(self.tank, WILDCARD, 100,
                                     efficiency=1)
