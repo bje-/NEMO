@@ -27,9 +27,8 @@ class GenericStorage():
 
         The storage capacity (in MWh) is specified by maxstorage.
         """
-        self.maxstorage = maxstorage
-        self.storage = self.maxstorage / 2
         self.label = label
+        self.set_storage(maxstorage)
 
     def set_storage(self, maxstorage):
         """
@@ -46,15 +45,32 @@ class GenericStorage():
         self.storage = self.maxstorage / 2
 
     def soc(self):
-        """Return the storage SOC (state of charge)."""
+        """Return the storage SOC (state of charge).
+
+        >>> r = GenericStorage(1000)
+        >>> r.soc()
+        0.5
+        """
         return self.storage / self.maxstorage
 
     def empty_p(self):
-        """Return True if the storage is empty."""
+        """Return True if the storage is empty.
+
+        >>> r = GenericStorage(1000)
+        >>> r.storage = 0
+        >>> r.empty_p(), r.full_p()
+        (True, False)
+        """
         return self.storage == 0
 
     def full_p(self):
-        """Return True if the storage is full."""
+        """Return True if the storage is full.
+
+        >>> r = GenericStorage(1000)
+        >>> r.storage = 1000
+        >>> r.full_p(), r.empty_p()
+        (True, False)
+        """
         return self.maxstorage == self.storage
 
     def charge(self, amt):
@@ -62,12 +78,8 @@ class GenericStorage():
         Charge the storage by amt.
 
         >>> stg = GenericStorage(1000, 'test')
-        >>> stg.charge(100)
-        100
-        >>> stg.charge(600)
-        400.0
-        >>> stg.storage == stg.maxstorage
-        True
+        >>> stg.charge(600), stg.full_p()
+        (500.0, True)
         """
         assert amt >= 0
         delta = min(self.maxstorage - self.storage, amt)
@@ -79,10 +91,8 @@ class GenericStorage():
         Discharge the storage by 'amt'.
 
         >>> stg = GenericStorage(1000, 'test')
-        >>> stg.discharge(100)
-        100
-        >>> stg.discharge(600)
-        400.0
+        >>> stg.discharge(600), stg.empty_p()
+        (500.0, True)
         """
         assert amt >= 0
         delta = min(self.storage, amt)
