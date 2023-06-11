@@ -438,8 +438,6 @@ class PumpedHydroPump(Storage, Generator):
         Generator.__init__(self, polygon, capacity, label)
         self.reservoirs = reservoirs
         self.rte = rte
-        self.last_gen = None
-        self.last_pump = None
 
     def step(self, hour, demand):
         """Return 0 as this is not a generator."""
@@ -463,14 +461,12 @@ class PumpedHydroPump(Storage, Generator):
             return 0
         power = min(self.charge_capacity(self, hour), power,
                     self.capacity)
-        energy = power * self.rte
 
-        if self.reservoirs.storage + energy > self.reservoirs.maxstorage:
+        stored = self.reservoirs.charge(power * self.rte)
+        if stored < power * self.rte:
             power = (self.reservoirs.maxstorage - self.reservoirs.storage) \
                 / self.rte
-            self.reservoirs.storage = self.reservoirs.maxstorage
-        else:
-            self.reservoirs.storage += energy
+
         if power > 0:
             self.record(hour, power)
             self.reservoirs.last_pump = hour
@@ -480,11 +476,7 @@ class PumpedHydroPump(Storage, Generator):
         """Reset the generator."""
         Generator.reset(self)
         Storage.reset(self)
-
-        # Only the pump (not the turbine) needs to reset the reservoir
-        self.reservoirs.storage = self.reservoirs.maxstorage * .5
-        self.reservoirs.last_gen = None
-        self.reservoirs.last_pump = None
+        self.reservoirs.reset()
 
     def summary(self, context):
         """Return a summary of the generator activity."""
@@ -500,13 +492,12 @@ class PumpedHydroTurbine(Hydro):
     patch = Patch(facecolor='powderblue')
     """Colour for plotting"""
 
-    def __init__(self, polygon, capacity, reservoirs, rte=0.8, label=None):
+    def __init__(self, polygon, capacity, reservoirs, label=None):
         """Construct a pumped hydro storage generator."""
         if not isinstance(reservoirs, storage.PumpedHydroStorage):
             raise TypeError
         Hydro.__init__(self, polygon, capacity, label)
         self.reservoirs = reservoirs
-        self.rte = rte
 
     def step(self, hour, demand):
         """Step method for pumped hydro storage."""
@@ -517,22 +508,13 @@ class PumpedHydroTurbine(Hydro):
             self.series_spilled[hour] = 0
             return 0, 0
 
+        self.reservoirs.discharge(power)
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
-        self.reservoirs.storage -= power
         if power > 0:
             self.runhours += 1
             self.reservoirs.last_gen = hour
         return power, 0
-
-    def summary(self, context):
-        """Return a summary of the generator activity."""
-        return Generator.summary(self, context) + \
-            f', ran {thousands(self.runhours)} hours'
-
-    def reset(self):
-        """Reset the generator."""
-        Hydro.reset(self)
 
 
 class Biofuel(Fuelled):

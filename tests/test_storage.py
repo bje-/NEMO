@@ -137,13 +137,13 @@ class TestPumpedHydro(unittest.TestCase):
         self.assertEqual(result, 0)
 
         self.reservoir.storage = 800
-        result = self.pump.store(hour=1, power=200)
+        result = self.pump.store(1, 200)
         self.assertEqual(result, 100)
         self.assertEqual(self.reservoir.storage, 900)
-        result = self.pump.store(hour=2, power=200)
+        result = self.pump.store(2, 200)
         self.assertEqual(result, 100)
         self.assertEqual(self.reservoir.storage, 1000)
-        result = self.pump.store(hour=3, power=200)
+        result = self.pump.store(3, 200)
         self.assertEqual(result, 0)
         self.assertEqual(self.reservoir.storage, 1000)
         self.assertEqual(sum(self.pump.series_charge.values()), 200)

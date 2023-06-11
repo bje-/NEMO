@@ -28,6 +28,7 @@ class GenericStorage():
         The storage capacity (in MWh) is specified by maxstorage.
         """
         self.label = label
+        self.storage = 0
         self.set_storage(maxstorage)
 
     def set_storage(self, maxstorage):
@@ -42,6 +43,18 @@ class GenericStorage():
         600.0
         """
         self.maxstorage = maxstorage
+        self.reset()
+
+    def reset(self):
+        """
+        Reset storage to 50% SOC.
+
+        >>> r = GenericStorage(1000)
+        >>> r.storage = 200
+        >>> r.reset()
+        >>> r.storage
+        500.0
+        """
         self.storage = self.maxstorage / 2
 
     def soc(self):
@@ -116,5 +129,11 @@ class PumpedHydroStorage(GenericStorage):
 
         # Communicate between pump and turbine here to prevent both
         # generators running in the same hour.
+        self.last_gen = None
+        self.last_pump = None
+
+    def reset(self):
+        """Reset the storage."""
+        GenericStorage.reset(self)
         self.last_gen = None
         self.last_pump = None
