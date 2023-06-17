@@ -725,6 +725,69 @@ class Diesel(Fossil):
         return total_opcost
 
 
+class BatteryLoad(Generator):
+    """Battery storage (load side)."""
+
+    patch = Patch(facecolor='#00a2fa')
+    """Colour for plotting"""
+    synchronous_p = False
+    """Is this a synchronous generator?"""
+
+    def __init__(self, polygon, capacity, battery, label=None,
+                 discharge_hours=None):
+        """
+        Construct a battery generator.
+
+        Storage (shours) is specified in duration hours at full power.
+        Discharge hours is a list of hours when discharging can occur.
+        """
+        Generator.__init__(self, polygon, capacity, label)
+        self.battery = battery
+        shours = battery.maxstorage / capacity
+        assert shours in [1, 2, 4, 8]
+        self.discharge_hours = discharge_hours \
+            if discharge_hours is not None else range(18, 24)
+        self.runhours = 0
+
+    def soc(self):
+        """Return the battery SOC (state of charge)."""
+        return self.battery.soc()
+
+    def step(self, hour, demand):
+        """Specialised step method for batteries."""
+        if self.battery.empty_p() or \
+           hour % 24 not in self.discharge_hours:
+            self.series_power[hour] = 0
+            self.series_spilled[hour] = 0
+            return 0, 0
+
+        power = min(self.battery.storage, self.capacity, demand)
+        self.battery.discharge(power)
+        self.series_power[hour] = power
+        self.series_spilled[hour] = 0
+        if power > 0:
+            self.runhours += 1
+        return power, 0
+
+    def summary(self, context):
+        """Return a summary of the generator activity."""
+        return Generator.summary(self, context) + \
+            f', ran {thousands(self.runhours)} hours'
+
+    # Battery costs are all calculated on the storage side.
+    def capcost(self, costs):
+        """Return the annual capital cost."""
+        return 0
+
+    def fixed_om_costs(self, costs):
+        """Return the fixed O&M costs."""
+        return 0
+
+    def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
+        return 0
+
+
 class Battery(Storage, Generator):
     """Battery storage (of any type)."""
 
@@ -733,7 +796,7 @@ class Battery(Storage, Generator):
     synchronous_p = False
     """Is this a synchronous generator?"""
 
-    def __init__(self, polygon, capacity, shours, label=None,
+    def __init__(self, polygon, capacity, battery, label=None,
                  discharge_hours=None, rte=0.95):
         """
         Construct a battery generator.
@@ -744,17 +807,18 @@ class Battery(Storage, Generator):
         """
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
-        self.stored = 0
-        assert shours in [1, 2, 4, 8]
-        self.set_storage(shours)
+        self.battery = battery
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
         self.rte = rte
-        self.runhours = 0
+
+    def step(self, hour, demand):
+        """Return 0 as this is not a generator."""
+        return 0, 0
 
     def soc(self):
         """Return the battery SOC (state of charge)."""
-        return self.stored / self.maxstorage
+        return self.battery.soc()
 
     def series(self):
         """Return the combined series."""
@@ -763,75 +827,33 @@ class Battery(Storage, Generator):
         # combine dictionaries
         return {**dict1, **dict2}
 
-    def set_capacity(self, cap):
-        """Change the capacity of the generator to cap GW."""
-        Generator.set_capacity(self, cap)
-        self.set_storage(self.shours)
-
-    def set_storage(self, shours):
-        """Vary the full load hours of battery storage."""
-        assert shours in [1, 2, 4, 8]
-        self.shours = shours
-        self.maxstorage = self.capacity * shours
-        self.stored = 0
-
-    def empty_p(self):
-        """Return True if the storage is empty."""
-        return self.stored == 0
-
-    def full_p(self):
-        """Return True if the storage is full."""
-        return self.maxstorage == self.stored
-
     def store(self, hour, power):
         """Store power."""
         assert power > 0, f'{power} is <= 0'
 
-        if self.full_p() or \
+        if self.battery.full_p() or \
            hour % 24 in self.discharge_hours:
             return 0
 
         power = min(self.charge_capacity(self, hour), power,
                     self.capacity)
-        energy = power
-        if self.stored + energy > self.maxstorage:
-            energy = self.maxstorage - self.stored
-        self.stored += energy
-        if energy > 0:
-            self.record(hour, energy)
-        assert self.stored <= self.maxstorage or \
-            isclose(self.stored, self.maxstorage)
-        return energy
-
-    def step(self, hour, demand):
-        """Specialised step method for batteries."""
-        if self.empty_p() or \
-           hour % 24 not in self.discharge_hours:
-            self.series_power[hour] = 0
-            self.series_spilled[hour] = 0
-            return 0, 0
-
-        power = min(self.stored, self.capacity, demand) * self.rte
-        self.series_power[hour] = power
-        self.series_spilled[hour] = 0
-        self.stored -= power
+        stored = self.battery.charge(power * self.rte)
         if power > 0:
-            self.runhours += 1
-        assert self.stored >= 0 or isclose(self.stored, 0)
-        return power, 0
+            self.record(hour, stored / self.rte)
+        return stored / self.rte
 
     def reset(self):
         """Reset the generator."""
         Generator.reset(self)
         Storage.reset(self)
-        self.runhours = 0
-        self.stored = 0
+        self.battery.reset()
 
     def capcost(self, costs):
         """Return the annual capital cost."""
-        assert self.shours in [1, 2, 4, 8]
-        cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
-        kwh = self.capacity * 1000 * self.shours
+        kwh = self.battery.maxstorage * 1000
+        shours = self.battery.maxstorage / self.capacity
+        assert shours in [1, 2, 4, 8]
+        cost_per_kwh = costs.totcost_per_kwh[type(self)][shours]
         return kwh * cost_per_kwh
 
     def fixed_om_costs(self, costs):
@@ -847,10 +869,10 @@ class Battery(Storage, Generator):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
+        mwh = self.battery.maxstorage * ureg.MWh
         return Generator.summary(self, context) + \
-            f', ran {thousands(self.runhours)} hours' + \
             f', charged {thousands(len(self.series_charge))} hours' + \
-            f', {self.shours}h storage'
+            f', {mwh.to_compact()} storage'
 
 
 class Geothermal(CSVTraceGenerator):

@@ -11,13 +11,13 @@
 """Supply side scenarios."""
 
 from nemo import configfile, regions
-from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, Biofuel,
-                             Black_Coal, CentralReceiver, Coal_CCS,
+from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
+                             Biofuel, Black_Coal, CentralReceiver, Coal_CCS,
                              DemandResponse, Hydro, PumpedHydroPump,
                              PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
-from nemo.storage import PumpedHydroStorage
+from nemo.storage import BatteryStorage, PumpedHydroStorage
 from nemo.types import UnreachableError
 
 
@@ -143,15 +143,6 @@ def re100(context):
     context.generators = result
 
 
-def re100_batteries(context):
-    """Use lots of renewables plus battery storage."""
-    re100(context)
-    # discharge between 6pm and 6am daily
-    hrs = list(range(0, 7)) + list(range(18, 24))
-    battery = Battery(WILDCARD, 0, 4, discharge_hours=hrs)
-    context.generators.insert(0, battery)
-
-
 def _one_per_poly(region):
     """Return three lists of wind, PV and CST generators, one per polygon."""
     pv = []
@@ -253,7 +244,6 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're100-qld': re100_qld,
                     're100-nsw': re100_nsw,
                     're100-sa': re100_south_aus,
-                    're100+batteries': re100_batteries,
                     're100+dsp': re100_dsp,
                     're100-nocst': re100_nocst,
                     'replacement': replacement}

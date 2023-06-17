@@ -28,6 +28,7 @@ class GenericStorage():
         The storage capacity (in MWh) is specified by maxstorage.
         """
         self.label = label
+        # initialise to silence pylint
         self.storage = 0
         self.set_storage(maxstorage)
 
@@ -42,8 +43,8 @@ class GenericStorage():
         >>> r.storage
         600.0
         """
+        self.storage = maxstorage / 2
         self.maxstorage = maxstorage
-        self.reset()
 
     def reset(self):
         """
@@ -97,6 +98,7 @@ class GenericStorage():
         assert amt >= 0
         delta = min(self.maxstorage - self.storage, amt)
         self.storage = min(self.maxstorage, self.storage + amt)
+        assert 0 <= self.storage <= self.maxstorage
         return delta
 
     def discharge(self, amt):
@@ -110,7 +112,12 @@ class GenericStorage():
         assert amt >= 0
         delta = min(self.storage, amt)
         self.storage = max(0, self.storage - amt)
+        assert 0 <= self.storage <= self.maxstorage
         return delta
+
+
+class BatteryStorage(GenericStorage):
+    """Battery storage."""
 
 
 class HydrogenStorage(GenericStorage):

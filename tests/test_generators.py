@@ -18,10 +18,12 @@ import tcpserver
 from nemo import costs, generators, storage
 
 PORT = 9998
+battery_storage = storage.BatteryStorage(400, "Li-ion store")
 hydrogen_storage = storage.HydrogenStorage(1000, "H2 store")
 pumped_storage = storage.PumpedHydroStorage(1000, "PSH store")
 
 dummy_arguments = {'axes': 0,
+                   'battery': battery_storage,
                    'build_limit': 1000,
                    'capacity': 100,
                    'capture': 0.85,
@@ -49,10 +51,11 @@ dummy_arguments = {'axes': 0,
 # are, however, tested below via Python introspection (and hence not
 # named explicitly in source code).
 
-classlist = [generators.Battery, generators.Behind_Meter_PV,
-             generators.Biofuel, generators.Biomass,
-             generators.Black_Coal, generators.Block, generators.CCGT,
-             generators.CCGT_CCS, generators.CCS, generators.CST,
+classlist = [generators.Battery, generators.BatteryLoad,
+             generators.Behind_Meter_PV, generators.Biofuel,
+             generators.Biomass, generators.Black_Coal,
+             generators.Block, generators.CCGT, generators.CCGT_CCS,
+             generators.CCS, generators.CST,
              generators.CSVTraceGenerator, generators.CentralReceiver,
              generators.Coal_CCS, generators.DemandResponse,
              generators.Diesel, generators.Electrolyser,
@@ -212,11 +215,6 @@ class TestGenerators(unittest.TestCase):
                 self.assertEqual(gen.shours, testvalue)
                 self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
                 self.assertEqual(gen.stored, 0.5 * gen.maxstorage)
-            elif isinstance(gen, generators.Battery):
-                testvalue = 4
-                gen.set_storage(testvalue)
-                self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
-                self.assertEqual(gen.stored, 0)
 
     def test_str(self):
         """Test __str__() method."""
