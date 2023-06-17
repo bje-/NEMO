@@ -11,13 +11,13 @@
 """Supply side scenarios."""
 
 from nemo import configfile, regions
-from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
-                             Biofuel, Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, PumpedHydroPump,
-                             PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
+from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Biofuel, Black_Coal,
+                             CentralReceiver, Coal_CCS, DemandResponse, Hydro,
+                             PumpedHydroPump, PumpedHydroTurbine, PV1Axis,
+                             Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
-from nemo.storage import BatteryStorage, PumpedHydroStorage
+from nemo.storage import PumpedHydroStorage
 from nemo.types import UnreachableError
 
 
