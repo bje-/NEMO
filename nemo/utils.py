@@ -182,13 +182,15 @@ def _figure(context, spills, showlegend, xlim):
 def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     """Produce a pretty plot of supply and demand."""
     if xlim is None:
+        starttime = context.demand.index[0]
         ninety_days = 24 * 90
         if context.timesteps() > ninety_days:
-            starttime = context.demand.index[0]
             endtime = starttime + timedelta(days=90)
+        else:
+            endtime = context.demand.index[-1]
             timerange = (starttime, endtime)
     else:
-        timerange = None
+        timerange = xlim
 
     _figure(context, spills, showlegend, timerange)
     if not filename:
