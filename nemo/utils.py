@@ -188,7 +188,7 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
             endtime = starttime + timedelta(days=90)
         else:
             endtime = context.demand.index[-1]
-            timerange = (starttime, endtime)
+        timerange = (starttime, endtime)
     else:
         timerange = xlim
 
