@@ -68,7 +68,7 @@ class Generator():
         return polygons.region(self.polygon)
 
     def capcost(self, costs):
-        """Return the annual capital cost."""
+        """Return the capital cost."""
         return costs.capcost_per_kw[type(self)] * self.capacity * 1000
 
     def opcost(self, costs):
@@ -528,7 +528,7 @@ class Biofuel(Fuelled):
         Fuelled.__init__(self, polygon, capacity, label)
 
     def capcost(self, costs):
-        """Return the annual capital cost (of an OCGT)."""
+        """Return the capital cost (of an OCGT)."""
         return costs.capcost_per_kw[OCGT] * self.capacity * 1000
 
     def fixed_om_costs(self, costs):
@@ -776,7 +776,7 @@ class BatteryLoad(Generator):
 
     # Battery costs are all calculated on the storage side.
     def capcost(self, costs):
-        """Return the annual capital cost."""
+        """Return the capital cost."""
         return 0
 
     def fixed_om_costs(self, costs):
@@ -849,7 +849,7 @@ class Battery(Storage, Generator):
         self.battery.reset()
 
     def capcost(self, costs):
-        """Return the annual capital cost."""
+        """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
         shours = self.battery.maxstorage / self.capacity
         assert shours in [1, 2, 4, 8]
@@ -1061,7 +1061,7 @@ class HydrogenGT(Fuelled):
         return power, 0
 
     def capcost(self, costs):
-        """Return the annual capital cost (of an OCGT)."""
+        """Return the capital cost (of an OCGT)."""
         return costs.capcost_per_kw[OCGT] * self.capacity * 1000
 
     def fixed_om_costs(self, costs):
