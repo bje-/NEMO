@@ -97,14 +97,16 @@ class TestPumpedHydro(unittest.TestCase):
         """Test soc() method."""
         self.assertEqual(self.pump.soc(), 0.5)
 
-    def test_series(self):
-        """Test series() method."""
+    def test_series_pump(self):
+        """Test series() method for the pump."""
         series = self.pump.series()
         keys = series.keys()
         self.assertEqual(len(keys), 4)
         # use a set comparison
         self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
 
+    def test_series_turbine(self):
+        """Test series() method for the turbine."""
         series = self.turbine.series()
         keys = series.keys()
         self.assertEqual(len(keys), 2)
@@ -232,23 +234,30 @@ class TestBattery(unittest.TestCase):
 
     def test_initialisation(self):
         """Test Battery constructor."""
-        batt = generators.Battery(WILDCARD, 400, self.stor, rte=1)
+        batt = generators.BatteryLoad(WILDCARD, 400, self.stor)
         self.assertEqual(self.stor.maxstorage, 800)
         self.assertEqual(batt.discharge_hours, range(18, 24))
         self.assertTrue(batt.battery.empty_p())
         self.assertFalse(batt.battery.full_p())
         self.assertTrue(batt.storage_p)
-        self.assertEqual(batt.rte, 1)
+        self.assertEqual(batt.rte, 0.95)
         self.assertEqual(len(batt.series_charge), 0)
 
-    def test_series(self):
+    def test_series_batteryload(self):
         """Test series() method."""
-        batt = generators.Battery(WILDCARD, 400, self.stor)
-        series = batt.series()
-        keys = series.keys()
+        batt = generators.BatteryLoad(WILDCARD, 400, self.stor)
+        keys = batt.series().keys()
         self.assertEqual(len(keys), 4)
         # use a set comparison
         self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
+
+    def test_series_battery(self):
+        """Test series() method."""
+        batt = generators.Battery(WILDCARD, 400, self.stor)
+        keys = batt.series().keys()
+        self.assertEqual(len(keys), 2)
+        # use a set comparison
+        self.assertLessEqual({'power', 'spilled'}, keys)
 
     def test_soc(self):
         """Test soc() method in Battery and BatteryLoad."""
@@ -261,13 +270,13 @@ class TestBattery(unittest.TestCase):
 
     def test_empty_p(self):
         """Test the empty_p() method."""
-        batt = generators.Battery(WILDCARD, 800, self.stor, rte=1)
+        batt = generators.BatteryLoad(WILDCARD, 800, self.stor, rte=1)
         self.assertEqual(batt.battery.storage, 0)
         self.assertTrue(batt.battery.empty_p())
 
     def test_full_p(self):
         """Test the full_p() method."""
-        batt = generators.Battery(WILDCARD, 800, self.stor, rte=1)
+        batt = generators.BatteryLoad(WILDCARD, 800, self.stor, rte=1)
         self.assertFalse(batt.battery.full_p())
         self.stor.storage = 800
         self.assertTrue(batt.battery.full_p())
@@ -277,8 +286,8 @@ class TestBattery(unittest.TestCase):
         # Test discontiguous hour range
         hrs = [0, 1] + list(range(18, 24))
         self.stor = storage.BatteryStorage(400 * 8)
-        batt = generators.BatteryLoad(WILDCARD, 400, self.stor,
-                                      discharge_hours=hrs)
+        batt = generators.Battery(WILDCARD, 400, self.stor,
+                                  discharge_hours=hrs)
         self.stor.storage = 400
         for hour in range(24):
             result = batt.step(hour, demand=50)
@@ -291,31 +300,33 @@ class TestBattery(unittest.TestCase):
         """Test (normal) charging inside and outside of discharge hours."""
         # Test discontiguous hour range
         hrs = [0, 1] + list(range(18, 24))
-        batt = generators.Battery(WILDCARD, 400, self.stor,
-                                  discharge_hours=hrs, rte=1)
+        rte = 0.95
+        batt = generators.BatteryLoad(WILDCARD, 400, self.stor,
+                                      discharge_hours=hrs, rte=rte)
         for hour in range(24):
             result = batt.store(hour=hour, power=50)
             # 0 if no charging permitted, 50 otherwise
             self.assertEqual(result, 0 if hour in hrs else 50)
         nhours = 24 - len(hrs)
-        self.assertEqual(self.stor.storage, 50 * nhours)
+        self.assertEqual(self.stor.storage, 50 * nhours * rte)
         self.assertEqual(sum(batt.series_charge.values()), 50 * nhours)
 
     def test_charge_multiple(self):
         """Test multiple calls to store()."""
-        batt = generators.Battery(WILDCARD, 125, self.stor,
-                                  discharge_hours=[], rte=1)
-        result = batt.store(hour=12, power=100)
+        self.stor = storage.BatteryStorage(125 * 4)
+        batt = generators.BatteryLoad(WILDCARD, 125, self.stor,
+                                      discharge_hours=[], rte=1)
+        result = batt.store(12, 100)
         self.assertEqual(result, 100)
-        result = batt.store(hour=12, power=100)
+        result = batt.store(12, 100)
         self.assertEqual(result, 25)
-        result = batt.store(hour=12, power=100)
+        result = batt.store(12, 100)
         self.assertEqual(result, 0)
-        self.assertEqual(self.stor.storage, 125)
+        self.assertEqual(self.stor.storage, 250 + 125)
 
     def test_to_full(self):
         """Test charging to full."""
-        batt = generators.Battery(WILDCARD, 400, self.stor, rte=1)
+        batt = generators.BatteryLoad(WILDCARD, 400, self.stor, rte=1)
         self.stor.storage = 700
         result = batt.store(hour=0, power=200)
         self.assertEqual(result, 100)
@@ -324,16 +335,12 @@ class TestBattery(unittest.TestCase):
     def test_zero_power(self):
         """Test a battery with zero capacity."""
         zerostor = storage.BatteryStorage(0)
-        batt = generators.Battery(WILDCARD, 400, zerostor, rte=1)
-        result = batt.store(hour=0, power=400)
-        self.assertEqual(result, 0)
-        result = batt.step(hour=0, demand=400)
-        self.assertEqual(result, (0, 0))
-        self.assertEqual(len(batt.series_charge), 0)
+        with self.assertRaises(AssertionError):
+            generators.BatteryLoad(WILDCARD, 400, zerostor, rte=1)
 
     def test_reset(self):
         """Test battery reset() method."""
-        batt = generators.Battery(WILDCARD, 400, self.stor, rte=1)
+        batt = generators.BatteryLoad(WILDCARD, 400, self.stor, rte=1)
         batt.series_power = {0: 200}
         batt.series_charge = {0: 150}
         batt.reset()
@@ -342,7 +349,7 @@ class TestBattery(unittest.TestCase):
 
     def test_round_trip_efficiency(self):
         """Test a battery with 50% round trip efficiency."""
-        batt = generators.Battery(WILDCARD, 100, self.stor, rte=0.5)
+        batt = generators.BatteryLoad(WILDCARD, 100, self.stor, rte=0.5)
         self.assertEqual(self.stor.storage, 0)
         result = batt.store(hour=0, power=100)
         self.assertEqual(result, 100)

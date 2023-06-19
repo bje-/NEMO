@@ -143,6 +143,9 @@ class Generator():
         return self.__str__()
 
 
+# This class is not to be confused with storage.py.
+# This class will go away soon.
+
 class Storage():
     """A class to give a generator storage capability."""
 
@@ -725,73 +728,10 @@ class Diesel(Fossil):
         return total_opcost
 
 
-class BatteryLoad(Generator):
+class BatteryLoad(Storage, Generator):
     """Battery storage (load side)."""
 
-    patch = Patch(facecolor='#00a2fa')
-    """Colour for plotting"""
-    synchronous_p = False
-    """Is this a synchronous generator?"""
-
-    def __init__(self, polygon, capacity, battery, label=None,
-                 discharge_hours=None):
-        """
-        Construct a battery generator.
-
-        Storage (shours) is specified in duration hours at full power.
-        Discharge hours is a list of hours when discharging can occur.
-        """
-        Generator.__init__(self, polygon, capacity, label)
-        self.battery = battery
-        shours = battery.maxstorage / capacity
-        assert shours in [1, 2, 4, 8]
-        self.discharge_hours = discharge_hours \
-            if discharge_hours is not None else range(18, 24)
-        self.runhours = 0
-
-    def soc(self):
-        """Return the battery SOC (state of charge)."""
-        return self.battery.soc()
-
-    def step(self, hour, demand):
-        """Specialised step method for batteries."""
-        if self.battery.empty_p() or \
-           hour % 24 not in self.discharge_hours:
-            self.series_power[hour] = 0
-            self.series_spilled[hour] = 0
-            return 0, 0
-
-        power = min(self.battery.storage, self.capacity, demand)
-        self.battery.discharge(power)
-        self.series_power[hour] = power
-        self.series_spilled[hour] = 0
-        if power > 0:
-            self.runhours += 1
-        return power, 0
-
-    def summary(self, context):
-        """Return a summary of the generator activity."""
-        return Generator.summary(self, context) + \
-            f', ran {thousands(self.runhours)} hours'
-
-    # Battery costs are all calculated on the storage side.
-    def capcost(self, costs):
-        """Return the capital cost."""
-        return 0
-
-    def fixed_om_costs(self, costs):
-        """Return the fixed O&M costs."""
-        return 0
-
-    def opcost_per_mwh(self, costs):
-        """Return the variable O&M costs."""
-        return 0
-
-
-class Battery(Storage, Generator):
-    """Battery storage (of any type)."""
-
-    patch = Patch(facecolor='#00a2fa')
+    patch = Patch(facecolor='#b2daef')
     """Colour for plotting"""
     synchronous_p = False
     """Is this a synchronous generator?"""
@@ -799,33 +739,26 @@ class Battery(Storage, Generator):
     def __init__(self, polygon, capacity, battery, label=None,
                  discharge_hours=None, rte=0.95):
         """
-        Construct a battery generator.
+        Construct a battery load (battery charging).
 
-        Storage (shours) is specified in duration hours at full power.
-        Discharge hours is a list of hours when discharging can occur.
-        Round-trip efficiency (rte) defaults to 95% for good Li-ion.
+        battery must be an instance of storage.BatteryStorage.
+        discharge_hours is a list of hours when discharging can occur
+          (or, rather, when charging cannot occur).
         """
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
+        if not isinstance(battery, storage.BatteryStorage):
+            raise TypeError
         self.battery = battery
+        self.rte = rte
+        shours = battery.maxstorage / capacity
+        assert shours in [1, 2, 4, 8]
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
-        self.rte = rte
 
     def step(self, hour, demand):
         """Return 0 as this is not a generator."""
         return 0, 0
-
-    def soc(self):
-        """Return the battery SOC (state of charge)."""
-        return self.battery.soc()
-
-    def series(self):
-        """Return the combined series."""
-        dict1 = Generator.series(self)
-        dict2 = Storage.series(self)
-        # combine dictionaries
-        return {**dict1, **dict2}
 
     def store(self, hour, power):
         """Store power."""
@@ -848,6 +781,85 @@ class Battery(Storage, Generator):
         Storage.reset(self)
         self.battery.reset()
 
+    def series(self):
+        """Return the combined series."""
+        dict1 = Generator.series(self)
+        dict2 = Storage.series(self)
+        # combine dictionaries
+        return {**dict1, **dict2}
+
+    def soc(self):
+        """Return the battery SOC (state of charge)."""
+        return self.battery.soc()
+
+    # Battery costs are all calculated on the discharge side.
+    def capcost(self, costs):
+        """Return the capital cost."""
+        return 0
+
+    def fixed_om_costs(self, costs):
+        """Return the fixed O&M costs."""
+        return 0
+
+    def opcost_per_mwh(self, costs):
+        """Return the variable O&M costs."""
+        return 0
+
+    def summary(self, context):
+        """Return a summary of the generator activity."""
+        mwh = self.battery.maxstorage * ureg.MWh
+        return Generator.summary(self, context) + \
+            f', charged {thousands(len(self.series_charge))} hours' + \
+            f', {mwh.to_compact()} storage'
+
+
+class Battery(Generator):
+    """Battery storage (of any type)."""
+
+    patch = Patch(facecolor='#00a2fa')
+    """Colour for plotting"""
+
+    def __init__(self, polygon, capacity, battery, label=None,
+                 discharge_hours=None):
+        """
+        Construct a battery generator.
+
+        battery must be an instance of storage.BatteryStorage.
+        discharge_hours is a list of hours when discharging can occur.
+        """
+        if not isinstance(battery, storage.BatteryStorage):
+            raise TypeError
+        Generator.__init__(self, polygon, capacity, label)
+        self.battery = battery
+        self.runhours = 0
+        self.discharge_hours = discharge_hours \
+            if discharge_hours is not None else range(18, 24)
+
+    def step(self, hour, demand):
+        """Specialised step method for batteries."""
+        if self.battery.empty_p() or \
+           hour % 24 not in self.discharge_hours:
+            self.series_power[hour] = 0
+            self.series_spilled[hour] = 0
+            return 0, 0
+
+        power = min(self.battery.storage, self.capacity, demand)
+        self.battery.discharge(power)
+        self.series_power[hour] = power
+        self.series_spilled[hour] = 0
+        if power > 0:
+            self.runhours += 1
+        return power, 0
+
+    def reset(self):
+        """Reset the generator."""
+        Generator.reset(self)
+        self.battery.reset()
+
+    def soc(self):
+        """Return the battery SOC (state of charge)."""
+        return self.battery.soc()
+
     def capcost(self, costs):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
@@ -861,7 +873,8 @@ class Battery(Storage, Generator):
         return 0
 
     def opcost_per_mwh(self, costs):
-        """Return the variable O&M costs.
+        """
+        Return the variable O&M costs.
 
         Per-kWh costs for batteries are included in the capital cost.
         """
@@ -869,10 +882,8 @@ class Battery(Storage, Generator):
 
     def summary(self, context):
         """Return a summary of the generator activity."""
-        mwh = self.battery.maxstorage * ureg.MWh
         return Generator.summary(self, context) + \
-            f', charged {thousands(len(self.series_charge))} hours' + \
-            f', {mwh.to_compact()} storage'
+            f', ran {thousands(self.runhours)} hours'
 
 
 class Geothermal(CSVTraceGenerator):
