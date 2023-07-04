@@ -15,7 +15,7 @@ COVRUN=coverage run -a --source=. --omit=setup.py
 envset:
 	test -n "$$VIRTUAL_ENV" || (echo "Python env is not activated" && false)
 
-check:  envset flake8
+check:  envset flake8 ruff
 	PYTHONOPTIMIZE=0 pytest --cov=awklite --cov nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
@@ -72,15 +72,18 @@ prof: nemo.prof
 lineprof: stub.py
 	kernprof -v -l stub.py
 
-flake8: envset
-	flake8 evolve replay summary awklite nemo tests --ignore=N801
-
 LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
+
+flake8: envset
+	flake8 $(LINTSRC) --ignore=N801
+
+ruff:	envset
+	ruff check $(LINTSRC)
 
 pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
 
-lint:	envset flake8 pylint
+lint:	envset flake8 ruff pylint
 	codespell -d -L fom,hsa,trough $(LINTSRC) || true
 	isort --check $(LINTSRC)
 	pylama $(LINTSRC)
