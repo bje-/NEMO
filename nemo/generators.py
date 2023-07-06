@@ -450,7 +450,8 @@ class PumpedHydroPump(Storage, Generator):
         """Return the combined series."""
         dict1 = Hydro.series(self)
         dict2 = Storage.series(self)
-        return dict1 | dict2
+        # combine dictionaries
+        return {**dict1, **dict2}
 
     def soc(self):
         """Return the pumped hydro SOC (state of charge)."""
@@ -784,7 +785,8 @@ class BatteryLoad(Storage, Generator):
         """Return the combined series."""
         dict1 = Generator.series(self)
         dict2 = Storage.series(self)
-        return dict1 | dict2
+        # combine dictionaries
+        return {**dict1, **dict2}
 
     def soc(self):
         """Return the battery SOC (state of charge)."""
@@ -1012,7 +1014,8 @@ class Electrolyser(Storage, Generator):
         """Return the combined series."""
         dict1 = Generator.series(self)
         dict2 = Storage.series(self)
-        return dict1 | dict2
+        # combine dictionaries
+        return {**dict1, **dict2}
 
     def step(self, hour, demand):
         """Return 0 as this is not a generator."""
