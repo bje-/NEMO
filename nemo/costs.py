@@ -49,7 +49,41 @@ class NullCosts():
         self.carbon = 0
 
 
-class APGTR2015():
+class Common():
+    """Costs common to all cost classes (eg, existing hydro)."""
+
+    def __init__(self):
+        """
+        Iniitialise common costs.
+
+        Derived costs can call update() on these dicts.
+        """
+        # Common capital costs
+        self.capcost_per_kw = {
+            tech.DemandResponse: 0,
+            tech.Diesel: 0,
+            tech.Hydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0}
+
+        # Variable O&M (VOM) costs
+        self.opcost_per_mwh = {
+            # a reasonable estimate of diesel VOM
+            tech.Diesel: 8,
+            tech.Hydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0}
+
+        # Fixed O&M (FOM) costs
+        self.fixed_om_costs = {
+            tech.DemandResponse: 0,
+            tech.Diesel: 0,
+            tech.Hydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0}
+
+
+class APGTR2015(Common):
     """Australian Power Generation Technology Report costs in 2015.
 
     Source: CO2CRC Australian Power Generation Technology Report (2015)
@@ -60,6 +94,7 @@ class APGTR2015():
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
+        Common.__init__(self)
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
@@ -69,42 +104,25 @@ class APGTR2015():
         self.diesel_price_per_litre = 1.50
         self.annuityf = annuity_factor(self.lifetime, discount)
 
-        # Common capital costs
-        self.capcost_per_kw = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Diesel: 0,
-            tech.DemandResponse: 0}
-
         # Variable O&M (VOM) costs
-        self.opcost_per_mwh = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Diesel: 0,
+        self.opcost_per_mwh.update({
             tech.Wind: 0,
             tech.CentralReceiver: 4,
             tech.PV: 0,
             tech.PV1Axis: 0,
             tech.CCGT: 1.5,
             tech.OCGT: 12,
-            tech.Black_Coal: 2.5}
+            tech.Black_Coal: 2.5})
 
         # Fixed O&M (FOM) costs
-        self.fixed_om_costs = {
-            tech.DemandResponse: 0,
-            tech.Diesel: 0,
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
+        self.fixed_om_costs.update({
             tech.Wind: 55,
             tech.CentralReceiver: 65,
             tech.PV: 30,
             tech.PV1Axis: 35,
             tech.CCGT: 20,
             tech.OCGT: 8,
-            tech.Black_Coal: 45}
+            tech.Black_Coal: 45})
 
         table = self.capcost_per_kw
         table[tech.Wind] = 2450
@@ -138,7 +156,7 @@ class APGTR2030(APGTR2015):
         table[tech.Black_Coal] *= 0.9
 
 
-class AETA2012_2030():
+class AETA2012_2030(Common):
     """Australian Energy Technology Assessment (2012) costs for 2030.
 
     Source: BREE AETA report (2012), bree.gov.au
@@ -149,6 +167,7 @@ class AETA2012_2030():
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
+        Common.__init__(self)
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
@@ -158,20 +177,8 @@ class AETA2012_2030():
         self.diesel_price_per_litre = 1.50
         self.annuityf = annuity_factor(self.lifetime, discount)
 
-        # Common capital costs
-        self.capcost_per_kw = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Diesel: 0,
-            tech.DemandResponse: 0}
-
         # Variable O&M (VOM) costs
-        self.opcost_per_mwh = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Diesel: 0,
+        self.opcost_per_mwh.update({
             tech.Wind: 12 * self.escalation,
             tech.CentralReceiver: 15 * self.escalation,
             tech.ParabolicTrough: 20 * self.escalation,
@@ -183,15 +190,10 @@ class AETA2012_2030():
             tech.Coal_CCS: 15 * self.escalation,
             tech.Black_Coal: 7 * self.escalation,
             tech.Geothermal_HSA: 0,
-            tech.Geothermal_EGS: 0}
+            tech.Geothermal_EGS: 0})
 
         # Fixed O&M (FOM) costs
-        self.fixed_om_costs = {
-            tech.DemandResponse: 0,
-            tech.Diesel: 0,
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
+        self.fixed_om_costs.update({
             tech.Wind: 40 * self.escalation,
             tech.CentralReceiver: 60 * self.escalation,
             tech.ParabolicTrough: 65 * self.escalation,
@@ -203,7 +205,7 @@ class AETA2012_2030():
             tech.Coal_CCS: 73.2 * self.escalation,
             tech.Black_Coal: 50.5 * self.escalation,
             tech.Geothermal_HSA: 200 * self.escalation,
-            tech.Geothermal_EGS: 170 * self.escalation}
+            tech.Geothermal_EGS: 170 * self.escalation})
 
 
 class AETA2012_2030Low(AETA2012_2030):
@@ -359,7 +361,7 @@ class CEEM2016_2030(AETA2012_2030Mid):
         self.capcost_per_kw[tech.PV1Axis] = 1255
 
 
-class GenCost2021:
+class GenCost2021(Common):
     """GenCost 2020-21 costs.
 
     Source:
@@ -371,6 +373,7 @@ class GenCost2021:
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
+        Common.__init__(self)
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
@@ -383,44 +386,27 @@ class GenCost2021:
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
         # so we can set them once here.
-        self.fixed_om_costs = {
+        self.fixed_om_costs.update({
             tech.Black_Coal: 53.2,
             tech.CCGT: 10.9,
             tech.CCGT_CCS: 16.4,
             tech.CentralReceiver: 142.5,
             tech.Coal_CCS: 77.8,
-            tech.Hydro: 0,
             tech.OCGT: 10.2,
             tech.PV1Axis: 17.0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Wind: 25.0,
-            tech.DemandResponse: 0
-        }
+            tech.Wind: 25.0})
 
         # Variable O&M (VOM) costs
         # Likewise, these are the same for all years (2030, 2040, 2050).
-        self.opcost_per_mwh = {
+        self.opcost_per_mwh.update({
             tech.Black_Coal: 4.2,
             tech.CCGT: 3.7,
             tech.CCGT_CCS: 7.2,
             tech.CentralReceiver: 0,
             tech.Coal_CCS: 8.0,
-            tech.Hydro: 0,
             tech.OCGT: 2.4,
             tech.PV1Axis: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.Wind: 0
-        }
-
-        # Common capital costs
-        self.capcost_per_kw = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.DemandResponse: 0
-        }
+            tech.Wind: 0})
 
 
 class GenCost2021_2020(GenCost2021):
@@ -542,7 +528,7 @@ class GenCost2021_2050High(GenCost2021):
         table[tech.Wind] = 1830
 
 
-class GenCost2022:
+class GenCost2022(Common):
     """GenCost 2021-22 costs.
 
     Source:
@@ -554,6 +540,7 @@ class GenCost2022:
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
+        Common.__init__(self)
         self.discount_rate = discount
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
@@ -566,46 +553,29 @@ class GenCost2022:
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
         # so we can set them once here.
-        self.fixed_om_costs = {
+        self.fixed_om_costs.update({
             tech.Black_Coal: 53.2,
             tech.CCGT: 10.9,
             tech.CCGT_CCS: 16.4,
             tech.CentralReceiver: 120.0,
             tech.Coal_CCS: 77.8,
-            tech.Hydro: 0,
             tech.OCGT: 10.2,
             tech.PV1Axis: 17.0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
             tech.Wind: 25.0,
-            tech.WindOffshore: 149.9,
-            tech.DemandResponse: 0
-        }
+            tech.WindOffshore: 149.9})
 
         # Variable O&M (VOM) costs
         # Likewise, these are the same for all years (2030, 2040, 2050).
-        self.opcost_per_mwh = {
+        self.opcost_per_mwh.update({
             tech.Black_Coal: 4.2,
             tech.CCGT: 3.7,
             tech.CCGT_CCS: 7.2,
             tech.CentralReceiver: 0,
             tech.Coal_CCS: 8.0,
-            tech.Hydro: 0,
             tech.OCGT: 7.3,
             tech.PV1Axis: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
             tech.Wind: 0,
-            tech.WindOffshore: 0
-        }
-
-        # Common capital costs
-        self.capcost_per_kw = {
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-            tech.DemandResponse: 0
-        }
+            tech.WindOffshore: 0})
 
         # Storage is expressed on a total cost basis (GenCost 2022, p. 18)
         # Figures are entered in the classes in $/kWh, but these are
