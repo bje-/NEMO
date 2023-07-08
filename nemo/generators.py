@@ -21,7 +21,7 @@ import requests
 from matplotlib.patches import Patch
 
 from nemo import polygons, storage
-from nemo.utils import Dict, currency, thousands, ureg
+from nemo.utils import currency, thousands, ureg
 
 
 class Generator():
@@ -448,9 +448,10 @@ class PumpedHydroPump(Storage, Generator):
 
     def series(self):
         """Return the combined series."""
-        dict1 = Dict(Hydro.series(self))
-        dict2 = Dict(Storage.series(self))
-        return dict1.union(dict2)
+        dict1 = Hydro.series(self)
+        dict2 = Storage.series(self)
+        dict1.update(dict2)
+        return dict1
 
     def soc(self):
         """Return the pumped hydro SOC (state of charge)."""
@@ -782,9 +783,10 @@ class BatteryLoad(Storage, Generator):
 
     def series(self):
         """Return the combined series."""
-        dict1 = Dict(Generator.series(self))
-        dict2 = Dict(Storage.series(self))
-        return dict1.union(dict2)
+        dict1 = Generator.series(self)
+        dict2 = Storage.series(self)
+        dict1.update(dict2)
+        return dict1
 
     def soc(self):
         """Return the battery SOC (state of charge)."""
@@ -1010,9 +1012,10 @@ class Electrolyser(Storage, Generator):
 
     def series(self):
         """Return the combined series."""
-        dict1 = Dict(Generator.series(self))
-        dict2 = Dict(Storage.series(self))
-        return dict1.union(dict2)
+        dict1 = Generator.series(self)
+        dict2 = Storage.series(self)
+        dict1.update(dict2)
+        return dict1
 
     def step(self, hour, demand):
         """Return 0 as this is not a generator."""

@@ -42,23 +42,6 @@ MAX_PLOT_GENERATORS = 50
 register_matplotlib_converters()
 
 
-class Dict(dict):
-    """
-    A dictionary that supports a union operation.
-
-    Once Python 3.8 reaches end of life, we can get rid of this.
-
-    >>> d1 = Dict({1: 10})
-    >>> d2 = Dict({2: 20})
-    >>> d1.union(d2)
-    {1: 10, 2: 20}
-    """
-
-    def union(self, other):
-        """Merge the self and other dictionaries."""
-        return {**self, **other}
-
-
 def thousands(value):
     """
     Format a value with thousands separator(s).
