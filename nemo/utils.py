@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Ben Elliston
+# Copyright (C) 2017, 2023 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -40,6 +40,23 @@ MAX_PLOT_GENERATORS = 50
 # Future versions of pandas will require us to explicitly register
 # matplotlib converters, so do it here now.
 register_matplotlib_converters()
+
+
+class Dict(dict):
+    """
+    A dictionary that supports a union operation.
+
+    Once Python 3.8 reaches end of life, we can get rid of this.
+
+    >>> d1 = Dict({1: 10})
+    >>> d2 = Dict({2: 20})
+    >>> d1.union(d2)
+    {1: 10, 2: 20}
+    """
+
+    def union(self, other):
+        """Merge the self and other dictionaries."""
+        return {**self, **other}
 
 
 def thousands(value):
