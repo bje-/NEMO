@@ -89,8 +89,7 @@ class APGTR2015(Common):
     Source: CO2CRC Australian Power Generation Technology Report (2015)
     """
 
-    lifetime = 30
-    escalation = 1.0
+    LIFETIME = 30
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
@@ -102,7 +101,7 @@ class APGTR2015(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.lifetime, discount)
+        self.annuityf = annuity_factor(self.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
@@ -162,8 +161,8 @@ class AETA2012_2030(Common):
     Source: BREE AETA report (2012), bree.gov.au
     """
 
-    lifetime = 30
-    escalation = 1.171
+    LIFETIME = 30
+    ESCALATION = 1.171
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
@@ -175,37 +174,37 @@ class AETA2012_2030(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.lifetime, discount)
+        self.annuityf = annuity_factor(self.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
-            tech.Wind: 12 * self.escalation,
-            tech.CentralReceiver: 15 * self.escalation,
-            tech.ParabolicTrough: 20 * self.escalation,
+            tech.Wind: 12 * self.ESCALATION,
+            tech.CentralReceiver: 15 * self.ESCALATION,
+            tech.ParabolicTrough: 20 * self.ESCALATION,
             tech.PV: 0,
             tech.PV1Axis: 0,
-            tech.CCGT: 4 * self.escalation,
-            tech.OCGT: 10 * self.escalation,
-            tech.CCGT_CCS: 9 * self.escalation,
-            tech.Coal_CCS: 15 * self.escalation,
-            tech.Black_Coal: 7 * self.escalation,
+            tech.CCGT: 4 * self.ESCALATION,
+            tech.OCGT: 10 * self.ESCALATION,
+            tech.CCGT_CCS: 9 * self.ESCALATION,
+            tech.Coal_CCS: 15 * self.ESCALATION,
+            tech.Black_Coal: 7 * self.ESCALATION,
             tech.Geothermal_HSA: 0,
             tech.Geothermal_EGS: 0})
 
         # Fixed O&M (FOM) costs
         self.fixed_om_costs.update({
-            tech.Wind: 40 * self.escalation,
-            tech.CentralReceiver: 60 * self.escalation,
-            tech.ParabolicTrough: 65 * self.escalation,
-            tech.PV: 25 * self.escalation,
-            tech.PV1Axis: 38 * self.escalation,
-            tech.CCGT: 10 * self.escalation,
-            tech.OCGT: 4 * self.escalation,
-            tech.CCGT_CCS: 17 * self.escalation,
-            tech.Coal_CCS: 73.2 * self.escalation,
-            tech.Black_Coal: 50.5 * self.escalation,
-            tech.Geothermal_HSA: 200 * self.escalation,
-            tech.Geothermal_EGS: 170 * self.escalation})
+            tech.Wind: 40 * self.ESCALATION,
+            tech.CentralReceiver: 60 * self.ESCALATION,
+            tech.ParabolicTrough: 65 * self.ESCALATION,
+            tech.PV: 25 * self.ESCALATION,
+            tech.PV1Axis: 38 * self.ESCALATION,
+            tech.CCGT: 10 * self.ESCALATION,
+            tech.OCGT: 4 * self.ESCALATION,
+            tech.CCGT_CCS: 17 * self.ESCALATION,
+            tech.Coal_CCS: 73.2 * self.ESCALATION,
+            tech.Black_Coal: 50.5 * self.ESCALATION,
+            tech.Geothermal_HSA: 200 * self.ESCALATION,
+            tech.Geothermal_EGS: 170 * self.ESCALATION})
 
 
 class AETA2012_2030Low(AETA2012_2030):
@@ -287,14 +286,14 @@ class AETA2013_2030Low(AETA2012_2030Low):
 
         # Override a few O&M costs.
         fom = self.fixed_om_costs
-        fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.PV1Axis] = 30 * self.escalation
-        fom[tech.CentralReceiver] = 71.312 * self.escalation
-        fom[tech.ParabolicTrough] = 72.381 * self.escalation
+        fom[tech.Wind] = 32.5 * self.ESCALATION
+        fom[tech.PV1Axis] = 30 * self.ESCALATION
+        fom[tech.CentralReceiver] = 71.312 * self.ESCALATION
+        fom[tech.ParabolicTrough] = 72.381 * self.ESCALATION
         vom = self.opcost_per_mwh
-        vom[tech.Wind] = 10 * self.escalation
-        vom[tech.CentralReceiver] = 5.65 * self.escalation
-        vom[tech.ParabolicTrough] = 11.39 * self.escalation
+        vom[tech.Wind] = 10 * self.ESCALATION
+        vom[tech.CentralReceiver] = 5.65 * self.ESCALATION
+        vom[tech.ParabolicTrough] = 11.39 * self.ESCALATION
 
 
 class AETA2013_2030High(AETA2012_2030High):
@@ -307,14 +306,14 @@ class AETA2013_2030High(AETA2012_2030High):
 
         # Override a few O&M costs.
         fom = self.fixed_om_costs
-        fom[tech.Wind] = 32.5 * self.escalation
-        fom[tech.PV1Axis] = 30 * self.escalation
-        fom[tech.CentralReceiver] = 71.312 * self.escalation
-        fom[tech.ParabolicTrough] = 72.381 * self.escalation
+        fom[tech.Wind] = 32.5 * self.ESCALATION
+        fom[tech.PV1Axis] = 30 * self.ESCALATION
+        fom[tech.CentralReceiver] = 71.312 * self.ESCALATION
+        fom[tech.ParabolicTrough] = 72.381 * self.ESCALATION
         vom = self.opcost_per_mwh
-        vom[tech.Wind] = 10 * self.escalation
-        vom[tech.CentralReceiver] = 5.65 * self.escalation
-        vom[tech.ParabolicTrough] = 11.39 * self.escalation
+        vom[tech.Wind] = 10 * self.ESCALATION
+        vom[tech.CentralReceiver] = 5.65 * self.ESCALATION
+        vom[tech.ParabolicTrough] = 11.39 * self.ESCALATION
 
 
 class AETA2013_2030Mid(AETA2012_2030):
@@ -369,7 +368,7 @@ class GenCost2021(Common):
     https://data.csiro.au/collections/collection/CIcsiro:44228
     """
 
-    lifetime = 30
+    LIFETIME = 30
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
@@ -381,7 +380,7 @@ class GenCost2021(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.lifetime, discount)
+        self.annuityf = annuity_factor(self.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -536,7 +535,7 @@ class GenCost2022(Common):
     https://data.csiro.au/collections/collection/CIcsiro:44228
     """
 
-    lifetime = 30
+    LIFETIME = 30
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
@@ -548,7 +547,7 @@ class GenCost2022(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.lifetime, discount)
+        self.annuityf = annuity_factor(self.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
