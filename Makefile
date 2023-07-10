@@ -29,8 +29,7 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve -v --lambda 2 -g1 -s __one_ccgt__ \
 		--trace-file=trace.out --emissions-limit=0 \
 		--fossil-limit=0.1 --reserves=1000 \
-		--reliability-std=0.002 --min-regional-generation=0.5 \
-		-d scale:10 -d scaletwh:100 -d scalex:0:6:10 > /dev/null
+		--reliability-std=0.002 --min-regional-generation=0.5 > /dev/null
 	test -f trace.out && rm trace.out
 	$(COVRUN) replay -f replay.json -v -v > /dev/null
 	$(COVRUN) replay -f replay-noscenario.json -v > /dev/null || true
@@ -50,7 +49,7 @@ replay.json:
 	printf "# %s\n%s\n\n" "comment line" "malformed line" >> $@
 	printf '{"options": {"carbon_price": 0, "ccs_storage_costs": 27, "gas_price": 11,' >> $@
 	printf ' "coal_price": 2, "costs": "Null", "discount_rate": 0.05, "supply_scenario": "__one_ccgt__",' >> $@
-	printf ' "nsp_limit": 0.75, "demand_modifier": ["unchanged"]}, "parameters": [1]}\n' >> $@
+	printf ' "nsp_limit": 0.75, "parameters": [1]}\n' >> $@
 
 replay-noscenario.json: replay.json
 	sed 's/__one_ccgt__/noexist/' < $< > $@
