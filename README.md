@@ -22,8 +22,8 @@ pip install nemopt
 
 For a set of given (or default) generation or demand traces, users can:
 
-1. Specify & simulate a custom resource mix, or;
-2. "Evolve" a resource mix using pre-configured scenarios, or configure their own scenario
+	1. Specify & simulate a custom resource mix, or;
+	2. "Evolve" a resource mix using pre-configured scenarios, or configure their own scenario
     
 ### Evolution strategy
 
@@ -49,17 +49,17 @@ Market](http://ceem.unsw.edu.au/sites/default/files/documents/LeastCostElectrici
 
 NEMO should run on any operating system where Python 3 is available (eg, Windows, Mac OS X, Linux). It utilises some add-on packages:
 
-- [DEAP](https://deap.readthedocs.io/en/master/),
-- [Gooey](https://pypi.org/project/Gooey/),
-- [Matplotlib](http://matplotlib.org/), [Numpy](http://www.numpy.org/),
-- [Pandas](http://pandas.pydata.org/) and
-- [Pint](https://pint.readthedocs.io).
+	- [DEAP](https://deap.readthedocs.io/en/master/),
+	- [Gooey](https://pypi.org/project/Gooey/),
+	- [Matplotlib](http://matplotlib.org/), [Numpy](http://www.numpy.org/),
+	- [Pandas](http://pandas.pydata.org/) and
+	- [Pint](https://pint.readthedocs.io).
 
 ### Scaling up
 
 For simple simulations or scripted sensitivity analyses, a laptop or desktop PC will be adequate. However, for optimising larger systems, a cluster of compute nodes is desirable. The model is scalable and you can devote as many locally available CPU cores to the model as you wish. 
 
-> **Note**
+> #### Note
 > 
 > Due to a lack of active development, support for [SCOOP](https://pypi.python.org/pypi/scoop) has been removed. It will be soon replaced with something like [Ray](https://ray.io/).
 
