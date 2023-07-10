@@ -22,6 +22,21 @@ from nemo import context, scenarios, sim, utils
 class TestUtils(unittest.TestCase):
     """Tests for utils.py functions."""
 
+    def unlink(self, filename):
+        """Unlink filename without error."""
+        try:
+            os.unlink(filename)
+        except FileNotFoundError:
+            pass
+
+    def exists(self, filename):
+        """Return True if filename exists."""
+        try:
+            os.stat(filename)
+            return True
+        except FileNotFoundError:
+            return False
+
     def setUp(self):
         """Test harness setup."""
         self.context = context.Context()
@@ -42,27 +57,30 @@ class TestUtils(unittest.TestCase):
         utils._figure(self.context, spills=True, showlegend=True, xlim=None)
         return utils.plt.gcf()
 
-    @pytest.mark.mpl_image_compare
-    def test_figure_3(self):
-        """Test supply/demand plot with only 7 days of data."""
-        start = self.context.demand.index[0]
-        end = start + timedelta(days=7)
-        utils._figure(self.context, spills=True, showlegend=False,
-                      xlim=(start, end))
-        return utils.plt.gcf()
-
     def test_plot_1(self):
         """Test plot() function writing to file."""
         fname = 'test_plot_1.png'
-        try:
-            os.unlink(fname)
-        except FileNotFoundError:
-            pass
+        self.unlink(fname)
         utils.plot(self.context, filename=fname)
-        try:
-            os.stat(fname)
-            exists = True
-        except FileNotFoundError:
-            exists = False
-        self.assertTrue(exists)
+        self.assertTrue(self.exists(fname))
+        os.unlink(fname)
+
+    def test_plot_2(self):
+        """Test plot with only 7 days of data."""
+        start = self.context.demand.index[0]
+        end = start + timedelta(days=7)
+        fname = 'test_plot_2.png'
+        self.unlink(fname)
+        utils.plot(self.context, filename=fname, xlim=(start, end))
+        self.assertTrue(self.exists(fname))
+        os.unlink(fname)
+
+    def test_plot_3(self):
+        """Test plot with only 7 days of data."""
+        fname = 'test_plot_3.png'
+        self.unlink(fname)
+        # 7 * 24 hours of timesteps
+        self.context.timesteps = lambda: 7 * 24
+        utils.plot(self.context, filename=fname)
+        self.assertTrue(self.exists(fname))
         os.unlink(fname)
