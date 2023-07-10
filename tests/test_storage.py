@@ -243,6 +243,13 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(batt.rte, 0.95)
         self.assertEqual(len(batt.series_charge), 0)
 
+    def test_type_error(self):
+        """Check that the wrong type raises a TypeError."""
+        with self.assertRaises(TypeError):
+            generators.Battery(WILDCARD, 400, None)
+        with self.assertRaises(TypeError):
+            generators.BatteryLoad(WILDCARD, 400, None)
+
     def test_series_batteryload(self):
         """Test series() method."""
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor)
