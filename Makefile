@@ -15,7 +15,7 @@ COVRUN=coverage run -a --source=. --omit=setup.py
 envset:
 	test -n "$$VIRTUAL_ENV" || (echo "Python env is not activated" && false)
 
-check:  envset flake8 ruftf test
+check:  envset flake8 ruff test
 
 test:	envset
 	PYTHONPATH=. pytest --cov=nemo --doctest-modules
