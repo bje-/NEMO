@@ -35,9 +35,9 @@ For a set of given (or default) generation or demand traces, users can:
 
 ### Evolution strategy
 
-The benefit of an evolutionary approach is that NEMO in searching for
-the least-cost solution, NEMO can also explore "near-optimal" resource
-mixes.
+The benefit of an evolutionary approach is that while NEMO is
+searching for the least-cost solution, NEMO can also explore
+"near-optimal" resource mixes.
 
 NEMO no longer uses genetic algorithms, but has adopted the better
 performing [CMA-ES](https://en.wikipedia.org/wiki/CMA-ES) method.
