@@ -15,8 +15,10 @@ COVRUN=coverage run -a --source=. --omit=setup.py
 envset:
 	test -n "$$VIRTUAL_ENV" || (echo "Python env is not activated" && false)
 
-check:  envset flake8 ruff
-	PYTHONOPTIMIZE=0 pytest --cov=awklite --cov nemo --doctest-modules
+check:  envset flake8 ruftf test
+
+test:	envset
+	PYTHONPATH=. pytest --cov=nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
