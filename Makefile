@@ -18,7 +18,7 @@ envset:
 check:  envset flake8 ruff test
 
 test:	envset
-	PYTHONPATH=. pytest --cov=nemo --doctest-modules
+	PYTHONPATH=. pytest --mpl --cov=nemo --doctest-modules
 
 coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) evolve --list-scenarios > /dev/null
