@@ -60,6 +60,7 @@ NEMO should run on any operating system where Python 3 is available (eg, Windows
 For simple simulations or scripted sensitivity analyses, a laptop or desktop PC will be adequate. However, for optimising larger systems, a cluster of compute nodes is desirable. The model is scalable and you can devote as many locally available CPU cores to the model as you wish. 
 
 > **Note**
+> 
 > Due to a lack of active development, support for [SCOOP](https://pypi.python.org/pypi/scoop) has been removed. It will be soon replaced with something like [Ray](https://ray.io/).
 
 ## Citation
