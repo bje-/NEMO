@@ -12,6 +12,7 @@
 
 import os
 import unittest
+from datetime import timedelta
 
 import pytest
 
@@ -39,6 +40,15 @@ class TestUtils(unittest.TestCase):
         self.context.generators *= 2  # double list length
         sim.run(self.context)
         utils._figure(self.context, spills=True, showlegend=True, xlim=None)
+        return utils.plt.gcf()
+
+    @pytest.mark.mpl_image_compare
+    def test_figure_3(self):
+        """Test supply/demand plot with only 7 days of data."""
+        start = self.context.demand.index[0]
+        end = start + timedelta(days=7)
+        utils._figure(self.context, spills=True, showlegend=False,
+                      xlim=(start, end))
         return utils.plt.gcf()
 
     def test_plot_1(self):
