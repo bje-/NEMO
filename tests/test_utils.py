@@ -52,7 +52,12 @@ class TestUtils(unittest.TestCase):
     @pytest.mark.mpl_image_compare
     def test_figure_2(self):
         """Test supply/demand plot with many generators."""
-        self.context.generators *= 2  # double list length
+        ngens = len(self.context.generators)
+        extras = utils.MAX_PLOT_GENERATORS - ngens + 5
+        self.context.generators[0].set_capacity(0.001)  # 1 MW
+        self.context.generators = \
+            [self.context.generators[0]] * extras + \
+            self.context.generators
         sim.run(self.context)
         utils._figure(self.context, spills=True, showlegend=True, xlim=None)
         return utils.plt.gcf()
