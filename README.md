@@ -49,11 +49,11 @@ Market](http://ceem.unsw.edu.au/sites/default/files/documents/LeastCostElectrici
 
 NEMO should run on any operating system where Python 3 is available (eg, Windows, Mac OS X, Linux). It utilises some add-on packages:
 
-	- [DEAP](https://deap.readthedocs.io/en/master/),
-	- [Gooey](https://pypi.org/project/Gooey/),
-	- [Matplotlib](http://matplotlib.org/), [Numpy](http://www.numpy.org/),
-	- [Pandas](http://pandas.pydata.org/) and
-	- [Pint](https://pint.readthedocs.io).
+  - [DEAP](https://deap.readthedocs.io/en/master/),
+  - [Gooey](https://pypi.org/project/Gooey/),
+  - [Matplotlib](http://matplotlib.org/), [Numpy](http://www.numpy.org/),
+  - [Pandas](http://pandas.pydata.org/) and
+  - [Pint](https://pint.readthedocs.io).
 
 ### Scaling up
 
