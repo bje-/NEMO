@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>nemo.scenarios API documentation</title>
+<meta name="description" content="Supply side scenarios." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nemo.scenarios</code></h1>
+</header>
+<section id="section-intro">
+<p>Supply side scenarios.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright (C) 2012, 2013, 2014, 2022 Ben Elliston
+# Copyright (C) 2014, 2015, 2016 The University of New South Wales
+# Copyright (C) 2016 IT Power (Australia)
+# Copyright (C) 2023 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+&#34;&#34;&#34;Supply side scenarios.&#34;&#34;&#34;
+
+from nemo import configfile, regions
+from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Biofuel, Black_Coal,
+                             CentralReceiver, Coal_CCS, DemandResponse, Hydro,
+                             PumpedHydroPump, PumpedHydroTurbine, PV1Axis,
+                             Wind, WindOffshore)
+from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
+                           wind_limit)
+from nemo.storage import PumpedHydroStorage
+from nemo.types import UnreachableError
+
+
+def _demand_response():
+    &#34;&#34;&#34;Return a list of DR &#39;generators&#39;.&#34;&#34;&#34;
+    dr1 = DemandResponse(WILDCARD, 1000, 100, &#34;DR100&#34;)
+    dr2 = DemandResponse(WILDCARD, 1000, 500, &#34;DR500&#34;)
+    dr3 = DemandResponse(WILDCARD, 1000, 1000, &#34;DR1000&#34;)
+    return [dr1, dr2, dr3]
+
+
+def _pumped_hydro():
+    &#34;&#34;&#34;Return a list of existing pumped hydro generators.&#34;&#34;&#34;
+    # QLD: Wivenhoe (http://www.csenergy.com.au/content-%28168%29-wivenhoe.htm)
+    psh17stg = PumpedHydroStorage(5000, label=&#39;poly 17 pumped storage&#39;)
+    psh17pump = PumpedHydroPump(17, 500, psh17stg, label=&#39;poly 17 PSH pump&#39;)
+    psh17turb = PumpedHydroTurbine(17, 500, psh17stg,
+                                   label=&#39;poly 17 PSH generator&#39;)
+
+    # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
+    psh36stg = PumpedHydroStorage(15000, label=&#39;Tumut 3 storage&#39;)
+    psh36pump = PumpedHydroPump(36, 1740, psh36stg, label=&#39;Tumut 3 pump&#39;)
+    psh36turb = PumpedHydroTurbine(36, 1740, psh36stg,
+                                   label=&#39;Tumut 3 generator&#39;)
+
+    return [psh17pump, psh36pump, psh17turb, psh36turb]
+
+
+def _hydro():
+    &#34;&#34;&#34;Return a list of existing hydroelectric generators.&#34;&#34;&#34;
+    hydro24 = Hydro(24, 42.5, label=&#39;poly 24 hydro&#39;)
+    hydro31 = Hydro(31, 43, label=&#39;poly 31 hydro&#39;)
+    hydro35 = Hydro(35, 71, label=&#39;poly 35 hydro&#39;)
+    hydro36 = Hydro(36, 2513.9, label=&#39;poly 36 hydro&#39;)
+    hydro38 = Hydro(38, 450, label=&#39;poly 38 hydro&#39;)
+    hydro39 = Hydro(39, 13.8, label=&#39;poly 39 hydro&#39;)
+    hydro40 = Hydro(40, 586.6, label=&#39;poly 40 hydro&#39;)
+    hydro41 = Hydro(41, 280, label=&#39;poly 41 hydro&#39;)
+    hydro42 = Hydro(42, 590.4, label=&#39;poly 42 hydro&#39;)
+    hydro43 = Hydro(43, 462.5, label=&#39;poly 43 hydro&#39;)
+
+    return [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39,
+            hydro40, hydro41, hydro42, hydro43]
+
+
+def replacement(context):
+    &#34;&#34;&#34;Replace the current NEM fleet, more or less.&#34;&#34;&#34;
+    context.generators = \
+        [Black_Coal(WILDCARD, 0)] + _pumped_hydro() + _hydro() + \
+        [OCGT(WILDCARD, 0)]
+
+
+def _one_ccgt(context):
+    &#34;&#34;&#34;One CCGT only.&#34;&#34;&#34;
+    context.generators = [CCGT(WILDCARD, 0)]
+
+
+def ccgt(context):
+    &#34;&#34;&#34;All gas scenario.&#34;&#34;&#34;
+    context.generators = [CCGT(WILDCARD, 0)] + _pumped_hydro() + \
+        _hydro() + [OCGT(WILDCARD, 0)]
+
+
+def ccgt_ccs(context):
+    &#34;&#34;&#34;CCGT CCS scenario.&#34;&#34;&#34;
+    # pylint: disable=redefined-outer-name
+    ccgt = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [ccgt] + _pumped_hydro() + _hydro() + [ocgt]
+
+
+def coal_ccs(context):
+    &#34;&#34;&#34;Coal CCS scenario.&#34;&#34;&#34;
+    coal = Coal_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [coal] + _pumped_hydro() + _hydro() + [ocgt]
+
+
+def _every_poly(gentype):
+    &#34;&#34;&#34;Create a generator of type gentype in each of the 44 polygons.&#34;&#34;&#34;
+    result = []
+    for poly in range(1, 44):
+        if gentype == Biofuel:
+            result.append(gentype(poly, 0, label=f&#39;polygon {poly} GT&#39;))
+        elif gentype == PV1Axis:
+            cfg = configfile.get(&#39;generation&#39;, &#39;pv1axis-trace&#39;)
+            result.append(gentype(poly, 0, cfg, poly - 1,
+                                  build_limit=pv_limit[poly],
+                                  label=f&#39;polygon {poly} PV&#39;))
+        elif gentype == CentralReceiver:
+            cfg = configfile.get(&#39;generation&#39;, &#39;cst-trace&#39;)
+            result.append(gentype(poly, 0, 2.0, 6, cfg, poly - 1,
+                                  build_limit=cst_limit[poly],
+                                  label=f&#39;polygon {poly} CST&#39;))
+        elif gentype == Wind:
+            cfg = configfile.get(&#39;generation&#39;, &#39;wind-trace&#39;)
+            result.append(gentype(poly, 0, cfg, poly - 1,
+                                  build_limit=wind_limit[poly],
+                                  label=f&#39;polygon {poly} wind&#39;))
+    return result
+
+
+def re100(context):
+    &#34;&#34;&#34;100% renewable electricity.&#34;&#34;&#34;
+    result = []
+    # The following list is in merit order.
+    for g in [PV1Axis, Wind, WindOffshore, PumpedHydroTurbine, Hydro,
+              CentralReceiver, Biofuel]:
+        if g == PumpedHydroTurbine:
+            result += _pumped_hydro()
+        elif g == Hydro:
+            result += _hydro()
+        elif g == WindOffshore:
+            cfg = configfile.get(&#39;generation&#39;, &#39;offshore-wind-trace&#39;)
+            for column, poly in enumerate([31, 36, 38, 40]):
+                result.append(g(poly, 0, cfg, column,
+                                build_limit=offshore_wind_limit[poly],
+                                label=&#39;polygon {poly} offshore&#39;))
+        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
+            result += _every_poly(g)
+        else:
+            raise UnreachableError(&#39;unhandled generator type&#39;)
+    context.generators = result
+
+
+def _one_per_poly(region):
+    &#34;&#34;&#34;Return three lists of wind, PV and CST generators, one per polygon.&#34;&#34;&#34;
+    pv = []
+    wind = []
+    cst = []
+
+    wind_cfg = configfile.get(&#39;generation&#39;, &#39;wind-trace&#39;)
+    pv_cfg = configfile.get(&#39;generation&#39;, &#39;pv1axis-trace&#39;)
+    cst_cfg = configfile.get(&#39;generation&#39;, &#39;cst-trace&#39;)
+
+    for poly in region.polygons:
+        wind.append(Wind(poly, 0, wind_cfg,
+                         poly - 1,
+                         build_limit=wind_limit[poly],
+                         label=f&#39;poly {poly} wind&#39;))
+        pv.append(PV1Axis(poly, 0, pv_cfg,
+                          poly - 1,
+                          build_limit=pv_limit[poly],
+                          label=f&#39;poly {poly} PV&#39;))
+        cst.append(CentralReceiver(poly, 0, 2.5, 8, cst_cfg,
+                                   poly - 1,
+                                   build_limit=cst_limit[poly],
+                                   label=f&#39;poly {poly} CST&#39;))
+    return wind, pv, cst
+
+
+def re100_one_region(context, region):
+    &#34;&#34;&#34;100% renewables in one region only.&#34;&#34;&#34;
+    re100(context)
+    context.regions = [region]
+    wind, pv, cst = _one_per_poly(region)
+    newlist = wind
+    newlist += pv
+    newlist += [g for g in context.generators if
+                isinstance(g, Hydro) and g.region() is region]
+    newlist += cst
+    newlist += [g for g in context.generators if
+                isinstance(g, Biofuel) and g.region() is region]
+    context.generators = newlist
+
+
+def re_plus_ccs(context):
+    &#34;&#34;&#34;Mostly renewables with fossil and CCS augmentation.&#34;&#34;&#34;
+    re100(context)
+    coal = Black_Coal(WILDCARD, 0)
+    # pylint: disable=redefined-outer-name
+    coal_ccs = Coal_CCS(WILDCARD, 0)
+    # pylint: disable=redefined-outer-name
+    ccgt = CCGT(WILDCARD, 0)
+    ccgt_ccs = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + \
+        context.generators[:-4] + [ocgt]
+
+
+def re_plus_fossil(context):
+    &#34;&#34;&#34;Mostly renewables with some fossil augmentation.&#34;&#34;&#34;
+    re100(context)
+    context.generators = \
+        [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0)] + \
+        context.generators[:-4] + [OCGT(WILDCARD, 0)]
+
+
+def re100_dsp(context):
+    &#34;&#34;&#34;Mostly renewables with demand side participation.&#34;&#34;&#34;
+    re100(context)
+    context.generators += _demand_response()
+
+
+def re100_nocst(context):
+    &#34;&#34;&#34;100% renewables, but no CST.&#34;&#34;&#34;
+    re100(context)
+    newlist = [g for g in context.generators if not isinstance(g, CST)]
+    context.generators = newlist
+
+
+def re100_nsw(context):
+    &#34;&#34;&#34;100% renewables in New South Wales only.&#34;&#34;&#34;
+    re100_one_region(context, regions.nsw)
+
+
+def re100_qld(context):
+    &#34;&#34;&#34;100% renewables in Queensland only.&#34;&#34;&#34;
+    re100_one_region(context, regions.qld)
+
+
+def re100_south_aus(context):
+    &#34;&#34;&#34;100% renewables in South Australia only.&#34;&#34;&#34;
+    re100_one_region(context, regions.sa)
+
+
+supply_scenarios = {&#39;__one_ccgt__&#39;: _one_ccgt,  # nb. for testing only
+                    &#39;ccgt&#39;: ccgt,
+                    &#39;ccgt-ccs&#39;: ccgt_ccs,
+                    &#39;coal-ccs&#39;: coal_ccs,
+                    &#39;re+ccs&#39;: re_plus_ccs,
+                    &#39;re+fossil&#39;: re_plus_fossil,
+                    &#39;re100&#39;: re100,
+                    &#39;re100-qld&#39;: re100_qld,
+                    &#39;re100-nsw&#39;: re100_nsw,
+                    &#39;re100-sa&#39;: re100_south_aus,
+                    &#39;re100+dsp&#39;: re100_dsp,
+                    &#39;re100-nocst&#39;: re100_nocst,
+                    &#39;replacement&#39;: replacement}</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="nemo.scenarios.ccgt"><code class="name flex">
+<span>def <span class="ident">ccgt</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>All gas scenario.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ccgt(context):
+    &#34;&#34;&#34;All gas scenario.&#34;&#34;&#34;
+    context.generators = [CCGT(WILDCARD, 0)] + _pumped_hydro() + \
+        _hydro() + [OCGT(WILDCARD, 0)]</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.ccgt_ccs"><code class="name flex">
+<span>def <span class="ident">ccgt_ccs</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>CCGT CCS scenario.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ccgt_ccs(context):
+    &#34;&#34;&#34;CCGT CCS scenario.&#34;&#34;&#34;
+    # pylint: disable=redefined-outer-name
+    ccgt = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [ccgt] + _pumped_hydro() + _hydro() + [ocgt]</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.coal_ccs"><code class="name flex">
+<span>def <span class="ident">coal_ccs</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Coal CCS scenario.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def coal_ccs(context):
+    &#34;&#34;&#34;Coal CCS scenario.&#34;&#34;&#34;
+    coal = Coal_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [coal] + _pumped_hydro() + _hydro() + [ocgt]</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100"><code class="name flex">
+<span>def <span class="ident">re100</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewable electricity.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100(context):
+    &#34;&#34;&#34;100% renewable electricity.&#34;&#34;&#34;
+    result = []
+    # The following list is in merit order.
+    for g in [PV1Axis, Wind, WindOffshore, PumpedHydroTurbine, Hydro,
+              CentralReceiver, Biofuel]:
+        if g == PumpedHydroTurbine:
+            result += _pumped_hydro()
+        elif g == Hydro:
+            result += _hydro()
+        elif g == WindOffshore:
+            cfg = configfile.get(&#39;generation&#39;, &#39;offshore-wind-trace&#39;)
+            for column, poly in enumerate([31, 36, 38, 40]):
+                result.append(g(poly, 0, cfg, column,
+                                build_limit=offshore_wind_limit[poly],
+                                label=&#39;polygon {poly} offshore&#39;))
+        elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
+            result += _every_poly(g)
+        else:
+            raise UnreachableError(&#39;unhandled generator type&#39;)
+    context.generators = result</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_dsp"><code class="name flex">
+<span>def <span class="ident">re100_dsp</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mostly renewables with demand side participation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_dsp(context):
+    &#34;&#34;&#34;Mostly renewables with demand side participation.&#34;&#34;&#34;
+    re100(context)
+    context.generators += _demand_response()</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_nocst"><code class="name flex">
+<span>def <span class="ident">re100_nocst</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewables, but no CST.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_nocst(context):
+    &#34;&#34;&#34;100% renewables, but no CST.&#34;&#34;&#34;
+    re100(context)
+    newlist = [g for g in context.generators if not isinstance(g, CST)]
+    context.generators = newlist</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_nsw"><code class="name flex">
+<span>def <span class="ident">re100_nsw</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewables in New South Wales only.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_nsw(context):
+    &#34;&#34;&#34;100% renewables in New South Wales only.&#34;&#34;&#34;
+    re100_one_region(context, regions.nsw)</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_one_region"><code class="name flex">
+<span>def <span class="ident">re100_one_region</span></span>(<span>context, region)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewables in one region only.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_one_region(context, region):
+    &#34;&#34;&#34;100% renewables in one region only.&#34;&#34;&#34;
+    re100(context)
+    context.regions = [region]
+    wind, pv, cst = _one_per_poly(region)
+    newlist = wind
+    newlist += pv
+    newlist += [g for g in context.generators if
+                isinstance(g, Hydro) and g.region() is region]
+    newlist += cst
+    newlist += [g for g in context.generators if
+                isinstance(g, Biofuel) and g.region() is region]
+    context.generators = newlist</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_qld"><code class="name flex">
+<span>def <span class="ident">re100_qld</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewables in Queensland only.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_qld(context):
+    &#34;&#34;&#34;100% renewables in Queensland only.&#34;&#34;&#34;
+    re100_one_region(context, regions.qld)</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re100_south_aus"><code class="name flex">
+<span>def <span class="ident">re100_south_aus</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>100% renewables in South Australia only.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re100_south_aus(context):
+    &#34;&#34;&#34;100% renewables in South Australia only.&#34;&#34;&#34;
+    re100_one_region(context, regions.sa)</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re_plus_ccs"><code class="name flex">
+<span>def <span class="ident">re_plus_ccs</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mostly renewables with fossil and CCS augmentation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re_plus_ccs(context):
+    &#34;&#34;&#34;Mostly renewables with fossil and CCS augmentation.&#34;&#34;&#34;
+    re100(context)
+    coal = Black_Coal(WILDCARD, 0)
+    # pylint: disable=redefined-outer-name
+    coal_ccs = Coal_CCS(WILDCARD, 0)
+    # pylint: disable=redefined-outer-name
+    ccgt = CCGT(WILDCARD, 0)
+    ccgt_ccs = CCGT_CCS(WILDCARD, 0)
+    ocgt = OCGT(WILDCARD, 0)
+    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + \
+        context.generators[:-4] + [ocgt]</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.re_plus_fossil"><code class="name flex">
+<span>def <span class="ident">re_plus_fossil</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mostly renewables with some fossil augmentation.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re_plus_fossil(context):
+    &#34;&#34;&#34;Mostly renewables with some fossil augmentation.&#34;&#34;&#34;
+    re100(context)
+    context.generators = \
+        [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0)] + \
+        context.generators[:-4] + [OCGT(WILDCARD, 0)]</code></pre>
+</details>
+</dd>
+<dt id="nemo.scenarios.replacement"><code class="name flex">
+<span>def <span class="ident">replacement</span></span>(<span>context)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Replace the current NEM fleet, more or less.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replacement(context):
+    &#34;&#34;&#34;Replace the current NEM fleet, more or less.&#34;&#34;&#34;
+    context.generators = \
+        [Black_Coal(WILDCARD, 0)] + _pumped_hydro() + _hydro() + \
+        [OCGT(WILDCARD, 0)]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nemo" href="index.html">nemo</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="nemo.scenarios.ccgt" href="#nemo.scenarios.ccgt">ccgt</a></code></li>
+<li><code><a title="nemo.scenarios.ccgt_ccs" href="#nemo.scenarios.ccgt_ccs">ccgt_ccs</a></code></li>
+<li><code><a title="nemo.scenarios.coal_ccs" href="#nemo.scenarios.coal_ccs">coal_ccs</a></code></li>
+<li><code><a title="nemo.scenarios.re100" href="#nemo.scenarios.re100">re100</a></code></li>
+<li><code><a title="nemo.scenarios.re100_dsp" href="#nemo.scenarios.re100_dsp">re100_dsp</a></code></li>
+<li><code><a title="nemo.scenarios.re100_nocst" href="#nemo.scenarios.re100_nocst">re100_nocst</a></code></li>
+<li><code><a title="nemo.scenarios.re100_nsw" href="#nemo.scenarios.re100_nsw">re100_nsw</a></code></li>
+<li><code><a title="nemo.scenarios.re100_one_region" href="#nemo.scenarios.re100_one_region">re100_one_region</a></code></li>
+<li><code><a title="nemo.scenarios.re100_qld" href="#nemo.scenarios.re100_qld">re100_qld</a></code></li>
+<li><code><a title="nemo.scenarios.re100_south_aus" href="#nemo.scenarios.re100_south_aus">re100_south_aus</a></code></li>
+<li><code><a title="nemo.scenarios.re_plus_ccs" href="#nemo.scenarios.re_plus_ccs">re_plus_ccs</a></code></li>
+<li><code><a title="nemo.scenarios.re_plus_fossil" href="#nemo.scenarios.re_plus_fossil">re_plus_fossil</a></code></li>
+<li><code><a title="nemo.scenarios.replacement" href="#nemo.scenarios.replacement">replacement</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

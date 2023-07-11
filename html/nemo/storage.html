@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>nemo.storage API documentation</title>
+<meta name="description" content="Storage classes …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nemo.storage</code></h1>
+</header>
+<section id="section-intro">
+<p>Storage classes.</p>
+<p>Storage objects are usually shared between a load and a generator (for
+example, a pumped hydro system having a pump, a turbine and a storage
+system.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># Copyright (C) 2023 Ben Elliston
+#
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+
+&#34;&#34;&#34;
+Storage classes.
+
+Storage objects are usually shared between a load and a generator (for
+example, a pumped hydro system having a pump, a turbine and a storage
+system.
+&#34;&#34;&#34;
+
+
+class GenericStorage():
+    &#34;&#34;&#34;A simple electrical storage system.
+
+    The storage has unity efficiency. It is up to the load and
+    generator to handle the round trip efficiency of the relevant
+    technologies.
+    &#34;&#34;&#34;
+
+    def __init__(self, maxstorage, label=None):
+        &#34;&#34;&#34;Construct a storage object.
+
+        The storage capacity (in MWh) is specified by maxstorage.
+        &#34;&#34;&#34;
+        self.label = label
+        # initialise to silence pylint
+        self.storage = 0
+        self.set_storage(maxstorage)
+
+    def set_storage(self, maxstorage):
+        &#34;&#34;&#34;
+        Change the storage capacity.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.set_storage(1200)
+        &gt;&gt;&gt; r.maxstorage
+        1200
+        &gt;&gt;&gt; r.storage
+        600.0
+        &#34;&#34;&#34;
+        self.storage = maxstorage / 2
+        self.maxstorage = maxstorage
+
+    def reset(self):
+        &#34;&#34;&#34;
+        Reset storage to 50% SOC.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 200
+        &gt;&gt;&gt; r.reset()
+        &gt;&gt;&gt; r.storage
+        500.0
+        &#34;&#34;&#34;
+        self.storage = self.maxstorage / 2
+
+    def soc(self):
+        &#34;&#34;&#34;Return the storage SOC (state of charge).
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.soc()
+        0.5
+        &#34;&#34;&#34;
+        return self.storage / self.maxstorage
+
+    def empty_p(self):
+        &#34;&#34;&#34;Return True if the storage is empty.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 0
+        &gt;&gt;&gt; r.empty_p(), r.full_p()
+        (True, False)
+        &#34;&#34;&#34;
+        return self.storage == 0
+
+    def full_p(self):
+        &#34;&#34;&#34;Return True if the storage is full.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 1000
+        &gt;&gt;&gt; r.full_p(), r.empty_p()
+        (True, False)
+        &#34;&#34;&#34;
+        return self.maxstorage == self.storage
+
+    def charge(self, amt):
+        &#34;&#34;&#34;
+        Charge the storage by amt.
+
+        &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+        &gt;&gt;&gt; stg.charge(600), stg.full_p()
+        (500.0, True)
+        &#34;&#34;&#34;
+        assert amt &gt;= 0
+        delta = min(self.maxstorage - self.storage, amt)
+        self.storage = min(self.maxstorage, self.storage + amt)
+        assert 0 &lt;= self.storage &lt;= self.maxstorage
+        return delta
+
+    def discharge(self, amt):
+        &#34;&#34;&#34;
+        Discharge the storage by &#39;amt&#39;.
+
+        &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+        &gt;&gt;&gt; stg.discharge(600), stg.empty_p()
+        (500.0, True)
+        &#34;&#34;&#34;
+        assert amt &gt;= 0
+        delta = min(self.storage, amt)
+        self.storage = max(0, self.storage - amt)
+        assert 0 &lt;= self.storage &lt;= self.maxstorage
+        return delta
+
+
+class BatteryStorage(GenericStorage):
+    &#34;&#34;&#34;Battery storage.&#34;&#34;&#34;
+
+
+class HydrogenStorage(GenericStorage):
+    &#34;&#34;&#34;Hydrogen storage.&#34;&#34;&#34;
+
+
+class PumpedHydroStorage(GenericStorage):
+    &#34;&#34;&#34;A pair of reservoirs for pumped storage.&#34;&#34;&#34;
+
+    def __init__(self, maxstorage, label=None):
+        &#34;&#34;&#34;Construct a pumped hydro storage reservoir pair.
+
+        The storage capacity (in MWh) is specified by maxstorage.
+        &#34;&#34;&#34;
+        GenericStorage.__init__(self, maxstorage, label)
+
+        # Communicate between pump and turbine here to prevent both
+        # generators running in the same hour.
+        self.last_gen = None
+        self.last_pump = None
+
+    def reset(self):
+        &#34;&#34;&#34;Reset the storage.&#34;&#34;&#34;
+        GenericStorage.reset(self)
+        self.last_gen = None
+        self.last_pump = None</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nemo.storage.BatteryStorage"><code class="flex name class">
+<span>class <span class="ident">BatteryStorage</span></span>
+<span>(</span><span>maxstorage, label=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Battery storage.</p>
+<p>Construct a storage object.</p>
+<p>The storage capacity (in MWh) is specified by maxstorage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BatteryStorage(GenericStorage):
+    &#34;&#34;&#34;Battery storage.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nemo.storage.GenericStorage.charge" href="#nemo.storage.GenericStorage.charge">charge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.discharge" href="#nemo.storage.GenericStorage.discharge">discharge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.empty_p" href="#nemo.storage.GenericStorage.empty_p">empty_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.full_p" href="#nemo.storage.GenericStorage.full_p">full_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.reset" href="#nemo.storage.GenericStorage.reset">reset</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.set_storage" href="#nemo.storage.GenericStorage.set_storage">set_storage</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.soc" href="#nemo.storage.GenericStorage.soc">soc</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="nemo.storage.GenericStorage"><code class="flex name class">
+<span>class <span class="ident">GenericStorage</span></span>
+<span>(</span><span>maxstorage, label=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A simple electrical storage system.</p>
+<p>The storage has unity efficiency. It is up to the load and
+generator to handle the round trip efficiency of the relevant
+technologies.</p>
+<p>Construct a storage object.</p>
+<p>The storage capacity (in MWh) is specified by maxstorage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GenericStorage():
+    &#34;&#34;&#34;A simple electrical storage system.
+
+    The storage has unity efficiency. It is up to the load and
+    generator to handle the round trip efficiency of the relevant
+    technologies.
+    &#34;&#34;&#34;
+
+    def __init__(self, maxstorage, label=None):
+        &#34;&#34;&#34;Construct a storage object.
+
+        The storage capacity (in MWh) is specified by maxstorage.
+        &#34;&#34;&#34;
+        self.label = label
+        # initialise to silence pylint
+        self.storage = 0
+        self.set_storage(maxstorage)
+
+    def set_storage(self, maxstorage):
+        &#34;&#34;&#34;
+        Change the storage capacity.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.set_storage(1200)
+        &gt;&gt;&gt; r.maxstorage
+        1200
+        &gt;&gt;&gt; r.storage
+        600.0
+        &#34;&#34;&#34;
+        self.storage = maxstorage / 2
+        self.maxstorage = maxstorage
+
+    def reset(self):
+        &#34;&#34;&#34;
+        Reset storage to 50% SOC.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 200
+        &gt;&gt;&gt; r.reset()
+        &gt;&gt;&gt; r.storage
+        500.0
+        &#34;&#34;&#34;
+        self.storage = self.maxstorage / 2
+
+    def soc(self):
+        &#34;&#34;&#34;Return the storage SOC (state of charge).
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.soc()
+        0.5
+        &#34;&#34;&#34;
+        return self.storage / self.maxstorage
+
+    def empty_p(self):
+        &#34;&#34;&#34;Return True if the storage is empty.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 0
+        &gt;&gt;&gt; r.empty_p(), r.full_p()
+        (True, False)
+        &#34;&#34;&#34;
+        return self.storage == 0
+
+    def full_p(self):
+        &#34;&#34;&#34;Return True if the storage is full.
+
+        &gt;&gt;&gt; r = GenericStorage(1000)
+        &gt;&gt;&gt; r.storage = 1000
+        &gt;&gt;&gt; r.full_p(), r.empty_p()
+        (True, False)
+        &#34;&#34;&#34;
+        return self.maxstorage == self.storage
+
+    def charge(self, amt):
+        &#34;&#34;&#34;
+        Charge the storage by amt.
+
+        &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+        &gt;&gt;&gt; stg.charge(600), stg.full_p()
+        (500.0, True)
+        &#34;&#34;&#34;
+        assert amt &gt;= 0
+        delta = min(self.maxstorage - self.storage, amt)
+        self.storage = min(self.maxstorage, self.storage + amt)
+        assert 0 &lt;= self.storage &lt;= self.maxstorage
+        return delta
+
+    def discharge(self, amt):
+        &#34;&#34;&#34;
+        Discharge the storage by &#39;amt&#39;.
+
+        &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+        &gt;&gt;&gt; stg.discharge(600), stg.empty_p()
+        (500.0, True)
+        &#34;&#34;&#34;
+        assert amt &gt;= 0
+        delta = min(self.storage, amt)
+        self.storage = max(0, self.storage - amt)
+        assert 0 &lt;= self.storage &lt;= self.maxstorage
+        return delta</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nemo.storage.BatteryStorage" href="#nemo.storage.BatteryStorage">BatteryStorage</a></li>
+<li><a title="nemo.storage.HydrogenStorage" href="#nemo.storage.HydrogenStorage">HydrogenStorage</a></li>
+<li><a title="nemo.storage.PumpedHydroStorage" href="#nemo.storage.PumpedHydroStorage">PumpedHydroStorage</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="nemo.storage.GenericStorage.charge"><code class="name flex">
+<span>def <span class="ident">charge</span></span>(<span>self, amt)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Charge the storage by amt.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; stg = GenericStorage(1000, 'test')
+&gt;&gt;&gt; stg.charge(600), stg.full_p()
+(500.0, True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def charge(self, amt):
+    &#34;&#34;&#34;
+    Charge the storage by amt.
+
+    &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+    &gt;&gt;&gt; stg.charge(600), stg.full_p()
+    (500.0, True)
+    &#34;&#34;&#34;
+    assert amt &gt;= 0
+    delta = min(self.maxstorage - self.storage, amt)
+    self.storage = min(self.maxstorage, self.storage + amt)
+    assert 0 &lt;= self.storage &lt;= self.maxstorage
+    return delta</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.discharge"><code class="name flex">
+<span>def <span class="ident">discharge</span></span>(<span>self, amt)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Discharge the storage by 'amt'.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; stg = GenericStorage(1000, 'test')
+&gt;&gt;&gt; stg.discharge(600), stg.empty_p()
+(500.0, True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def discharge(self, amt):
+    &#34;&#34;&#34;
+    Discharge the storage by &#39;amt&#39;.
+
+    &gt;&gt;&gt; stg = GenericStorage(1000, &#39;test&#39;)
+    &gt;&gt;&gt; stg.discharge(600), stg.empty_p()
+    (500.0, True)
+    &#34;&#34;&#34;
+    assert amt &gt;= 0
+    delta = min(self.storage, amt)
+    self.storage = max(0, self.storage - amt)
+    assert 0 &lt;= self.storage &lt;= self.maxstorage
+    return delta</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.empty_p"><code class="name flex">
+<span>def <span class="ident">empty_p</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the storage is empty.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; r = GenericStorage(1000)
+&gt;&gt;&gt; r.storage = 0
+&gt;&gt;&gt; r.empty_p(), r.full_p()
+(True, False)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def empty_p(self):
+    &#34;&#34;&#34;Return True if the storage is empty.
+
+    &gt;&gt;&gt; r = GenericStorage(1000)
+    &gt;&gt;&gt; r.storage = 0
+    &gt;&gt;&gt; r.empty_p(), r.full_p()
+    (True, False)
+    &#34;&#34;&#34;
+    return self.storage == 0</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.full_p"><code class="name flex">
+<span>def <span class="ident">full_p</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the storage is full.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; r = GenericStorage(1000)
+&gt;&gt;&gt; r.storage = 1000
+&gt;&gt;&gt; r.full_p(), r.empty_p()
+(True, False)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def full_p(self):
+    &#34;&#34;&#34;Return True if the storage is full.
+
+    &gt;&gt;&gt; r = GenericStorage(1000)
+    &gt;&gt;&gt; r.storage = 1000
+    &gt;&gt;&gt; r.full_p(), r.empty_p()
+    (True, False)
+    &#34;&#34;&#34;
+    return self.maxstorage == self.storage</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset storage to 50% SOC.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; r = GenericStorage(1000)
+&gt;&gt;&gt; r.storage = 200
+&gt;&gt;&gt; r.reset()
+&gt;&gt;&gt; r.storage
+500.0
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self):
+    &#34;&#34;&#34;
+    Reset storage to 50% SOC.
+
+    &gt;&gt;&gt; r = GenericStorage(1000)
+    &gt;&gt;&gt; r.storage = 200
+    &gt;&gt;&gt; r.reset()
+    &gt;&gt;&gt; r.storage
+    500.0
+    &#34;&#34;&#34;
+    self.storage = self.maxstorage / 2</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.set_storage"><code class="name flex">
+<span>def <span class="ident">set_storage</span></span>(<span>self, maxstorage)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change the storage capacity.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; r = GenericStorage(1000)
+&gt;&gt;&gt; r.set_storage(1200)
+&gt;&gt;&gt; r.maxstorage
+1200
+&gt;&gt;&gt; r.storage
+600.0
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_storage(self, maxstorage):
+    &#34;&#34;&#34;
+    Change the storage capacity.
+
+    &gt;&gt;&gt; r = GenericStorage(1000)
+    &gt;&gt;&gt; r.set_storage(1200)
+    &gt;&gt;&gt; r.maxstorage
+    1200
+    &gt;&gt;&gt; r.storage
+    600.0
+    &#34;&#34;&#34;
+    self.storage = maxstorage / 2
+    self.maxstorage = maxstorage</code></pre>
+</details>
+</dd>
+<dt id="nemo.storage.GenericStorage.soc"><code class="name flex">
+<span>def <span class="ident">soc</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the storage SOC (state of charge).</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; r = GenericStorage(1000)
+&gt;&gt;&gt; r.soc()
+0.5
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def soc(self):
+    &#34;&#34;&#34;Return the storage SOC (state of charge).
+
+    &gt;&gt;&gt; r = GenericStorage(1000)
+    &gt;&gt;&gt; r.soc()
+    0.5
+    &#34;&#34;&#34;
+    return self.storage / self.maxstorage</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="nemo.storage.HydrogenStorage"><code class="flex name class">
+<span>class <span class="ident">HydrogenStorage</span></span>
+<span>(</span><span>maxstorage, label=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Hydrogen storage.</p>
+<p>Construct a storage object.</p>
+<p>The storage capacity (in MWh) is specified by maxstorage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HydrogenStorage(GenericStorage):
+    &#34;&#34;&#34;Hydrogen storage.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nemo.storage.GenericStorage.charge" href="#nemo.storage.GenericStorage.charge">charge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.discharge" href="#nemo.storage.GenericStorage.discharge">discharge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.empty_p" href="#nemo.storage.GenericStorage.empty_p">empty_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.full_p" href="#nemo.storage.GenericStorage.full_p">full_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.reset" href="#nemo.storage.GenericStorage.reset">reset</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.set_storage" href="#nemo.storage.GenericStorage.set_storage">set_storage</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.soc" href="#nemo.storage.GenericStorage.soc">soc</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="nemo.storage.PumpedHydroStorage"><code class="flex name class">
+<span>class <span class="ident">PumpedHydroStorage</span></span>
+<span>(</span><span>maxstorage, label=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A pair of reservoirs for pumped storage.</p>
+<p>Construct a pumped hydro storage reservoir pair.</p>
+<p>The storage capacity (in MWh) is specified by maxstorage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PumpedHydroStorage(GenericStorage):
+    &#34;&#34;&#34;A pair of reservoirs for pumped storage.&#34;&#34;&#34;
+
+    def __init__(self, maxstorage, label=None):
+        &#34;&#34;&#34;Construct a pumped hydro storage reservoir pair.
+
+        The storage capacity (in MWh) is specified by maxstorage.
+        &#34;&#34;&#34;
+        GenericStorage.__init__(self, maxstorage, label)
+
+        # Communicate between pump and turbine here to prevent both
+        # generators running in the same hour.
+        self.last_gen = None
+        self.last_pump = None
+
+    def reset(self):
+        &#34;&#34;&#34;Reset the storage.&#34;&#34;&#34;
+        GenericStorage.reset(self)
+        self.last_gen = None
+        self.last_pump = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="nemo.storage.PumpedHydroStorage.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reset the storage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self):
+    &#34;&#34;&#34;Reset the storage.&#34;&#34;&#34;
+    GenericStorage.reset(self)
+    self.last_gen = None
+    self.last_pump = None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nemo.storage.GenericStorage.charge" href="#nemo.storage.GenericStorage.charge">charge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.discharge" href="#nemo.storage.GenericStorage.discharge">discharge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.empty_p" href="#nemo.storage.GenericStorage.empty_p">empty_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.full_p" href="#nemo.storage.GenericStorage.full_p">full_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.set_storage" href="#nemo.storage.GenericStorage.set_storage">set_storage</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.soc" href="#nemo.storage.GenericStorage.soc">soc</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nemo" href="index.html">nemo</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nemo.storage.BatteryStorage" href="#nemo.storage.BatteryStorage">BatteryStorage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nemo.storage.GenericStorage" href="#nemo.storage.GenericStorage">GenericStorage</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nemo.storage.GenericStorage.charge" href="#nemo.storage.GenericStorage.charge">charge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.discharge" href="#nemo.storage.GenericStorage.discharge">discharge</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.empty_p" href="#nemo.storage.GenericStorage.empty_p">empty_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.full_p" href="#nemo.storage.GenericStorage.full_p">full_p</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.reset" href="#nemo.storage.GenericStorage.reset">reset</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.set_storage" href="#nemo.storage.GenericStorage.set_storage">set_storage</a></code></li>
+<li><code><a title="nemo.storage.GenericStorage.soc" href="#nemo.storage.GenericStorage.soc">soc</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nemo.storage.HydrogenStorage" href="#nemo.storage.HydrogenStorage">HydrogenStorage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nemo.storage.PumpedHydroStorage" href="#nemo.storage.PumpedHydroStorage">PumpedHydroStorage</a></code></h4>
+<ul class="">
+<li><code><a title="nemo.storage.PumpedHydroStorage.reset" href="#nemo.storage.PumpedHydroStorage.reset">reset</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
