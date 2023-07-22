@@ -133,8 +133,8 @@ Assessments](https://www.industry.gov.au/Office-of-the-Chief-Economist/Publicati
 Report](http://www.co2crc.com.au/publication-category/reports/) (2015)
 and the CSIRO [GenCost
 reports](https://data.csiro.au/collections/collection/CIcsiro:44228)
-(2021, 2022). The GenCost reports provide the basis of the input cost
-assumptions for the AEMO [Integrated System
+(2021, 2022, 2023). The GenCost reports provide the basis of the input
+cost assumptions for the AEMO [Integrated System
 Plan](https://aemo.com.au/en/energy-systems/major-publications/integrated-system-plan-isp).
 Costs for other countries may be added in time.
 
