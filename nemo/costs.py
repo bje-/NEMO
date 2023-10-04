@@ -57,7 +57,7 @@ class Common():
 
     def __init__(self):
         """
-        Iniitialise common costs.
+        Initialise common costs.
 
         Derived costs can call update() on these dicts.
         """
