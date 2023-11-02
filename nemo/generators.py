@@ -202,10 +202,7 @@ class Storage():
 
 
 class TraceGenerator(Generator):
-    """A generator that gets its hourly dispatch from a CSV trace file."""
-
-    csvfilename = None
-    csvdata = None
+    """A generator that gets its hourly dispatch from a trace."""
 
     def __init__(self, polygon, capacity, label=None, build_limit=None):
         """Construct a generator with a specified trace file."""
