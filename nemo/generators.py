@@ -13,7 +13,7 @@
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
 
-from math import isclose
+from math import inf, isclose
 
 import numpy as np
 import pandas as pd
@@ -107,7 +107,7 @@ class Generator():
         if supplied > 0:
             cost_per_mwh = total_cost / supplied
             return cost_per_mwh
-        return np.inf
+        return inf
 
     def summary(self, context):
         """Return a summary of the generator activity."""
@@ -860,7 +860,10 @@ class Battery(Generator):
     def capcost(self, costs):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
-        shours = self.battery.maxstorage / self.capacity
+        if self.capacity == 0:
+            shours = inf
+        else:
+            shours = self.battery.maxstorage / self.capacity
         assert shours in [1, 2, 4, 8]
         cost_per_kwh = costs.totcost_per_kwh[type(self)][shours]
         return kwh * cost_per_kwh
