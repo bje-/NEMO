@@ -84,8 +84,8 @@ def _pairwise(lst):
     return zip(iter1, iter2)
 
 
-def _legend(context):
-    """Draw the legend."""
+def _legend(fig, context):
+    """Draw the legend on fig."""
     # ::-1 slicing reverses the list so that the legend appears in merit order
     gens = _generator_list(context)[::-1]
     labels = []
@@ -105,13 +105,13 @@ def _legend(context):
             patches.append(gen.patch)
 
     red_patch = Patch(facecolor='red', edgecolor='black')
-    legend = plt.figlegend([red_patch] + patches,
-                           ['unserved'] + labels,
-                           loc='upper right')
-    plt.setp(legend.get_texts(), fontsize='small')
+    fig.legend([red_patch] + patches,
+               ['unserved'] + labels,
+               fontsize='small',
+               loc='upper right')
 
 
-def _plot_areas(context, category, prev=None, alpha=None):
+def _plot_areas(axes, context, category, prev=None, alpha=None):
     assert category in ['generation', 'spill']
 
     demand = context.demand.sum(axis=1)
@@ -127,15 +127,15 @@ def _plot_areas(context, category, prev=None, alpha=None):
             # don't plot individual traces lines when there are too
             # many generators
             continue
-        plt.plot(accum.index, accum, color='black', linewidth=0.4,
-                 linestyle='--')
-        plt.fill_between(prev.index, prev, accum,
-                         facecolor=gen.patch.get_fc(), alpha=alpha)
+        axes.plot(accum.index, accum, color='black', linewidth=0.4,
+                  linestyle='--')
+        axes.fill_between(prev.index, prev, accum,
+                          facecolor=gen.patch.get_fc(), alpha=alpha)
         prev = accum.copy()
 
     # Unmet demand is shaded red.
     if category == 'generation':
-        plt.fill_between(accum.index, accum, demand, facecolor='red')
+        axes.fill_between(accum.index, accum, demand, facecolor='red')
 
 
 def _figure(context, spills, showlegend, xlim):
@@ -143,8 +143,8 @@ def _figure(context, spills, showlegend, xlim):
     # aggregate demand
     demand = context.demand.sum(axis=1)
 
-    plt.clf()
-    plt.ylabel('Power (MW)')
+    fig, axes = plt.subplots()
+    axes.set_ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
     except (configparser.NoSectionError, configparser.NoOptionError):
@@ -154,29 +154,29 @@ def _figure(context, spills, showlegend, xlim):
     except (configfile.configparser.NoSectionError,
             configfile.configparser.NoOptionError):
         pass
-    plt.suptitle(title)
+    fig.suptitle(title)
 
     if showlegend:
-        _legend(context)
+        _legend(fig, context)
 
     # Plot demand first.
-    plt.plot(demand.index, demand, color='black', linewidth=2)
+    axes.plot(demand.index, demand, color='black', linewidth=2)
 
     # Plot generation.
     zeros = pd.Series(data=0, index=demand.index)
-    _plot_areas(context, 'generation', prev=zeros)
+    _plot_areas(axes, context, 'generation', prev=zeros)
 
     # Optionally plot spills.
     if spills:
-        _plot_areas(context, 'spill', prev=demand, alpha=0.3)
+        _plot_areas(axes, context, 'spill', prev=demand, alpha=0.3)
 
-    plt.gca().set_xlim(xlim)  # set_xlim accepts None
-    plt.gca().xaxis_date()
-    plt.gcf().autofmt_xdate()
+    axes.set_xlim(xlim)  # set_xlim accepts None
+    axes.xaxis_date()
+    fig.autofmt_xdate()
 
-    _, ymax = plt.gca().get_ylim()
-    plt.plot(context.unserved.index, [ymax] * len(context.unserved),
-             "v", markersize=10, color='red', markeredgecolor='black')
+    _, ymax = axes.get_ylim()
+    axes.plot(context.unserved.index, [ymax] * len(context.unserved),
+              "v", markersize=10, color='red', markeredgecolor='black')
 
 
 def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
