@@ -748,8 +748,6 @@ class BatteryLoad(Storage, Generator):
             raise TypeError
         self.battery = battery
         self.rte = rte
-        shours = battery.maxstorage / capacity
-        assert shours in [1, 2, 4, 8]
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
 
