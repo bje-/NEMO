@@ -869,11 +869,7 @@ class Battery(Generator):
     def capcost(self, costs):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
-        if self.capacity == 0:
-            shours = inf
-        else:
-            shours = self.battery.maxstorage / self.capacity
-        assert shours in [1, 2, 4, 8]
+        assert self.shours in [1, 2, 4, 8]
         cost_per_kwh = costs.totcost_per_kwh[type(self)][shours]
         return kwh * cost_per_kwh
 
