@@ -888,6 +888,7 @@ class Battery(Generator):
     def summary(self, context):
         """Return a summary of the generator activity."""
         return Generator.summary(self, context) + \
+            f', {self.shours}h storage' + \
             f', ran {thousands(self.runhours)} hours'
 
 
