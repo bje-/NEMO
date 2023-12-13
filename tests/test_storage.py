@@ -246,7 +246,7 @@ class TestBattery(unittest.TestCase):
     def test_type_error(self):
         """Check that the wrong type raises a TypeError."""
         with self.assertRaises(TypeError):
-            generators.Battery(WILDCARD, 400, None)
+            generators.Battery(WILDCARD, 400, 2, None)
         with self.assertRaises(TypeError):
             generators.BatteryLoad(WILDCARD, 400, None)
 
