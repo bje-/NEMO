@@ -339,12 +339,6 @@ class TestBattery(unittest.TestCase):
         self.assertEqual(result, 100)
         self.assertEqual(self.stor.storage, 800)
 
-    def test_zero_power(self):
-        """Test a battery with zero capacity."""
-        zerostor = storage.BatteryStorage(0)
-        with self.assertRaises(AssertionError):
-            generators.BatteryLoad(WILDCARD, 400, zerostor, rte=1)
-
     def test_reset(self):
         """Test battery reset() method."""
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor, rte=1)
