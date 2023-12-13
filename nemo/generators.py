@@ -870,7 +870,7 @@ class Battery(Generator):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
         assert self.shours in [1, 2, 4, 8]
-        cost_per_kwh = costs.totcost_per_kwh[type(self)][shours]
+        cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
         return kwh * cost_per_kwh
 
     def fixed_om_costs(self, costs):
