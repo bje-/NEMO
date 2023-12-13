@@ -259,6 +259,8 @@ class CSVTraceGenerator(TraceGenerator):
             assert np.all(~np.isnan(cls.csvdata)), \
                 f'Trace file {filename} contains NaNs; inspect file'
             cls.csvfilename = filename
+        # pylint limitation: https://github.com/pylint-dev/pylint/issues/9250
+        # pylint: disable=unsubscriptable-object
         self.generation = cls.csvdata[::, column]
 
 
