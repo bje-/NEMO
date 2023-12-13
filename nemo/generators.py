@@ -816,12 +816,13 @@ class Battery(Generator):
     patch = Patch(facecolor='#00a2fa')
     """Colour for plotting"""
 
-    def __init__(self, polygon, capacity, battery, label=None,
-                 discharge_hours=None):
+    def __init__(self, polygon, capacity, shours, battery,
+                 label=None, discharge_hours=None):
         """
         Construct a battery generator.
 
         battery must be an instance of storage.BatteryStorage.
+        shours is the number of hours of storage at full load.
         discharge_hours is a list of hours when discharging can occur.
         """
         if not isinstance(battery, storage.BatteryStorage):
@@ -829,8 +830,18 @@ class Battery(Generator):
         Generator.__init__(self, polygon, capacity, label)
         self.battery = battery
         self.runhours = 0
+        self.shours = shours
+        assert shours in [1, 2, 4, 8]
+        assert capacity * shours == battery.maxstorage
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
+
+    def set_capacity(self, cap):
+        """Change the capacity of the generator to cap GW."""
+        Generator.set_capacity(self, cap)
+        # now alter the storage to match the new capacity
+        newmax = self.capacity * self.shours
+        self.battery.set_storage(newmax)
 
     def step(self, hour, demand):
         """Specialised step method for batteries."""

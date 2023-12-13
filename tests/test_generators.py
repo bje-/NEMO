@@ -18,7 +18,7 @@ import tcpserver
 from nemo import costs, generators, storage
 
 PORT = 9998
-battery_storage = storage.BatteryStorage(400, "Li-ion store")
+battery_storage = storage.BatteryStorage(800, "Li-ion store")
 hydrogen_storage = storage.HydrogenStorage(1000, "H2 store")
 pumped_storage = storage.PumpedHydroStorage(1000, "PSH store")
 
@@ -200,9 +200,13 @@ class TestGenerators(unittest.TestCase):
 
     def test_set_capacity(self):
         """Test set_capacity() method."""
+        initial_cap = self.generators[0].capacity
         for gen in self.generators:
             gen.set_capacity(0.2)
-        self.assertEqual(self.generators[0].capacity, 200)
+            self.assertEqual(gen.capacity, 200)
+            # put capacity back to its initial value
+            gen.set_capacity(initial_cap / 1000)
+            self.assertEqual(gen.capacity, initial_cap)
 
     def test_set_storage(self):
         """Test set_storage() method."""

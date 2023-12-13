@@ -260,7 +260,7 @@ class TestBattery(unittest.TestCase):
 
     def test_series_battery(self):
         """Test series() method."""
-        batt = generators.Battery(WILDCARD, 400, self.stor)
+        batt = generators.Battery(WILDCARD, 400, 2, self.stor)
         keys = batt.series().keys()
         self.assertEqual(len(keys), 2)
         # use a set comparison
@@ -268,7 +268,7 @@ class TestBattery(unittest.TestCase):
 
     def test_soc(self):
         """Test soc() method in Battery and BatteryLoad."""
-        batt = generators.Battery(WILDCARD, 400, self.stor)
+        batt = generators.Battery(WILDCARD, 400, 2, self.stor)
         battload = generators.BatteryLoad(WILDCARD, 400, self.stor)
         self.assertEqual(batt.soc(), 0)
         self.stor.storage = 200
@@ -293,7 +293,7 @@ class TestBattery(unittest.TestCase):
         # Test discontiguous hour range
         hrs = [0, 1] + list(range(18, 24))
         self.stor = storage.BatteryStorage(400 * 8)
-        batt = generators.Battery(WILDCARD, 400, self.stor,
+        batt = generators.Battery(WILDCARD, 400, 8, self.stor,
                                   discharge_hours=hrs)
         self.stor.storage = 400
         for hour in range(24):
