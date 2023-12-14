@@ -5,8 +5,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# pylint: disable=protected-access
-
 """A testsuite for the costs module."""
 
 import unittest
@@ -29,11 +27,6 @@ class TestCosts(unittest.TestCase):
         """Test annuity_factor function."""
         result = round(costs.annuity_factor(30, 0.05), 3)
         self.assertEqual(result, 15.372)
-
-    def test_zero_dict(self):
-        """Test _ZeroDict dictionary type."""
-        zerodict = costs.NullCosts._ZeroDict()
-        self.assertEqual(zerodict[123], 0)
 
     def test_table(self):
         """Check all table entries are valid."""

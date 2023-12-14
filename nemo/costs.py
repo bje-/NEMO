@@ -14,6 +14,8 @@
 
 # pylint: disable=too-many-lines
 
+from collections import defaultdict
+
 from nemo import generators as tech
 
 
@@ -25,24 +27,14 @@ def annuity_factor(lifetime, rate):
 class NullCosts():
     """All costs are zero. Useful for debugging."""
 
-    class _ZeroDict(dict):
-        """Return a fixed value (eg, 0) for any key."""
-
-        def __init__(self, value=0):
-            dict.__init__(self)
-            self.value = value
-
-        def __getitem__(self, key):
-            return dict.get(self, key, self.value)
-
     # pylint: disable=unused-argument
     def __init__(self, discount=0, coal_price=0, gas_price=0, ccs_price=0):
         """Construct an all-zero costs object."""
-        self.capcost_per_kw = self._ZeroDict()
-        self.fixed_om_costs = self._ZeroDict()
-        self.opcost_per_mwh = self._ZeroDict()
+        self.capcost_per_kw = defaultdict(lambda: 0)
+        self.fixed_om_costs = defaultdict(lambda: 0)
+        self.opcost_per_mwh = defaultdict(lambda: 0)
         # a dictionary of dictionary of zeros
-        self.totcost_per_kwh = self._ZeroDict(self._ZeroDict())
+        self.totcost_per_kwh = defaultdict(lambda: defaultdict(lambda: 0))
         self.annuityf = 1
         self.ccs_storage_per_t = 0
         self.bioenergy_price_per_gj = 0
