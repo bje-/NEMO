@@ -438,6 +438,8 @@ class PumpedHydroPump(Storage, Generator):
             raise TypeError
         Storage.__init__(self)
         Generator.__init__(self, polygon, capacity, label)
+        # capacity is in MW, but build limit is in GW
+        self.setters = [(self.set_capacity, 0, capacity / 1000.)]
         self.reservoirs = reservoirs
         self.rte = rte
 
