@@ -33,8 +33,13 @@ else:
         raise ConnectionError(f'HTTP {resp.status_code}: {url}')
     traceinput = io.StringIO(resp.text)
 
-demand = pd.read_csv(traceinput, comment='#', sep=',',
-                     parse_dates=[['Date', 'Time']], index_col='Date_Time')
+demand = pd.read_csv(traceinput, comment='#', sep=',')
+# combine Date and Time columns into a new Date_Time column, make this
+# the index column and then drop the original Date and Time columns
+demand['Date_Time'] = \
+    pd.to_datetime(demand['Date'] + ' ' + demand['Time'])
+demand.set_index('Date_Time', inplace=True)
+demand.drop(columns=['Date', 'Time'], inplace=True)
 
 # Check for date, time and n demand columns (for n regions).
 assert len(demand.columns) == regions.NUMREGIONS
