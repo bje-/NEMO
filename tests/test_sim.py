@@ -24,7 +24,7 @@ class TestSim(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.context = Context()
-        self.date_range = pd.date_range('2010-01-01', '2010-01-02', freq='H')
+        self.date_range = pd.date_range('2010-01-01', '2010-01-02', freq='h')
         self.generation = np.zeros((len(self.date_range),
                                     len(self.context.generators)))
         self.spill = np.zeros((len(self.date_range),

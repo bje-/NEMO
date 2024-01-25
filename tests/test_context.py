@@ -79,7 +79,7 @@ class TestContextMethods(unittest.TestCase):
         # Dummy lambda functions for testing
         self.context.surplus_energy = lambda: 300
         self.context.unserved_percent = lambda: 0.5
-        rng = pd.date_range(start='2022-01-01', end='2022-01-02', freq='H')
+        rng = pd.date_range(start='2022-01-01', end='2022-01-02', freq='h')
         self.context.unserved = pd.Series(index=rng, data=range(len(rng)))
         output = str(self.context)
 

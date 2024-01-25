@@ -47,7 +47,7 @@ assert (startdate.hour, startdate.minute, startdate.second) == (0, 30, 0), \
     'demand data must start at midnight'
 
 # Calculate hourly demand, averaging half-hours n and n+1.
-hourly_regional_demand = demand.resample('H', closed='right').mean()
+hourly_regional_demand = demand.resample('h', closed='right').mean()
 
 # Now put the demand into polygon resolution according to the load
 # apportioning figures given in each region's polygons field.

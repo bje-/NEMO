@@ -127,7 +127,7 @@ class Context():
             # constant). Group by the deltas.
             date_range = pd.date_range(self.unserved.index[0],
                                        periods=len(self.unserved.index),
-                                       freq='H')
+                                       freq='h')
             deltas = self.unserved.groupby(self.unserved.index - date_range)
             unserved_events = [k for k, g in deltas]
             string += 'Number of unserved energy events: '

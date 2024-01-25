@@ -135,7 +135,7 @@ def run(context, starthour=None, endhour=None):
         starthour = context.demand.index.min()
     if endhour is None:
         endhour = context.demand.index.max()
-    date_range = pd.date_range(starthour, endhour, freq='H')
+    date_range = pd.date_range(starthour, endhour, freq='h')
 
     _sim(context, date_range)
 
