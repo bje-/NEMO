@@ -135,7 +135,7 @@ def re100(context):
             for column, poly in enumerate([31, 36, 38, 40]):
                 result.append(g(poly, 0, cfg, column,
                                 build_limit=offshore_wind_limit[poly],
-                                label='polygon {poly} offshore'))
+                                label=f'polygon {poly} offshore'))
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             result += _every_poly(g)
         else:
