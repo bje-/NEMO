@@ -37,11 +37,13 @@ def _pumped_hydro():
     psh17turb = PumpedHydroTurbine(17, 500, psh17stg,
                                    label='poly 17 PSH generator')
 
-    # NSW: Tumut 3 (6x250), Bendeela (2x80) and Kangaroo Valley (2x40)
-    psh36stg = PumpedHydroStorage(15000, label='Tumut 3 storage')
-    psh36pump = PumpedHydroPump(36, 600, psh36stg, label='Tumut 3 pump')
-    psh36turb = PumpedHydroTurbine(36, 1800, psh36stg,
-                                   label='Tumut 3 generator')
+    # NSW: Tumut 3, Bendeela (2x80 MW) and Kangaroo Valley (2x40 MW)
+    # Tumut 3 is 600 MW pumping and 1800 MW generating
+    psh36stg = PumpedHydroStorage(15000, label='poly 36 pumped storage')
+    psh36pump = PumpedHydroPump(36, 600 + 160 + 80, psh36stg,
+                                label='poly 36 PSH pump')
+    psh36turb = PumpedHydroTurbine(36, 1800 + 160 + 80, psh36stg,
+                                   label='poly 36 PSH generator')
 
     return [psh17pump, psh36pump, psh17turb, psh36turb]
 
