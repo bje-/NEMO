@@ -865,6 +865,7 @@ class Battery(Generator):
         """Reset the generator."""
         Generator.reset(self)
         self.battery.reset()
+        self.runhours = 0
 
     def soc(self):
         """Return the battery SOC (state of charge)."""
