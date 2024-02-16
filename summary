@@ -70,8 +70,8 @@ def warn(flds):
     print("WARNING: unmatched:", ' '.join(flds))
 
 
-MERIT = "battery HSA EGS PV wind CST Coal Coal-CCS CCGT CCGT-CCS hydro "
-MERIT += "PSH GT OCGT diesel DR"
+MERIT = "battery HSA EGS PV wind offshore CST Coal Coal-CCS CCGT CCGT-CCS "
+MERIT += "hydro PSH GT OCGT diesel DR"
 MERIT = MERIT.split()
 
 # A namespace for AWK-like variables
@@ -87,6 +87,7 @@ patterns = {
     'EGS.*[kMG]W$': lambda f: addcap("EGS", f),
     'PV.*[kMG]W$': lambda f: addcap("PV", f),
     '[Ww]ind.*[kMG]W$': lambda f: addcap("wind", f),
+    'offshore.*[kMG]W$': lambda f: addcap("offshore", f),
     ' S?CST.*[kMG]W$': lambda f: addcap("CST", f),
     ' hydro.*[kMG]W$': lambda f: addcap("hydro", f),
     'pumped-hydro.*[kMG]W$': lambda f: addcap("PSH", f),
