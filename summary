@@ -82,6 +82,8 @@ av.caps = {}
 scenario_num = 0  # pylint: disable=invalid-name
 
 patterns = {
+    # don't count battery loads
+    '[Bb]att(ery) ([Ll]oad|[Cc]harger)?.*[kMG]W$': lambda f: None,
     '[Bb]att(ery)?.*[kMG]W$': lambda f: addcap("battery", f),
     'HSA.*[kMG]W$': lambda f: addcap("HSA", f),
     'EGS.*[kMG]W$': lambda f: addcap("EGS", f),
@@ -92,7 +94,8 @@ patterns = {
     ' hydro.*[kMG]W$': lambda f: addcap("hydro", f),
     'pumped-hydro.*[kMG]W$': lambda f: addcap("PSH", f),
     'PSH generator.*[kMG]W$': lambda f: addcap("PSH", f),
-    'PSH pump.*[kMG]W$': lambda f: None,  # don't count pumps
+    # don't count pumped hydro pumps
+    'PSH pump.*[kMG]W$': lambda f: None,
     ' GT.*[kMG]W$': lambda f: addcap("GT", f),
     'CCGT-CCS.*[kMG]W$': lambda f: addcap("CCGT-CCS", f),
     'CCGT .*[kMG]W$': lambda f: addcap("CCGT", f),
