@@ -65,6 +65,11 @@ def addcap(tech, flds):
     av.last = tech
 
 
+def warn(flds):
+    """Warn if a line is not matched in the pattern dictionary."""
+    print("WARNING: unmatched:", ' '.join(flds))
+
+
 MERIT = "battery HSA EGS PV wind CST Coal Coal-CCS CCGT CCGT-CCS hydro "
 MERIT += "PSH GT OCGT diesel DR"
 MERIT = MERIT.split()
@@ -94,7 +99,8 @@ patterns = {
     'OCGT.*[kMG]W.?$': lambda f: addcap("OCGT", f),
     'diesel.*[kMG]W.?$': lambda f: addcap("diesel", f),
     '(DR|demand, f).*[kMG]W.?$': lambda f: addcap("DR", f),
-    'HydrogenGT.*[kMG]W.?$': lambda f: addcap("HydrogenGT", f)
+    'HydrogenGT.*[kMG]W.?$': lambda f: addcap("HydrogenGT", f),
+    '[kMG]W[^h]?$': warn
 }
 
 for line in sys.stdin:  # noqa: C901
@@ -105,6 +111,7 @@ for line in sys.stdin:  # noqa: C901
     for pattern, action in patterns.items():
         if search(pattern, line):
             action(fields)
+            break
 
     if search(r'supplied [\d\.]+ [MGTP]Wh', line):
         fld3 = fields[3]
