@@ -91,8 +91,6 @@ patterns = {
     ' S?CST.*[kMG]W$': lambda f: addcap("CST", f),
     ' hydro.*[kMG]W$': lambda f: addcap("hydro", f),
     'pumped-hydro.*[kMG]W$': lambda f: addcap("PSH", f),
-    'PSH generator.*[kMG]W$': lambda f: addcap("PSH", f),
-    'PSH pump.*[kMG]W$': lambda f: None,  # don't count pumps
     ' GT.*[kMG]W$': lambda f: addcap("GT", f),
     'CCGT-CCS.*[kMG]W$': lambda f: addcap("CCGT-CCS", f),
     'CCGT .*[kMG]W$': lambda f: addcap("CCGT", f),
