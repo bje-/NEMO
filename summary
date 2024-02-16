@@ -82,29 +82,30 @@ av.caps = {}
 scenario_num = 0  # pylint: disable=invalid-name
 
 patterns = {
-    '[Bb]att(ery)?.*[kMG]W.?$': lambda f: addcap("battery", f),
-    'HSA.*[kMG]W.?$': lambda f: addcap("HSA", f),
-    'EGS.*[kMG]W.?$': lambda f: addcap("EGS", f),
-    'PV.*[kMG]W.?$': lambda f: addcap("PV", f),
-    '[Ww]ind.*[kMG]W.?$': lambda f: addcap("wind", f),
-    ' S?CST.*[kMG]W.?$': lambda f: addcap("CST", f),
-    ' hydro.*[kMG]W.?$': lambda f: addcap("hydro", f),
-    'pumped-hydro.*[kMG]W.?$': lambda f: addcap("PSH", f),
-    'PSH.*[kMG]W.?$': lambda f: addcap("PSH", f),
-    ' GT.*[kMG]W.?$': lambda f: addcap("GT", f),
-    'CCGT-CCS.*[kMG]W.?$': lambda f: addcap("CCGT-CCS", f),
-    'CCGT .*[kMG]W.?$': lambda f: addcap("CCGT", f),
-    'coal.*[kMG]W.?$': lambda f: addcap("Coal", f),
-    'Coal-CCS.*[kMG]W.?$': lambda f: addcap("Coal-CCS", f),
-    'OCGT.*[kMG]W.?$': lambda f: addcap("OCGT", f),
-    'diesel.*[kMG]W.?$': lambda f: addcap("diesel", f),
-    '(DR|demand, f).*[kMG]W.?$': lambda f: addcap("DR", f),
-    'HydrogenGT.*[kMG]W.?$': lambda f: addcap("HydrogenGT", f),
-    '[kMG]W[^h]?$': warn
+    '[Bb]att(ery)?.*[kMG]W$': lambda f: addcap("battery", f),
+    'HSA.*[kMG]W$': lambda f: addcap("HSA", f),
+    'EGS.*[kMG]W$': lambda f: addcap("EGS", f),
+    'PV.*[kMG]W$': lambda f: addcap("PV", f),
+    '[Ww]ind.*[kMG]W$': lambda f: addcap("wind", f),
+    ' S?CST.*[kMG]W$': lambda f: addcap("CST", f),
+    ' hydro.*[kMG]W$': lambda f: addcap("hydro", f),
+    'pumped-hydro.*[kMG]W$': lambda f: addcap("PSH", f),
+    'PSH generator.*[kMG]W$': lambda f: addcap("PSH", f),
+    'PSH pump.*[kMG]W$': lambda f: None,  # don't count pumps
+    ' GT.*[kMG]W$': lambda f: addcap("GT", f),
+    'CCGT-CCS.*[kMG]W$': lambda f: addcap("CCGT-CCS", f),
+    'CCGT .*[kMG]W$': lambda f: addcap("CCGT", f),
+    'coal.*[kMG]W$': lambda f: addcap("Coal", f),
+    'Coal-CCS.*[kMG]W$': lambda f: addcap("Coal-CCS", f),
+    'OCGT.*[kMG]W$': lambda f: addcap("OCGT", f),
+    'diesel.*[kMG]W$': lambda f: addcap("diesel", f),
+    '(DR|demand, f).*[kMG]W$': lambda f: addcap("DR", f),
+    'HydrogenGT.*[kMG]W$': lambda f: addcap("HydrogenGT", f),
+    '[kMG]W$': warn
 }
 
 for line in sys.stdin:  # noqa: C901
-    fields = awklite.Fields(line.split())
+    fields = awklite.Fields(line.strip().split())
     nf = len(fields)
 
     # AWK-style processing loop
