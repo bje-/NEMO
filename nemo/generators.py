@@ -93,11 +93,11 @@ class Generator():
         """Capacity factor of this generator (in %)."""
         supplied = sum(self.series_power.values())
         hours = len(self.series_power)
-        try:
+        if self.capacity * hours == 0:
+            return float('nan')
+        else:
             capfactor = supplied / (self.capacity * hours) * 100
             return capfactor
-        except ZeroDivisionError:
-            return float('nan')
 
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
