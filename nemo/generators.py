@@ -95,9 +95,8 @@ class Generator():
         hours = len(self.series_power)
         if self.capacity * hours == 0:
             return float('nan')
-        else:
-            capfactor = supplied / (self.capacity * hours) * 100
-            return capfactor
+        capfactor = supplied / (self.capacity * hours) * 100
+        return capfactor
 
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
