@@ -83,7 +83,7 @@ scenario_num = 0  # pylint: disable=invalid-name
 
 patterns = {
     # don't count battery loads
-    '[Bb]att(ery) ([Ll]oad|[Cc]harger)?.*[kMG]W$': lambda f: None,
+    '[Bb]att(ery)? ([Ll]oad|[Cc]harge).*[kMG]W$': lambda f: None,
     '[Bb]att(ery)?.*[kMG]W$': lambda f: addcap("battery", f),
     'HSA.*[kMG]W$': lambda f: addcap("HSA", f),
     'EGS.*[kMG]W$': lambda f: addcap("EGS", f),
