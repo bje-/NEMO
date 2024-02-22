@@ -8,7 +8,6 @@
 
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
-# pylint: disable=too-many-instance-attributes
 
 """Generation technology costs."""
 
@@ -17,11 +16,6 @@
 from collections import defaultdict
 
 from nemo import generators as tech
-
-
-def annuity_factor(lifetime, rate):
-    """Return the annuity factor for lifetime t and interest rate r."""
-    return (1 - (1 / (1 + rate) ** lifetime)) / rate
 
 
 class NullCosts():
@@ -35,7 +29,6 @@ class NullCosts():
         self.opcost_per_mwh = defaultdict(lambda: 0)
         # a dictionary of dictionary of zeros
         self.totcost_per_kwh = defaultdict(lambda: defaultdict(lambda: 0))
-        self.annuityf = 1
         self.ccs_storage_per_t = 0
         self.bioenergy_price_per_gj = 0
         self.coal_price_per_gj = 0
@@ -43,18 +36,22 @@ class NullCosts():
         self.diesel_price_per_litre = 0
         self.carbon = 0
 
+    def annuity_factor(self, lifetime):
+        """Return the annuity factor for lifetime t."""
+        return 1
+
 
 class Common():
     """Costs common to all cost classes (eg, existing hydro)."""
 
-    LIFETIME = 30
-
-    def __init__(self):
+    def __init__(self, discount):
         """
         Initialise common costs.
 
         Derived costs can call update() on these dicts.
         """
+        self.discount_rate = discount
+
         # Common capital costs
         self.capcost_per_kw = {
             tech.DemandResponse: 0,
@@ -79,6 +76,11 @@ class Common():
             tech.PumpedHydroPump: 0,
             tech.PumpedHydroTurbine: 0}
 
+    def annuity_factor(self, lifetime):
+        """Return the annuity factor for lifetime t and discount rate r."""
+        rate = self.discount_rate
+        return (1 - (1 / (1 + rate) ** lifetime)) / rate
+
 
 class APGTR2015(Common):
     """Australian Power Generation Technology Report costs in 2015.
@@ -88,15 +90,13 @@ class APGTR2015(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self)
-        self.discount_rate = discount
+        Common.__init__(self, discount)
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
@@ -160,15 +160,13 @@ class AETA2012_2030(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self)
-        self.discount_rate = discount
+        Common.__init__(self, discount)
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
@@ -364,15 +362,13 @@ class GenCost2021(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self)
-        self.discount_rate = discount
+        Common.__init__(self, discount)
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -529,15 +525,13 @@ class GenCost2022(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self)
-        self.discount_rate = discount
+        Common.__init__(self, discount)
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -792,15 +786,13 @@ class GenCost2023(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self)
-        self.discount_rate = discount
+        Common.__init__(self, discount)
         self.ccs_storage_per_t = ccs_price
         # bioenergy costs taken from CSIRO energy storage report for AEMO
         self.bioenergy_price_per_gj = 12
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),

@@ -25,7 +25,8 @@ class TestCosts(unittest.TestCase):
 
     def test_annuity_factor(self):
         """Test annuity_factor function."""
-        result = round(costs.annuity_factor(30, 0.05), 3)
+        obj = costs.Common(0.05)
+        result = round(obj.annuity_factor(30), 3)
         self.assertEqual(result, 15.372)
 
     def test_table(self):

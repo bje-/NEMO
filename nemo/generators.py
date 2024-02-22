@@ -27,6 +27,9 @@ from nemo.utils import currency, thousands, ureg
 class Generator():
     """Base generator class."""
 
+    # Economic lifetime of the generator in years (default 30)
+    lifetime = 30
+
     # Is the generator a rotating machine?
     synchronous_p = True
     """Is this a synchronous generator?"""
@@ -100,7 +103,8 @@ class Generator():
 
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
-        total_cost = self.capcost(costs) / costs.annuityf * years \
+        annuityf = costs.annuity_factor(self.lifetime)
+        total_cost = self.capcost(costs) / annuityf * years \
             + self.opcost(costs)
         supplied = sum(self.series_power.values())
         if supplied > 0:
@@ -813,6 +817,9 @@ class BatteryLoad(Storage, Generator):
 
 class Battery(Generator):
     """Battery storage (of any type)."""
+
+    # Lifespan of the battery in years
+    lifetime = 15
 
     patch = Patch(facecolor='#00a2fa')
     """Colour for plotting"""
