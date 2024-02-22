@@ -2,3 +2,4 @@
 htmlcov
 results.json
 myenv
+__pycache__
