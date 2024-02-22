@@ -47,6 +47,8 @@ class NullCosts():
 class Common():
     """Costs common to all cost classes (eg, existing hydro)."""
 
+    LIFETIME = 30
+
     def __init__(self):
         """
         Initialise common costs.
@@ -84,8 +86,6 @@ class APGTR2015(Common):
     Source: CO2CRC Australian Power Generation Technology Report (2015)
     """
 
-    LIFETIME = 30
-
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
         Common.__init__(self)
@@ -96,7 +96,7 @@ class APGTR2015(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.LIFETIME, discount)
+        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
@@ -156,7 +156,6 @@ class AETA2012_2030(Common):
     Source: BREE AETA report (2012), bree.gov.au
     """
 
-    LIFETIME = 30
     ESCALATION = 1.171
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
@@ -169,7 +168,7 @@ class AETA2012_2030(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.LIFETIME, discount)
+        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Variable O&M (VOM) costs
         self.opcost_per_mwh.update({
@@ -363,8 +362,6 @@ class GenCost2021(Common):
     https://data.csiro.au/collections/collection/CIcsiro:44228
     """
 
-    LIFETIME = 30
-
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
         Common.__init__(self)
@@ -375,7 +372,7 @@ class GenCost2021(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.LIFETIME, discount)
+        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -530,8 +527,6 @@ class GenCost2022(Common):
     https://data.csiro.au/collections/collection/CIcsiro:44228
     """
 
-    LIFETIME = 30
-
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
         Common.__init__(self)
@@ -542,7 +537,7 @@ class GenCost2022(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.LIFETIME, discount)
+        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -795,8 +790,6 @@ class GenCost2023(Common):
     https://data.csiro.au/collections/collection/CIcsiro:44228
     """
 
-    LIFETIME = 30
-
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
         Common.__init__(self)
@@ -807,7 +800,7 @@ class GenCost2023(Common):
         self.coal_price_per_gj = coal_price
         self.gas_price_per_gj = gas_price
         self.diesel_price_per_litre = 1.50
-        self.annuityf = annuity_factor(self.LIFETIME, discount)
+        self.annuityf = annuity_factor(Common.LIFETIME, discount)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
