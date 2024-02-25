@@ -543,6 +543,7 @@ class GenCost2022(Common):
             tech.CentralReceiver: 120.0,
             tech.Coal_CCS: 77.8,
             tech.OCGT: 10.2,
+            tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 17.0,
             tech.Wind: 25.0,
             tech.WindOffshore: 149.9})
@@ -556,6 +557,7 @@ class GenCost2022(Common):
             tech.CentralReceiver: 0,
             tech.Coal_CCS: 8.0,
             tech.OCGT: 7.3,
+            tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 0,
             tech.Wind: 0,
             tech.WindOffshore: 0})
@@ -579,6 +581,7 @@ class GenCost2022_2021(GenCost2022):
         table[tech.CentralReceiver] = 6693
         table[tech.Coal_CCS] = 9077
         table[tech.OCGT] = 873
+        table[tech.Behind_Meter_PV] = 1333
         table[tech.PV1Axis] = 1441
         table[tech.Wind] = 1960
         table[tech.WindOffshore] = 4649
@@ -600,6 +603,7 @@ class GenCost2022_2030_CP(GenCost2022):
         table[tech.CentralReceiver] = 5660
         table[tech.Coal_CCS] = 8884
         table[tech.OCGT] = 741
+        table[tech.Behind_Meter_PV] = 949
         table[tech.PV1Axis] = 1013
         table[tech.Wind] = 1897
         table[tech.WindOffshore] = 4545
@@ -621,6 +625,7 @@ class GenCost2022_2040_CP(GenCost2022):
         table[tech.CentralReceiver] = 4894
         table[tech.Coal_CCS] = 8650
         table[tech.OCGT] = 716
+        table[tech.Behind_Meter_PV] = 691
         table[tech.PV1Axis] = 733
         table[tech.Wind] = 1868
         table[tech.WindOffshore] = 4482
@@ -642,6 +647,7 @@ class GenCost2022_2050_CP(GenCost2022):
         table[tech.CentralReceiver] = 4103
         table[tech.Coal_CCS] = 7958
         table[tech.OCGT] = 691
+        table[tech.Behind_Meter_PV] = 606
         table[tech.PV1Axis] = 644
         table[tech.Wind] = 1828
         table[tech.WindOffshore] = 4431
@@ -663,6 +669,7 @@ class GenCost2022_2030_NZE2050(GenCost2022):
         table[tech.CentralReceiver] = 4657
         table[tech.Coal_CCS] = 8631
         table[tech.OCGT] = 741
+        table[tech.Behind_Meter_PV] = 752
         table[tech.PV1Axis] = 785
         table[tech.Wind] = 1633
         table[tech.WindOffshore] = 2967
@@ -684,6 +691,7 @@ class GenCost2022_2040_NZE2050(GenCost2022):
         table[tech.CentralReceiver] = 3620
         table[tech.Coal_CCS] = 7768
         table[tech.OCGT] = 716
+        table[tech.Behind_Meter_PV] = 557
         table[tech.PV1Axis] = 578
         table[tech.Wind] = 1553
         table[tech.WindOffshore] = 2653
@@ -705,6 +713,7 @@ class GenCost2022_2050_NZE2050(GenCost2022):
         table[tech.CentralReceiver] = 2911
         table[tech.Coal_CCS] = 7552
         table[tech.OCGT] = 691
+        table[tech.Behind_Meter_PV] = 500
         table[tech.PV1Axis] = 521
         table[tech.Wind] = 1521
         table[tech.WindOffshore] = 2506
@@ -726,6 +735,7 @@ class GenCost2022_2030_NZEPost2050(GenCost2022):
         table[tech.CentralReceiver] = 5236
         table[tech.Coal_CCS] = 8747
         table[tech.OCGT] = 741
+        table[tech.Behind_Meter_PV] = 977
         table[tech.PV1Axis] = 1046
         table[tech.Wind] = 1778
         table[tech.WindOffshore] = 4437
@@ -747,6 +757,7 @@ class GenCost2022_2040_NZEPost2050(GenCost2022):
         table[tech.CentralReceiver] = 4181
         table[tech.Coal_CCS] = 8025
         table[tech.OCGT] = 716
+        table[tech.Behind_Meter_PV] = 653
         table[tech.PV1Axis] = 689
         table[tech.Wind] = 1648
         table[tech.WindOffshore] = 3772
@@ -768,6 +779,7 @@ class GenCost2022_2050_NZEPost2050(GenCost2022):
         table[tech.CentralReceiver] = 3478
         table[tech.Coal_CCS] = 7792
         table[tech.OCGT] = 691
+        table[tech.Behind_Meter_PV] = 508
         table[tech.PV1Axis] = 530
         table[tech.Wind] = 1546
         table[tech.WindOffshore] = 3168
@@ -804,6 +816,7 @@ class GenCost2023(Common):
             tech.CentralReceiver: 120.0,
             tech.Coal_CCS: 77.8,
             tech.OCGT: 10.2,
+            tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 17.0,
             tech.Wind: 25.0,
             tech.WindOffshore: 149.9})
@@ -817,6 +830,7 @@ class GenCost2023(Common):
             tech.CentralReceiver: 0,
             tech.Coal_CCS: 8.0,
             tech.OCGT: 7.3,
+            tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 0,
             tech.Wind: 0,
             tech.WindOffshore: 0})
@@ -840,6 +854,7 @@ class GenCost2023_2030_CP(GenCost2023):
         table[tech.CentralReceiver] = 5562
         table[tech.Coal_CCS] = 9597
         table[tech.OCGT] = 803
+        table[tech.Behind_Meter_PV] = 977
         table[tech.PV1Axis] = 1058
         table[tech.Wind] = 1989
         table[tech.WindOffshore] = 4803
@@ -861,6 +876,7 @@ class GenCost2023_2040_CP(GenCost2023):
         table[tech.CentralReceiver] = 4826
         table[tech.Coal_CCS] = 8896
         table[tech.OCGT] = 790
+        table[tech.Behind_Meter_PV] = 764
         table[tech.PV1Axis] = 839
         table[tech.Wind] = 1959
         table[tech.WindOffshore] = 4659
@@ -882,6 +898,7 @@ class GenCost2023_2050_CP(GenCost2023):
         table[tech.CentralReceiver] = 4051
         table[tech.Coal_CCS] = 8566
         table[tech.OCGT] = 768
+        table[tech.Behind_Meter_PV] = 619
         table[tech.PV1Axis] = 676
         table[tech.Wind] = 1927
         table[tech.WindOffshore] = 4511
@@ -903,6 +920,7 @@ class GenCost2023_2030_NZE2050(GenCost2023):
         table[tech.CentralReceiver] = 4917
         table[tech.Coal_CCS] = 9639
         table[tech.OCGT] = 828
+        table[tech.Behind_Meter_PV] = 988
         table[tech.PV1Axis] = 1071
         table[tech.Wind] = 1913
         table[tech.WindOffshore] = 2755
@@ -924,6 +942,7 @@ class GenCost2023_2040_NZE2050(GenCost2023):
         table[tech.CentralReceiver] = 3835
         table[tech.Coal_CCS] = 8722
         table[tech.OCGT] = 790
+        table[tech.Behind_Meter_PV] = 610
         table[tech.PV1Axis] = 653
         table[tech.Wind] = 1720
         table[tech.WindOffshore] = 2589
@@ -945,6 +964,7 @@ class GenCost2023_2050_NZE2050(GenCost2023):
         table[tech.CentralReceiver] = 3087
         table[tech.Coal_CCS] = 8083
         table[tech.OCGT] = 768
+        table[tech.Behind_Meter_PV] = 483
         table[tech.PV1Axis] = 513
         table[tech.Wind] = 1642
         table[tech.WindOffshore] = 2539
@@ -966,6 +986,7 @@ class GenCost2023_2030_NZEPost2050(GenCost2023):
         table[tech.CentralReceiver] = 5124
         table[tech.Coal_CCS] = 9639
         table[tech.OCGT] = 828
+        table[tech.Behind_Meter_PV] = 976
         table[tech.PV1Axis] = 1071
         table[tech.Wind] = 1900
         table[tech.WindOffshore] = 4352
@@ -987,6 +1008,7 @@ class GenCost2023_2040_NZEPost2050(GenCost2023):
         table[tech.CentralReceiver] = 4105
         table[tech.Coal_CCS] = 8739
         table[tech.OCGT] = 790
+        table[tech.Behind_Meter_PV] = 618
         table[tech.PV1Axis] = 687
         table[tech.Wind] = 1817
         table[tech.WindOffshore] = 3988
@@ -1008,6 +1030,7 @@ class GenCost2023_2050_NZEPost2050(GenCost2023):
         table[tech.CentralReceiver] = 3419
         table[tech.Coal_CCS] = 8109
         table[tech.OCGT] = 768
+        table[tech.Behind_Meter_PV] = 525
         table[tech.PV1Axis] = 586
         table[tech.Wind] = 1787
         table[tech.WindOffshore] = 3751
