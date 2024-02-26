@@ -50,7 +50,7 @@ def conditional_gooey(*pargs, **kwargs):
     """Conditional decorator that wraps the Gooey decorator if the display
     can be found."""
     def decorator(func):
-        if not wx.PyApp.IsDisplayAvailable():  # pylint: disable=no-member
+        if not wx.PyApp.IsDisplayAvailable():
             return func
         return Gooey(*pargs, **kwargs)(func)
     return decorator
