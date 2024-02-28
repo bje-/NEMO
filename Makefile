@@ -37,8 +37,10 @@ coverage: replay.json replay-noscenario.json replay-nocost.json
 	$(COVRUN) replay -f replay-noscenario.json -v > /dev/null || true
 	$(COVRUN) replay -f replay-nocost.json -v > /dev/null || true
 	$(COVRUN) evolve -g1 -s __one_ccgt__ -p > /dev/null
+	$(COVRUN) evolve -g1 -s __one_ccgt__ > output.txt
+	$(COVRUN) summary < output.txt
 	$(COVRUN) replay -p -f replay.json > /dev/null
-	rm results.json
+	rm results.json output.txt
 	rm replay.json replay-noscenario.json replay-nocost.json
 	make html
 
