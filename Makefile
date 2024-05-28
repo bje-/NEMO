@@ -87,7 +87,7 @@ pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
 
 lint:	envset flake8 ruff pylint
-	codespell -d -L fom,hsa,trough,harge $(LINTSRC) || true
+	codespell -d -L assertin,fom,hsa,trough,harge $(LINTSRC) || true
 	isort --check $(LINTSRC)
 	pylama $(LINTSRC)
 	-vulture --min-confidence=70 $(LINTSRC)
