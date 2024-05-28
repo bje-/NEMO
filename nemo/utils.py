@@ -170,7 +170,8 @@ def _figure(context, spills, showlegend, xlim):
     if spills:
         _plot_areas(axes, context, 'spill', prev=demand, alpha=0.3)
 
-    axes.set_xlim(xlim)  # set_xlim accepts None
+    if xlim is not None:
+        axes.set_xlim(xlim)
     axes.xaxis_date()
     fig.autofmt_xdate()
 
@@ -181,6 +182,7 @@ def _figure(context, spills, showlegend, xlim):
 
 def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
     """Produce a pretty plot of supply and demand."""
+    assert xlim is None or isinstance(xlim, tuple)
     if xlim is None:
         starttime = context.demand.index[0]
         ninety_days = 24 * 90
@@ -190,6 +192,7 @@ def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
             endtime = context.demand.index[-1]
         timerange = (starttime, endtime)
     else:
+        assert len(xlim) == 2
         timerange = xlim
 
     _figure(context, spills, showlegend, timerange)
