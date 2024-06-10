@@ -26,7 +26,7 @@ locale.setlocale(locale.LC_ALL, '')
 # Default to abbreviated units when formatting.
 # Caching is not yet the default.
 ureg = pint.UnitRegistry(cache_folder=':auto:')
-ureg.default_format = '.2f~P'
+ureg.formatter.default_format = '.2f~P'
 
 # The maximum number of generators before we only show a consolidated
 # list of generator types and not individual generator names.

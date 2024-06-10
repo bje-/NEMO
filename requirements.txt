@@ -12,7 +12,7 @@ pdoc3
 numpy
 pandas
 matplotlib
-pint
+pint>=0.24
 Gooey>=1.0.4
 deap
 twine
