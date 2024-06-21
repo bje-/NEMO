@@ -445,8 +445,7 @@ def dist(poly1, poly2):
     0
     >>> dist(1,43)
     2910
-    >>> dist(1,43) == distances[1,43]
-    True
+    >>> assert dist(1,43) == distances[1,43]
     """
     # Code adapted from Chris Veness
     # pylint: disable=invalid-name
