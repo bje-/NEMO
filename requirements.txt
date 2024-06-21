@@ -9,7 +9,7 @@ vulture
 bandit
 pydocstyle
 pdoc3
-numpy
+numpy<2.0
 pandas
 matplotlib
 pint>=0.24
