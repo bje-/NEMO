@@ -17,8 +17,9 @@ class TestScenarios(unittest.TestCase):
 
     def test_all_scenarios(self):
         """Run each scenario and then check the generator list."""
+        ctx = context.Context()
         for setupfn in scenarios.supply_scenarios.values():
-            ctx = context.Context()
+            ctx.generators = []
             setupfn(ctx)
             self.assertGreater(len(ctx.generators), 0)
             # sanity check
