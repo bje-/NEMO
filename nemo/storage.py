@@ -14,7 +14,7 @@ system.
 """
 
 
-class GenericStorage():
+class GenericStorage:
     """A simple electrical storage system.
 
     The storage has unity efficiency. It is up to the load and

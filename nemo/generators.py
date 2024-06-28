@@ -24,7 +24,7 @@ from nemo import polygons, storage
 from nemo.utils import currency, thousands, ureg
 
 
-class Generator():
+class Generator:
     """Base generator class."""
 
     # Economic lifetime of the generator in years (default 30)
@@ -149,7 +149,7 @@ class Generator():
 # This class is not to be confused with storage.py.
 # This class will go away soon.
 
-class Storage():
+class Storage:
     """A class to give a generator storage capability."""
 
     storage_p = True

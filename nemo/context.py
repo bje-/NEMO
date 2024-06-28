@@ -23,7 +23,7 @@ from nemo.nem import hourly_demand, hourly_regional_demand, startdate
 from nemo.utils import ureg
 
 
-class Context():
+class Context:
     """All simulation state is kept in a Context object."""
 
     # pylint: disable=too-many-instance-attributes

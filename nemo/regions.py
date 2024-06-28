@@ -9,7 +9,7 @@
 """Market regions consisting of one or more polygons."""
 
 
-class Region():
+class Region:
     """Each region is described by a Region object."""
 
     def __init__(self, ordinal, regionid, descr):

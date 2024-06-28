@@ -18,7 +18,7 @@ from collections import defaultdict
 from nemo import generators as tech
 
 
-class NullCosts():
+class NullCosts:
     """All costs are zero. Useful for debugging."""
 
     # pylint: disable=unused-argument
@@ -41,7 +41,7 @@ class NullCosts():
         return 1
 
 
-class Common():
+class Common:
     """Costs common to all cost classes (eg, existing hydro)."""
 
     def __init__(self, discount):
