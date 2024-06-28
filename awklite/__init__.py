@@ -60,7 +60,8 @@ class Fields(list):
         >>> flds[1]
         1
         """
-        assert 0 < key <= len(self)
+        if not 0 < key <= len(self):
+            raise IndexError(key)
         return list.__getitem__(self, key - 1)
 
     def __setitem__(self, key, value):
@@ -71,11 +72,12 @@ class Fields(list):
         >>> flds == [10,2,3]
         True
         """
-        assert 0 < key <= len(self)
+        if not 0 < key <= len(self):
+            raise IndexError(key)
         return list.__setitem__(self, key - 1, value)
 
 
-class Undefined():
+class Undefined:
     """An undefined object mimics an undefined variable in AWK."""
 
     def __int__(self):
@@ -99,7 +101,7 @@ class Undefined():
         return False
 
 
-class Namespace():
+class Namespace:
     """An object that returns an Undefined for undefined attributes.
 
     >>> ns = Namespace()
