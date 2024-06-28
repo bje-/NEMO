@@ -88,14 +88,14 @@ def ccgt_ccs(context):
     # pylint: disable=redefined-outer-name
     ccgt = CCGT_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
-    context.generators = [ccgt] + _pumped_hydro() + _hydro() + [ocgt]
+    context.generators = [ccgt, *_pumped_hydro(), *_hydro(), ocgt]
 
 
 def coal_ccs(context):
     """Coal CCS scenario."""
     coal = Coal_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
-    context.generators = [coal] + _pumped_hydro() + _hydro() + [ocgt]
+    context.generators = [coal, *_pumped_hydro(), *_hydro(), ocgt]
 
 
 def _every_poly(gentype):

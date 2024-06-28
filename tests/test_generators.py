@@ -130,14 +130,14 @@ class TestGenerators(unittest.TestCase):
     def test_step(self):
         """Test step() method."""
         for gen in self.generators:
-            for hour in range(0, 10):
+            for hour in range(10):
                 gen.step(hour, 20)
 
     def test_store(self):
         """Test store() method."""
         for gen in self.generators:
             if gen.storage_p:
-                for hour in range(0, 10):
+                for hour in range(10):
                     gen.step(hour, 20)
 
     def test_capcost(self):

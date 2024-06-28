@@ -291,7 +291,7 @@ class TestBattery(unittest.TestCase):
     def test_discharge(self):
         """Test discharging outside of discharge hours."""
         # Test discontiguous hour range
-        hrs = [0, 1] + list(range(18, 24))
+        hrs = [0, 1, *list(range(18, 24))]
         self.stor = storage.BatteryStorage(400 * 8)
         batt = generators.Battery(WILDCARD, 400, 8, self.stor,
                                   discharge_hours=hrs)
@@ -306,7 +306,7 @@ class TestBattery(unittest.TestCase):
     def test_charge(self):
         """Test (normal) charging inside and outside of discharge hours."""
         # Test discontiguous hour range
-        hrs = [0, 1] + list(range(18, 24))
+        hrs = [0, 1, *list(range(18, 24))]
         rte = 0.95
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor,
                                       discharge_hours=hrs, rte=rte)

@@ -105,8 +105,8 @@ def _legend(fig, context):
             patches.append(gen.patch)
 
     red_patch = Patch(facecolor='red', edgecolor='black')
-    fig.legend([red_patch] + patches,
-               ['unserved'] + labels,
+    fig.legend([red_patch, *patches],
+               ['unserved', *labels],
                fontsize='small',
                loc='upper right')
 

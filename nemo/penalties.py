@@ -85,10 +85,7 @@ def min_regional(ctx, _):
         min_regional_generation = regional_demand * ctx.min_regional_generation
         shortfall += max(0, min_regional_generation - regional_generation)
 
-    if shortfall > 0:
-        reason = reasons['min-regional-gen']
-    else:
-        reason = 0
+    reason = reasons['min-regional-gen'] if shortfall > 0 else 0
     return pow(shortfall, 3), reason
 
 
