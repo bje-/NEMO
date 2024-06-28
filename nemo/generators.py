@@ -43,7 +43,8 @@ class Generator:
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
-        assert capacity >= 0
+        if capacity < 0:
+            raise ValueError(capacity)
         self.setters = [(self.set_capacity, 0, 40)]
         self.label = self.__class__.__name__ if label is None else label
         self.capacity = capacity
@@ -653,7 +654,8 @@ class CCS(Fossil):
         Emissions capture rate is given in the range 0 to 1.
         """
         Fossil.__init__(self, polygon, capacity, intensity, label)
-        assert 0 <= capture <= 1
+        if not 0 <= capture <= 1:
+            raise ValueError(capture)
         self.capture = capture
 
     def summary(self, context):
@@ -839,7 +841,8 @@ class Battery(Generator):
         self.battery = battery
         self.runhours = 0
         self.shours = shours
-        assert shours in [1, 2, 4, 8]
+        if shours not in [1, 2, 4, 8]:
+            raise ValueError(shours)
         assert capacity * shours == battery.maxstorage
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
