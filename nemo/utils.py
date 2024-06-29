@@ -113,7 +113,10 @@ def _legend(fig, context):
 
 
 def _plot_areas(axes, context, category, prev=None, alpha=None):
-    assert category in ['generation', 'spill']
+    """Plot the areas (generation or spills)."""
+
+    if category not in ['generation', 'spill']:
+        raise ValueError(category)
 
     demand = context.demand.sum(axis=1)
     timeseries = getattr(context, category)
@@ -180,7 +183,9 @@ def _figure(context, spills, showlegend, xlim):
 
 def plot(context, filename=None, xlim=None, *, spills=False, showlegend=True):
     """Produce a pretty plot of supply and demand."""
-    assert xlim is None or isinstance(xlim, tuple)
+    if xlim is not None and not isinstance(xlim, tuple):
+        raise ValueError(xlim)
+
     if xlim is None:
         starttime = context.demand.index[0]
         ninety_days = 24 * 90
@@ -190,7 +195,8 @@ def plot(context, filename=None, xlim=None, *, spills=False, showlegend=True):
             endtime = context.demand.index[-1]
         timerange = (starttime, endtime)
     else:
-        assert len(xlim) == 2
+        if len(xlim) != 2:
+            raise ValueError(xlim)
         timerange = xlim
 
     _figure(context, spills, showlegend, timerange)

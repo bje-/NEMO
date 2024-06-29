@@ -44,14 +44,19 @@ demand = demand.set_index('Date_Time')
 demand = demand.drop(columns=['Date', 'Time'])
 
 # Check for date, time and n demand columns (for n regions).
-assert len(demand.columns) == regions.NUMREGIONS
+if len(demand.columns) != regions.NUMREGIONS:
+    raise AssertionError
+
 # The number of rows must be even.
-assert len(demand) % 2 == 0, "odd number of rows in half-hourly demand data"
+if len(demand) % 2 != 0:
+    msg = "odd number of rows in half-hourly demand data"
+    raise AssertionError(msg)
 
 # Check demand data starts at midnight
 startdate = demand.index[0]
-assert (startdate.hour, startdate.minute, startdate.second) == (0, 30, 0), \
-    'demand data must start at midnight'
+if (startdate.hour, startdate.minute, startdate.second) != (0, 30, 0):
+    msg = 'demand data must start at midnight'
+    raise AssertionError(msg)
 
 # Calculate hourly demand, averaging half-hours n and n+1.
 hourly_regional_demand = demand.resample('h', closed='right').mean()

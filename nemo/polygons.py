@@ -27,8 +27,8 @@ regions.vic.polygons = {37: .2, 38: .1, 39: .7}
 
 # Ensure all weights sum to one.
 for r in regions.All:
-    if r.polygons:
-        assert round(sum(r.polygons.values())) == 1
+    if r.polygons and round(sum(r.polygons.values())) != 1:
+        raise AssertionError
 
 # Useful for testing
 WILDCARD = 31

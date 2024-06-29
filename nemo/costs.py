@@ -257,8 +257,10 @@ class AETA2012_2030Mid(AETA2012_2030):
                                ccs_storage_costs)
         high = AETA2012_2030High(discount, coal_price, gas_price,
                                  ccs_storage_costs)
-        assert low.opcost_per_mwh == high.opcost_per_mwh
-        assert low.fixed_om_costs == high.fixed_om_costs
+        if low.opcost_per_mwh != high.opcost_per_mwh:
+            raise AssertionError
+        if low.fixed_om_costs != high.fixed_om_costs:
+            raise AssertionError
 
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw
@@ -320,10 +322,10 @@ class AETA2013_2030Mid(AETA2012_2030):
                                ccs_storage_costs)
         high = AETA2013_2030High(discount, coal_price, gas_price,
                                  ccs_storage_costs)
-        assert low.opcost_per_mwh == high.opcost_per_mwh
-        self.opcost_per_mwh = low.opcost_per_mwh
-        assert low.fixed_om_costs == high.fixed_om_costs
-        self.fixed_om_costs = low.fixed_om_costs
+        if low.opcost_per_mwh != high.opcost_per_mwh:
+            raise AssertionError
+        if low.fixed_om_costs != high.fixed_om_costs:
+            raise AssertionError
 
         table = self.capcost_per_kw
         lowtable = low.capcost_per_kw

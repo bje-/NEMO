@@ -85,7 +85,9 @@ class Context:
                 setter(newval)
                 num += 1
         # Check every parameter has been set.
-        assert num == len(caps), f'{num} != {len(caps)}'
+        msg = f'{num} != {len(caps)}'
+        if num != len(caps):
+            raise ValueError(msg)
 
     def __str__(self):
         """Make a human-readable representation of the context."""

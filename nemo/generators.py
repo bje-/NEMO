@@ -51,8 +51,10 @@ class Generator:
         self.polygon = polygon
 
         # Sanity check polygon argument.
-        assert not isinstance(polygon, polygons.regions.Region)
-        assert 0 < polygon <= polygons.NUMPOLYGONS, polygon
+        if isinstance(polygon, polygons.regions.Region):
+            raise TypeError
+        if not 0 < polygon <= polygons.NUMPOLYGONS:
+            raise AssertionError
 
         # Time series of dispatched power and spills
         self.series_power = {}
@@ -879,7 +881,8 @@ class Battery(Generator):
     def capcost(self, costs):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
-        assert self.shours in [1, 2, 4, 8]
+        if self.shours not in [1, 2, 4, 8]:
+            raise ValueError(self.shours)
         cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
         return kwh * cost_per_kwh
 
@@ -1070,7 +1073,8 @@ class HydrogenGT(Fuelled):
         >>> h.storage == (1000 / 2.) - (200 / gt.efficiency)
         True
         """
-        assert isinstance(tank, storage.HydrogenStorage)
+        if not isinstance(tank, storage.HydrogenStorage):
+            raise TypeError(tank)
         Fuelled.__init__(self, polygon, capacity, label)
         self.tank = tank
         self.efficiency = efficiency

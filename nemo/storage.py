@@ -95,10 +95,12 @@ class GenericStorage:
         >>> stg.charge(600), stg.full_p()
         (500.0, True)
         """
-        assert amt >= 0
+        if amt < 0:
+            raise ValueError(amt)
         delta = min(self.maxstorage - self.storage, amt)
         self.storage = min(self.maxstorage, self.storage + amt)
-        assert 0 <= self.storage <= self.maxstorage
+        if not 0 <= self.storage <= self.maxstorage:
+            raise AssertionError
         return delta
 
     def discharge(self, amt):
@@ -109,10 +111,12 @@ class GenericStorage:
         >>> stg.discharge(600), stg.empty_p()
         (500.0, True)
         """
-        assert amt >= 0
+        if amt < 0:
+            raise ValueError(amt)
         delta = min(self.storage, amt)
         self.storage = max(0, self.storage - amt)
-        assert 0 <= self.storage <= self.maxstorage
+        if not 0 <= self.storage <= self.maxstorage:
+            raise AssertionError
         return delta
 
 
