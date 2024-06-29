@@ -105,10 +105,10 @@ patterns = {
     'diesel.*[kMG]W$': lambda f: addcap("diesel", f),
     '(DR|demand, f).*[kMG]W$': lambda f: addcap("DR", f),
     'HydrogenGT.*[kMG]W$': lambda f: addcap("HydrogenGT", f),
-    '[kMG]W$': warn
+    '[kMG]W$': warn,
 }
 
-for line in sys.stdin:  # noqa: C901
+for line in sys.stdin:
     fields = awklite.Fields(line.strip().split())
     nf = len(fields)
 
@@ -156,9 +156,8 @@ for line in sys.stdin:  # noqa: C901
         av.penalty = float(fields[2])
 
     if search('Constraints violated', line):
-        line = line.replace('Constraints violated: ', '').strip('\n')
-        line = line.replace(' ', ',')
-        av.constraints = line
+        newline = line.replace('Constraints violated: ', '').strip('\n')
+        av.constraints = newline.replace(' ', ',')
 
     if search('Timesteps:', line):
         av.timesteps = int(fields[2])
@@ -181,7 +180,7 @@ for line in sys.stdin:  # noqa: C901
         if av.CO2 > 0:
             print(f"# emissions {av.CO2:.2f} Mt")
         if av.unserved:
-            print(f"# unserved {str(av.unserved)}")
+            print(f"# unserved {av.unserved}")
         print(f"# score {av.cost} $/MWh")
         if av.penalty > 0:
             print(f"# penalty {av.penalty} $/MWh")
