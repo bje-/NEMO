@@ -63,13 +63,15 @@ def _store_spills(context, hour, gen, generators, spl):
     assert spl > 0, f'{spl} is <= 0'
     if context.storages is None:
         # compute this just once and cache it in the context object
-        context.storages = list(g for g in generators if g.storage_p)
+        context.storages = [g for g in generators if g.storage_p]
     for other in context.storages:
         stored = other.store(hour, spl)
         spl -= stored
         if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
             spl = 0
-        assert spl >= 0
+        if spl < 0:
+            msg = 'negative spill'
+            raise RuntimeWarning(msg)
 
         # energy stored <= energy transferred, according to store's RTE
         if context.verbose:
@@ -110,9 +112,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         residual_hour_demand -= gen
         assert residual_hour_demand > 0 or \
             isclose(residual_hour_demand, 0, abs_tol=1e-6)
-        # optimised version of max()
-        residual_hour_demand = residual_hour_demand \
-            if residual_hour_demand > 0 else 0
+        residual_hour_demand = max(0, residual_hour_demand)
 
         if context.verbose:
             print(f'GENERATOR: {generator},',

@@ -15,7 +15,8 @@ def load(filename):
     """Load a configuration file (or files)."""
     result = config.read(filename)
     if not result:
-        raise FileNotFoundError(f"config file {filename} not found")
+        msg = f"config file {filename} not found"
+        raise FileNotFoundError(msg)
     # Verify
     config.get('generation', 'cst-trace')
     config.get('generation', 'egs-geothermal-trace')
@@ -26,8 +27,7 @@ def load(filename):
 
 
 def get(section, option):
-    """
-    Get an option value for the named section.
+    """Get an option value for the named section.
 
     This works the same as ConfigParser.get.
     """
@@ -35,8 +35,7 @@ def get(section, option):
 
 
 def has_option_p(section, option):
-    """
-    Check if this section has a given option.
+    """Check if this section has a given option.
 
     This works the same as ConfigParser.has_option.
     """

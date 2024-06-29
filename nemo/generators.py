@@ -99,8 +99,7 @@ class Generator:
         hours = len(self.series_power)
         if self.capacity * hours == 0:
             return float('nan')
-        capfactor = supplied / (self.capacity * hours) * 100
-        return capfactor
+        return supplied / (self.capacity * hours) * 100
 
     def lcoe(self, costs, years):
         """Calculate the LCOE in $/MWh."""
@@ -109,8 +108,7 @@ class Generator:
             + self.opcost(costs)
         supplied = sum(self.series_power.values())
         if supplied > 0:
-            cost_per_mwh = total_cost / supplied
-            return cost_per_mwh
+            return total_cost / supplied  # cost per MWh
         return inf
 
     def summary(self, context):
@@ -118,9 +116,8 @@ class Generator:
         costs = context.costs
         supplied = sum(self.series_power.values()) * ureg.MWh
         string = f'supplied {supplied.to_compact()}'
-        if self.capacity > 0:
-            if self.capfactor() > 0:
-                string += f', CF {self.capfactor():.1f}%'
+        if self.capacity > 0 and self.capfactor() > 0:
+            string += f', CF {self.capfactor():.1f}%'
         if sum(self.series_spilled.values()) > 0:
             spilled = sum(self.series_spilled.values()) * ureg.MWh
             string += f', surplus {spilled.to_compact()}'
@@ -251,7 +248,8 @@ class CSVTraceGenerator(TraceGenerator):
                 try:
                     resp = requests.request('GET', filename, timeout=5)
                 except requests.exceptions.Timeout as exc:
-                    raise TimeoutError(f'timeout fetching {filename}') from exc
+                    msg = f'timeout fetching {filename}'
+                    raise TimeoutError(msg) from exc
                 if not resp.ok:
                     msg = f'HTTP {resp.status_code}: {filename}'
                     raise ConnectionError(msg)
@@ -605,8 +603,8 @@ class Black_Coal(Fossil):
         """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.coal_price_per_gj * 8.57
-        total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return total_opcost
+        carbon_cost = self.intensity * costs.carbon
+        return vom + fuel_cost + carbon_cost
 
 
 class OCGT(Fossil):
@@ -623,8 +621,8 @@ class OCGT(Fossil):
         """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 11.61
-        total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return total_opcost
+        carbon_cost = self.intensity * costs.carbon
+        return vom + fuel_cost + carbon_cost
 
 
 class CCGT(Fossil):
@@ -641,8 +639,8 @@ class CCGT(Fossil):
         """Return the variable O&M costs."""
         vom = costs.opcost_per_mwh[type(self)]
         fuel_cost = costs.gas_price_per_gj * 6.92
-        total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return total_opcost
+        carbon_cost = self.intensity * costs.carbon
+        return vom + fuel_cost + carbon_cost
 
 
 class CCS(Fossil):
@@ -685,10 +683,9 @@ class Coal_CCS(CCS):
         fuel_cost = costs.coal_price_per_gj * (3.6 / 0.314)
         # t CO2/MWh
         emissions_rate = 0.103
-        total_opcost = vom + fuel_cost + \
-            (emissions_rate * costs.carbon) + \
-            (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return total_opcost
+        carbon_cost = emissions_rate * costs.carbon + \
+            self.intensity * self.capture * costs.ccs_storage_per_t
+        return vom + fuel_cost + carbon_cost
 
 
 class CCGT_CCS(CCS):
@@ -730,8 +727,8 @@ class Diesel(Fossil):
         vom = costs.opcost_per_mwh[type(self)]
         litres_per_mwh = (1 / self.kwh_per_litre) * 1000
         fuel_cost = costs.diesel_price_per_litre * litres_per_mwh
-        total_opcost = vom + fuel_cost + self.intensity * costs.carbon
-        return total_opcost
+        carbon_cost = self.intensity * costs.carbon
+        return vom + fuel_cost + carbon_cost
 
 
 class BatteryLoad(Storage, Generator):

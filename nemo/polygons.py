@@ -424,7 +424,8 @@ def _centroid(vertices):
     """Find the centroid of a polygon."""
     # pylint: disable=invalid-name
     # Ensure the polygon is closed
-    assert vertices[0] == vertices[-1]
+    if vertices[0] != vertices[-1]:
+        raise ValueError(vertices)
     thesum = 0
     vsum = (0, 0)
     for i in range(len(vertices) - 1):
@@ -585,6 +586,8 @@ for (p1, p2, limit) in \
      (32, 37, 900), (37, 32, 900), (37, 39, 900), (39, 37, 900),
      (33, 39, 500), (39, 33, 1300), (34, 39, 1000), (39, 34, 1300),
      (39, 38, 2500), (38, 39, 6400), (38, 41, 450), (41, 38, 600)]:
-    assert p1 in list(net[p2].keys()), (p2, p1)
-    assert p2 in list(net[p1].keys()), (p1, p2)
+    if p1 not in list(net[p2].keys()):
+        raise ValueError(p2, p1)
+    if p2 not in list(net[p1].keys()):
+        raise ValueError(p1, p2)
     existing_net[p1, p2] = limit
