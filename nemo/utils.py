@@ -178,7 +178,7 @@ def _figure(context, spills, showlegend, xlim):
               "v", markersize=10, color='red', markeredgecolor='black')
 
 
-def plot(context, spills=False, filename=None, showlegend=True, xlim=None):
+def plot(context, filename=None, xlim=None, *, spills=False, showlegend=True):
     """Produce a pretty plot of supply and demand."""
     assert xlim is None or isinstance(xlim, tuple)
     if xlim is None:
