@@ -89,13 +89,13 @@ class TestSequenceFunctions(unittest.TestCase):
         """Generation to meet minimum load leads to no spills."""
         self.context.generators = [SuperGenerator(self.minload)]
         nemo.run(self.context)
-        self.assertEqual(self.context.spill.values.sum(), 0)
+        self.assertEqual(self.context.spill.to_numpy().sum(), 0)
 
     def test_007(self):
         """Generation to meet minimum load + 1GW produces some spills."""
         self.context.generators = [SuperGenerator(self.minload + 1000)]
         nemo.run(self.context)
-        self.assertTrue(self.context.spill.values.sum() > 0)
+        self.assertTrue(self.context.spill.to_numpy().sum() > 0)
 
     def test_008(self):
         """A NSW generator runs in NSW only."""

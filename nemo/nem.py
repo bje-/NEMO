@@ -28,9 +28,11 @@ else:
     try:
         resp = requests.request('GET', url, timeout=5)
     except requests.exceptions.Timeout as exc:
-        raise TimeoutError(f'timeout fetching {url}') from exc
+        msg = f'timeout fetching {url}'
+        raise TimeoutError(msg) from exc
     if not resp.ok:
-        raise ConnectionError(f'HTTP {resp.status_code}: {url}')
+        msg = f'HTTP {resp.status_code}: {url}'
+        raise ConnectionError(msg)
     traceinput = io.StringIO(resp.text)
 
 demand = pd.read_csv(traceinput, comment='#', sep=',')
@@ -38,8 +40,8 @@ demand = pd.read_csv(traceinput, comment='#', sep=',')
 # the index column and then drop the original Date and Time columns
 demand['Date_Time'] = \
     pd.to_datetime(demand['Date'] + ' ' + demand['Time'])
-demand.set_index('Date_Time', inplace=True)
-demand.drop(columns=['Date', 'Time'], inplace=True)
+demand = demand.set_index('Date_Time')
+demand = demand.drop(columns=['Date', 'Time'])
 
 # Check for date, time and n demand columns (for n regions).
 assert len(demand.columns) == regions.NUMREGIONS

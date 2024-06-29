@@ -183,7 +183,7 @@ class TestGenerators(unittest.TestCase):
             costs = self.costs
 
             def years(self):
-                """A mocked up version of the Context years() method."""
+                """Mock up a version of the Context years() method."""
                 return 1
 
         context = MyContext()

@@ -57,15 +57,15 @@ class Context:
 
     def total_demand(self):
         """Return the total demand from the data frame."""
-        return self.demand.values.sum()
+        return self.demand.to_numpy().sum()
 
     def unserved_energy(self):
         """Return the total unserved energy."""
-        return self.unserved.values.sum()
+        return self.unserved.to_numpy().sum()
 
     def surplus_energy(self):
         """Return total surplus energy."""
-        return self.spill.values.sum()
+        return self.spill.to_numpy().sum()
 
     def unserved_percent(self):
         """Return the total unserved energy as a percentage of total demand."""

@@ -36,7 +36,7 @@ def _sim(context, date_range):
             context.demand[poly - 1] = 0
 
     # We are free to scribble all over demand_copy. Use ndarray for speed.
-    demand_copy = context.demand.copy().values
+    demand_copy = context.demand.copy().to_numpy()
     residual_demand = demand_copy.sum(axis=1)
 
     for hour in range(timesteps):
@@ -99,15 +99,15 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             gen, spl = generator.step(hour, residual_hour_demand)
         assert gen < residual_hour_demand or \
             isclose(gen, residual_hour_demand), \
-            f"generation ({gen:.4f}) > demand " + \
-            f"({residual_hour_demand:.4f}) for {generator}"
+            (f"generation ({gen:.4f}) > demand "
+             f"({residual_hour_demand:.4f}) for {generator}")
         generation[hour, gidx] = gen
 
         if not generator.synchronous_p:
             async_demand -= gen
             assert async_demand > 0 or isclose(async_demand, 0, abs_tol=1e-6)
             # optimised version of max()
-            async_demand = async_demand if async_demand > 0 else 0
+            async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
         assert residual_hour_demand > 0 or \

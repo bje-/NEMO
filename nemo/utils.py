@@ -8,6 +8,8 @@
 """Utility functions (eg, plotting)."""
 
 import locale
+from configparser import NoOptionError, NoSectionError
+from contextlib import suppress
 from datetime import timedelta
 from itertools import tee
 
@@ -18,7 +20,6 @@ from matplotlib.patches import Patch
 from pandas.plotting import register_matplotlib_converters
 
 from nemo import configfile
-from nemo.configfile import configparser
 
 # Needed for currency formatting.
 locale.setlocale(locale.LC_ALL, '')
@@ -120,7 +121,7 @@ def _plot_areas(axes, context, category, prev=None, alpha=None):
     numgens = len(genlist)
 
     accum = prev.copy()
-    for gen, nextgen in _pairwise(genlist + [None]):
+    for gen, nextgen in _pairwise([*genlist, None]):
         index = context.generators.index(gen)
         accum += timeseries[index]
         if type(gen) is type(nextgen) and numgens > MAX_PLOT_GENERATORS:
@@ -147,13 +148,10 @@ def _figure(context, spills, showlegend, xlim):
     axes.set_ylabel('Power (MW)')
     try:
         title = configfile.get('plot', 'title')
-    except (configparser.NoSectionError, configparser.NoOptionError):
+    except (NoSectionError, NoOptionError):
         title = 'Energy balance'
-    try:
+    with suppress(NoSectionError, NoOptionError):
         title += '\n' + configfile.get('plot', 'subtitle')
-    except (configfile.configparser.NoSectionError,
-            configfile.configparser.NoOptionError):
-        pass
     fig.suptitle(title)
 
     if showlegend:

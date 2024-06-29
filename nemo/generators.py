@@ -218,9 +218,7 @@ class TraceGenerator(Generator):
         # self.generation must be defined by derived classes
         # pylint: disable=no-member
         generation = self.generation[hour] * self.capacity
-        # optimised version of min() because TraceGenerator is a
-        # heavily used class
-        power = generation if generation < demand else demand
+        power = min(generation, demand)
         spilled = generation - power
         self.series_power[hour] = power
         self.series_spilled[hour] = spilled
@@ -704,10 +702,10 @@ class CCGT_CCS(CCS):
         vom = costs.opcost_per_mwh[type(self)]
         # thermal efficiency 43.1% (AETA 2012)
         fuel_cost = costs.gas_price_per_gj * (3.6 / 0.431)
-        total_opcost = vom + fuel_cost + \
-            (self.intensity * (1 - self.capture) * costs.carbon) + \
-            (self.intensity * self.capture * costs.ccs_storage_per_t)
-        return total_opcost
+        carbon_cost = \
+            self.intensity * (1 - self.capture) * costs.carbon + \
+            self.intensity * self.capture * costs.ccs_storage_per_t
+        return vom + fuel_cost + carbon_cost
 
 
 class Diesel(Fossil):

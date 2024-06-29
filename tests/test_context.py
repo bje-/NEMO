@@ -27,19 +27,19 @@ class TestContextMethods(unittest.TestCase):
         """Test total_demand() method."""
         self.assertTrue(self.context.total_demand() > 0)
         self.assertEqual(self.context.total_demand(),
-                         self.context.demand.values.sum())
+                         self.context.demand.to_numpy().sum())
 
     def test_unserved_energy(self):
         """Test unserved_energy method."""
         self.assertEqual(self.context.unserved_energy(), 0)
         self.assertEqual(self.context.unserved_energy(),
-                         self.context.unserved.values.sum())
+                         self.context.unserved.to_numpy().sum())
 
     def test_surplus_energy(self):
         """Test surplus_energy method."""
         self.assertEqual(self.context.surplus_energy(), 0)
         self.assertEqual(self.context.surplus_energy(),
-                         self.context.spill.values.sum())
+                         self.context.spill.to_numpy().sum())
 
     def test_unserved_percent(self):
         """Test unserved_percent method."""

@@ -7,6 +7,8 @@
 
 """Penalty functions for the optimisation."""
 
+from contextlib import suppress
+
 from nemo import generators
 
 _reason_labels = ['unserved', 'emissions', 'fossil', 'bioenergy',
@@ -46,11 +48,9 @@ def reserves(ctx, args):
     for time in range(ctx.timesteps()):
         reserve, spilled = 0, 0
         for gen in ctx.generators:
-            try:
+            # non-variable generators may not have spill data
+            with suppress(KeyError):
                 spilled += gen.series_spilled[time]
-            except KeyError:
-                # non-variable generators may not have spill data
-                pass
             reserve += _calculate_reserve(gen, time)
 
         if reserve + spilled < args.reserves:

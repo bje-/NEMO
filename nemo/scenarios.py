@@ -68,8 +68,8 @@ def _hydro():
 def replacement(context):
     """Replace the current NEM fleet, more or less."""
     context.generators = \
-        [Black_Coal(WILDCARD, 0)] + _pumped_hydro() + _hydro() + \
-        [OCGT(WILDCARD, 0)]
+        [Black_Coal(WILDCARD, 0), *_pumped_hydro(), *_hydro(),
+         OCGT(WILDCARD, 0)]
 
 
 def _one_ccgt(context):
@@ -79,8 +79,8 @@ def _one_ccgt(context):
 
 def ccgt(context):
     """All gas scenario."""
-    context.generators = [CCGT(WILDCARD, 0)] + _pumped_hydro() + \
-        _hydro() + [OCGT(WILDCARD, 0)]
+    context.generators = [CCGT(WILDCARD, 0), *_pumped_hydro(),
+                          *_hydro(), OCGT(WILDCARD, 0)]
 
 
 def ccgt_ccs(context):
@@ -141,7 +141,8 @@ def re100(context):
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             result += _every_poly(g)
         else:
-            raise UnreachableError('unhandled generator type')
+            msg = 'unhandled generator type'
+            raise UnreachableError(msg)
     context.generators = result
 
 
