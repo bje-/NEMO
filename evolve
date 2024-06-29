@@ -18,6 +18,7 @@ import sys
 from argparse import ArgumentDefaultsHelpFormatter as HelpFormatter
 from multiprocessing import set_start_method
 from multiprocessing.pool import Pool
+from pathlib import Path
 
 import numpy as np
 import wx
@@ -229,9 +230,9 @@ def eval_func(chromosome):
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
-        with open(args.trace_file, 'a', encoding='utf-8') as tracefile:
+        with Path(args.trace_file).open('a') as tracefile:
             tracer = csv.writer(tracefile)
-            tracer.writerow([score, penalty, reason] + list(chromosome))
+            tracer.writerow([score, penalty, reason, *list(chromosome)])
     return (score + penalty,)
 
 
@@ -254,7 +255,7 @@ def run_final(best):
                 print(label, end=' ')
         print()
 
-    with open(args.output, 'w', encoding='utf-8') as filehandle:
+    with Path(args.output).open('w') as filehandle:
         bundle = {'options': vars(args),
                   'parameters': [max(0, cap) for cap in best],
                   'score': score, 'penalty': penalty,
@@ -308,7 +309,7 @@ if __name__ == '__main__':
     scenarios.supply_scenarios[args.supply_scenario](main_context)
     penaltyfns = penaltyfn_list(main_context)
 
-    numparams = sum(list(len(g.setters) for g in main_context.generators))
+    numparams = sum([len(g.setters) for g in main_context.generators])
     if args.lambda_ is None:
         # let DEAP choose
         strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
