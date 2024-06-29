@@ -13,8 +13,7 @@ class Region:
     """Each region is described by a Region object."""
 
     def __init__(self, ordinal, regionid, descr):
-        """
-        Construct a Region given an ordinal number, region ID and description.
+        """Construct a Region given an ordinal number, region ID and description.
 
         >>> r = Region(0, 'cbr', 'Capital region')
         """

@@ -6,8 +6,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""
-Implementation of the Context class.
+"""Implementation of the Context class.
 
 A simulation context encapsulates all simulation state ensuring that
 there is never any residual state left behind after a simulation

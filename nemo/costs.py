@@ -45,8 +45,7 @@ class Common:
     """Costs common to all cost classes (eg, existing hydro)."""
 
     def __init__(self, discount):
-        """
-        Initialise common costs.
+        """Initialise common costs.
 
         Derived costs can call update() on these dicts.
         """
@@ -336,8 +335,7 @@ class AETA2013_2030Mid(AETA2012_2030):
 
 
 class CEEM2016_2030(AETA2012_2030Mid):
-    """
-    CEEM 2016 custom costs.
+    """CEEM 2016 custom costs.
 
     These custom costs were produced by CEEM -- AETA (2013) mid costs
     with CO2CRC Power Generation Technology Report 2030 capital costs

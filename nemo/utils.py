@@ -44,8 +44,7 @@ register_matplotlib_converters()
 
 
 def thousands(value):
-    """
-    Format a value with thousands separator(s).
+    """Format a value with thousands separator(s).
 
     No doctest provided as the result will be locale specific.
     """
@@ -53,8 +52,7 @@ def thousands(value):
 
 
 def currency(value):
-    """
-    Format a value into currency with thousands separator(s).
+    """Format a value into currency with thousands separator(s).
 
     If there are zero cents, remove .00 for brevity.  No doctest
     provided as the result will be locale specific.
@@ -114,7 +112,6 @@ def _legend(fig, context):
 
 def _plot_areas(axes, context, category, prev=None, alpha=None):
     """Plot the areas (generation or spills)."""
-
     if category not in ['generation', 'spill']:
         raise ValueError(category)
 

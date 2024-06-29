@@ -5,8 +5,7 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-"""
-Storage classes.
+"""Storage classes.
 
 Storage objects are usually shared between a load and a generator (for
 example, a pumped hydro system having a pump, a turbine and a storage
@@ -33,8 +32,7 @@ class GenericStorage:
         self.set_storage(maxstorage)
 
     def set_storage(self, maxstorage):
-        """
-        Change the storage capacity.
+        """Change the storage capacity.
 
         >>> r = GenericStorage(1000)
         >>> r.set_storage(1200)
@@ -47,8 +45,7 @@ class GenericStorage:
         self.maxstorage = maxstorage
 
     def reset(self):
-        """
-        Reset storage to 50% SOC.
+        """Reset storage to 50% SOC.
 
         >>> r = GenericStorage(1000)
         >>> r.storage = 200
@@ -88,8 +85,7 @@ class GenericStorage:
         return self.maxstorage == self.storage
 
     def charge(self, amt):
-        """
-        Charge the storage by amt.
+        """Charge the storage by amt.
 
         >>> stg = GenericStorage(1000, 'test')
         >>> stg.charge(600), stg.full_p()
@@ -104,8 +100,7 @@ class GenericStorage:
         return delta
 
     def discharge(self, amt):
-        """
-        Discharge the storage by 'amt'.
+        """Discharge the storage by 'amt'.
 
         >>> stg = GenericStorage(1000, 'test')
         >>> stg.discharge(600), stg.empty_p()

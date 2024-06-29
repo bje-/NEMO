@@ -38,8 +38,7 @@ class Generator:
     """A generator is not capable of storage by default."""
 
     def __init__(self, polygon, capacity, label=None):
-        """
-        Construct a base Generator.
+        """Construct a base Generator.
 
         Arguments: installed polygon, installed capacity, descriptive label.
         """
@@ -311,8 +310,7 @@ class CST(CSVTraceGenerator):
 
     def __init__(self, polygon, capacity, solarmult, shours, filename,
                  column, label=None, build_limit=None):
-        """
-        Construct a CST generator.
+        """Construct a CST generator.
 
         Arguments include capacity (in MW), sm (solar multiple) and
         shours (hours of storage).
@@ -574,8 +572,7 @@ class Fossil(Fuelled):
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, intensity, label=None):
-        """
-        Construct a fossil fuelled generator.
+        """Construct a fossil fuelled generator.
 
         Greenhouse gas emissions intensity is given in tonnes per MWh.
         """
@@ -742,8 +739,7 @@ class BatteryLoad(Storage, Generator):
 
     def __init__(self, polygon, capacity, battery, label=None,
                  discharge_hours=None, rte=0.95):
-        """
-        Construct a battery load (battery charging).
+        """Construct a battery load (battery charging).
 
         battery must be an instance of storage.BatteryStorage.
         discharge_hours is a list of hours when discharging can occur
@@ -826,8 +822,7 @@ class Battery(Generator):
 
     def __init__(self, polygon, capacity, shours, battery,
                  label=None, discharge_hours=None):
-        """
-        Construct a battery generator.
+        """Construct a battery generator.
 
         battery must be an instance of storage.BatteryStorage.
         shours is the number of hours of storage at full load.
@@ -891,8 +886,7 @@ class Battery(Generator):
         return 0
 
     def opcost_per_mwh(self, costs):
-        """
-        Return the variable O&M costs.
+        """Return the variable O&M costs.
 
         Per-kWh costs for batteries are included in the capital cost.
         """
@@ -932,8 +926,7 @@ class Geothermal_EGS(Geothermal):
 
 
 class DemandResponse(Generator):
-    """
-    Load shedding generator.
+    """Load shedding generator.
 
     >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
     """
@@ -942,8 +935,7 @@ class DemandResponse(Generator):
     """Colour for plotting"""
 
     def __init__(self, polygon, capacity, cost_per_mwh, label=None):
-        """
-        Construct a demand response 'generator'.
+        """Construct a demand response 'generator'.
 
         The demand response opportunity cost is given by
         cost_per_mwh. There is assumed to be no capital cost.
@@ -955,8 +947,7 @@ class DemandResponse(Generator):
         self.cost_per_mwh = cost_per_mwh
 
     def step(self, hour, demand):
-        """
-        Specialised step method for demand response.
+        """Specialised step method for demand response.
 
         >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
         >>> dr.step(hour=0, demand=200)
@@ -1010,8 +1001,7 @@ class Electrolyser(Storage, Generator):
     """Colour for plotting"""
 
     def __init__(self, tank, polygon, capacity, efficiency=0.8, label=None):
-        """
-        Construct a hydrogen electrolyser.
+        """Construct a hydrogen electrolyser.
 
         Arguments include the associated storage vessel (the 'tank'),
         the capacity of the electrolyser (in MW) and electrolysis
@@ -1059,8 +1049,7 @@ class HydrogenGT(Fuelled):
     """Colour for plotting"""
 
     def __init__(self, tank, polygon, capacity, efficiency=0.36, label=None):
-        """
-        Construct a HydrogenGT object.
+        """Construct a HydrogenGT object.
 
         >>> h = storage.HydrogenStorage(1000, 'test')
         >>> gt = HydrogenGT(h, 1, 100, efficiency=0.5)
