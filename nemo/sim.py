@@ -7,6 +7,7 @@
 
 """The core of the simulation engine."""
 
+import logging
 from math import isclose
 
 import numpy as np
@@ -43,15 +44,14 @@ def _sim(context, date_range):
         hour_demand = demand_copy[hour]
         residual_hour_demand = residual_demand[hour]
 
-        if context.verbose:
-            print('STEP:', date_range[hour])
-            print('DEMAND:', {a: round(b, 2) for a, b in
-                              enumerate(hour_demand)})
+        logging.info('STEP: %s', date_range[hour])
+        logging.info('DEMAND: %s',
+                     {a: float(round(b, 2)) for
+                      a, b in enumerate(hour_demand)})
 
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
-        if context.verbose:
-            print('ENDSTEP:', date_range[hour])
+        logging.info('ENDSTEP: %s', date_range[hour])
 
     # Change the numpy arrays to dataframes for human consumption
     context.generation = pd.DataFrame(index=date_range, data=generation)
@@ -74,9 +74,7 @@ def _store_spills(context, hour, gen, generators, spl):
             raise RuntimeWarning(msg)
 
         # energy stored <= energy transferred, according to store's RTE
-        if context.verbose:
-            # show the energy transferred, not stored
-            print('STORE:', gen, '->', other, f'({stored:.1f})')
+        logging.info('STORE: %s -> %s (%.1f)', gen, other, stored)
 
         if spl == 0:
             # early exit
@@ -114,12 +112,10 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             isclose(residual_hour_demand, 0, abs_tol=1e-6)
         residual_hour_demand = max(0, residual_hour_demand)
 
-        if context.verbose:
-            print(f'GENERATOR: {generator},',
-                  f'generation: {gen:.1f}',
-                  f'spill: {spl:.1f}',
-                  f'residual-demand: {residual_hour_demand:.1f}',
-                  f'async-demand: {async_demand:.1f}')
+        logging.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '
+                      'residual-demand: %.1f, async-demand: %.1f'),
+                     generator, gen, spl, residual_hour_demand,
+                     async_demand)
 
         if spl > 0:
             spill[hour, gidx] = \
