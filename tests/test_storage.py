@@ -67,7 +67,6 @@ class TestPumpedHydro(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
-
         # Attach the reservroir to the pump and the turbine.
         # In this case, the pump and turbine are symmetric at 100 MW.
         self.reservoir = storage.PumpedHydroStorage(1000)

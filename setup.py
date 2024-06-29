@@ -2,9 +2,10 @@
 
 import time
 
+from pathlib import Path
 from setuptools import setup
 
-with open('README.md', encoding='utf-8') as f:
+with Path('README.md').open() as f:
     long_description = f.read()
 
 setup(name='nemopt',

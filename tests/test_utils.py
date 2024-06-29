@@ -10,9 +10,9 @@
 # Some protected members (eg _figure) are accessed to facilitate testing.
 # pylint: disable=protected-access
 
-import os
 import unittest
 from datetime import timedelta
+from pathlib import Path
 
 import pytest
 
@@ -24,18 +24,11 @@ class TestUtils(unittest.TestCase):
 
     def unlink(self, filename):
         """Unlink filename without error."""
-        try:
-            os.unlink(filename)
-        except FileNotFoundError:
-            pass
+        Path(filename).unlink(missing_ok=True)
 
     def exists(self, filename):
         """Return True if filename exists."""
-        try:
-            os.stat(filename)
-            return True
-        except FileNotFoundError:
-            return False
+        return Path(filename).exists()
 
     def setUp(self):
         """Test harness setup."""
@@ -43,13 +36,13 @@ class TestUtils(unittest.TestCase):
         scenarios.ccgt(self.context)
         sim.run(self.context)
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare()
     def test_figure_1(self):
         """Test simple supply/demand plot."""
         utils._figure(self.context, spills=True, showlegend=True, xlim=None)
         return utils.plt.gcf()
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare()
     def test_figure_2(self):
         """Test supply/demand plot with many generators."""
         ngens = len(self.context.generators)
@@ -68,7 +61,7 @@ class TestUtils(unittest.TestCase):
         self.unlink(fname)
         utils.plot(self.context, filename=fname)
         self.assertTrue(self.exists(fname))
-        os.unlink(fname)
+        self.unlink(fname)
 
     def test_plot_2(self):
         """Test plot with only 7 days of data."""
@@ -78,7 +71,7 @@ class TestUtils(unittest.TestCase):
         self.unlink(fname)
         utils.plot(self.context, filename=fname, xlim=(start, end))
         self.assertTrue(self.exists(fname))
-        os.unlink(fname)
+        self.unlink(fname)
 
     def test_plot_3(self):
         """Test plot with only 7 days of data."""
@@ -88,4 +81,4 @@ class TestUtils(unittest.TestCase):
         self.context.timesteps = lambda: 7 * 24
         utils.plot(self.context, filename=fname)
         self.assertTrue(self.exists(fname))
-        os.unlink(fname)
+        self.unlink(fname)

@@ -8,8 +8,8 @@
 """A testsuite for the generators module."""
 
 import inspect
-import os
 import unittest
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -77,7 +77,7 @@ class TestGenerators(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.tracefile = 'tracedata.csv'
-        with open(self.tracefile, 'w', encoding='utf-8') as tracefile:
+        with Path(self.tracefile).open('w') as tracefile:
             for i in range(100):
                 print(f'{0.01 * i:.2f}, 0', file=tracefile)
 
@@ -107,7 +107,8 @@ class TestGenerators(unittest.TestCase):
 
     def tearDown(self):
         """Remove tracefile on teardown."""
-        os.unlink(self.tracefile)
+        path = Path(self.tracefile)
+        path.unlink()
 
     def test_series(self):
         """Test series() method."""
