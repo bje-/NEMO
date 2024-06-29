@@ -1061,7 +1061,7 @@ class HydrogenGT(Fuelled):
 
         >>> h = storage.HydrogenStorage(1000, 'test')
         >>> gt = HydrogenGT(h, 1, 100, efficiency=0.5)
-        >>> print(gt)
+        >>> gt
         HydrogenGT (QLD1:1), 100.00 MW
         >>> gt.step(0, 100) # discharge 100 MWh-e of hydrogen
         (100.0, 0)
