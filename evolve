@@ -309,7 +309,7 @@ if __name__ == '__main__':
     scenarios.supply_scenarios[args.supply_scenario](main_context)
     penaltyfns = penaltyfn_list(main_context)
 
-    numparams = sum([len(g.setters) for g in main_context.generators])
+    numparams = sum(len(g.setters) for g in main_context.generators)
     if args.lambda_ is None:
         # let DEAP choose
         strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma)
