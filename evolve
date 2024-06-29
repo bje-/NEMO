@@ -230,7 +230,7 @@ def eval_func(chromosome):
     score, penalty, reason = cost(context)
     if args.trace_file is not None:
         # write the score and individual to the trace file
-        with Path(args.trace_file).open('a') as tracefile:
+        with Path(args.trace_file).open('a', encoding='utf-8') as tracefile:
             tracer = csv.writer(tracefile)
             tracer.writerow([score, penalty, reason, *list(chromosome)])
     return (score + penalty,)
@@ -255,7 +255,7 @@ def run_final(best):
                 print(label, end=' ')
         print()
 
-    with Path(args.output).open('w') as filehandle:
+    with Path(args.output).open('w', encoding='utf-8') as filehandle:
         bundle = {'options': vars(args),
                   'parameters': [max(0, cap) for cap in best],
                   'score': score, 'penalty': penalty,

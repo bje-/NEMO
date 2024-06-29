@@ -77,7 +77,7 @@ class TestGenerators(unittest.TestCase):
     def setUp(self):
         """Test harness setup."""
         self.tracefile = 'tracedata.csv'
-        with Path(self.tracefile).open('w') as tracefile:
+        with Path(self.tracefile).open('w', encoding='utf-8') as tracefile:
             for i in range(100):
                 print(f'{0.01 * i:.2f}, 0', file=tracefile)
 
