@@ -1,8 +1,8 @@
 """Setup script."""
 
 import time
-
 from pathlib import Path
+
 from setuptools import setup
 
 with Path('README.md').open() as f:

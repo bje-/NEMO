@@ -98,10 +98,8 @@ class TestGenerators(unittest.TestCase):
             self.assertIn(clstype, classlist)
 
             args = inspect.getfullargspec(clstype.__init__).args
-            arglist = []
-            for arg in args:
-                if dummy_arguments[arg] is not None:
-                    arglist.append(dummy_arguments[arg])
+            arglist = [dummy_arguments[arg] for arg in args if
+                       dummy_arguments[arg] is not None]
             obj = clstype(*arglist)
             self.generators.append(obj)
 
