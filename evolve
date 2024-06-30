@@ -48,8 +48,10 @@ def init_worker(arguments):
 
 
 def conditional_gooey(*pargs, **kwargs):
-    """Conditional decorator that wraps the Gooey decorator if the display
-    can be found."""
+    """Conditional decorator that wraps the Gooey decorator.
+
+    (Only if the display can be found.)
+    """
     def decorator(func):
         if not wx.PyApp.IsDisplayAvailable():
             return func
@@ -162,12 +164,13 @@ def setup_context(args):
 
     # Set the system non-synchronous penetration limit.
     ctx.nsp_limit = args.nsp_limit
-    assert 0 <= ctx.nsp_limit <= 1
+    if not 0 <= ctx.nsp_limit <= 1:
+        raise ValueError(ctx.nsp_limit)
 
     # Likewise for the minimum share of regional generation.
     ctx.min_regional_generation = args.min_regional_generation
-    assert 0 <= ctx.min_regional_generation <= 1, \
-        "Minimum regional generation must be in the interval [0,1]"
+    if not 0 <= ctx.min_regional_generation <= 1:
+        raise ValueError(ctx.min_regional_generation)
 
     cost_class = costs.cost_scenarios[args.costs]
     ctx.costs = cost_class(args.discount_rate, args.coal_price,
@@ -267,7 +270,8 @@ def run():
     """Run the evolution."""
     if args.verbose:
         docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
-        assert docstring is not None
+        if docstring is None:
+            raise AssertionError
         # Prune off any doctest test from the docstring.
         docstring = docstring.split('\n')[0]
         print(f"supply scenario: {args.supply_scenario} ({docstring})")

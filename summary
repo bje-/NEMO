@@ -9,14 +9,17 @@
 
 # pylint: disable=no-member
 
-"""This script, hand translated into Python from the original AWK
+"""Produce a summary from evolve output.
+
+This script, hand translated into Python from the original AWK
 version, processes the output of evolve into a summary table. An
 example of its usage:
 
 python3 summary < evolve-output.txt
 
 The script is capable of processing a file containing multiple runs.
-Multiple summary tables will be output."""
+Multiple summary tables will be output.
+"""
 
 import sys
 from re import search
@@ -25,8 +28,7 @@ import awklite
 
 
 def convert_to_gw(amt, suffix):
-    """Convert any unit of power to gigawatts (GW)"""
-
+    """Convert any unit of power to gigawatts (GW)."""
     amt = float(amt)
     if suffix == 'kW':
         return amt / 10**6
@@ -39,8 +41,7 @@ def convert_to_gw(amt, suffix):
 
 
 def twh(amt, suffix):
-    """Convert any energy unit to TWh"""
-
+    """Convert any energy unit to TWh."""
     amt = float(amt)
     if suffix == 'MWh':
         return amt / 10**6
@@ -83,7 +84,7 @@ scenario_num = 0  # pylint: disable=invalid-name
 
 patterns = {
     # don't count battery loads
-    '[Bb]att(ery)? ([Ll]oad|[Cc]harge).*[kMG]W$': lambda f: None,
+    '[Bb]att(ery)? ([Ll]oad|[Cc]harge).*[kMG]W$': lambda _: None,
     '[Bb]att(ery)?.*[kMG]W$': lambda f: addcap("battery", f),
     'HSA.*[kMG]W$': lambda f: addcap("HSA", f),
     'EGS.*[kMG]W$': lambda f: addcap("EGS", f),
@@ -95,7 +96,7 @@ patterns = {
     'pumped-hydro.*[kMG]W$': lambda f: addcap("PSH", f),
     'PSH generator.*[kMG]W$': lambda f: addcap("PSH", f),
     # don't count pumped hydro pumps
-    'PSH pump.*[kMG]W$': lambda f: None,
+    'PSH pump.*[kMG]W$': lambda _: None,
     ' GT.*[kMG]W$': lambda f: addcap("GT", f),
     'CCGT-CCS.*[kMG]W$': lambda f: addcap("CCGT-CCS", f),
     'CCGT .*[kMG]W$': lambda f: addcap("CCGT", f),
