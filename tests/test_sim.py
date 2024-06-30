@@ -84,7 +84,7 @@ class TestSim(unittest.TestCase):
         # symmetric 250 MW PSH pump/generator
         psh1p = generators.PumpedHydroPump(1, 250, storage1)
         psh1t = generators.PumpedHydroTurbine(1, 250, storage1)
-        psh1p.store = lambda hour, spl: spl + 1e-9
+        psh1p.store = lambda _, spl: spl + 1e-9
 
         storage2 = storage.PumpedHydroStorage(1000)
         psh2p = generators.PumpedHydroPump(1, 250, storage2)

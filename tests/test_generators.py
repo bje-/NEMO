@@ -182,7 +182,7 @@ class TestGenerators(unittest.TestCase):
             costs = self.costs
 
             def years(self):
-                """Mock up a version of the Context years() method."""
+                """Mock up a version of the Context years method."""
                 return 1
 
         context = MyContext()
@@ -190,7 +190,7 @@ class TestGenerators(unittest.TestCase):
             gen.series_power = {n: 10 for n in range(10)}  # 10 MW * 10 h
             gen.series_spilled = {n: 1 for n in range(10)}  # 1 MW * 10 h
             # fake up a capcost() method for testing summary()
-            gen.capcost = lambda costs: 100
+            gen.capcost = lambda _: 100
             output = gen.summary(context)
             self.assertIn('capcost $100,', output)
             self.assertIn('supplied 100.00 MWh', output)
