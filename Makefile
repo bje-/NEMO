@@ -81,7 +81,8 @@ flake8: envset
 	flake8 $(LINTSRC) --ignore=N801
 
 ruff:	envset
-	ruff check $(LINTSRC)
+	ruff check --select ALL --ignore=Q000,ARG002,T201,ANN,N801,SLF,PLR,PT,INP \
+		--output-format=concise $(LINTSRC)
 
 pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
