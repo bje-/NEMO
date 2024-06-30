@@ -186,7 +186,8 @@ class Storage:
         else:
             if result < 0 or isclose(result, 0, abs_tol=1e-6):
                 result = 0
-            assert result >= 0
+            if result < 0:
+                raise AssertionError
             return result
 
     def series(self):
@@ -257,9 +258,10 @@ class CSVTraceGenerator(TraceGenerator):
             cls.csvdata = np.genfromtxt(traceinput, encoding='UTF-8',
                                         delimiter=',')
             cls.csvdata = np.maximum(0, cls.csvdata)
-            # check all elements are not NaNs
-            assert np.all(~np.isnan(cls.csvdata)), \
-                f'Trace file {filename} contains NaNs; inspect file'
+            # check no elements are NaNs
+            if np.any(np.isnan(cls.csvdata)):
+                msg = f'Trace file {filename} contains NaNs; inspect file'
+                raise AssertionError(msg)
             cls.csvfilename = filename
         # pylint limitation: https://github.com/pylint-dev/pylint/issues/9250
         # pylint: disable=unsubscriptable-object
@@ -350,9 +352,12 @@ class CST(CSVTraceGenerator):
             from_storage = min(remainder - generation, self.stored)
             generation += from_storage
             self.stored -= from_storage
-            assert self.stored >= 0
-        assert self.stored <= self.maxstorage
-        assert self.stored >= 0
+            if self.stored < 0:
+                raise AssertionError
+        if self.stored > self.maxstorage:
+            raise AssertionError
+        if self.stored < 0:
+            raise AssertionError
         self.series_power[hour] = generation
         self.series_spilled[hour] = 0
 
@@ -760,7 +765,9 @@ class BatteryLoad(Storage, Generator):
 
     def store(self, hour, power):
         """Store power."""
-        assert power > 0, f'{power} is <= 0'
+        if power <= 0:
+            msg = f'{power} is <= 0'
+            raise AssertionError(msg)
 
         if self.battery.full_p() or \
            hour % 24 in self.discharge_hours:
@@ -836,7 +843,8 @@ class Battery(Generator):
         self.shours = shours
         if shours not in [1, 2, 4, 8]:
             raise ValueError(shours)
-        assert capacity * shours == battery.maxstorage
+        if capacity * shours != battery.maxstorage:
+            raise ValueError
         self.discharge_hours = discharge_hours \
             if discharge_hours is not None else range(18, 24)
 
