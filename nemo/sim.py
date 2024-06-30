@@ -44,14 +44,17 @@ def _sim(context, date_range):
         hour_demand = demand_copy[hour]
         residual_hour_demand = residual_demand[hour]
 
-        logging.info('STEP: %s', date_range[hour])
-        logging.info('DEMAND: %s',
-                     {a: float(round(b, 2)) for
-                      a, b in enumerate(hour_demand)})
+        # This avoids expensive argument evaluations
+        if logging.getLogger().isEnabledFor(logging.INFO):
+            logging.info('STEP: %s', date_range[hour])
+            demand = {a: float(round(b, 2)) for
+                      a, b in enumerate(hour_demand)}
+            logging.info('DEMAND: %s', demand)
 
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
-        logging.info('ENDSTEP: %s', date_range[hour])
+        if logging.getLogger().isEnabledFor(logging.INFO):
+            logging.info('ENDSTEP: %s', date_range[hour])
 
     # Change the numpy arrays to dataframes for human consumption
     context.generation = pd.DataFrame(index=date_range, data=generation)
@@ -97,21 +100,24 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             gen, spl = generator.step(hour, async_demand)
         else:
             gen, spl = generator.step(hour, residual_hour_demand)
-        assert gen < residual_hour_demand or \
-            isclose(gen, residual_hour_demand), \
-            (f"generation ({gen:.4f}) > demand "
-             f"({residual_hour_demand:.4f}) for {generator}")
+        if gen > residual_hour_demand and \
+           not isclose(gen, residual_hour_demand):
+            msg = (f"generation ({gen:.4f}) > demand "
+                   f"({residual_hour_demand:.4f}) for {generator}")
+            raise AssertionError(msg)
         generation[hour, gidx] = gen
 
         if not generator.synchronous_p:
             async_demand -= gen
-            assert async_demand > 0 or isclose(async_demand, 0, abs_tol=1e-6)
+            if async_demand < 0 and not isclose(async_demand, 0, abs_tol=1e-6):
+                raise AssertionError(async_demand)
             # optimised version of max()
             async_demand = max(0, async_demand)
 
         residual_hour_demand -= gen
-        assert residual_hour_demand > 0 or \
-            isclose(residual_hour_demand, 0, abs_tol=1e-6)
+        if residual_hour_demand < 0 and \
+           not isclose(residual_hour_demand, 0, abs_tol=1e-6):
+            raise AssertionError(residual_hour_demand)
         residual_hour_demand = max(0, residual_hour_demand)
 
         logging.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '

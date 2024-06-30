@@ -68,7 +68,8 @@ class TestConfigFileUnset(unittest.TestCase):
             del os.environ['NEMORC']
         except KeyError:
             self.old = None
-        assert 'NEMORC' not in os.environ
+        if 'NEMORC' in os.environ:
+            raise OSError
         importlib.reload(configfile)
 
     def tearDown(self):
