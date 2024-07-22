@@ -49,14 +49,14 @@ if len(demand.columns) != regions.NUMREGIONS:
 
 # The number of rows must be even.
 if len(demand) % 2 != 0:
-    msg = "odd number of rows in half-hourly demand data"
-    raise AssertionError(msg)
+    MSG = "odd number of rows in half-hourly demand data"
+    raise AssertionError(MSG)
 
 # Check demand data starts at midnight
 startdate = demand.index[0]
 if (startdate.hour, startdate.minute, startdate.second) != (0, 30, 0):
-    msg = 'demand data must start at midnight'
-    raise AssertionError(msg)
+    MSG = 'demand data must start at midnight'
+    raise AssertionError(MSG)
 
 # Calculate hourly demand, averaging half-hours n and n+1.
 hourly_regional_demand = demand.resample('h', closed='right').mean()
