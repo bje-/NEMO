@@ -277,7 +277,13 @@ def run():
         print(f"supply scenario: {args.supply_scenario} ({docstring})")
         print("objective: minimise", eval_func.__doc__)
 
-    np.random.seed(args.seed)
+    # NumPy recommends using a dedicated `Generator` instance rather
+    # than the random variate generation methods exposed directly on
+    # the `random` module, as the new `Generator` is both faster and
+    # has better statistical properties. However, we can't use it as
+    # we need previous runs of `evolve` to be reproducible.
+
+    np.random.seed(args.seed)  # noqa: NPY002
     hof = tools.HallOfFame(1)
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
     stats_hof = tools.Statistics(lambda _: hof[0].fitness.values)
