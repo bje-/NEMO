@@ -183,12 +183,11 @@ class Storage:
             result = gen.capacity - self.series_charge[hour]
         except KeyError:
             return gen.capacity
-        else:
-            if result < 0 or isclose(result, 0, abs_tol=1e-6):
-                result = 0
-            if result < 0:
-                raise AssertionError
-            return result
+        if result < 0 and isclose(result, 0, abs_tol=1e-6):
+            result = 0
+        if result < 0:
+            raise AssertionError
+        return result
 
     def series(self):
         """Return generation and spills series."""
