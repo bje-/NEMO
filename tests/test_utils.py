@@ -15,7 +15,6 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
-
 from nemo import context, scenarios, sim, utils
 
 

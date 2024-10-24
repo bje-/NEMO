@@ -13,9 +13,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import tcpserver
-
 from nemo import costs, generators, storage
+
+import tcpserver
 
 PORT = 9998
 battery_storage = storage.BatteryStorage(800, "Li-ion store")

@@ -13,7 +13,6 @@ import unittest
 
 import numpy as np
 import pandas as pd
-
 from nemo import configfile, generators, sim, storage
 from nemo.context import Context
 

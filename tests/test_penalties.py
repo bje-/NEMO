@@ -11,9 +11,8 @@
 
 import unittest
 
-import numpy as np
-
 import nemo
+import numpy as np
 from nemo import generators, penalties, regions, storage
 from nemo.penalties import reasons
 from nemo.polygons import WILDCARD

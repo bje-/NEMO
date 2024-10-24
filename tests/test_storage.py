@@ -10,7 +10,6 @@
 import unittest
 
 import pandas as pd
-
 from nemo import configfile, generators, storage
 from nemo.polygons import WILDCARD
 

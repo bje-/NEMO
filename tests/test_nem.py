@@ -11,9 +11,9 @@ import configparser
 import importlib
 import unittest
 
-import tcpserver
-
 from nemo import nem
+
+import tcpserver
 
 PORT = 9998
 
