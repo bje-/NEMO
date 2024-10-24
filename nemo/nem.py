@@ -28,11 +28,11 @@ else:
     try:
         resp = requests.request('GET', url, timeout=5)
     except requests.exceptions.Timeout as exc:
-        msg = f'timeout fetching {url}'
-        raise TimeoutError(msg) from exc
+        MSG = f'timeout fetching {url}'
+        raise TimeoutError(MSG) from exc
     if not resp.ok:
-        msg = f'HTTP {resp.status_code}: {url}'
-        raise ConnectionError(msg)
+        MSG = f'HTTP {resp.status_code}: {url}'
+        raise ConnectionError(MSG)
     traceinput = io.StringIO(resp.text)
 
 demand = pd.read_csv(traceinput, comment='#', sep=',')
