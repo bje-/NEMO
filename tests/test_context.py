@@ -9,9 +9,10 @@
 
 import unittest
 
-import nemo
 import numpy as np
 import pandas as pd
+
+import nemo
 from nemo import regions
 
 
