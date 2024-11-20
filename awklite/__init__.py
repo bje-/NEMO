@@ -59,6 +59,10 @@ class Fields(list):
         >>> flds = Fields([1,2,3])
         >>> flds[1]
         1
+        >>> flds[0]
+        Traceback (most recent call last):
+            ...
+        IndexError: 0
         """
         if not 0 < key <= len(self):
             raise IndexError(key)
@@ -71,6 +75,10 @@ class Fields(list):
         >>> flds[1] = 10
         >>> flds == [10,2,3]
         True
+        >>> flds[0] = 2
+        Traceback (most recent call last):
+            ...
+        IndexError: 0
         """
         if not 0 < key <= len(self):
             raise IndexError(key)
