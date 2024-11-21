@@ -20,44 +20,44 @@ class TestStorage(unittest.TestCase):
 
     def setUp(self):
         """Test harness setup."""
-        stg = generators.Storage()
+        self.stg = generators.Storage()
 
     def test_initialisation(self):
         """Test constructor."""
-        self.assertEqual(stg.series_charge, {})
+        self.assertEqual(self.stg.series_charge, {})
 
     def test_reset(self):
         """Test reset() method."""
-        stg.series_charge = {0: 150}
-        stg.reset()
-        self.assertEqual(stg.series_charge, {})
+        self.stg.series_charge = {0: 150}
+        self.stg.reset()
+        self.assertEqual(self.stg.series_charge, {})
 
     def test_soc(self):
         """Test soc() method in the base class."""
         with self.assertRaises(NotImplementedError):
-            stg.soc()
+            self.stg.soc()
 
     def test_record(self):
         """Test record() method."""
         # redefine base soc() method to avoid NotImplementedError
-        stg.soc = lambda: 0.5
-        stg.record(0, 100)
-        stg.record(0, 50)
-        stg.record(1, 75)
-        self.assertEqual(stg.series_charge, {0: 150, 1: 75})
-        self.assertEqual(stg.series_soc, {0: 0.5, 1: 0.5})
+        self.stg.soc = lambda: 0.5
+        self.stg.record(0, 100)
+        self.stg.record(0, 50)
+        self.stg.record(1, 75)
+        self.assertEqual(self.stg.series_charge, {0: 150, 1: 75})
+        self.assertEqual(self.stg.series_soc, {0: 0.5, 1: 0.5})
 
     def test_series(self):
         """Test series() method."""
         value = {0: 150}
-        stg.series_charge = value
+        self.stg.series_charge = value
         series = pd.Series(value, dtype=float)
-        self.assertTrue(stg.series()['charge'].equals(series))
+        self.assertTrue(self.stg.series()['charge'].equals(series))
 
     def test_store(self):
         """Test store() method."""
         with self.assertRaises(NotImplementedError):
-            stg.store(0, 100)
+            self.stg.store(0, 100)
 
 
 class TestPumpedHydro(unittest.TestCase):
