@@ -19,7 +19,7 @@ import pytest
 from nemo import context, scenarios, sim, utils
 
 
-class TestUtils(unittest.TestCase):
+class TestPlots(unittest.TestCase):
     """Tests for utils.py functions."""
 
     def unlink(self, filename):
@@ -82,3 +82,24 @@ class TestUtils(unittest.TestCase):
         utils.plot(self.context, filename=fname)
         self.assertTrue(self.exists(fname))
         self.unlink(fname)
+
+
+class TestUtils(unittest.TestCase):
+    """Tests for other utils.py functions."""
+
+    def test_plot_areas(self):
+        """Test error handling of unsupported category."""
+        with self.assertRaises(ValueError):
+            utils._plot_areas(None, None, 'invalid')
+
+    def test_plot_xlim_type(self):
+        """Test error handling of xlim type."""
+        ctx = context.Context()
+        with self.assertRaises(ValueError):
+            utils.plot(ctx, None, xlim="wrongtype")
+
+    def test_plot_xlim_length(self):
+        """Test error handling of xlim tuple length."""
+        ctx = context.Context()
+        with self.assertRaises(ValueError):
+            utils.plot(ctx, None, xlim=(1, 2, 3))
