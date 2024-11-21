@@ -766,7 +766,7 @@ class BatteryLoad(Storage, Generator):
         """Store power."""
         if power <= 0:
             msg = f'{power} is <= 0'
-            raise AssertionError(msg)
+            raise ValueError(msg)
 
         if self.battery.full_p() or \
            hour % 24 in self.discharge_hours:
