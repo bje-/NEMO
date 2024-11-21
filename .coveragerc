@@ -7,6 +7,9 @@ exclude_lines =
     # Have to re-enable the standard pragma
     pragma: no cover
 
+    # Don't complain if assertions aren't reached
+    raise AssertionError
+
     # Don't complain if tests don't run unreachable code
     raise UnreachableError
 
