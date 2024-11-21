@@ -18,27 +18,27 @@ from nemo.polygons import WILDCARD
 class TestStorage(unittest.TestCase):
     """Test Storage class."""
 
+    def setUp(self):
+        """Test harness setup."""
+        stg = generators.Storage()
+
     def test_initialisation(self):
         """Test constructor."""
-        stg = generators.Storage()
         self.assertEqual(stg.series_charge, {})
 
     def test_reset(self):
         """Test reset() method."""
-        stg = generators.Storage()
         stg.series_charge = {0: 150}
         stg.reset()
         self.assertEqual(stg.series_charge, {})
 
     def test_soc(self):
         """Test soc() method in the base class."""
-        stg = generators.Storage()
         with self.assertRaises(NotImplementedError):
             stg.soc()
 
     def test_record(self):
         """Test record() method."""
-        stg = generators.Storage()
         # redefine base soc() method to avoid NotImplementedError
         stg.soc = lambda: 0.5
         stg.record(0, 100)
@@ -49,7 +49,6 @@ class TestStorage(unittest.TestCase):
 
     def test_series(self):
         """Test series() method."""
-        stg = generators.Storage()
         value = {0: 150}
         stg.series_charge = value
         series = pd.Series(value, dtype=float)
@@ -57,7 +56,6 @@ class TestStorage(unittest.TestCase):
 
     def test_store(self):
         """Test store() method."""
-        stg = generators.Storage()
         with self.assertRaises(NotImplementedError):
             stg.store(0, 100)
 
