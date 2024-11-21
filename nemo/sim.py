@@ -63,8 +63,8 @@ def _sim(context, date_range):
 
 def _store_spills(context, hour, gen, generators, spl):
     """Store spills from a generator into any storage."""
+    msg = f'{spl} is <= 0'
     if spl <= 0:
-        msg = f'{spl} is <= 0'
         raise AssertionError(msg)
     if context.storages is None:
         # compute this just once and cache it in the context object

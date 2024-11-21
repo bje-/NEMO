@@ -258,8 +258,8 @@ class CSVTraceGenerator(TraceGenerator):
                                         delimiter=',')
             cls.csvdata = np.maximum(0, cls.csvdata)
             # check no elements are NaNs
+            msg = f'Trace file {filename} contains NaNs; inspect file'
             if np.any(np.isnan(cls.csvdata)):
-                msg = f'Trace file {filename} contains NaNs; inspect file'
                 raise AssertionError(msg)
             cls.csvfilename = filename
         # pylint limitation: https://github.com/pylint-dev/pylint/issues/9250
