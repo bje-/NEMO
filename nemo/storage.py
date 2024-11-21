@@ -88,8 +88,14 @@ class GenericStorage:
         """Charge the storage by amt.
 
         >>> stg = GenericStorage(1000, 'test')
-        >>> stg.charge(600), stg.full_p()
-        (500.0, True)
+        >>> stg.charge(600)
+        500.0
+        >>> stg.full_p()
+        True
+        >>> stg.charge(-1)
+        Traceback (most recent call last):
+            ...
+        ValueError: -1
         """
         if amt < 0:
             raise ValueError(amt)
@@ -103,8 +109,14 @@ class GenericStorage:
         """Discharge the storage by 'amt'.
 
         >>> stg = GenericStorage(1000, 'test')
-        >>> stg.discharge(600), stg.empty_p()
-        (500.0, True)
+        >>> stg.discharge(600)
+        500.0
+        >>> stg.empty_p()
+        True
+        >>> stg.discharge(-1)
+        Traceback (most recent call last):
+            ...
+        ValueError: -1
         """
         if amt < 0:
             raise ValueError(amt)
