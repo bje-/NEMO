@@ -586,7 +586,7 @@ for (p1, p2, limit) in \
      (33, 39, 500), (39, 33, 1300), (34, 39, 1000), (39, 34, 1300),
      (39, 38, 2500), (38, 39, 6400), (38, 41, 450), (41, 38, 600)]:
     if p1 not in list(net[p2].keys()):
-        raise ValueError(p2, p1)
+        raise AssertionError(p2, p1)
     if p2 not in list(net[p1].keys()):
-        raise ValueError(p1, p2)
+        raise AssertionError(p1, p2)
     existing_net[p1, p2] = limit

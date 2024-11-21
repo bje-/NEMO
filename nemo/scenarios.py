@@ -141,8 +141,7 @@ def re100(context):
         elif g in [Biofuel, PV1Axis, CentralReceiver, Wind]:
             result += _every_poly(g)
         else:
-            msg = 'unhandled generator type'
-            raise UnreachableError(msg)
+            raise UnreachableError
     context.generators = result
 
 

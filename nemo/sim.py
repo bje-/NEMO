@@ -75,8 +75,7 @@ def _store_spills(context, hour, gen, generators, spl):
         if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
             spl = 0
         if spl < 0:
-            msg = 'negative spill'
-            raise RuntimeWarning(msg)
+            raise AssertionError(spl)
 
         # energy stored <= energy transferred, according to store's RTE
         logging.info('STORE: %s -> %s (%.1f)', gen, other, stored)

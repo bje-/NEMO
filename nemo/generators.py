@@ -184,7 +184,7 @@ class Storage:
         except KeyError:
             return gen.capacity
         if result < 0 and isclose(result, 0, abs_tol=1e-6):
-            result = 0
+            result = 0  # pragma: no cover
         if result < 0:
             raise AssertionError
         return result
