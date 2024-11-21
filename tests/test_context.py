@@ -55,6 +55,11 @@ class TestContextMethods(unittest.TestCase):
         self.assertEqual(self.context.generators[0].capacity, 100)
         self.assertEqual(self.context.generators[1].capacity, 200)
 
+    def test_set_capacities_exception(self):
+        """Test error handling in set_capacities."""
+        with self.assertRaises(ValueError):
+            self.context.set_capacities([0.1] * 10)
+
     def test_str_no_unserved(self):
         """Test __str__ method (no unserved energy)."""
         output = str(self.context)
