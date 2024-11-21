@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import tcpserver
 
-from nemo import costs, generators, storage
+from nemo import costs, generators, regions, storage
 
 PORT = 9998
 battery_storage = storage.BatteryStorage(800, "Li-ion store")
@@ -228,6 +228,71 @@ class TestGenerators(unittest.TestCase):
         """Test __repr__() method."""
         for gen in self.generators:
             repr(gen)
+
+
+class TestGeneratorExceptions(unittest.TestCase):
+    """Test exceptions raised by base Generator constructor."""
+
+    def test_negative_capacity(self):
+        """Capacity less than zero should raise ValueError."""
+        with self.assertRaises(ValueError):
+            generators.Generator(0, -1, 'label')
+
+    def test_polygon_type(self):
+        """A polygon that is a region should raise TypeError."""
+        with self.assertRaises(TypeError):
+            poly = regions.nsw
+            generators.Generator(poly, 100, 'label')
+
+    def test_polygon_number(self):
+        """A polygon out of range should raise AssertionError."""
+        with self.assertRaises(AssertionError):
+            poly = 1000
+            generators.Generator(poly, 100, 'label')
+
+    def test_ccs_capture_range(self):
+        """A capture fraction out of range should raise ValueError."""
+        with self.assertRaises(ValueError):
+            generators.CCS(1, 100, intensity=0.5, capture=1.2)
+        with self.assertRaises(ValueError):
+            generators.CCS(1, 100, intensity=0.5, capture=-0.2)
+
+    def test_batteryload_store_negative(self):
+        """Storing power <= 0 should raise a ValueError."""
+        battery = storage.BatteryStorage(100)
+        gen = generators.BatteryLoad(1, 100, battery)
+        with self.assertRaises(ValueError):
+            gen.store(hour=0, power=-1)
+        with self.assertRaises(ValueError):
+            gen.store(hour=0, power=0)
+
+    def test_battery_shours(self):
+        """Hours that are not in [1,2,4,8] should raise ValueError."""
+        battery = storage.BatteryStorage(100)
+        with self.assertRaises(ValueError):
+            generators.Battery(1, 100, 3, battery)
+
+    def test_battery_capacity(self):
+        """If capacity * shours != battery size, raise ValueError."""
+        battery = storage.BatteryStorage(100)
+        with self.assertRaises(ValueError):
+            # 120 MW x 1 hour = 120 MWh ( != 100 MWh)
+            generators.Battery(1, 120, 1, battery)
+
+    def test_battery_capcost(self):
+        """Hours that are not in [1,2,4,8] should raise ValueError."""
+        battery = storage.BatteryStorage(100)
+        gen = generators.Battery(1, 100, 1, battery)
+        nullcosts = costs.NullCosts()
+        with self.assertRaises(ValueError):
+            gen.shours = 3
+            gen.capcost(nullcosts)
+
+    def test_hydrogen_gt_tank(self):
+        """Tank that is not a HydrogenStorage should raise TypeError."""
+        with self.assertRaises(TypeError):
+            tank = None
+            generators.HydrogenGT(tank, 1, 100)
 
 
 class TestTraceGeneratorTimeout(unittest.TestCase):
