@@ -100,7 +100,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         else:
             gen, spl = generator.step(hour, residual_hour_demand)
         if gen > residual_hour_demand and \
-           not isclose(gen, residual_hour_demand):
+           not isclose(gen, residual_hour_demand):  # pragma: no cover
             msg = (f"generation ({gen:.4f}) > demand "
                    f"({residual_hour_demand:.4f}) for {generator}")
             raise AssertionError(msg)
