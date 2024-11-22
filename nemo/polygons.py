@@ -420,7 +420,14 @@ offshore_wind_limit = {31: 10, 36: 10, 38: 10, 40: 10}
 
 
 def _centroid(vertices):
-    """Find the centroid of a polygon."""
+    """Find the centroid of a polygon.
+
+    >>> notclosed = [(1, 1), (0, 0), (1, 2), (3, 3)]
+    >>> _centroid(notclosed)
+    Traceback (most recent call last):
+        ...
+    ValueError: [(1, 1), (0, 0), (1, 2), (3, 3)]
+    """
     # pylint: disable=invalid-name
     # Ensure the polygon is closed
     if vertices[0] != vertices[-1]:
