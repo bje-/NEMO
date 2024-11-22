@@ -9,6 +9,7 @@
 
 """A testsuite for the sim module."""
 
+import logging
 import unittest
 
 import numpy as np
@@ -34,6 +35,14 @@ class TestSim(unittest.TestCase):
         """Test _sim() function."""
         self.context.verbose = True
         sim._sim(self.context, self.date_range)
+
+    def test_sim_with_logging(self):
+        """Test _sim() function."""
+        origlevel = logging.getLogger().level
+        logging.getLogger().setLevel(logging.INFO)
+        self.context.verbose = True
+        sim._sim(self.context, self.date_range)
+        logging.getLogger().setLevel(origlevel)
 
     def test_dispatch(self):
         """Test _dispatch() function."""
