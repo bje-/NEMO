@@ -12,4 +12,4 @@ from nemo.context import Context
 from nemo.sim import run
 from nemo.utils import plot
 
-__all__ = ['Context', 'run', 'plot']
+__all__ = ['Context', 'plot', 'run']
