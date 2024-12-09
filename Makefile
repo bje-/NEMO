@@ -75,7 +75,7 @@ prof: nemo.prof
 lineprof: stub.py
 	kernprof -v -l stub.py
 
-LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py tests/*.py)
+LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py nemo/costs/*.py tests/*.py)
 
 flake8: envset
 	flake8 $(LINTSRC) --ignore=N801
