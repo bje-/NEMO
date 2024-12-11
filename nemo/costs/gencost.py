@@ -52,8 +52,3 @@ class GenCost(Common):
             tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 0,
             tech.Wind: 0})
-
-        # Storage is expressed on a total cost basis (GenCost 2024, Sec. 2.8)
-        # Figures are entered in the classes in $/kWh, but these are
-        # converted to $/kW in capcost().
-        self.totcost_per_kwh = {}

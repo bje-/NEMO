@@ -12,13 +12,13 @@
 
 from nemo import generators as tech
 
-from .gencost import GenCost
+from .common import Common
 
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
 
 
-class GenCost2025(GenCost):
+class GenCost2025(Common):
     """GenCost 2024-25 costs.
 
     Source:
@@ -27,17 +27,15 @@ class GenCost2025(GenCost):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        GenCost.__init__(self, discount, coal_price, gas_price, ccs_price)
+        Common.__init__(self, discount)
+        self.ccs_storage_per_t = ccs_price
+        self.coal_price_per_gj = coal_price
+        self.gas_price_per_gj = gas_price
 
         # Fixed O&M (FOM) costs
-        # Clear all base costs as 2025 costs have changed considerably.
-        self.fixed_om_costs = {
-            tech.DemandResponse: 0,
-            tech.Diesel: 0,
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-
+        # Note: These are the same for all years (2030, 2040, 2050),
+        # so we can set them once here.
+        self.fixed_om_costs.update({
             tech.Black_Coal: 64.9,
             tech.CCGT: 15,
             tech.CCGT_CCS: 22.5,
@@ -47,17 +45,11 @@ class GenCost2025(GenCost):
             tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 12.0,
             tech.Wind: 28.0,
-            tech.WindOffshore: 174.6}
+            tech.WindOffshore: 174.6})
 
         # Variable O&M (VOM) costs
-        # Clear all base costs as 2025 costs have changed considerably.
-        self.opcost_per_mwh = {
-            # a reasonable estimate of diesel VOM
-            tech.Diesel: 8,
-            tech.Hydro: 0,
-            tech.PumpedHydroPump: 0,
-            tech.PumpedHydroTurbine: 0,
-
+        # Likewise, these are the same for all years (2030, 2040, 2050).
+        self.opcost_per_mwh.update({
             tech.Black_Coal: 4.7,
             tech.CCGT: 4.1,
             tech.CCGT_CCS: 8.0,
@@ -67,7 +59,7 @@ class GenCost2025(GenCost):
             tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 0,
             tech.Wind: 0,
-            tech.WindOffshore: 0}
+            tech.WindOffshore: 0})
 
 
 class GenCost2025_2030_CP(GenCost2025):

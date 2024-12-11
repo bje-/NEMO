@@ -48,6 +48,11 @@ class Common:
             tech.PumpedHydroPump: 0,
             tech.PumpedHydroTurbine: 0}
 
+        # Storage is expressed on a total cost basis. Figures are
+        # entered in the classes in $/kWh, but these are converted to
+        # $/kW in capcost().
+        self.totcost_per_kwh = {}
+
     def annuity_factor(self, lifetime):
         """Return the annuity factor for lifetime t and discount rate r."""
         rate = self.discount_rate
