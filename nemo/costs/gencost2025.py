@@ -12,13 +12,13 @@
 
 from nemo import generators as tech
 
-from .common import Common
+from .gencost import GenCost
 
 # We use class names here that upset Pylint.
 # pylint: disable=invalid-name
 
 
-class GenCost2025(Common):
+class GenCost2025(GenCost):
     """GenCost 2024-25 costs.
 
     Source:
@@ -27,10 +27,7 @@ class GenCost2025(Common):
 
     def __init__(self, discount, coal_price, gas_price, ccs_price):
         """Construct a cost object."""
-        Common.__init__(self, discount)
-        self.ccs_storage_per_t = ccs_price
-        self.coal_price_per_gj = coal_price
-        self.gas_price_per_gj = gas_price
+        GenCost.__init__(self, discount, coal_price, gas_price, ccs_price)
 
         # Fixed O&M (FOM) costs
         # Note: These are the same for all years (2030, 2040, 2050),
@@ -42,7 +39,6 @@ class GenCost2025(Common):
             tech.CentralReceiver: 124.2,
             tech.Coal_CCS: 94.8,
             tech.OCGT: 14.1,
-            tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 12.0,
             tech.Wind: 28.0,
             tech.WindOffshore: 174.6})
@@ -53,12 +49,7 @@ class GenCost2025(Common):
             tech.Black_Coal: 4.7,
             tech.CCGT: 4.1,
             tech.CCGT_CCS: 8.0,
-            tech.CentralReceiver: 0,
-            tech.Coal_CCS: 8.9,
             tech.OCGT: 8.1,
-            tech.Behind_Meter_PV: 0,
-            tech.PV1Axis: 0,
-            tech.Wind: 0,
             tech.WindOffshore: 0})
 
 
