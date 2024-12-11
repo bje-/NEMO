@@ -86,7 +86,7 @@ cost_scenarios = {
     'GenCost2024-in2050-CP': GenCost2024_2050_CP,
     'GenCost2024-in2050-NZE2050': GenCost2024_2050_NZE2050,
     'GenCost2024-in2050-NZE2050+': GenCost2024_2050_NZEPost2050,
-	'DraftGenCost2025-in2030-CP': GenCost2025_2030_CP,
+    'DraftGenCost2025-in2030-CP': GenCost2025_2030_CP,
     'DraftGenCost2025-in2030-NZE2050': GenCost2025_2030_NZE2050,
     'DraftGenCost2025-in2030-NZE2050+': GenCost2025_2030_NZEPost2050,
     'DraftGenCost2025-in2040-CP': GenCost2025_2040_CP,
