@@ -29,10 +29,15 @@ class GenCost2025(GenCost):
         """Construct a cost object."""
         GenCost.__init__(self, discount, coal_price, gas_price, ccs_price)
 
-        # Fixed O&M (FOM) costs. Clear all base costs as 2025 costs
-        # have changed considerably.
-        self.fixed_om_costs.clear()
-        self.fixed_om_costs.update({
+        # Fixed O&M (FOM) costs
+        # Clear all base costs as 2025 costs have changed considerably.
+        self.fixed_om_costs = {
+            tech.DemandResponse: 0,
+            tech.Diesel: 0,
+            tech.Hydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
+
             tech.Black_Coal: 64.9,
             tech.CCGT: 15,
             tech.CCGT_CCS: 22.5,
@@ -45,7 +50,14 @@ class GenCost2025(GenCost):
             tech.WindOffshore: 174.6})
 
         # Variable O&M (VOM) costs
-        self.opcost_per_mwh.update({
+        # Clear all base costs as 2025 costs have changed considerably.
+        self.opcost_per_mwh = {
+            # a reasonable estimate of diesel VOM
+            tech.Diesel: 8,
+            tech.Hydro: 0,
+            tech.PumpedHydroPump: 0,
+            tech.PumpedHydroTurbine: 0,
+
             tech.Black_Coal: 4.7,
             tech.CCGT: 4.1,
             tech.CCGT_CCS: 8.0,
