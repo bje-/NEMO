@@ -47,7 +47,7 @@ class GenCost2025(GenCost):
             tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 12.0,
             tech.Wind: 28.0,
-            tech.WindOffshore: 174.6})
+            tech.WindOffshore: 174.6}
 
         # Variable O&M (VOM) costs
         # Clear all base costs as 2025 costs have changed considerably.
@@ -67,7 +67,7 @@ class GenCost2025(GenCost):
             tech.Behind_Meter_PV: 0,
             tech.PV1Axis: 0,
             tech.Wind: 0,
-            tech.WindOffshore: 0})
+            tech.WindOffshore: 0}
 
 
 class GenCost2025_2030_CP(GenCost2025):
