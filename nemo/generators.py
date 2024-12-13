@@ -823,6 +823,9 @@ class Battery(Generator):
     # Lifespan of the battery in years
     lifetime = 15
 
+    # storage durations (in hours)
+    durations = (1, 2, 4, 8, 12, 24)
+
     patch = Patch(facecolor='#00a2fa')
     """Colour for plotting"""
 
@@ -840,7 +843,7 @@ class Battery(Generator):
         self.battery = battery
         self.runhours = 0
         self.shours = shours
-        if shours not in [1, 2, 4, 8]:
+        if shours not in self.durations:
             raise ValueError(shours)
         if capacity * shours != battery.maxstorage:
             raise ValueError
@@ -883,7 +886,7 @@ class Battery(Generator):
     def capcost(self, costs):
         """Return the capital cost."""
         kwh = self.battery.maxstorage * 1000
-        if self.shours not in [1, 2, 4, 8]:
+        if self.shours not in self.durations:
             raise ValueError(self.shours)
         cost_per_kwh = costs.totcost_per_kwh[type(self)][self.shours]
         return kwh * cost_per_kwh
