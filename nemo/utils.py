@@ -43,6 +43,35 @@ MAX_PLOT_GENERATORS = 50
 register_matplotlib_converters()
 
 
+class MultiSetter:
+    """A setter that broadcasts its value to any number of setters.
+
+    This is useful for generator pairs such as a Battery and a
+    BatteryLoad, where there should only be one (tied) capacity for
+    both objects.
+
+    >>> setter1 = (lambda x: print("one", x), 0, 40)
+    >>> setter2 = (lambda x: print("two", x), 0, 40)
+    >>> ds = DualSetter(setter1, setter2)
+    >>> ds.set_capacity(1.2)
+    one 1.2
+    two 1.2
+    """
+
+    def __init__(self, *args):
+        """Initialise a MultiSetter with any number of setters."""
+        self.setters = []
+        for setter in args:
+            if not callable(setter):
+                raise TypeError
+            self.setters.append(setter[0])
+
+    def set_capacity(self, value):
+        """Broadcast value to all setters."""
+        for setter in self.setters:
+            setter(value)
+
+
 def thousands(value):
     """Format a value with thousands separator(s).
 
