@@ -52,19 +52,18 @@ class MultiSetter:
 
     >>> setter1 = (lambda x: print("one", x), 0, 40)
     >>> setter2 = (lambda x: print("two", x), 0, 40)
-    >>> ds = DualSetter(setter1, setter2)
-    >>> ds.set_capacity(1.2)
+    >>> ms = MultiSetter(setter1, setter2)
+    >>> ms.set_capacity(1.2)
     one 1.2
     two 1.2
     """
 
     def __init__(self, *args):
         """Initialise a MultiSetter with any number of setters."""
-        self.setters = []
-        for setter in args:
+        self.setters = [setter[0] for setter in args]
+        for setter in self.setters:
             if not callable(setter):
                 raise TypeError
-            self.setters.append(setter[0])
 
     def set_capacity(self, value):
         """Broadcast value to all setters."""
