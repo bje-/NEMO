@@ -100,7 +100,7 @@ patterns = {
     ' GT.*[kMG]W$': lambda f: addcap("GT", f),
     'CCGT-CCS.*[kMG]W$': lambda f: addcap("CCGT-CCS", f),
     'CCGT .*[kMG]W$': lambda f: addcap("CCGT", f),
-    'coal.*[kMG]W$': lambda f: addcap("Coal", f),
+    '[Cc]oal.*[kMG]W$': lambda f: addcap("Coal", f),
     'Coal-CCS.*[kMG]W$': lambda f: addcap("Coal-CCS", f),
     'OCGT.*[kMG]W$': lambda f: addcap("OCGT", f),
     'diesel.*[kMG]W$': lambda f: addcap("diesel", f),
