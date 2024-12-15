@@ -11,14 +11,15 @@
 """Supply side scenarios."""
 
 from nemo import configfile, regions
-from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Biofuel, Black_Coal,
-                             CentralReceiver, Coal_CCS, DemandResponse, Hydro,
-                             PumpedHydroPump, PumpedHydroTurbine, PV1Axis,
-                             Wind, WindOffshore)
+from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
+                             Biofuel, Black_Coal, CentralReceiver, Coal_CCS,
+                             DemandResponse, Hydro, PumpedHydroPump,
+                             PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
-from nemo.storage import PumpedHydroStorage
+from nemo.storage import BatteryStorage, PumpedHydroStorage
 from nemo.types import UnreachableError
+from nemo.utils import MultiSetter
 
 
 def _demand_response():
@@ -63,6 +64,28 @@ def _hydro():
 
     return [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39,
             hydro40, hydro41, hydro42, hydro43]
+
+
+def _battery(polygon, capacity, shours, label):
+    """Generate and return a pair of battery generator objects.
+
+    One for the charging side and one for the discharging side.
+
+    capacity is the initial generating capacity (in MW)
+    shours is the number of full load storage hours
+    label is the prefix for the generator label
+    """
+    # discharge between 5pm and 7am daily
+    hrs = list(range(8)) + list(range(17, 24))
+    storage = BatteryStorage(capacity * shours, f"{label} Storage")
+    batt = Battery(polygon, capacity, shours, storage,
+                   f"{label}", discharge_hours=hrs)
+    load = BatteryLoad(polygon, capacity, storage,
+                       f"{label} (load)", discharge_hours=hrs, rte=0.9)
+    multi = MultiSetter(batt.setters[0], load.setters[0])
+    load.setters = []  # no setter for the load side
+    batt.setters = [(multi.set_capacity, 0, 40)]
+    return batt, load
 
 
 def replacement(context):
@@ -126,12 +149,15 @@ def re100(context):
     """100% renewable electricity."""
     result = []
     # The following list is in merit order.
-    for g in [PV1Axis, Wind, WindOffshore, PumpedHydroTurbine, Hydro,
-              CentralReceiver, Biofuel]:
+    for g in [PV1Axis, Wind, WindOffshore, PumpedHydroTurbine,
+              Battery, Hydro, CentralReceiver, Biofuel]:
         if g == PumpedHydroTurbine:
             result += _pumped_hydro()
         elif g == Hydro:
             result += _hydro()
+        elif g == Battery:
+            for duration in [1, 2, 4, 8, 12, 24]:
+                result += _battery(24, 0, duration, "battery")
         elif g == WindOffshore:
             cfg = configfile.get('generation', 'offshore-wind-trace')
             for column, poly in enumerate([31, 36, 38, 40]):

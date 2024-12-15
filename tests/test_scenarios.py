@@ -23,4 +23,4 @@ class TestScenarios(unittest.TestCase):
             setupfn(ctx)
             self.assertGreater(len(ctx.generators), 0)
             # sanity check
-            self.assertLess(len(ctx.generators), 200)
+            self.assertLess(len(ctx.generators), 250)
