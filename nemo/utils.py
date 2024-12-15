@@ -56,6 +56,12 @@ class MultiSetter:
     >>> ms.set_capacity(1.2)
     one 1.2
     two 1.2
+
+    >>> setter1 = (None, 0, 40)  # not callable
+    >>> ms = MultiSetter(setter1)
+    Traceback (most recent call last):
+        ...
+    TypeError: setter not callable
     """
 
     def __init__(self, *args):
@@ -63,7 +69,7 @@ class MultiSetter:
         self.setters = [setter[0] for setter in args]
         for setter in self.setters:
             if not callable(setter):
-                raise TypeError
+                raise TypeError("setter not callable")
 
     def set_capacity(self, value):
         """Broadcast value to all setters."""
