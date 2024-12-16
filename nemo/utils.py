@@ -69,7 +69,8 @@ class MultiSetter:
         self.setters = [setter[0] for setter in args]
         for setter in self.setters:
             if not callable(setter):
-                raise TypeError("setter not callable")
+                msg = "setter not callable"
+                raise TypeError(msg)
 
     def set_capacity(self, value):
         """Broadcast value to all setters."""
