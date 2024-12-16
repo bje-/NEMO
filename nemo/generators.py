@@ -431,6 +431,17 @@ class Hydro(Fuelled):
         self.setters = [(self.set_capacity, 0, capacity / 1000.)]
 
 
+class Nuclear(Fuelled):
+    """Nuclear power stations (large-scale)."""
+
+    patch = Patch(facecolor='pink')
+    """Colour for plotting"""
+
+    def __init__(self, polygon, capacity, label=None):
+        """Construct a nuclear generator."""
+        Fuelled.__init__(self, polygon, capacity, label)
+
+
 class PumpedHydroPump(Storage, Generator):
     """Pumped hydro (pump side) model."""
 

@@ -13,7 +13,7 @@
 from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
                              Biofuel, Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, PumpedHydroPump,
+                             DemandResponse, Hydro, Nuclear, PumpedHydroPump,
                              PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
@@ -234,6 +234,14 @@ def re_plus_fossil(context):
         context.generators[:-4] + [OCGT(WILDCARD, 0)]
 
 
+def re_plus_nuclear(context):
+    """Renewables with nuclear and OCGT peakers."""
+    re100(context)
+    context.generators = \
+        [Nuclear(WILDCARD, 0)] + context.generators[:-4] + \
+        [OCGT(WILDCARD, 0)]
+
+
 def re100_dsp(context):
     """Mostly renewables with demand side participation."""
     re100(context)
@@ -268,6 +276,7 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     'coal-ccs': coal_ccs,
                     're+ccs': re_plus_ccs,
                     're+fossil': re_plus_fossil,
+                    're+nuclear': re_plus_nuclear,
                     're100': re100,
                     're100-qld': re100_qld,
                     're100-nsw': re100_nsw,

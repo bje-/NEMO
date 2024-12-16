@@ -38,6 +38,7 @@ class GenCost2025(GenCost):
             tech.CCGT_CCS: 22.5,
             tech.CentralReceiver: 124.2,
             tech.Coal_CCS: 94.8,
+            tech.Nuclear: 200,
             tech.OCGT: 14.1,
             tech.PV1Axis: 12.0,
             tech.Wind: 28.0,
@@ -49,6 +50,8 @@ class GenCost2025(GenCost):
             tech.Black_Coal: 4.7,
             tech.CCGT: 4.1,
             tech.CCGT_CCS: 8.0,
+            # 10 GJ/MWh heat rate (36% efficiency), $1.10/GJ fuel cost
+            tech.Nuclear: 5.3 + (10 * 1.1),
             tech.OCGT: 8.1,
             tech.WindOffshore: 0})
 
@@ -65,6 +68,7 @@ class GenCost2025_2030_CP(GenCost2025):
         table[tech.CCGT_CCS] = 4617
         table[tech.CentralReceiver] = 5973
         table[tech.Coal_CCS] = 10435
+        table[tech.Nuclear] = 8467
         table[tech.OCGT] = 1302
         table[tech.Behind_Meter_PV] = 1106
         table[tech.PV1Axis] = 1224
@@ -89,6 +93,7 @@ class GenCost2025_2040_CP(GenCost2025):
         table[tech.CCGT_CCS] = 4486
         table[tech.CentralReceiver] = 5217
         table[tech.Coal_CCS] = 10202
+        table[tech.Nuclear] = 8322
         table[tech.OCGT] = 1280
         table[tech.Behind_Meter_PV] = 907
         table[tech.PV1Axis] = 1016
@@ -113,6 +118,7 @@ class GenCost2025_2050_CP(GenCost2025):
         table[tech.CCGT_CCS] = 4257
         table[tech.CentralReceiver] = 4388
         table[tech.Coal_CCS] = 9810
+        table[tech.Nuclear] = 8091
         table[tech.OCGT] = 1243
         table[tech.Behind_Meter_PV] = 718
         table[tech.PV1Axis] = 807
@@ -137,6 +143,7 @@ class GenCost2025_2030_NZE2050(GenCost2025):
         table[tech.CCGT_CCS] = 4678
         table[tech.CentralReceiver] = 5437
         table[tech.Coal_CCS] = 10529
+        table[tech.Nuclear] = 8493
         table[tech.OCGT] = 1302
         table[tech.Behind_Meter_PV] = 1031
         table[tech.PV1Axis] = 1141
@@ -161,6 +168,7 @@ class GenCost2025_2040_NZE2050(GenCost2025):
         table[tech.CCGT_CCS] = 4292
         table[tech.CentralReceiver] = 4269
         table[tech.Coal_CCS] = 10001
+        table[tech.Nuclear] = 8322
         table[tech.OCGT] = 1280
         table[tech.Behind_Meter_PV] = 599
         table[tech.PV1Axis] = 671
@@ -185,6 +193,7 @@ class GenCost2025_2050_NZE2050(GenCost2025):
         table[tech.CCGT_CCS] = 4122
         table[tech.CentralReceiver] = 3444
         table[tech.Coal_CCS] = 9670
+        table[tech.Nuclear] = 8091
         table[tech.OCGT] = 1243
         table[tech.Behind_Meter_PV] = 505
         table[tech.PV1Axis] = 569
@@ -209,6 +218,7 @@ class GenCost2025_2030_NZEPost2050(GenCost2025):
         table[tech.CCGT_CCS] = 4678
         table[tech.CentralReceiver] = 5666
         table[tech.Coal_CCS] = 10529
+        table[tech.Nuclear] = 8467
         table[tech.OCGT] = 1302
         table[tech.Behind_Meter_PV] = 1069
         table[tech.PV1Axis] = 1183
@@ -233,6 +243,7 @@ class GenCost2025_2040_NZEPost2050(GenCost2025):
         table[tech.CCGT_CCS] = 4457
         table[tech.CentralReceiver] = 4570
         table[tech.Coal_CCS] = 10172
+        table[tech.Nuclear] = 8322
         table[tech.OCGT] = 1280
         table[tech.Behind_Meter_PV] = 753
         table[tech.PV1Axis] = 843
@@ -257,6 +268,7 @@ class GenCost2025_2050_NZEPost2050(GenCost2025):
         table[tech.CCGT_CCS] = 4184
         table[tech.CentralReceiver] = 3814
         table[tech.Coal_CCS] = 8734
+        table[tech.Nuclear] = 8091
         table[tech.OCGT] = 1243
         table[tech.Behind_Meter_PV] = 612
         table[tech.PV1Axis] = 688
