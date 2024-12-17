@@ -238,7 +238,7 @@ def re_plus_nuclear(context):
     """Renewables with nuclear and OCGT peakers."""
     re100(context)
     context.generators = \
-        [Nuclear(WILDCARD, 0)] + context.generators[:-4] + \
+        [Nuclear(WILDCARD, 0)] + context.generators + \
         [OCGT(WILDCARD, 0)]
 
 
