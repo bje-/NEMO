@@ -35,6 +35,7 @@ setup(name='nemopt',
       scripts=['evolve', 'replay', 'summary'],
       install_requires=[
           'deap',
+          'colored<2',
           'Gooey>=1.0.4',
           'matplotlib',
           'numpy',
