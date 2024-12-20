@@ -222,24 +222,24 @@ def re_plus_ccs(context):
     ccgt = CCGT(WILDCARD, 0)
     ccgt_ccs = CCGT_CCS(WILDCARD, 0)
     ocgt = OCGT(WILDCARD, 0)
-    context.generators = [coal, coal_ccs, ccgt, ccgt_ccs] + \
-        context.generators[:-4] + [ocgt]
+    context.generators = \
+        [coal, coal_ccs, ccgt, ccgt_ccs, *context.generators[:-4],
+         ocgt]
 
 
 def re_plus_fossil(context):
     """Mostly renewables with some fossil augmentation."""
     re100(context)
     context.generators = \
-        [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0)] + \
-        context.generators[:-4] + [OCGT(WILDCARD, 0)]
+        [Black_Coal(WILDCARD, 0), CCGT(WILDCARD, 0),
+         *context.generators[:-4], OCGT(WILDCARD, 0)]
 
 
 def re_plus_nuclear(context):
     """Renewables with nuclear and OCGT peakers."""
     re100(context)
     context.generators = \
-        [Nuclear(WILDCARD, 0)] + context.generators + \
-        [OCGT(WILDCARD, 0)]
+        [Nuclear(WILDCARD, 0), *context.generators, OCGT(WILDCARD, 0)]
 
 
 def re100_dsp(context):
