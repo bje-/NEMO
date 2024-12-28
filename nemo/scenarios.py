@@ -51,16 +51,16 @@ def _pumped_hydro():
 
 def _hydro():
     """Return a list of existing hydroelectric generators."""
-    hydro24 = Hydro(24, 42.5, label='poly 24 hydro')
-    hydro31 = Hydro(31, 43, label='poly 31 hydro')
-    hydro35 = Hydro(35, 71, label='poly 35 hydro')
-    hydro36 = Hydro(36, 2513.9, label='poly 36 hydro')
-    hydro38 = Hydro(38, 450, label='poly 38 hydro')
-    hydro39 = Hydro(39, 13.8, label='poly 39 hydro')
-    hydro40 = Hydro(40, 586.6, label='poly 40 hydro')
-    hydro41 = Hydro(41, 280, label='poly 41 hydro')
-    hydro42 = Hydro(42, 590.4, label='poly 42 hydro')
-    hydro43 = Hydro(43, 462.5, label='poly 43 hydro')
+    hydro24 = Hydro(24, 42.5, label='polygon 24 hydro')
+    hydro31 = Hydro(31, 43, label='polygon 31 hydro')
+    hydro35 = Hydro(35, 71, label='polygon 35 hydro')
+    hydro36 = Hydro(36, 2513.9, label='polygon 36 hydro')
+    hydro38 = Hydro(38, 450, label='polygon 38 hydro')
+    hydro39 = Hydro(39, 13.8, label='polygon 39 hydro')
+    hydro40 = Hydro(40, 586.6, label='polygon 40 hydro')
+    hydro41 = Hydro(41, 280, label='polygon 41 hydro')
+    hydro42 = Hydro(42, 590.4, label='polygon 42 hydro')
+    hydro43 = Hydro(43, 462.5, label='polygon 43 hydro')
 
     return [hydro24, hydro31, hydro35, hydro36, hydro38, hydro39,
             hydro40, hydro41, hydro42, hydro43]
