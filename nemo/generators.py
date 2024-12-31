@@ -1008,7 +1008,7 @@ class Block(Generator):
     """Colour for plotting"""
 
     def step(self, hour, demand):
-        """Step method for GreenPower."""
+        """Step method for Block generator."""
         power = min(self.capacity, demand)
         self.series_power[hour] = power
         self.series_spilled[hour] = 0
