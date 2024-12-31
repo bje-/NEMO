@@ -26,7 +26,6 @@ class Common:
 
         # Common capital costs
         self.capcost_per_kw = {
-            tech.DemandResponse: 0,
             tech.Diesel: 0,
             tech.Hydro: 0,
             tech.PumpedHydroPump: 0,
@@ -42,7 +41,6 @@ class Common:
 
         # Fixed O&M (FOM) costs
         self.fixed_om_costs = {
-            tech.DemandResponse: 0,
             tech.Diesel: 0,
             tech.Hydro: 0,
             tech.PumpedHydroPump: 0,

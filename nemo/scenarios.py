@@ -13,21 +13,13 @@
 from nemo import configfile, regions
 from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
                              Biofuel, Black_Coal, CentralReceiver, Coal_CCS,
-                             DemandResponse, Hydro, Nuclear, PumpedHydroPump,
+                             Hydro, Nuclear, PumpedHydroPump,
                              PumpedHydroTurbine, PV1Axis, Wind, WindOffshore)
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
 from nemo.storage import BatteryStorage, PumpedHydroStorage
 from nemo.types import UnreachableError
 from nemo.utils import MultiSetter
-
-
-def _demand_response():
-    """Return a list of DR 'generators'."""
-    dr1 = DemandResponse(WILDCARD, 1000, 100, "DR100")
-    dr2 = DemandResponse(WILDCARD, 1000, 500, "DR500")
-    dr3 = DemandResponse(WILDCARD, 1000, 1000, "DR1000")
-    return [dr1, dr2, dr3]
 
 
 def _pumped_hydro():
@@ -242,12 +234,6 @@ def re_plus_nuclear(context):
         [Nuclear(WILDCARD, 0), *context.generators, OCGT(WILDCARD, 0)]
 
 
-def re100_dsp(context):
-    """Mostly renewables with demand side participation."""
-    re100(context)
-    context.generators += _demand_response()
-
-
 def re100_nocst(context):
     """100% renewables, but no CST."""
     re100(context)
@@ -281,6 +267,5 @@ supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only
                     're100-qld': re100_qld,
                     're100-nsw': re100_nsw,
                     're100-sa': re100_south_aus,
-                    're100+dsp': re100_dsp,
                     're100-nocst': re100_nocst,
                     'replacement': replacement}

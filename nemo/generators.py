@@ -946,61 +946,6 @@ class Geothermal_EGS(Geothermal):
     """Enhanced geothermal systems (EGS) geothermal model."""
 
 
-class DemandResponse(Generator):
-    """Load shedding generator.
-
-    >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
-    """
-
-    patch = Patch(facecolor='white')
-    """Colour for plotting"""
-
-    def __init__(self, polygon, capacity, cost_per_mwh, label=None):
-        """Construct a demand response 'generator'.
-
-        The demand response opportunity cost is given by
-        cost_per_mwh. There is assumed to be no capital cost.
-        """
-        Generator.__init__(self, polygon, capacity, label)
-        self.setters = []
-        self.runhours = 0
-        self.maxresponse = 0
-        self.cost_per_mwh = cost_per_mwh
-
-    def step(self, hour, demand):
-        """Specialised step method for demand response.
-
-        >>> dr = DemandResponse(polygons.WILDCARD, 500, 1500)
-        >>> dr.step(hour=0, demand=200)
-        (200, 0)
-        >>> dr.runhours
-        1
-        """
-        power = min(self.capacity, demand)
-        self.maxresponse = max(self.maxresponse, power)
-        self.series_power[hour] = power
-        self.series_spilled[hour] = 0
-        if power > 0:
-            self.runhours += 1
-        return power, 0
-
-    def reset(self):
-        """Reset the generator."""
-        Generator.reset(self)
-        self.runhours = 0
-        self.maxresponse = 0
-
-    def opcost_per_mwh(self, costs):
-        """Return the variable O&M costs."""
-        return self.cost_per_mwh
-
-    def summary(self, context):
-        """Return a summary of the generator activity."""
-        return Generator.summary(self, context) + \
-            f', max response {self.maxresponse} MW' + \
-            f', ran {thousands(self.runhours)} hours'
-
-
 class Block(Generator):
     """A simple block generator."""
 
