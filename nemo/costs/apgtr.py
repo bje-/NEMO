@@ -11,6 +11,8 @@ from nemo import generators as tech
 
 from .common import Common
 
+# pylint: disable=duplicate-code
+
 
 class APGTR2015(Common):
     """Australian Power Generation Technology Report costs in 2015.

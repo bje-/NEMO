@@ -12,7 +12,7 @@ from nemo import generators as tech
 from .gencost import GenCost
 
 # We use class names here that upset Pylint.
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, disable=duplicate-code
 
 
 class GenCost2022(GenCost):
@@ -27,15 +27,10 @@ class GenCost2022(GenCost):
         """Construct a cost object."""
         GenCost.__init__(self, discount, coal_price, gas_price, ccs_price)
 
-        # Fixed O&M (FOM) costs
-        self.fixed_om_costs.update({
-            tech.CentralReceiver: 120.0,
-            tech.WindOffshore: 149.9})
-
-        # Variable O&M (VOM) costs
-        self.opcost_per_mwh.update({
-            tech.OCGT: 7.3,
-            tech.WindOffshore: 0})
+        self.fixed_om_costs.update({tech.CentralReceiver: 120.0,
+                                    tech.WindOffshore: 149.9})
+        self.opcost_per_mwh.update({tech.OCGT: 7.3,
+                                    tech.WindOffshore: 0})
 
 
 class GenCost2022_2021(GenCost2022):

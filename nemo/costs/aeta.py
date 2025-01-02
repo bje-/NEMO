@@ -12,7 +12,7 @@ from nemo import generators as tech
 from .common import Common
 
 # We use class names here that upset Pylint.
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, disable=duplicate-code
 
 
 class AETA2012_2030(Common):
