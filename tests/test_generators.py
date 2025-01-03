@@ -191,8 +191,10 @@ class TestGenerators(unittest.TestCase):
             gen.series_spilled = {n: 1 for n in range(10)}  # 1 MW * 10 h
             # fake up a capcost() method for testing summary()
             gen.capcost = lambda _: 100
+            gen.opcost = lambda _: 1234
             output = gen.summary(context)
             self.assertIn('capcost $100,', output)
+            self.assertIn('opcost $1,234,', output)
             self.assertIn('supplied 100.00 MWh', output)
             self.assertIn('surplus 10.00 MWh', output)
             self.assertIn('CF 10.0%', output)
