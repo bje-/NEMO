@@ -270,7 +270,7 @@ def run_final(best):
         json.dump(bundle, filehandle)
 
 
-def run():
+def run(toolbox):
     """Run the evolution."""
     if args.verbose:
         docstring = scenarios.supply_scenarios[args.supply_scenario].__doc__
@@ -331,15 +331,15 @@ if __name__ == '__main__':
         strategy = cma.Strategy(centroid=[0] * numparams, sigma=args.sigma,
                                 lambda_=args.lambda_)
 
-    toolbox = base.Toolbox()
-    toolbox.register("generate", strategy.generate, creator.Individual)
-    toolbox.register("update", strategy.update)
-    toolbox.register("evaluate", eval_func)
+    tbox = base.Toolbox()
+    tbox.register("generate", strategy.generate, creator.Individual)
+    tbox.register("update", strategy.update)
+    tbox.register("evaluate", eval_func)
 
     set_start_method('spawn')
     with Pool(args.ncpus if args.ncpus else None,
               initializer=init_worker, initargs=(args,)) as pool:
-        toolbox.register("map", pool.map)
-        run()
+        tbox.register("map", pool.map)
+        run(tbox)
         pool.close()
         pool.join()
