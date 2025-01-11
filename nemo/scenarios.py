@@ -18,8 +18,11 @@ from nemo.generators import (CCGT, CCGT_CCS, CST, OCGT, Battery, BatteryLoad,
 from nemo.polygons import (WILDCARD, cst_limit, offshore_wind_limit, pv_limit,
                            wind_limit)
 from nemo.storage import BatteryStorage, PumpedHydroStorage
-from nemo.types import UnreachableError
 from nemo.utils import MultiSetter
+
+
+class UnreachableError(AssertionError):
+    """For marking unreachable code."""
 
 
 def _pumped_hydro():
