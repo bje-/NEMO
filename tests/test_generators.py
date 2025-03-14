@@ -153,21 +153,21 @@ class TestGenerators(unittest.TestCase):
         """Test capfactor() method."""
         for gen in self.generators:
             # 10 MW for 10 hours = 100 MWh
-            gen.series_power = {n: 10 for n in range(10)}
+            gen.series_power = dict.fromkeys(range(10), 10)
             self.assertEqual(gen.capfactor(), 10)
 
     def test_lcoe(self):
         """Test lcoe() method."""
         for gen in self.generators:
             # 10 MWh for 10 hours = 100 MWh
-            gen.series_power = {n: 10 for n in range(10)}
+            gen.series_power = dict.fromkeys(range(10), 10)
             gen.lcoe(self.costs, self.years())
 
     def test_reset(self):
         """Test reset() method."""
         for gen in self.generators:
-            gen.series_power = {n: 10 for n in range(10)}
-            gen.series_spilled = {n: 10 for n in range(10)}
+            gen.series_power = dict.fromkeys(range(10), 10)
+            gen.series_spilled = dict.fromkeys(range(10), 10)
         for gen in self.generators:
             gen.reset()
         for gen in self.generators:
@@ -187,8 +187,8 @@ class TestGenerators(unittest.TestCase):
 
         context = MyContext()
         for gen in self.generators:
-            gen.series_power = {n: 10 for n in range(10)}  # 10 MW * 10 h
-            gen.series_spilled = {n: 1 for n in range(10)}  # 1 MW * 10 h
+            gen.series_power = dict.fromkeys(range(10), 10)  # 10 MW * 10 h
+            gen.series_spilled = dict.fromkeys(range(10), 1)  # 1 MW * 10 h
             # fake up a capcost() method for testing summary()
             gen.capcost = lambda _: 100
             gen.opcost = lambda _: 1234

@@ -51,7 +51,7 @@ class TestPenalties(unittest.TestCase):
 
     def test_calculate_reserve(self):
         """Test _calculate_reserve() function."""
-        self.context.generators[0].series_power = {n: 1 for n in range(1000)}
+        self.context.generators[0].series_power = dict.fromkeys(range(1000), 1)
         generator = self.context.generators[0]
         capacity = generator.capacity
         self.assertEqual(penalties._calculate_reserve(generator, 0),
@@ -65,7 +65,7 @@ class TestPenalties(unittest.TestCase):
         self.context.timesteps = lambda: 100
         del self.context.generators[1:]
         # 55 MW x 100 hours, 5 MW over reserve level
-        self.context.generators[0].series_power = {n: 55 for n in range(100)}
+        self.context.generators[0].series_power = dict.fromkeys(range(100), 55)
         self.context.generators[0].capacity = 100
         self.assertEqual(penalties.reserves(self.context, args),
                          (pow(5, 3) * 100, reasons['reserves']))
@@ -73,8 +73,8 @@ class TestPenalties(unittest.TestCase):
     def test_regional_generation(self):
         """Test _regional_generation() function."""
         # Gen 1: 1,000 MWh, Gen 2: 1,000 MWh, total 2,000 MWh
-        self.context.generators[0].series_power = {n: 1 for n in range(1000)}
-        self.context.generators[1].series_power = {n: 1 for n in range(1000)}
+        self.context.generators[0].series_power = dict.fromkeys(range(1000), 1)
+        self.context.generators[1].series_power = dict.fromkeys(range(1000), 1)
         # both generators are in NSW
         self.assertEqual(
             penalties._regional_generation(regions.nsw,
@@ -111,9 +111,9 @@ class TestPenalties(unittest.TestCase):
         # Gen 1: 1,000 MWh (1 GWh) at 0.8 tonnes/MWh = 800 t
         # Gen 2: 1,000 MWh (1 GWh) at 0.5 tonnes/MWh = 500 t
         # Total: 1,300 tonnes
-        self.context.generators[0].series_power = {n: 1 for n in range(1000)}
+        self.context.generators[0].series_power = dict.fromkeys(range(1000), 1)
         self.context.generators[0].intensity = 0.800
-        self.context.generators[1].series_power = {n: 1 for n in range(1000)}
+        self.context.generators[1].series_power = dict.fromkeys(range(1000), 1)
         self.context.generators[1].intensity = 0.500
 
         self.assertEqual(penalties.emissions(self.context, args),
@@ -122,14 +122,14 @@ class TestPenalties(unittest.TestCase):
     def test_fossil(self):
         """Test fossil() function."""
         # Gen 1: 10 MWh, Gen 2: 10 MWh (Total 20MWh or 20% of demand)
-        self.context.generators[0].series_power = {n: 1 for n in range(10)}
-        self.context.generators[1].series_power = {n: 1 for n in range(10)}
+        self.context.generators[0].series_power = dict.fromkeys(range(10), 1)
+        self.context.generators[1].series_power = dict.fromkeys(range(10), 1)
         self.assertEqual(penalties.fossil(self.context, args), (0, 0))
 
         # Gen 1: 50 MWh, Gen 2: 50 MWh (Total 100MWh or 100% of demand)
         self.assertEqual(args.fossil_limit, 0.5)
-        self.context.generators[0].series_power = {n: 5 for n in range(10)}
-        self.context.generators[1].series_power = {n: 5 for n in range(10)}
+        self.context.generators[0].series_power = dict.fromkeys(range(10), 5)
+        self.context.generators[1].series_power = dict.fromkeys(range(10), 5)
         self.assertEqual(penalties.fossil(self.context, args),
                          (pow(50, 3), reasons['fossil']))
 
@@ -141,7 +141,7 @@ class TestPenalties(unittest.TestCase):
         bio.series_power = {}
         self.assertEqual(penalties.bioenergy(self.context, args), (0, 0))
         # bioenergy: 5 MWh
-        bio.series_power = {n: 1 for n in range(5)}
+        bio.series_power = dict.fromkeys(range(5), 1)
         self.assertEqual(penalties.bioenergy(self.context, args),
                          (pow(4, 3), reasons['bioenergy']))
 
@@ -153,6 +153,6 @@ class TestPenalties(unittest.TestCase):
         hydro.series_power = {}
         self.assertEqual(penalties.hydro(self.context, args), (0, 0))
         # hydro: 5 MWh
-        hydro.series_power = {n: 1 for n in range(5)}
+        hydro.series_power = dict.fromkeys(range(5), 1)
         self.assertEqual(penalties.hydro(self.context, args),
                          (pow(4, 3), reasons['hydro']))

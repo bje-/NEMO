@@ -15,6 +15,8 @@ import pandas as pd
 
 from nemo import regions
 
+log = logging.getLogger(__name__)
+
 
 def _sim(context, date_range):
     # reset generator internal state
@@ -45,16 +47,16 @@ def _sim(context, date_range):
         residual_hour_demand = residual_demand[hour]
 
         # This avoids expensive argument evaluations
-        if logging.getLogger().isEnabledFor(logging.INFO):
-            logging.info('STEP: %s', date_range[hour])
+        if log.isEnabledFor(logging.INFO):
+            log.info('STEP: %s', date_range[hour])
             demand = {a: float(round(b, 2)) for
                       a, b in enumerate(hour_demand)}
-            logging.info('DEMAND: %s', demand)
+            log.info('DEMAND: %s', demand)
 
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
-        if logging.getLogger().isEnabledFor(logging.INFO):
-            logging.info('ENDSTEP: %s', date_range[hour])
+        if log.isEnabledFor(logging.INFO):
+            log.info('ENDSTEP: %s', date_range[hour])
 
     # Change the numpy arrays to dataframes for human consumption
     context.generation = pd.DataFrame(index=date_range, data=generation)
@@ -78,7 +80,7 @@ def _store_spills(context, hour, gen, generators, spl):
             raise AssertionError(spl)
 
         # energy stored <= energy transferred, according to store's RTE
-        logging.info('STORE: %s -> %s (%.1f)', gen, other, stored)
+        log.info('STORE: %s -> %s (%.1f)', gen, other, stored)
 
         if spl == 0:
             # early exit
@@ -119,10 +121,10 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             raise AssertionError(residual_hour_demand)
         residual_hour_demand = max(0, residual_hour_demand)
 
-        logging.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '
-                      'residual-demand: %.1f, async-demand: %.1f'),
-                     generator, gen, spl, residual_hour_demand,
-                     async_demand)
+        log.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '
+                  'residual-demand: %.1f, async-demand: %.1f'),
+                 generator, gen, spl, residual_hour_demand,
+                 async_demand)
 
         if spl > 0:
             spill[hour, gidx] = \
