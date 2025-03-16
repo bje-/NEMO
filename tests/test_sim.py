@@ -6,6 +6,7 @@
 # (at your option) any later version.
 
 # pylint: disable=protected-access
+# ruff: noqa: SLF001
 
 """A testsuite for the sim module."""
 

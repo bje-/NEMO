@@ -82,7 +82,7 @@ flake8: envset
 
 ruff:	envset
 	ruff check --select ALL \
-		--ignore=I001,D203,D213,Q000,ARG002,T201,ANN,N801,SLF,PLR,PT,INP \
+		--ignore=I001,D203,D213,Q000,ARG002,T201,ANN,N801,PLR,PT,INP \
 		--output-format=concise $(LINTSRC)
 
 pylint:

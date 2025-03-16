@@ -9,6 +9,7 @@
 
 # Some protected members (eg _figure) are accessed to facilitate testing.
 # pylint: disable=protected-access
+# ruff: noqa: SLF001
 
 import unittest
 from datetime import timedelta
