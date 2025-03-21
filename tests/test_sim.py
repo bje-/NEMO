@@ -50,7 +50,7 @@ class TestSim(unittest.TestCase):
         self.context.verbose = True
         sim._dispatch(self.context, 0, 10000, self.context.generators,
                       self.generation, self.spill)
-        self.assertEqual(self.spill.sum(), 0)
+        assert self.spill.sum() == 0
 
     def test_dispatch_pv(self):
         """Test _dispatch() function with an async generator."""
@@ -64,7 +64,7 @@ class TestSim(unittest.TestCase):
                                len(self.context.generators)))
         sim._dispatch(self.context, 0, 10000, self.context.generators,
                       self.generation, self.spill)
-        self.assertEqual(self.spill.sum(), 0)
+        assert self.spill.sum() == 0
 
     def test_store_spills(self):
         """Test _store_spills()."""
@@ -76,8 +76,8 @@ class TestSim(unittest.TestCase):
                                                efficiency=1.0)
         result = sim._store_spills(self.context, 0, hydro,
                                    [electrolyser], 50)
-        self.assertEqual(result, 0.0)
-        self.assertEqual(h2store.storage, 250.0)
+        assert result == 0.0
+        assert h2store.storage == 250.0
 
     def test_store_spills_negative(self):
         """Test _store_spills().
@@ -103,8 +103,7 @@ class TestSim(unittest.TestCase):
         # this will raise an exception if we try calling store()
         psh2p.store = None
         others = [psh1p, psh1t, psh2p, psh2t]
-        self.assertEqual(sim._store_spills(self.context, 0, gen,
-                                           others, 10), 0)
+        assert sim._store_spills(self.context, 0, gen, others, 10) == 0
 
     def test_run_1(self):
         """Test run() with region not a list."""

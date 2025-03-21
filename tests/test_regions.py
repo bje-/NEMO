@@ -19,18 +19,18 @@ class TestRegions(unittest.TestCase):
     def test_region(self):
         """Test Region class."""
         rgn = regions.Region(0, 'NSW1', 'New South Wales')
-        self.assertEqual('NSW1', str(rgn))
+        assert str(rgn) == 'NSW1'
         lst = range(5)
-        self.assertEqual(lst[rgn], 0)
+        assert lst[rgn] == 0
 
     def test_region_copy(self):
         """Check for no copying."""
         sa1 = regions.sa
         sa1copy = copy.copy(sa1)
-        self.assertIs(sa1, sa1copy)
+        assert sa1 is sa1copy
 
     def test_region_deepcopy(self):
         """Check for no deepcopying."""
         sa1 = regions.sa
         sa1copy = copy.deepcopy(sa1)
-        self.assertIs(sa1, sa1copy)
+        assert sa1 is sa1copy

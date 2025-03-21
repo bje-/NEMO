@@ -61,7 +61,7 @@ class TestPlots(unittest.TestCase):
         fname = 'test_plot_1.png'
         self.unlink(fname)
         utils.plot(self.context, filename=fname)
-        self.assertTrue(self.exists(fname))
+        assert self.exists(fname)
         self.unlink(fname)
 
     def test_plot_2(self):
@@ -71,7 +71,7 @@ class TestPlots(unittest.TestCase):
         fname = 'test_plot_2.png'
         self.unlink(fname)
         utils.plot(self.context, filename=fname, xlim=(start, end))
-        self.assertTrue(self.exists(fname))
+        assert self.exists(fname)
         self.unlink(fname)
 
     def test_plot_3(self):
@@ -81,7 +81,7 @@ class TestPlots(unittest.TestCase):
         # 7 * 24 hours of timesteps
         self.context.timesteps = lambda: 7 * 24
         utils.plot(self.context, filename=fname)
-        self.assertTrue(self.exists(fname))
+        assert self.exists(fname)
         self.unlink(fname)
 
 

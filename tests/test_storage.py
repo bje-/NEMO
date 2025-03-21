@@ -24,13 +24,13 @@ class TestStorage(unittest.TestCase):
 
     def test_initialisation(self):
         """Test constructor."""
-        self.assertEqual(self.stg.series_charge, {})
+        assert self.stg.series_charge == {}
 
     def test_reset(self):
         """Test reset() method."""
         self.stg.series_charge = {0: 150}
         self.stg.reset()
-        self.assertEqual(self.stg.series_charge, {})
+        assert self.stg.series_charge == {}
 
     def test_soc(self):
         """Test soc() method in the base class."""
@@ -44,15 +44,15 @@ class TestStorage(unittest.TestCase):
         self.stg.record(0, 100)
         self.stg.record(0, 50)
         self.stg.record(1, 75)
-        self.assertEqual(self.stg.series_charge, {0: 150, 1: 75})
-        self.assertEqual(self.stg.series_soc, {0: 0.5, 1: 0.5})
+        assert self.stg.series_charge == {0: 150, 1: 75}
+        assert self.stg.series_soc == {0: 0.5, 1: 0.5}
 
     def test_series(self):
         """Test series() method."""
         value = {0: 150}
         self.stg.series_charge = value
         series = pd.Series(value, dtype=float)
-        self.assertTrue(self.stg.series()['charge'].equals(series))
+        assert self.stg.series()['charge'].equals(series)
 
     def test_store(self):
         """Test store() method."""
@@ -75,13 +75,13 @@ class TestPumpedHydro(unittest.TestCase):
 
     def test_initialisation(self):
         """Test constructor."""
-        self.assertTrue(self.pump.storage_p)
-        self.assertEqual(self.reservoir.last_gen, None)
-        self.assertEqual(self.reservoir.last_pump, None)
-        self.assertEqual(self.reservoir.storage,
-                         .5 * self.reservoir.maxstorage)
-        self.assertEqual(self.pump.rte, 1.0)
-        self.assertEqual(self.reservoir.maxstorage, 1000)
+        assert self.pump.storage_p
+        assert self.reservoir.last_gen is None
+        assert self.reservoir.last_pump is None
+        assert self.reservoir.storage == .5 * \
+            self.reservoir.maxstorage
+        assert self.pump.rte == 1.0
+        assert self.reservoir.maxstorage == 1000
 
     def test_type_exceptions(self):
         """"Test type exceptions for pump and turbine."""
@@ -92,68 +92,68 @@ class TestPumpedHydro(unittest.TestCase):
 
     def test_soc(self):
         """Test soc() method."""
-        self.assertEqual(self.pump.soc(), 0.5)
+        assert self.pump.soc() == 0.5
 
     def test_series_pump(self):
         """Test series() method for the pump."""
         series = self.pump.series()
         keys = series.keys()
-        self.assertEqual(len(keys), 4)
+        assert len(keys) == 4
         # use a set comparison
-        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
+        assert {'power', 'spilled', 'charge', 'soc'} <= keys
 
     def test_series_turbine(self):
         """Test series() method for the turbine."""
         series = self.turbine.series()
         keys = series.keys()
-        self.assertEqual(len(keys), 2)
+        assert len(keys) == 2
         # use a set comparison
-        self.assertLessEqual({'power', 'spilled'}, keys)
+        assert {'power', 'spilled'} <= keys
 
     def test_pump_and_generate(self):
         """Test that pumping and generating cannot happen at the same time."""
         result = self.pump.store(hour=0, power=100)
-        self.assertEqual(result, 100)
+        assert result == 100
         result = self.turbine.step(hour=0, demand=50)
-        self.assertEqual(result, (0, 0))
+        assert result == (0, 0)
 
     def test_pump_multiple(self):
         """Test that pump can run more than once per timestep."""
         result = self.pump.store(hour=0, power=100)
-        self.assertEqual(result, 100)
+        assert result == 100
         result = self.pump.store(hour=0, power=50)
-        self.assertEqual(result, 0)
-        self.assertEqual(self.reservoir.storage, 600)
+        assert result == 0
+        assert self.reservoir.storage == 600
 
     def test_step(self):
         """Test step() method."""
         for i in range(10):
             result = self.turbine.step(hour=i, demand=50)
-            self.assertEqual(result, (50, 0))
-        self.assertEqual(self.reservoir.storage, 0)
-        self.assertEqual(sum(self.turbine.series_power.values()), 500)
-        self.assertEqual(len(self.turbine.series_power), 10)
+            assert result == (50, 0)
+        assert self.reservoir.storage == 0
+        assert sum(self.turbine.series_power.values()) == 500
+        assert len(self.turbine.series_power) == 10
 
     def test_store(self):
         """Test store() method."""
         result = self.turbine.step(hour=0, demand=100)
-        self.assertEqual(result, (100, 0))
+        assert result == (100, 0)
         # Can't pump and generate in the same hour.
         result = self.pump.store(hour=0, power=250)
-        self.assertEqual(result, 0)
+        assert result == 0
 
         self.reservoir.storage = 800
         result = self.pump.store(1, 200)
-        self.assertEqual(result, 100)
-        self.assertEqual(self.reservoir.storage, 900)
+        assert result == 100
+        assert self.reservoir.storage == 900
         result = self.pump.store(2, 200)
-        self.assertEqual(result, 100)
-        self.assertEqual(self.reservoir.storage, 1000)
+        assert result == 100
+        assert self.reservoir.storage == 1000
         result = self.pump.store(3, 200)
-        self.assertEqual(result, 0)
-        self.assertEqual(self.reservoir.storage, 1000)
-        self.assertEqual(sum(self.pump.series_charge.values()), 200)
-        self.assertEqual(len(self.pump.series_charge), 2)
+        assert result == 0
+        assert self.reservoir.storage == 1000
+        assert sum(self.pump.series_charge.values()) == 200
+        assert len(self.pump.series_charge) == 2
 
     def test_store_multiple(self):
         """Test store() called multiple times."""
@@ -168,12 +168,12 @@ class TestPumpedHydro(unittest.TestCase):
         self.reservoir.last_pump = 456
         self.pump.reset()
         self.turbine.reset()
-        self.assertEqual(self.reservoir.storage,
-                         .5 * self.reservoir.maxstorage)
-        self.assertEqual(self.reservoir.last_gen, None)
-        self.assertEqual(self.reservoir.last_pump, None)
-        self.assertEqual(len(self.pump.series_charge), 0)
-        self.assertEqual(len(self.turbine.series_power), 0)
+        assert self.reservoir.storage == \
+            .5 * self.reservoir.maxstorage
+        assert self.reservoir.last_gen is None
+        assert self.reservoir.last_pump is None
+        assert len(self.pump.series_charge) == 0
+        assert len(self.turbine.series_power) == 0
 
 
 class TestCST(unittest.TestCase):
@@ -187,36 +187,36 @@ class TestCST(unittest.TestCase):
 
     def test_initialisation(self):
         """Test CST constructor."""
-        self.assertEqual(self.cst.capacity, 100)
-        self.assertEqual(self.cst.shours, 8)
-        self.assertEqual(self.cst.maxstorage,
-                         self.cst.capacity * self.cst.shours)
-        self.assertEqual(self.cst.stored, 0.5 * self.cst.maxstorage)
-        self.assertEqual(self.cst.solarmult, 2.5)
+        assert self.cst.capacity == 100
+        assert self.cst.shours == 8
+        assert self.cst.maxstorage == \
+            self.cst.capacity * self.cst.shours
+        assert self.cst.stored == 0.5 * self.cst.maxstorage
+        assert self.cst.solarmult == 2.5
 
     def test_set_capacity(self):
         """Test set_capacity() method."""
         self.cst.set_capacity(0.2)
-        self.assertEqual(self.cst.capacity, 200)
-        self.assertEqual(self.cst.maxstorage, 200 * self.cst.shours)
+        assert self.cst.capacity == 200
+        assert self.cst.maxstorage == 200 * self.cst.shours
 
     def test_set_multiple(self):
         """Test set_multiple() method."""
         self.cst.set_multiple(3)
-        self.assertEqual(self.cst.solarmult, 3)
+        assert self.cst.solarmult == 3
 
     def test_set_storage(self):
         """Test set_storage() method."""
         self.cst.set_storage(6)
-        self.assertEqual(self.cst.maxstorage,
-                         self.cst.capacity * self.cst.shours)
-        self.assertEqual(self.cst.stored, 0.5 * self.cst.maxstorage)
+        assert self.cst.maxstorage == \
+            self.cst.capacity * self.cst.shours
+        assert self.cst.stored == 0.5 * self.cst.maxstorage
 
     def test_reset(self):
         """Test reset() method."""
         self.cst.stored = 0
         self.cst.reset()
-        self.assertEqual(self.cst.stored, 0.5 * self.cst.maxstorage)
+        assert self.cst.stored == 0.5 * self.cst.maxstorage
 
 
 class TestBattery(unittest.TestCase):
@@ -232,13 +232,13 @@ class TestBattery(unittest.TestCase):
     def test_initialisation(self):
         """Test Battery constructor."""
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor)
-        self.assertEqual(self.stor.maxstorage, 800)
-        self.assertEqual(batt.discharge_hours, range(18, 24))
-        self.assertTrue(batt.battery.empty_p())
-        self.assertFalse(batt.battery.full_p())
-        self.assertTrue(batt.storage_p)
-        self.assertEqual(batt.rte, 0.95)
-        self.assertEqual(len(batt.series_charge), 0)
+        assert self.stor.maxstorage == 800
+        assert batt.discharge_hours == range(18, 24)
+        assert batt.battery.empty_p()
+        assert not batt.battery.full_p()
+        assert batt.storage_p
+        assert batt.rte == 0.95
+        assert len(batt.series_charge) == 0
 
     def test_type_error(self):
         """Check that the wrong type raises a TypeError."""
@@ -251,39 +251,39 @@ class TestBattery(unittest.TestCase):
         """Test series() method."""
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor)
         keys = batt.series().keys()
-        self.assertEqual(len(keys), 4)
+        assert len(keys) == 4
         # use a set comparison
-        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
+        assert {'power', 'spilled', 'charge', 'soc'} <= keys
 
     def test_series_battery(self):
         """Test series() method."""
         batt = generators.Battery(WILDCARD, 400, 2, self.stor)
         keys = batt.series().keys()
-        self.assertEqual(len(keys), 2)
+        assert len(keys) == 2
         # use a set comparison
-        self.assertLessEqual({'power', 'spilled'}, keys)
+        assert {'power', 'spilled'} <= keys
 
     def test_soc(self):
         """Test soc() method in Battery and BatteryLoad."""
         batt = generators.Battery(WILDCARD, 400, 2, self.stor)
         battload = generators.BatteryLoad(WILDCARD, 400, self.stor)
-        self.assertEqual(batt.soc(), 0)
+        assert batt.soc() == 0
         self.stor.storage = 200
-        self.assertEqual(batt.soc(), 0.25)
-        self.assertEqual(battload.soc(), batt.soc())
+        assert batt.soc() == 0.25
+        assert battload.soc() == batt.soc()
 
     def test_empty_p(self):
         """Test the empty_p() method."""
         batt = generators.BatteryLoad(WILDCARD, 800, self.stor, rte=1)
-        self.assertEqual(batt.battery.storage, 0)
-        self.assertTrue(batt.battery.empty_p())
+        assert batt.battery.storage == 0
+        assert batt.battery.empty_p()
 
     def test_full_p(self):
         """Test the full_p() method."""
         batt = generators.BatteryLoad(WILDCARD, 800, self.stor, rte=1)
-        self.assertFalse(batt.battery.full_p())
+        assert not batt.battery.full_p()
         self.stor.storage = 800
-        self.assertTrue(batt.battery.full_p())
+        assert batt.battery.full_p()
 
     def test_discharge(self):
         """Test discharging outside of discharge hours."""
@@ -298,7 +298,7 @@ class TestBattery(unittest.TestCase):
             # 0,0 if no discharging permitted, 50,0 otherwise
             self.assertEqual(result, (50, 0) if hour in hrs else (0, 0),
                              f'discharge failed in hour {hour}')
-        self.assertTrue(batt.battery.empty_p())
+        assert batt.battery.empty_p()
 
     def test_charge(self):
         """Test (normal) charging inside and outside of discharge hours."""
@@ -310,10 +310,10 @@ class TestBattery(unittest.TestCase):
         for hour in range(24):
             result = batt.store(hour=hour, power=50)
             # 0 if no charging permitted, 50 otherwise
-            self.assertEqual(result, 0 if hour in hrs else 50)
+            assert result == 0 if hour in hrs else 50
         nhours = 24 - len(hrs)
-        self.assertEqual(self.stor.storage, 50 * nhours * rte)
-        self.assertEqual(sum(batt.series_charge.values()), 50 * nhours)
+        assert self.stor.storage == 50 * nhours * rte
+        assert sum(batt.series_charge.values()) == 50 * nhours
 
     def test_charge_multiple(self):
         """Test multiple calls to store()."""
@@ -321,20 +321,20 @@ class TestBattery(unittest.TestCase):
         batt = generators.BatteryLoad(WILDCARD, 125, self.stor,
                                       discharge_hours=[], rte=1)
         result = batt.store(12, 100)
-        self.assertEqual(result, 100)
+        assert result == 100
         result = batt.store(12, 100)
-        self.assertEqual(result, 25)
+        assert result == 25
         result = batt.store(12, 100)
-        self.assertEqual(result, 0)
-        self.assertEqual(self.stor.storage, 250 + 125)
+        assert result == 0
+        assert self.stor.storage == 250 + 125
 
     def test_to_full(self):
         """Test charging to full."""
         batt = generators.BatteryLoad(WILDCARD, 400, self.stor, rte=1)
         self.stor.storage = 700
         result = batt.store(hour=0, power=200)
-        self.assertEqual(result, 100)
-        self.assertEqual(self.stor.storage, 800)
+        assert result == 100
+        assert self.stor.storage == 800
 
     def test_reset(self):
         """Test battery reset() method."""
@@ -342,16 +342,16 @@ class TestBattery(unittest.TestCase):
         batt.series_power = {0: 200}
         batt.series_charge = {0: 150}
         batt.reset()
-        self.assertEqual(len(batt.series_charge), 0)
-        self.assertEqual(len(batt.series_power), 0)
+        assert len(batt.series_charge) == 0
+        assert len(batt.series_power) == 0
 
     def test_round_trip_efficiency(self):
         """Test a battery with 50% round trip efficiency."""
         batt = generators.BatteryLoad(WILDCARD, 100, self.stor, rte=0.5)
-        self.assertEqual(self.stor.storage, 0)
+        assert self.stor.storage == 0
         result = batt.store(hour=0, power=100)
-        self.assertEqual(result, 100)
-        self.assertEqual(self.stor.storage, 50)
+        assert result == 100
+        assert self.stor.storage == 50
 
 
 class TestElectrolyser(unittest.TestCase):
@@ -367,8 +367,8 @@ class TestElectrolyser(unittest.TestCase):
     def test_soc(self):
         """Test tank and electrolyser soc() method."""
         tank_soc = self.tank.soc()
-        self.assertEqual(tank_soc, 0.5)
-        self.assertEqual(self.electrolyser.soc(), tank_soc)
+        assert tank_soc == 0.5
+        assert self.electrolyser.soc() == tank_soc
 
     def test_type_error(self):
         """Check that the wrong type raises a TypeError."""
@@ -379,17 +379,17 @@ class TestElectrolyser(unittest.TestCase):
         """Test series() method."""
         series = self.electrolyser.series()
         keys = series.keys()
-        self.assertEqual(len(keys), 4)
+        assert len(keys) == 4
         # use a set comparison
-        self.assertLessEqual({'power', 'spilled', 'charge', 'soc'}, keys)
+        assert {'power', 'spilled', 'charge', 'soc'} <= keys
 
     def test_step(self):
         """Test step() method."""
         # an electrolyser is not a generator
-        self.assertEqual(self.electrolyser.step(0, 100), (0, 0))
+        assert self.electrolyser.step(0, 100) == (0, 0)
         # store 100 MWh of hydrogen
-        self.assertEqual(self.electrolyser.store(0, 100), 100)
+        assert self.electrolyser.store(0, 100) == 100
         # store another 100 MWh of hydrogen
-        self.assertEqual(self.electrolyser.store(0, 100), 100)
+        assert self.electrolyser.store(0, 100) == 100
         # tank is full, none stored
-        self.assertEqual(self.electrolyser.store(0, 100), 0)
+        assert self.electrolyser.store(0, 100) == 0

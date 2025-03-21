@@ -20,7 +20,7 @@ class TestConfigfile(unittest.TestCase):
 
     def test_get(self):
         """Test get() function."""
-        self.assertEqual(configfile.get('optimiser', 'sigma'), '2.0')
+        assert configfile.get('optimiser', 'sigma') == '2.0'
         with self.assertRaises(configparser.NoSectionError):
             configfile.get('nosection', 'sigma')
         with self.assertRaises(configparser.NoOptionError):
@@ -28,9 +28,9 @@ class TestConfigfile(unittest.TestCase):
 
     def test_has_option_p(self):
         """Test has_option_p() function."""
-        self.assertTrue(configfile.has_option_p('optimiser', 'sigma'))
-        self.assertFalse(configfile.has_option_p('optimiser', 'nooption'))
-        self.assertFalse(configfile.has_option_p('nosection', 'sigma'))
+        assert configfile.has_option_p('optimiser', 'sigma')
+        assert not configfile.has_option_p('optimiser', 'nooption')
+        assert not configfile.has_option_p('nosection', 'sigma')
 
 
 class TestConfigFileSet(unittest.TestCase):
@@ -82,4 +82,4 @@ class TestConfigFileUnset(unittest.TestCase):
         """Test opening the default configuration file."""
         reference = configparser.ConfigParser()
         reference.read('nemo.cfg')
-        self.assertEqual(reference, configfile.config)
+        assert reference == configfile.config
