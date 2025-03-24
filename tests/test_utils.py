@@ -37,13 +37,13 @@ class TestPlots(unittest.TestCase):
         scenarios.ccgt(self.context)
         sim.run(self.context)
 
-    @pytest.mark.mpl_image_compare()
+    @pytest.mark.mpl_image_compare
     def test_figure_1(self):
         """Test simple supply/demand plot."""
         utils._figure(self.context, spills=True, showlegend=True, xlim=None)
         return utils.plt.gcf()
 
-    @pytest.mark.mpl_image_compare()
+    @pytest.mark.mpl_image_compare
     def test_figure_2(self):
         """Test supply/demand plot with many generators."""
         ngens = len(self.context.generators)
