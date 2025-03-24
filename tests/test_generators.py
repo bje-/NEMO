@@ -95,7 +95,7 @@ class TestGenerators(unittest.TestCase):
                 continue
 
             # check that every class in generators.py is in classlist
-            assert clstype in classlist
+            self.assertIn(clstype, classlist)
 
             args = inspect.getfullargspec(clstype.__init__).args
             arglist = [dummy_arguments[arg] for arg in args if
@@ -116,9 +116,9 @@ class TestGenerators(unittest.TestCase):
         gen.series_spilled = {1: 200}
         # .. and then call gen.series()
         series1 = pd.Series(gen.series_power, dtype=float)
-        assert gen.series()['power'].equals(other=series1)
+        self.assertTrue(gen.series()['power'].equals(other=series1))
         series2 = pd.Series(gen.series_spilled, dtype=float)
-        assert gen.series()['spilled'].equals(other=series2)
+        self.assertTrue(gen.series()['spilled'].equals(other=series2))
 
     def test_step_abstract(self):
         """Test step() method in the abstract Generator class."""
@@ -147,14 +147,14 @@ class TestGenerators(unittest.TestCase):
     def test_capfactor_nan(self):
         """Test capfactor() NaN case."""
         gen = generators.Generator(1, 0, 'label')
-        assert np.isnan(gen.capfactor())
+        self.assertTrue(np.isnan(gen.capfactor()))
 
     def test_capfactor(self):
         """Test capfactor() method."""
         for gen in self.generators:
             # 10 MW for 10 hours = 100 MWh
             gen.series_power = dict.fromkeys(range(10), 10)
-            assert gen.capfactor() == 10
+            self.assertEqual(gen.capfactor(), 10)
 
     def test_lcoe(self):
         """Test lcoe() method."""
@@ -171,8 +171,8 @@ class TestGenerators(unittest.TestCase):
         for gen in self.generators:
             gen.reset()
         for gen in self.generators:
-            assert len(gen.series_power) == 0
-            assert len(gen.series_spilled) == 0
+            self.assertEqual(len(gen.series_power), 0)
+            self.assertEqual(len(gen.series_spilled), 0)
 
     def test_summary(self):
         """Test summary() method."""
@@ -193,21 +193,21 @@ class TestGenerators(unittest.TestCase):
             gen.capcost = lambda _: 100
             gen.opcost = lambda _: 1234
             output = gen.summary(context)
-            assert 'capcost $100,' in output
-            assert 'opcost $1,234,' in output
-            assert 'supplied 100.00 MWh' in output
-            assert 'surplus 10.00 MWh' in output
-            assert 'CF 10.0%' in output
+            self.assertIn('capcost $100,', output)
+            self.assertIn('opcost $1,234,', output)
+            self.assertIn('supplied 100.00 MWh', output)
+            self.assertIn('surplus 10.00 MWh', output)
+            self.assertIn('CF 10.0%', output)
 
     def test_set_capacity(self):
         """Test set_capacity() method."""
         initial_cap = self.generators[0].capacity
         for gen in self.generators:
             gen.set_capacity(0.2)
-            assert gen.capacity == 200
+            self.assertEqual(gen.capacity, 200)
             # put capacity back to its initial value
             gen.set_capacity(initial_cap / 1000)
-            assert gen.capacity == initial_cap
+            self.assertEqual(gen.capacity, initial_cap)
 
     def test_set_storage(self):
         """Test set_storage() method."""
@@ -217,9 +217,9 @@ class TestGenerators(unittest.TestCase):
             if isinstance(gen, generators.CST):
                 testvalue = 10
                 gen.set_storage(testvalue)
-                assert gen.shours == testvalue
-                assert gen.maxstorage == gen.capacity * testvalue
-                assert gen.stored == 0.5 * gen.maxstorage
+                self.assertEqual(gen.shours, testvalue)
+                self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
+                self.assertEqual(gen.stored, 0.5 * gen.maxstorage)
 
     def test_str(self):
         """Test __str__() method."""

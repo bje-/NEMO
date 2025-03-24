@@ -21,6 +21,6 @@ class TestScenarios(unittest.TestCase):
         for setupfn in scenarios.supply_scenarios.values():
             ctx.generators = []
             setupfn(ctx)
-            assert len(ctx.generators) > 0
+            self.assertGreater(len(ctx.generators), 0)
             # sanity check
-            assert len(ctx.generators) < 250
+            self.assertLess(len(ctx.generators), 250)

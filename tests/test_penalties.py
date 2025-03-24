@@ -47,18 +47,19 @@ class TestPenalties(unittest.TestCase):
 
     def test_unserved(self):
         """Test unserved() function."""
-        assert penalties.unserved(self.context, 0) == \
-            (pow(0.01, 3), reasons['unserved'])
+        self.assertEqual(penalties.unserved(self.context, 0),
+                         (pow(0.01, 3), reasons['unserved']))
 
     def test_calculate_reserve(self):
         """Test _calculate_reserve() function."""
         self.context.generators[0].series_power = dict.fromkeys(range(1000), 1)
         generator = self.context.generators[0]
         capacity = generator.capacity
-        assert penalties._calculate_reserve(generator, 0) == capacity - 1
+        self.assertEqual(penalties._calculate_reserve(generator, 0),
+                         capacity - 1)
         psh_storage = storage.PumpedHydroStorage(0)
         psh_turbine = generators.PumpedHydroTurbine(WILDCARD, 0, psh_storage)
-        assert penalties._calculate_reserve(psh_turbine, 0) == 0
+        self.assertEqual(penalties._calculate_reserve(psh_turbine, 0), 0)
 
     def test_reserves(self):
         """Test reserves() function."""
@@ -67,8 +68,8 @@ class TestPenalties(unittest.TestCase):
         # 55 MW x 100 hours, 5 MW over reserve level
         self.context.generators[0].series_power = dict.fromkeys(range(100), 55)
         self.context.generators[0].capacity = 100
-        assert penalties.reserves(self.context, args) == \
-            (pow(5, 3) * 100, reasons['reserves'])
+        self.assertEqual(penalties.reserves(self.context, args),
+                         (pow(5, 3) * 100, reasons['reserves']))
 
     def test_regional_generation(self):
         """Test _regional_generation() function."""
@@ -76,12 +77,12 @@ class TestPenalties(unittest.TestCase):
         self.context.generators[0].series_power = dict.fromkeys(range(1000), 1)
         self.context.generators[1].series_power = dict.fromkeys(range(1000), 1)
         # both generators are in NSW
-        assert penalties._regional_generation(regions.nsw,
-                                              self.context.generators) \
-            == 2000
-        assert penalties._regional_generation(regions.sa,
-                                              self.context.generators) \
-            == 0
+        self.assertEqual(
+            penalties._regional_generation(regions.nsw,
+                                           self.context.generators), 2000)
+        self.assertEqual(
+            penalties._regional_generation(regions.sa,
+                                           self.context.generators), 0)
 
     def test_regional_demand(self):
         """Test _regional_demand() function."""
@@ -89,21 +90,22 @@ class TestPenalties(unittest.TestCase):
             # Check that there is X00 MWh of demand per region,
             # 100 MWh per polygon
             polycount = len(rgn.polygons) * 100
-            assert penalties._regional_demand(rgn,
-                                              self.context.demand) == polycount
+            self.assertEqual(penalties._regional_demand(rgn,
+                                                        self.context.demand),
+                             polycount)
 
     def test_min_regional_0(self):
         """Test min_regional() function at 0%."""
         self.context.min_regional_generation = 0
-        assert penalties.min_regional(self.context, args) == (0, 0)
+        self.assertEqual(penalties.min_regional(self.context, args), (0, 0))
 
     def test_min_regional_50(self):
         """Test min_regional() function at 50%."""
         self.context.min_regional_generation = 0.5
         # just two regions: NSW and SA
         self.context.regions = [regions.nsw, regions.sa]
-        assert penalties.min_regional(self.context, args) == \
-            (pow(1050, 3), reasons['min-regional-gen'])
+        self.assertEqual(penalties.min_regional(self.context, args),
+                         (pow(1050, 3), reasons['min-regional-gen']))
 
     def test_emissions(self):
         """Test emissions() function."""
@@ -115,22 +117,22 @@ class TestPenalties(unittest.TestCase):
         self.context.generators[1].series_power = dict.fromkeys(range(1000), 1)
         self.context.generators[1].intensity = 0.500
 
-        assert penalties.emissions(self.context, args) == \
-            (pow(1300, 3), reasons['emissions'])
+        self.assertEqual(penalties.emissions(self.context, args),
+                         (pow(1300, 3), reasons['emissions']))
 
     def test_fossil(self):
         """Test fossil() function."""
         # Gen 1: 10 MWh, Gen 2: 10 MWh (Total 20MWh or 20% of demand)
         self.context.generators[0].series_power = dict.fromkeys(range(10), 1)
         self.context.generators[1].series_power = dict.fromkeys(range(10), 1)
-        assert penalties.fossil(self.context, args) == (0, 0)
+        self.assertEqual(penalties.fossil(self.context, args), (0, 0))
 
         # Gen 1: 50 MWh, Gen 2: 50 MWh (Total 100MWh or 100% of demand)
-        assert args.fossil_limit == 0.5
+        self.assertEqual(args.fossil_limit, 0.5)
         self.context.generators[0].series_power = dict.fromkeys(range(10), 5)
         self.context.generators[1].series_power = dict.fromkeys(range(10), 5)
-        assert penalties.fossil(self.context, args) == \
-            (pow(50, 3), reasons['fossil'])
+        self.assertEqual(penalties.fossil(self.context, args),
+                         (pow(50, 3), reasons['fossil']))
 
     def test_bioenergy(self):
         """Test bioenerge() function."""
@@ -138,11 +140,11 @@ class TestPenalties(unittest.TestCase):
         self.context.generators += [bio]
         # bioenergy: 0 MWh
         bio.series_power = {}
-        assert penalties.bioenergy(self.context, args) == (0, 0)
+        self.assertEqual(penalties.bioenergy(self.context, args), (0, 0))
         # bioenergy: 5 MWh
         bio.series_power = dict.fromkeys(range(5), 1)
-        assert penalties.bioenergy(self.context, args) == \
-            (pow(4, 3), reasons['bioenergy'])
+        self.assertEqual(penalties.bioenergy(self.context, args),
+                         (pow(4, 3), reasons['bioenergy']))
 
     def test_hydro(self):
         """Test hydro() function."""
@@ -150,8 +152,8 @@ class TestPenalties(unittest.TestCase):
         self.context.generators += [hydro]
         # hydro: 0 MWh
         hydro.series_power = {}
-        assert penalties.hydro(self.context, args) == (0, 0)
+        self.assertEqual(penalties.hydro(self.context, args), (0, 0))
         # hydro: 5 MWh
         hydro.series_power = dict.fromkeys(range(5), 1)
-        assert penalties.hydro(self.context, args) == \
-            (pow(4, 3), reasons['hydro'])
+        self.assertEqual(penalties.hydro(self.context, args),
+                         (pow(4, 3), reasons['hydro']))

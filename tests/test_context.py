@@ -25,35 +25,35 @@ class TestContextMethods(unittest.TestCase):
 
     def test_total_demand(self):
         """Test total_demand() method."""
-        assert self.context.total_demand() > 0
-        assert self.context.total_demand() == \
-            self.context.demand.to_numpy().sum()
+        self.assertTrue(self.context.total_demand() > 0)
+        self.assertEqual(self.context.total_demand(),
+                         self.context.demand.to_numpy().sum())
 
     def test_unserved_energy(self):
         """Test unserved_energy method."""
-        assert self.context.unserved_energy() == 0
-        assert self.context.unserved_energy() == \
-            self.context.unserved.to_numpy().sum()
+        self.assertEqual(self.context.unserved_energy(), 0)
+        self.assertEqual(self.context.unserved_energy(),
+                         self.context.unserved.to_numpy().sum())
 
     def test_surplus_energy(self):
         """Test surplus_energy method."""
-        assert self.context.surplus_energy() == 0
-        assert self.context.surplus_energy() == \
-            self.context.spill.to_numpy().sum()
+        self.assertEqual(self.context.surplus_energy(), 0)
+        self.assertEqual(self.context.surplus_energy(),
+                         self.context.spill.to_numpy().sum())
 
     def test_unserved_percent(self):
         """Test unserved_percent method."""
-        assert self.context.unserved_percent() == 0
+        self.assertEqual(self.context.unserved_percent(), 0)
 
         # Special handling required for zero demand
         self.context.demand = pd.DataFrame()
-        assert np.isnan(self.context.unserved_percent())
+        self.assertTrue(np.isnan(self.context.unserved_percent()))
 
     def test_set_capacities(self):
         """Test set_capacities method."""
         self.context.set_capacities([0.1, 0.2])
-        assert self.context.generators[0].capacity == 100
-        assert self.context.generators[1].capacity == 200
+        self.assertEqual(self.context.generators[0].capacity, 100)
+        self.assertEqual(self.context.generators[1].capacity, 200)
 
     def test_set_capacities_exception(self):
         """Test error handling in set_capacities."""
@@ -63,20 +63,20 @@ class TestContextMethods(unittest.TestCase):
     def test_str_no_unserved(self):
         """Test __str__ method (no unserved energy)."""
         output = str(self.context)
-        assert 'No unserved energy' in output
+        self.assertIn('No unserved energy', output)
 
     def test_str_with_regions_subset(self):
         """Test __str__ method with only two regions."""
         self.context.regions = [regions.nsw, regions.sa]
         output = str(self.context)
-        assert 'Regions: [NSW1, SA1]' in output
+        self.assertIn('Regions: [NSW1, SA1]', output)
 
     def test_str_no_summary(self):
         """Test __str__ method with a generator that has no summary."""
         self.context.generators[1].summary = lambda _: None
         self.context.verbose = True
         output = str(self.context)
-        assert 'OCGT (NSW1:31), 20000.00 MW\nTimesteps:' in output
+        self.assertIn('OCGT (NSW1:31), 20000.00 MW\nTimesteps:', output)
 
     def test_str_with_unserved(self):
         """Test __str__ method (with some unserved energy)."""
@@ -88,11 +88,11 @@ class TestContextMethods(unittest.TestCase):
         self.context.unserved = pd.Series(index=rng, data=range(len(rng)))
         output = str(self.context)
 
-        assert 'Generators:' in output
-        assert f'Timesteps: {self.context.timesteps()} h' in output
-        assert 'Demand energy:' in output
-        assert 'Unstored surplus energy: 300.00 MWh' in output
-        assert 'WARNING: reliability standard exceeded' in output
-        assert 'Unserved total hours: 25' in output
-        assert 'Number of unserved energy events: 1' in output
-        assert 'Shortfalls (min, max): (0.00 MW, 24.00 MW)' in output
+        self.assertIn('Generators:', output)
+        self.assertIn(f'Timesteps: {self.context.timesteps()} h', output)
+        self.assertIn('Demand energy:', output)
+        self.assertIn('Unstored surplus energy: 300.00 MWh', output)
+        self.assertIn('WARNING: reliability standard exceeded', output)
+        self.assertIn('Unserved total hours: 25', output)
+        self.assertIn('Number of unserved energy events: 1', output)
+        self.assertIn('Shortfalls (min, max): (0.00 MW, 24.00 MW)', output)

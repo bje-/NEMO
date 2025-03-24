@@ -50,21 +50,21 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_001(self):
         """Test that all regions are present."""
-        assert self.context.regions == regions.All
+        self.assertEqual(self.context.regions, regions.All)
 
     def test_002(self):
         """Demand equals approx. 204 TWh."""
         self.context.generators = []
         nemo.run(self.context)
         total_demand = math.trunc(self.context.total_demand() / pow(10., 6))
-        assert total_demand == 204
+        self.assertEqual(total_demand, 204)
 
     def test_003(self):
         """Power system with no generators meets none of the demand."""
         self.context.generators = []
         nemo.run(self.context)
-        assert math.trunc(self.context.unserved_energy()) == \
-            math.trunc(self.context.total_demand())
+        self.assertEqual(math.trunc(self.context.unserved_energy()),
+                         math.trunc(self.context.total_demand()))
 
     def test_004(self):
         """100 MW fossil plant generates exactly 876,000 MWh."""
@@ -73,7 +73,7 @@ class TestSequenceFunctions(unittest.TestCase):
         nemo.run(self.context)
         total_generation = sum(ccgt.series_power.values())
         expected_generation = self.context.timesteps() * 100
-        assert total_generation == expected_generation
+        self.assertEqual(total_generation, expected_generation)
 
     # Create a super generator that always meets demand.
     # Check unserved_energy = 0
@@ -83,19 +83,19 @@ class TestSequenceFunctions(unittest.TestCase):
         gen = SuperGenerator(0)
         self.context.generators = [gen]
         nemo.run(self.context)
-        assert gen.runhours == self.context.timesteps()
+        self.assertEqual(gen.runhours, self.context.timesteps())
 
     def test_006(self):
         """Generation to meet minimum load leads to no spills."""
         self.context.generators = [SuperGenerator(self.minload)]
         nemo.run(self.context)
-        assert self.context.spill.to_numpy().sum() == 0
+        self.assertEqual(self.context.spill.to_numpy().sum(), 0)
 
     def test_007(self):
         """Generation to meet minimum load + 1GW produces some spills."""
         self.context.generators = [SuperGenerator(self.minload + 1000)]
         nemo.run(self.context)
-        assert self.context.spill.to_numpy().sum() > 0
+        self.assertTrue(self.context.spill.to_numpy().sum() > 0)
 
     def test_008(self):
         """A NSW generator runs in NSW only."""
@@ -105,9 +105,9 @@ class TestSequenceFunctions(unittest.TestCase):
             self.context.generators = [gen]
             nemo.run(self.context)
             if rgn == regions.nsw:
-                assert gen.runhours == self.context.timesteps()
+                self.assertEqual(gen.runhours, self.context.timesteps())
             else:
-                assert gen.runhours == 0
+                self.assertEqual(gen.runhours, 0)
 
     def test_009(self):
         """A NSW generators runs in any set of regions that includes NSW."""
@@ -118,7 +118,7 @@ class TestSequenceFunctions(unittest.TestCase):
             gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
-            assert gen.runhours == self.context.timesteps()
+            self.assertEqual(gen.runhours, self.context.timesteps())
 
     def test_012(self):
         """A NSW generator does not run in other regions."""
@@ -130,11 +130,11 @@ class TestSequenceFunctions(unittest.TestCase):
             gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
-            assert gen.runhours == 0
+            self.assertEqual(gen.runhours, 0)
 
     def test_013(self):
         """Fossil plant records power generation history."""
         ccgt = generators.CCGT(polygons.WILDCARD, 100)
         self.context.generators = [ccgt]
         nemo.run(self.context)
-        assert len(self.context.generators[0].series_power) > 0
+        self.assertTrue(len(self.context.generators[0].series_power) > 0)

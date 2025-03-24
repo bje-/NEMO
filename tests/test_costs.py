@@ -27,7 +27,7 @@ class TestCosts(unittest.TestCase):
         """Test annuity_factor function."""
         obj = costs.common.Common(0.05)
         result = round(obj.annuity_factor(30), 3)
-        assert result == 15.372
+        self.assertEqual(result, 15.372)
 
     def test_table(self):
         """Check all table entries are valid."""
@@ -36,13 +36,13 @@ class TestCosts(unittest.TestCase):
                       self.ccs_price)
             if isinstance(obj, costs.NullCosts):
                 # special case for NullCosts
-                assert obj.coal_price_per_gj == 0
-                assert obj.gas_price_per_gj == 0
-                assert obj.ccs_storage_per_t == 0
+                self.assertEqual(obj.coal_price_per_gj, 0)
+                self.assertEqual(obj.gas_price_per_gj, 0)
+                self.assertEqual(obj.ccs_storage_per_t, 0)
             else:
-                assert obj.coal_price_per_gj == self.coal_price
-                assert obj.gas_price_per_gj == self.gas_price
-                assert obj.ccs_storage_per_t == self.ccs_price
+                self.assertEqual(obj.coal_price_per_gj, self.coal_price)
+                self.assertEqual(obj.gas_price_per_gj, self.gas_price)
+                self.assertEqual(obj.ccs_storage_per_t, self.ccs_price)
 
     def test_costs_sensible(self):
         """Test if cost values are sensible."""
@@ -52,4 +52,4 @@ class TestCosts(unittest.TestCase):
 
             for table in [obj.capcost_per_kw, obj.fixed_om_costs,
                           obj.opcost_per_mwh]:
-                assert all(value >= 0 for value in table.values())
+                self.assertTrue(all(value >= 0 for value in table.values()))
