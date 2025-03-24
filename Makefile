@@ -80,10 +80,15 @@ LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py nemo/costs/
 flake8: envset
 	flake8 $(LINTSRC) --ignore=N801
 
+RUFFIGNORES=ANN,D203,D213,Q000
 ruff:	envset
 	ruff check --select ALL \
-		--ignore=I001,D203,D213,Q000,ARG002,T201,ANN,N801,PLR,PT,INP \
-		--output-format=concise $(LINTSRC)
+		--ignore=$(RUFFIGNORES),I001,ARG002,PLR,N801,INP,PT \
+		--output-format=concise $(filter %.py, $(LINTSRC))
+	# different ruff options for scripts
+	ruff check --select ALL \
+		--ignore=$(RUFFIGNORES),T201 \
+		--output-format=concise evolve replay summary
 
 pylint:
 	pylint --enable=useless-suppression $(LINTSRC)
