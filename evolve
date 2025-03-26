@@ -309,6 +309,7 @@ def run(toolbox):
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMin)
+main_context = None  # pylint: disable=invalid-name
 
 if __name__ == '__main__':
     args = process_options()
