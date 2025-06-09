@@ -25,6 +25,7 @@ def _sim(context, date_range):
 
     # clear possible cached value
     context.storages = None
+    log_enabled = log.isEnabledFor(logging.INFO)
 
     timesteps = len(date_range)
     generation = np.zeros((timesteps, len(context.generators)))
@@ -47,7 +48,7 @@ def _sim(context, date_range):
         residual_hour_demand = residual_demand[hour]
 
         # This avoids expensive argument evaluations
-        if log.isEnabledFor(logging.INFO):
+        if log_enabled:
             log.info('STEP: %s', date_range[hour])
             demand = {a: float(round(b, 2)) for
                       a, b in enumerate(hour_demand)}
@@ -55,7 +56,7 @@ def _sim(context, date_range):
 
         _dispatch(context, hour, residual_hour_demand, gens, generation, spill)
 
-        if log.isEnabledFor(logging.INFO):
+        if log_enabled:
             log.info('ENDSTEP: %s', date_range[hour])
 
     # Change the numpy arrays to dataframes for human consumption
@@ -65,6 +66,8 @@ def _sim(context, date_range):
 
 def _store_spills(context, hour, gen, generators, spl):
     """Store spills from a generator into any storage."""
+    log_enabled = log.isEnabledFor(logging.INFO)
+
     if spl <= 0:
         msg = f'{spl} is <= 0'
         raise AssertionError(msg)
@@ -81,7 +84,7 @@ def _store_spills(context, hour, gen, generators, spl):
                 raise AssertionError(spl)
 
         # energy stored <= energy transferred, according to store's RTE
-        if log.isEnabledFor(logging.INFO):
+        if log_enabled:
             log.info('STORE: %s -> %s (%.1f)', gen, other, stored)
 
         if spl == 0:
@@ -97,6 +100,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
     # generation. Non-synchronous generation in excess of this
     # value must be spilled.
     async_demand = residual_hour_demand * context.nsp_limit
+    log_enabled = log.isEnabledFor(logging.INFO)
 
     for gidx, generator in enumerate(gens):
         if not generator.synchronous_p and async_demand < residual_hour_demand:
@@ -123,7 +127,7 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
         if residual_hour_demand < 0:
             residual_hour_demand = 0
 
-        if log.isEnabledFor(logging.INFO):
+        if log_enabled:
             log.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '
                       'residual-demand: %.1f, async-demand: %.1f'),
                      generator, gen, spl, residual_hour_demand,
