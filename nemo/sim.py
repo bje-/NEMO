@@ -65,8 +65,8 @@ def _sim(context, date_range):
 
 def _store_spills(context, hour, gen, generators, spl):
     """Store spills from a generator into any storage."""
-    msg = f'{spl} is <= 0'
     if spl <= 0:
+        msg = f'{spl} is <= 0'
         raise AssertionError(msg)
     if context.storages is None:
         # compute this just once and cache it in the context object
@@ -74,13 +74,15 @@ def _store_spills(context, hour, gen, generators, spl):
     for other in context.storages:
         stored = other.store(hour, spl)
         spl -= stored
-        if spl < 0 and isclose(spl, 0, abs_tol=1e-6):
-            spl = 0
         if spl < 0:
-            raise AssertionError(spl)
+            if isclose(spl, 0, abs_tol=1e-6):
+                spl = 0
+            else:
+                raise AssertionError(spl)
 
         # energy stored <= energy transferred, according to store's RTE
-        log.info('STORE: %s -> %s (%.1f)', gen, other, stored)
+        if log.isEnabledFor(logging.INFO):
+            log.info('STORE: %s -> %s (%.1f)', gen, other, stored)
 
         if spl == 0:
             # early exit
