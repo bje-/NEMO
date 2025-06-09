@@ -151,7 +151,7 @@ def re100(context):
         elif g == Hydro:
             result += _hydro()
         elif g == Battery:
-            for duration in [1, 2, 4, 8, 12, 24]:
+            for duration in [1, 2, 4, 8]:
                 result += _battery(24, 0, duration, "battery")
         elif g == WindOffshore:
             cfg = configfile.get('generation', 'offshore-wind-trace')
