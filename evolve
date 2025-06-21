@@ -9,9 +9,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# Ruff warning PD011 is a false positive.
-# ruff: noqa: PD011
-
 """Evolutionary programming applied to NEM optimisations."""
 
 import argparse
