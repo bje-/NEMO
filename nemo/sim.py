@@ -32,7 +32,8 @@ def _sim(context, date_range):
     spill = np.zeros((timesteps, len(context.generators)))
 
     # Extract generators in the regions of interest.
-    gens = [g for g in context.generators if g.region() in context.regions]
+    gens = [generator for generator in context.generators if
+            generator.region() in context.regions]
 
     # Zero out polygon demands we don't care about.
     for rgn in [r for r in regions.All if r not in context.regions]:
@@ -64,33 +65,35 @@ def _sim(context, date_range):
     context.spill = pd.DataFrame(index=date_range, data=spill)
 
 
-def _store_spills(context, hour, gen, generators, spl):
+def _store_spills(context, hour, source_generator, generators, spill):
     """Store spills from a generator into any storage."""
     log_enabled = log.isEnabledFor(logging.INFO)
 
-    if spl <= 0:
-        msg = f'{spl} is <= 0'
+    if spill <= 0:
+        msg = f'{spill} is <= 0'
         raise AssertionError(msg)
     if context.storages is None:
         # compute this just once and cache it in the context object
-        context.storages = [g for g in generators if g.storage_p]
-    for other in context.storages:
-        stored = other.store(hour, spl)
-        spl -= stored
-        if spl < 0:
-            if isclose(spl, 0, abs_tol=1e-6):
-                spl = 0
+        context.storages = [generator for generator in generators if
+                            generator.storage_p]
+    for storage_generator in context.storages:
+        stored_energy = storage_generator.store(hour, spill)
+        spill -= stored_energy
+        if spill < 0:
+            if isclose(spill, 0, abs_tol=1e-6):
+                spill = 0
             else:
-                raise AssertionError(spl)
+                raise AssertionError(spill)
 
         # energy stored <= energy transferred, according to store's RTE
         if log_enabled:
-            log.info('STORE: %s -> %s (%.1f)', gen, other, stored)
+            log.info('STORE: %s -> %s (%.1f)', source_generator,
+                     storage_generator, stored_energy)
 
-        if spl == 0:
+        if spill == 0:
             # early exit
             break
-    return spl
+    return spill
 
 
 def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
