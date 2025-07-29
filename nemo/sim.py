@@ -118,14 +118,12 @@ def _dispatch(context, hour, residual_hour_demand, gens, generation, spill):
             async_demand -= gen
             if async_demand < -1e-6:
                 raise AssertionError(async_demand)
-            if async_demand < 0:
-                async_demand = 0
+            async_demand = max(async_demand, 0)
 
         residual_hour_demand -= gen
         if residual_hour_demand < -1e-6:
             raise AssertionError(residual_hour_demand)
-        if residual_hour_demand < 0:
-            residual_hour_demand = 0
+        residual_hour_demand = max(residual_hour_demand, 0)
 
         if log_enabled:
             log.info(('GENERATOR: %s, generation: %.1f, spill: %.1f, '
