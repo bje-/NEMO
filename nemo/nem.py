@@ -38,8 +38,8 @@ else:
 demand = pd.read_csv(traceinput, comment='#', sep=',')
 # combine Date and Time columns into a new Date_Time column, make this
 # the index column and then drop the original Date and Time columns
-demand['Date_Time'] = \
-    pd.to_datetime(demand['Date'] + ' ' + demand['Time'])
+datetime_values = pd.to_datetime(demand['Date'] + ' ' + demand['Time'])
+demand.insert(loc=0, column='Date_Time', value=datetime_values)
 demand = demand.set_index('Date_Time')
 demand = demand.drop(columns=['Date', 'Time'])
 
