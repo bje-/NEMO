@@ -9,7 +9,7 @@
 
 import socketserver
 import time
-from multiprocessing import Process
+from multiprocessing import Event, Process
 
 
 class HTTP400Handler(socketserver.BaseRequestHandler):
@@ -30,21 +30,25 @@ class BlockingTCPHandler(socketserver.BaseRequestHandler):
             time.sleep(60)
 
 
-def func(host, port, action):
+def func(event, host, port, action):
     """Create the server, binding to host and port."""
     socketserver.TCPServer.allow_reuse_address = True
     if action == 'block':
         with socketserver.TCPServer((host, port),
                                     BlockingTCPHandler) as server:
+            event.set()
             server.serve_forever()
     elif action == 'http400':
         with socketserver.TCPServer((host, port),
                                     HTTP400Handler) as server:
+            event.set()
             server.serve_forever()
 
 
 def run(port, action):
     """Start the TCP server."""
-    proc = Process(target=func, args=('localhost', port, action))
+    event = Event()
+    proc = Process(target=func, args=(event, 'localhost', port, action))
     proc.start()
+    event.wait()
     return proc
