@@ -68,8 +68,9 @@ class TestSim(unittest.TestCase):
 
     def test_store_spills(self):
         """Test _store_spills()."""
-        self.context = type('context', (), {'verbose': 0, 'storages': None})
-        self.context.verbose = True
+        origlevel = logging.getLogger().level
+        logging.getLogger().setLevel(logging.INFO)
+        self.context = type('context', (), {'verbose': 1, 'storages': None})
         hydro = generators.Hydro(1, 100)
         h2store = storage.HydrogenStorage(400)
         electrolyser = generators.Electrolyser(h2store, 1, 100,
@@ -78,6 +79,7 @@ class TestSim(unittest.TestCase):
                                    [electrolyser], 50)
         self.assertEqual(result, 0.0)
         self.assertEqual(h2store.storage, 250.0)
+        logging.getLogger().setLevel(origlevel)
 
     def test_store_spills_negative_1(self):
         """Test _store_spills().
