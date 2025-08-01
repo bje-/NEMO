@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 
 def _sim(context, date_range):
+    # pylint: disable=too-many-locals
     # reset generator internal state
     for gen in context.generators:
         gen.reset()
