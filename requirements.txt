@@ -16,7 +16,6 @@ pint>=0.24
 colored<2
 Gooey>=1.0.4
 deap
-twine
 pyflakes
 pytest
 pytest-cov
