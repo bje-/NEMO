@@ -129,20 +129,23 @@ class TestGenerators(unittest.TestCase):
     def test_step(self):
         """Test step() method."""
         for gen in self.generators:
-            for hour in range(10):
-                gen.step(hour, 20)
+            with self.subTest(gen=gen):
+                for hour in range(10):
+                    gen.step(hour, 20)
 
     def test_store(self):
         """Test store() method."""
         for gen in self.generators:
-            if gen.storage_p:
-                for hour in range(10):
-                    gen.step(hour, 20)
+            with self.subTest(gen=gen):
+                if gen.storage_p:
+                    for hour in range(10):
+                        gen.step(hour, 20)
 
     def test_capcost(self):
         """Test capcost() method."""
         for gen in self.generators:
-            gen.capcost(self.costs)
+            with self.subTest(gen=gen):
+                gen.capcost(self.costs)
 
     def test_capfactor_nan(self):
         """Test capfactor() NaN case."""
@@ -152,16 +155,18 @@ class TestGenerators(unittest.TestCase):
     def test_capfactor(self):
         """Test capfactor() method."""
         for gen in self.generators:
-            # 10 MW for 10 hours = 100 MWh
-            gen.series_power = dict.fromkeys(range(10), 10)
-            self.assertEqual(gen.capfactor(), 10)
+            with self.subTest(gen=gen):
+                # 10 MW for 10 hours = 100 MWh
+                gen.series_power = dict.fromkeys(range(10), 10)
+                self.assertEqual(gen.capfactor(), 10)
 
     def test_lcoe(self):
         """Test lcoe() method."""
         for gen in self.generators:
-            # 10 MWh for 10 hours = 100 MWh
-            gen.series_power = dict.fromkeys(range(10), 10)
-            gen.lcoe(self.costs, self.years())
+            with self.subTest(gen=gen):
+                # 10 MWh for 10 hours = 100 MWh
+                gen.series_power = dict.fromkeys(range(10), 10)
+                gen.lcoe(self.costs, self.years())
 
     def test_reset(self):
         """Test reset() method."""
@@ -187,49 +192,54 @@ class TestGenerators(unittest.TestCase):
 
         context = MyContext()
         for gen in self.generators:
-            gen.series_power = dict.fromkeys(range(10), 10)  # 10 MW * 10 h
-            gen.series_spilled = dict.fromkeys(range(10), 1)  # 1 MW * 10 h
-            # fake up a capcost() method for testing summary()
-            gen.capcost = lambda _: 100
-            gen.opcost = lambda _: 1234
-            output = gen.summary(context)
-            self.assertIn('capcost $100,', output)
-            self.assertIn('opcost $1,234,', output)
-            self.assertIn('supplied 100.00 MWh', output)
-            self.assertIn('surplus 10.00 MWh', output)
-            self.assertIn('CF 10.0%', output)
+            with self.subTest(gen=gen):
+                gen.series_power = dict.fromkeys(range(10), 10)  # 10 MW * 10 h
+                gen.series_spilled = dict.fromkeys(range(10), 1)  # 1 MW * 10 h
+                # fake up a capcost() method for testing summary()
+                gen.capcost = lambda _: 100
+                gen.opcost = lambda _: 1234
+                output = gen.summary(context)
+                self.assertIn('capcost $100,', output)
+                self.assertIn('opcost $1,234,', output)
+                self.assertIn('supplied 100.00 MWh', output)
+                self.assertIn('surplus 10.00 MWh', output)
+                self.assertIn('CF 10.0%', output)
 
     def test_set_capacity(self):
         """Test set_capacity() method."""
         initial_cap = self.generators[0].capacity
         for gen in self.generators:
-            gen.set_capacity(0.2)
-            self.assertEqual(gen.capacity, 200)
-            # put capacity back to its initial value
-            gen.set_capacity(initial_cap / 1000)
-            self.assertEqual(gen.capacity, initial_cap)
+            with self.subTest(gen=gen):
+                gen.set_capacity(0.2)
+                self.assertEqual(gen.capacity, 200)
+                # put capacity back to its initial value
+                gen.set_capacity(initial_cap / 1000)
+                self.assertEqual(gen.capacity, initial_cap)
 
     def test_set_storage(self):
         """Test set_storage() method."""
         # set_storage does not have a uniform calling convention for
         # different generator types, so handle each case specifically.
         for gen in self.generators:
-            if isinstance(gen, generators.CST):
-                testvalue = 10
-                gen.set_storage(testvalue)
-                self.assertEqual(gen.shours, testvalue)
-                self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
-                self.assertEqual(gen.stored, 0.5 * gen.maxstorage)
+            with self.subTest(gen=gen):
+                if isinstance(gen, generators.CST):
+                    testvalue = 10
+                    gen.set_storage(testvalue)
+                    self.assertEqual(gen.shours, testvalue)
+                    self.assertEqual(gen.maxstorage, gen.capacity * testvalue)
+                    self.assertEqual(gen.stored, 0.5 * gen.maxstorage)
 
     def test_str(self):
         """Test __str__() method."""
         for gen in self.generators:
-            str(gen)
+            with self.subTest(gen=gen):
+                str(gen)
 
     def test_repr(self):
         """Test __repr__() method."""
         for gen in self.generators:
-            repr(gen)
+            with self.subTest(gen=gen):
+                repr(gen)
 
 
 class TestGeneratorExceptions(unittest.TestCase):
