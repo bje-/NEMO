@@ -79,7 +79,19 @@ class TestSim(unittest.TestCase):
         self.assertEqual(result, 0.0)
         self.assertEqual(h2store.storage, 250.0)
 
-    def test_store_spills_negative(self):
+    def test_store_spills_negative_1(self):
+        """Test _store_spills().
+
+        This test checks that _store_spills throws an AssertionError
+        if the spills argument is negative.
+        """
+        self.context = Context()
+        gen = generators.CCGT(31, 200)
+        others = []
+        with self.assertRaises(AssertionError):
+            sim._store_spills(self.context, 0, gen, others, -1)
+
+    def test_store_spills_negative_2(self):
         """Test _store_spills().
 
         This test checks proper handling of the case where spl becomes
