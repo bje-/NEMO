@@ -15,7 +15,8 @@ COVRUN=coverage run -a --source=. --omit=setup.py
 envset:
 	test -n "$$VIRTUAL_ENV" || (echo "Python env is not activated" && false)
 
-check:  envset flake8 ruff test
+nox:
+	nox -x
 
 test:	envset
 	PYTHONPATH=. pytest --mpl --cov=nemo --doctest-modules
@@ -74,32 +75,6 @@ prof: nemo.prof
 
 lineprof: stub.py
 	kernprof -v -l stub.py
-
-LINTSRC=evolve replay summary $(wildcard *.py awklite/*.py nemo/*.py nemo/costs/*.py tests/*.py)
-
-flake8: envset
-	flake8 $(LINTSRC) --ignore=N801
-
-RUFFIGNORES=ANN,D203,D213,Q000
-ruff:	envset
-	ruff check --select ALL \
-		--ignore=$(RUFFIGNORES),I001,ARG002,PLR,N801,INP,PT \
-		--output-format=concise $(filter %.py, $(LINTSRC))
-	# different ruff options for scripts
-	ruff check --select ALL \
-		--ignore=$(RUFFIGNORES),T201 \
-		--output-format=concise evolve replay summary
-
-pylint:
-	pylint --enable=useless-suppression $(LINTSRC)
-
-lint:	envset flake8 ruff pylint
-	codespell -d -L assertin,fom,hsa,trough,harge $(LINTSRC) || true
-	isort --check $(LINTSRC)
-	pylama $(LINTSRC)
-	vulture --min-confidence=70 $(LINTSRC)
-	bandit -qq -s B101 $(LINTSRC)
-	pydocstyle $(LINTSRC)
 
 coveralls:
 	coveralls
