@@ -4,6 +4,7 @@ coverage
 deap
 Gooey>=1.0.4
 matplotlib
+nox
 numpy
 pandas
 pdoc3
