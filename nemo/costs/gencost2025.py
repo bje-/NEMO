@@ -8,7 +8,7 @@
 # NOTE: This is a consultation draft only. This file will be updated
 # when the final report is issued.
 
-"""CSIRO GenCost costs for 2024-25 (draft)."""
+"""CSIRO GenCost costs for 2024-25."""
 
 from nemo import generators as tech
 
