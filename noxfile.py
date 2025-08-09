@@ -72,7 +72,8 @@ def pytest(session):
     """Run pytest."""
     session.install('pytest', 'pytest-mpl', 'pytest-cov', 'pandas', 'numpy',
                     'requests', 'matplotlib', 'pint', 'pytest')
-    session.run('pytest', '--mpl', '--cov=nemo', '--doctest-modules', *srcdirs)
+    session.run('pytest', '--mpl', '--cov=nemo', '--doctest-modules',
+                *srcdirs, env={"MPLBACKEND": "Agg"})
 
 
 @nox.session(python=["3.12", "3.13", "3.14"])
