@@ -28,11 +28,11 @@ else:
     try:
         resp = requests.request('GET', url, timeout=5)
     except requests.exceptions.Timeout as exc:
-        MSG = f'timeout fetching {url}'
-        raise TimeoutError(MSG) from exc
+        msg = f'timeout fetching {url}'
+        raise TimeoutError(msg) from exc
     if not resp.ok:
-        MSG = f'HTTP {resp.status_code}: {url}'
-        raise ConnectionError(MSG)
+        msg = f'HTTP {resp.status_code}: {url}'
+        raise ConnectionError(msg)
     traceinput = io.StringIO(resp.text)
 
 demand = pd.read_csv(traceinput, comment='#', sep=',')
@@ -48,15 +48,15 @@ if len(demand.columns) != regions.NUMREGIONS:
     raise AssertionError
 
 # The number of rows must be even.
-MSG = "odd number of rows in half-hourly demand data"
+msg = "odd number of rows in half-hourly demand data"
 if len(demand) % 2 != 0:
-    raise AssertionError(MSG)
+    raise AssertionError(msg)
 
 # Check demand data starts at midnight
 startdate = demand.index[0]
-MSG = 'demand data must start at midnight'
+msg = 'demand data must start at midnight'
 if (startdate.hour, startdate.minute, startdate.second) != (0, 30, 0):
-    raise AssertionError(MSG)
+    raise AssertionError(msg)
 
 # Calculate hourly demand, averaging half-hours n and n+1.
 hourly_regional_demand = demand.resample('h', closed='right').mean()
