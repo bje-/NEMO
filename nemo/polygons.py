@@ -14,19 +14,19 @@ import numpy as np
 from nemo import regions
 
 # The fraction of a region's load in each polygon.
-regions.nsw.polygons = {21: 0, 22: 0, 23: 0, 24: .05, 28: 0, 29: 0,
+regions.NSW.polygons = {21: 0, 22: 0, 23: 0, 24: .05, 28: 0, 29: 0,
                         30: 0, 31: .8, 33: 0, 34: 0, 35: .05, 36: .1}
-regions.qld.polygons = {1: .04, 2: 0, 3: 0, 4: .11, 5: 0, 6: 0,
+regions.QLD.polygons = {1: .04, 2: 0, 3: 0, 4: .11, 5: 0, 6: 0,
                         7: .27, 8: 0, 9: 0, 10: 0, 11: .02, 14: 0, 15: 0,
                         16: .14, 17: .42}
-regions.sa.polygons = {12: 0, 13: 0, 18: 0, 19: 0, 20: 0, 25: 0,
+regions.SA.polygons = {12: 0, 13: 0, 18: 0, 19: 0, 20: 0, 25: 0,
                        26: 0, 27: .1, 32: .9}
-regions.snowy.polygons = {}
-regions.tas.polygons = {40: .2, 41: .2, 42: 0, 43: .6}
-regions.vic.polygons = {37: .2, 38: .1, 39: .7}
+regions.SNOWY.polygons = {}
+regions.TAS.polygons = {40: .2, 41: .2, 42: 0, 43: .6}
+regions.VIC.polygons = {37: .2, 38: .1, 39: .7}
 
 # Ensure all weights sum to one.
-for r in regions.All:
+for r in regions.ALL:
     if r.polygons and round(sum(r.polygons.values())) != 1:
         raise AssertionError
 
@@ -379,7 +379,7 @@ NUMPOLYGONS = len(_polygons)
 
 # Dictionary mapping polygon number to region.
 _region_table = {}
-for rgn in [regions.nsw, regions.qld, regions.sa, regions.tas, regions.vic]:
+for rgn in [regions.NSW, regions.QLD, regions.SA, regions.TAS, regions.VIC]:
     for poly in rgn.polygons:
         _region_table[poly] = rgn
 

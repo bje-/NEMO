@@ -50,7 +50,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_001(self):
         """Test that all regions are present."""
-        self.assertEqual(self.context.regions, regions.All)
+        self.assertEqual(self.context.regions, regions.ALL)
 
     def test_002(self):
         """Demand equals approx. 204 TWh."""
@@ -99,12 +99,12 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_008(self):
         """A NSW generator runs in NSW only."""
-        for rgn in regions.All:
+        for rgn in regions.ALL:
             self.context.regions = [rgn]
             gen = SuperGenerator(0)
             self.context.generators = [gen]
             nemo.run(self.context)
-            if rgn == regions.nsw:
+            if rgn == regions.NSW:
                 self.assertEqual(gen.runhours, self.context.timesteps())
             else:
                 self.assertEqual(gen.runhours, 0)
@@ -112,7 +112,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_009(self):
         """A NSW generators runs in any set of regions that includes NSW."""
         rgnset = []
-        for rgn in regions.All:
+        for rgn in regions.ALL:
             rgnset.append(rgn)
             self.context.regions = rgnset
             gen = SuperGenerator(0)
@@ -124,7 +124,7 @@ class TestSequenceFunctions(unittest.TestCase):
         """A NSW generator does not run in other regions."""
         rgnset = []
         # Skip NSW (first in the list).
-        for rgn in regions.All[1:]:
+        for rgn in regions.ALL[1:]:
             rgnset.append(rgn)
             self.context.regions = rgnset
             gen = SuperGenerator(0)

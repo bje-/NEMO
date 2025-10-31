@@ -67,6 +67,6 @@ numsteps = len(hourly_regional_demand)
 hourly_demand = pd.DataFrame(index=hourly_regional_demand.index,
                              data=np.zeros((numsteps, polygons.NUMPOLYGONS)))
 
-for rgn, weights in [(r.id, r.polygons) for r in regions.All]:
+for rgn, weights in [(r.id, r.polygons) for r in regions.ALL]:
     for polygon, share in weights.items():
         hourly_demand[polygon - 1] = hourly_regional_demand[rgn] * share

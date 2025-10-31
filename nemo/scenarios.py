@@ -246,17 +246,17 @@ def re100_nocst(context):
 
 def re100_nsw(context):
     """100% renewables in New South Wales only."""
-    re100_one_region(context, regions.nsw)
+    re100_one_region(context, regions.NSW)
 
 
 def re100_qld(context):
     """100% renewables in Queensland only."""
-    re100_one_region(context, regions.qld)
+    re100_one_region(context, regions.QLD)
 
 
 def re100_south_aus(context):
     """100% renewables in South Australia only."""
-    re100_one_region(context, regions.sa)
+    re100_one_region(context, regions.SA)
 
 
 supply_scenarios = {'__one_ccgt__': _one_ccgt,  # nb. for testing only

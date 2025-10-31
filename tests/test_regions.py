@@ -25,12 +25,12 @@ class TestRegions(unittest.TestCase):
 
     def test_region_copy(self):
         """Check for no copying."""
-        sa1 = regions.sa
+        sa1 = regions.SA
         sa1copy = copy.copy(sa1)
         self.assertIs(sa1, sa1copy)
 
     def test_region_deepcopy(self):
         """Check for no deepcopying."""
-        sa1 = regions.sa
+        sa1 = regions.SA
         sa1copy = copy.deepcopy(sa1)
         self.assertIs(sa1, sa1copy)

@@ -29,7 +29,7 @@ class Context:
     def __init__(self):
         """Initialise a default context."""
         self.verbose = False
-        self.regions = regions.All
+        self.regions = regions.ALL
         self.startdate = startdate
         # Number of timesteps is determined by the number of demand rows.
         self.hours = len(hourly_regional_demand)
@@ -91,7 +91,7 @@ class Context:
     def __str__(self):
         """Make a human-readable representation of the context."""
         string = ""
-        if self.regions != regions.All:
+        if self.regions != regions.ALL:
             string += f'Regions: {self.regions}\n'
         if self.verbose:
             string += 'Generators:' + '\n'

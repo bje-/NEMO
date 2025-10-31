@@ -67,7 +67,7 @@ class TestContextMethods(unittest.TestCase):
 
     def test_str_with_regions_subset(self):
         """Test __str__ method with only two regions."""
-        self.context.regions = [regions.nsw, regions.sa]
+        self.context.regions = [regions.NSW, regions.SA]
         output = str(self.context)
         self.assertIn('Regions: [NSW1, SA1]', output)
 

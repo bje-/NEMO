@@ -78,15 +78,15 @@ class TestPenalties(unittest.TestCase):
         self.context.generators[1].series_power = dict.fromkeys(range(1000), 1)
         # both generators are in NSW
         self.assertEqual(
-            penalties._regional_generation(regions.nsw,
+            penalties._regional_generation(regions.NSW,
                                            self.context.generators), 2000)
         self.assertEqual(
-            penalties._regional_generation(regions.sa,
+            penalties._regional_generation(regions.SA,
                                            self.context.generators), 0)
 
     def test_regional_demand(self):
         """Test _regional_demand() function."""
-        for rgn in regions.All:
+        for rgn in regions.ALL:
             # Check that there is X00 MWh of demand per region,
             # 100 MWh per polygon
             polycount = len(rgn.polygons) * 100
@@ -103,7 +103,7 @@ class TestPenalties(unittest.TestCase):
         """Test min_regional() function at 50%."""
         self.context.min_regional_generation = 0.5
         # just two regions: NSW and SA
-        self.context.regions = [regions.nsw, regions.sa]
+        self.context.regions = [regions.NSW, regions.SA]
         self.assertEqual(penalties.min_regional(self.context, args),
                          (pow(1050, 3), reasons['min-regional-gen']))
 

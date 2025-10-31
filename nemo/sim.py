@@ -37,7 +37,7 @@ def _sim(context, date_range):
             generator.region() in context.regions]
 
     # Zero out polygon demands we don't care about.
-    for rgn in [region for region in regions.All if region not in
+    for rgn in [region for region in regions.ALL if region not in
                 context.regions]:
         for poly in rgn.polygons:
             context.demand[poly - 1] = 0

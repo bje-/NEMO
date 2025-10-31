@@ -39,11 +39,11 @@ class Region:
         return self
 
 
-nsw = Region(0, 'NSW1', 'New South Wales')
-qld = Region(1, 'QLD1', 'Queensland')
-sa = Region(2, 'SA1', 'South Australia')
-snowy = Region(3, 'SNOWY1', 'Snowy Mountains')
-tas = Region(4, 'TAS1', 'Tasmania')
-vic = Region(5, 'VIC1', 'Victoria')
-All = [nsw, qld, sa, snowy, tas, vic]
-NUMREGIONS = len(All)
+NSW = Region(0, 'NSW1', 'New South Wales')
+QLD = Region(1, 'QLD1', 'Queensland')
+SA = Region(2, 'SA1', 'South Australia')
+SNOWY = Region(3, 'SNOWY1', 'Snowy Mountains')
+TAS = Region(4, 'TAS1', 'Tasmania')
+VIC = Region(5, 'VIC1', 'Victoria')
+ALL = [NSW, QLD, SA, SNOWY, TAS, VIC]
+NUMREGIONS = len(ALL)

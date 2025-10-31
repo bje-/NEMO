@@ -253,7 +253,7 @@ class TestGeneratorExceptions(unittest.TestCase):
     def test_polygon_type(self):
         """A polygon that is a region should raise TypeError."""
         with self.assertRaises(TypeError):
-            poly = regions.nsw
+            poly = regions.NSW
             generators.Generator(poly, 100, 'label')
 
     def test_polygon_number(self):
