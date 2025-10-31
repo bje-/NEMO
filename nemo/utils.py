@@ -115,7 +115,7 @@ def _pairwise(lst):
     """
     iter1, iter2 = tee(lst)
     next(iter2, None)
-    return zip(iter1, iter2)
+    return zip(iter1, iter2, strict=True)
 
 
 def _legend(fig, context):
