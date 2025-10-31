@@ -11,7 +11,7 @@ import locale
 from configparser import NoOptionError, NoSectionError
 from contextlib import suppress
 from datetime import timedelta
-from itertools import tee
+from itertools import pairwise
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -102,22 +102,6 @@ def _generator_list(context):
             if g.region() in context.regions and g.capacity > 0]
 
 
-def _pairwise(lst):
-    """Return pairwise elements of a list.
-
-    An implementation of pairwise() appears in the Python 3.10
-    itertools module. At some point, we can switch to the standard
-    library version and remove this definition.
-
-    >>> list(_pairwise([1,2,3,4,5]))
-    [(1, 2), (2, 3), (3, 4), (4, 5)]
-
-    """
-    iter1, iter2 = tee(lst)
-    next(iter2, None)
-    return zip(iter1, iter2, strict=True)
-
-
 def _legend(fig, context):
     """Draw the legend on fig."""
     # ::-1 slicing reverses the list so that the legend appears in merit order
@@ -156,7 +140,7 @@ def _plot_areas(axes, context, category, prev=None, alpha=None):
     numgens = len(genlist)
 
     accum = prev.copy()
-    for gen, nextgen in _pairwise([*genlist, None]):
+    for gen, nextgen in pairwise([*genlist, None]):
         index = context.generators.index(gen)
         accum += timeseries[index]
         if type(gen) is type(nextgen) and numgens > MAX_PLOT_GENERATORS:
