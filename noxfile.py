@@ -46,13 +46,6 @@ def pydocstyle(session):
 
 
 @nox.session(python=["3.12", "3.13", "3.14"])
-def pylama(session):
-    """Run pylama."""
-    session.install('pylama', 'setuptools')
-    session.run('pylama', *srcdirs)
-
-
-@nox.session(python=["3.12", "3.13", "3.14"])
 def flake8(session):
     """Run flake8."""
     session.install('flake8')
