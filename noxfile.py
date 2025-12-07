@@ -17,7 +17,7 @@ def codespell(session):
     session.run('codespell', '-d', '-L', f'{ignorewords}', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13"])  # broken in 3.14
+@nox.session(python=["3.12", "3.13", "3.14"])  # broken in 3.14
 def bandit(session):
     """Run bandit."""
     session.install('bandit')
