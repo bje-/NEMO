@@ -5,9 +5,6 @@
 # the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
 
-# NOTE: This is a consultation draft only. This file will be updated
-# when the final report is issued.
-
 """CSIRO GenCost costs for 2024-25."""
 
 from nemo import generators as tech
