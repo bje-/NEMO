@@ -15,9 +15,8 @@ import re
 import sys
 from pathlib import Path
 
-from gooey import Gooey
-
 import nemo
+from gooey import Gooey
 from nemo import costs, scenarios, utils
 
 if len(sys.argv) > 1 and '--ignore-gooey' not in sys.argv:

@@ -20,12 +20,11 @@ from multiprocessing import set_start_method
 from multiprocessing.pool import Pool
 from pathlib import Path
 
+import nemo
 import numpy as np
 import wx
 from deap import algorithms, base, cma, creator, tools
 from gooey import Gooey
-
-import nemo
 from nemo import configfile as cf
 from nemo import costs, penalties, scenarios
 
