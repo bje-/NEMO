@@ -40,6 +40,12 @@ from .gencost2025 import (GenCost2025_2030_CP, GenCost2025_2030_NZE2050,
                           GenCost2025_2040_NZEPost2050, GenCost2025_2050_CP,
                           GenCost2025_2050_NZE2050,
                           GenCost2025_2050_NZEPost2050)
+from .gencost2026 import (GenCost2026_2030_CP, GenCost2026_2030_NZE2050,
+                          GenCost2026_2030_NZEPost2050, GenCost2026_2040_CP,
+                          GenCost2026_2040_NZE2050,
+                          GenCost2026_2040_NZEPost2050, GenCost2026_2050_CP,
+                          GenCost2026_2050_NZE2050,
+                          GenCost2026_2050_NZEPost2050)
 from .null import NullCosts
 
 cost_scenarios = {
@@ -95,6 +101,15 @@ cost_scenarios = {
     'GenCost2025-in2050-CP': GenCost2025_2050_CP,
     'GenCost2025-in2050-NZE2050': GenCost2025_2050_NZE2050,
     'GenCost2025-in2050-NZE2050+': GenCost2025_2050_NZEPost2050,
+    'DraftGenCost2026-in2030-CP': GenCost2026_2030_CP,
+    'DraftGenCost2026-in2030-NZE2050': GenCost2026_2030_NZE2050,
+    'DraftGenCost2026-in2030-NZE2050+': GenCost2026_2030_NZEPost2050,
+    'DraftGenCost2026-in2040-CP': GenCost2026_2040_CP,
+    'DraftGenCost2026-in2040-NZE2050': GenCost2026_2040_NZE2050,
+    'DraftGenCost2026-in2040-NZE2050+': GenCost2026_2040_NZEPost2050,
+    'DraftGenCost2026-in2050-CP': GenCost2026_2050_CP,
+    'DraftGenCost2026-in2050-NZE2050': GenCost2026_2050_NZE2050,
+    'DraftGenCost2026-in2050-NZE2050+': GenCost2026_2050_NZEPost2050,
     'PGTR2015': APGTR2015,
     'PGTR2030': APGTR2030,
 }
