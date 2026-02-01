@@ -17,42 +17,42 @@ def codespell(session):
     session.run('codespell', '-d', '-L', f'{ignorewords}', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])  # broken in 3.14
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def bandit(session):
     """Run bandit."""
     session.install('bandit')
     session.run('bandit', '-r', '-qq', 'B101', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def isort(session):
     """Run isort."""
     session.install('isort')
     session.run('isort', '--check', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def vulture(session):
     """Run vulture."""
     session.install('vulture')
     session.run('vulture', '--min-confidence=70', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def pydocstyle(session):
     """Run pydocstyle."""
     session.install('pydocstyle')
     session.run('pydocstyle', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def flake8(session):
     """Run flake8."""
     session.install('flake8')
     session.run('flake8', '--ignore=N801', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def pylint(session):
     """Run pylint."""
     session.install('pylint', 'matplotlib', 'requests', 'pytest', 'pint')
@@ -60,7 +60,7 @@ def pylint(session):
                 '.nox', '--recursive', 'y', *srcdirs)
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def pytest(session):
     """Run pytest."""
     session.install('pytest', 'pytest-mpl', 'pytest-cov', 'pandas', 'numpy',
@@ -69,7 +69,7 @@ def pytest(session):
                 *srcdirs, env={"MPLBACKEND": "Agg"})
 
 
-@nox.session(python=["3.12", "3.13", "3.14"])
+@nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def ruff(session):
     """Run ruff."""
     session.install('ruff')
