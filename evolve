@@ -334,8 +334,8 @@ if __name__ == '__main__':
     tbox.register("evaluate", eval_func)
 
     set_start_method('spawn')
-    with Pool(args.ncpus or None,
-              initializer=init_worker, initargs=(args,)) as pool:
+    with Pool(args.ncpus or None, initializer=init_worker,
+              initargs=(args,)) as pool:
         tbox.register("map", pool.map)
         run(tbox)
         pool.close()
