@@ -34,7 +34,7 @@ ureg.formatter.default_format = '.2f~P'
 MAX_LEGEND_GENERATORS = 20
 
 # The maximum number of generators before we only show the generator
-# traces as a consolidated set (and not indiviudal traces). This
+# traces as a consolidated set (and not individual traces). This
 # speeds up the plotting dramatically.
 MAX_PLOT_GENERATORS = 50
 
