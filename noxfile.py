@@ -55,6 +55,7 @@ def flake8(session):
 @nox.session(python=["3.12", "3.13", "3.14", "3.15"])
 def pylint(session):
     """Run pylint."""
+    session.install("git+https://github.com/uqfoundation/dill.git")
     session.install('pylint', 'matplotlib', 'requests', 'pytest', 'pint')
     session.run('pylint', '--enable=useless-suppression', '--ignore',
                 '.nox', '--recursive', 'y', *srcdirs)
