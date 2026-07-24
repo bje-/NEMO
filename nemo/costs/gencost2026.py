@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Ben Elliston
+# Copyright (C) 2025, 2026 Ben Elliston
 #
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -64,21 +64,21 @@ class GenCost2026_2030_CP(GenCost2026):
         """Construct a cost object."""
         GenCost2026.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
-        table[tech.Black_Coal] = 6164
-        table[tech.CCGT] = 2180
-        table[tech.CCGT_CCS] = 5807
-        table[tech.CentralReceiver] = 7197
+        table[tech.Black_Coal] = 6162
+        table[tech.CCGT] = 2426
+        table[tech.CCGT_CCS] = 6269
+        table[tech.CentralReceiver] = 6358
         table[tech.Coal_CCS] = 11961
         table[tech.Nuclear] = 9658
-        table[tech.OCGT] = 2296
+        table[tech.OCGT] = 2624
         table[tech.Behind_Meter_PV] = 1135
-        table[tech.PV1Axis] = 1239
-        table[tech.Wind] = 2697
-        table[tech.WindOffshore] = 5268
+        table[tech.PV1Axis] = 1378
+        table[tech.Wind] = 2650
+        table[tech.WindOffshore] = 5300
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 717, 2: 484, 4: 355, 8: 284, 12: 265, 24: 246,
+            1: 653, 2: 438, 4: 319, 8: 254, 12: 237, 24: 219,
         }
 
 
@@ -89,21 +89,21 @@ class GenCost2026_2040_CP(GenCost2026):
         """Construct a cost object."""
         GenCost2026.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
-        table[tech.Black_Coal] = 5631
+        table[tech.Black_Coal] = 5624
         table[tech.CCGT] = 1939
-        table[tech.CCGT_CCS] = 4834
-        table[tech.CentralReceiver] = 6456
-        table[tech.Coal_CCS] = 11299
+        table[tech.CCGT_CCS] = 4933
+        table[tech.CentralReceiver] = 5873
+        table[tech.Coal_CCS] = 11408
         table[tech.Nuclear] = 9306
         table[tech.OCGT] = 1767
-        table[tech.Behind_Meter_PV] = 1103
-        table[tech.PV1Axis] = 918
-        table[tech.Wind] = 2343
-        table[tech.WindOffshore] = 5301
+        table[tech.Behind_Meter_PV] = 1090
+        table[tech.PV1Axis] = 1191
+        table[tech.Wind] = 2253
+        table[tech.WindOffshore] = 5315
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 568, 2: 378, 4: 274, 8: 217, 12: 201, 24: 186,
+            1: 582, 2: 373, 4: 261, 8: 201, 12: 183, 24: 166,
         }
 
 
@@ -114,21 +114,21 @@ class GenCost2026_2050_CP(GenCost2026):
         """Construct a cost object."""
         GenCost2026.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
-        table[tech.Black_Coal] = 5803
+        table[tech.Black_Coal] = 5791
         table[tech.CCGT] = 1978
-        table[tech.CCGT_CCS] = 4553
-        table[tech.CentralReceiver] = 6089
-        table[tech.Coal_CCS] = 11254
+        table[tech.CCGT_CCS] = 5031
+        table[tech.CentralReceiver] = 5376
+        table[tech.Coal_CCS] = 11790
         table[tech.Nuclear] = 9607
         table[tech.OCGT] = 1798
-        table[tech.Behind_Meter_PV] = 1091
-        table[tech.PV1Axis] = 851
-        table[tech.Wind] = 2290
-        table[tech.WindOffshore] = 5344
+        table[tech.Behind_Meter_PV] = 1077
+        table[tech.PV1Axis] = 1029
+        table[tech.Wind] = 2207
+        table[tech.WindOffshore] = 5342
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 537, 2: 358, 4: 259, 8: 205, 12: 190, 24: 176,
+            1: 567, 2: 362, 4: 252, 8: 193, 12: 177, 24: 160,
         }
 
 
@@ -140,20 +140,20 @@ class GenCost2026_2030_NZE2050(GenCost2026):
         GenCost2026.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 6296
-        table[tech.CCGT] = 2204
-        table[tech.CCGT_CCS] = 5846
-        table[tech.CentralReceiver] = 6869
+        table[tech.CCGT] = 2443
+        table[tech.CCGT_CCS] = 6252
+        table[tech.CentralReceiver] = 6037
         table[tech.Coal_CCS] = 12196
         table[tech.Nuclear] = 9858
-        table[tech.OCGT] = 2319
-        table[tech.Behind_Meter_PV] = 1101
-        table[tech.PV1Axis] = 743
-        table[tech.Wind] = 2608
-        table[tech.WindOffshore] = 3281
+        table[tech.OCGT] = 2642
+        table[tech.Behind_Meter_PV] = 1055
+        table[tech.PV1Axis] = 847
+        table[tech.Wind] = 2629
+        table[tech.WindOffshore] = 4133
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 420, 2: 295, 4: 223, 8: 183, 12: 173, 24: 163,
+            1: 588, 2: 406, 4: 302, 8: 245, 12: 230, 24: 215,
         }
 
 
@@ -166,19 +166,19 @@ class GenCost2026_2040_NZE2050(GenCost2026):
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 5941
         table[tech.CCGT] = 1994
-        table[tech.CCGT_CCS] = 4645
-        table[tech.CentralReceiver] = 6122
-        table[tech.Coal_CCS] = 11551
+        table[tech.CCGT_CCS] = 4654
+        table[tech.CentralReceiver] = 5662
+        table[tech.Coal_CCS] = 11561
         table[tech.Nuclear] = 9795
         table[tech.OCGT] = 1811
-        table[tech.Behind_Meter_PV] = 1058
-        table[tech.PV1Axis] = 584
-        table[tech.Wind] = 2153
-        table[tech.WindOffshore] = 3139
+        table[tech.Behind_Meter_PV] = 855
+        table[tech.PV1Axis] = 672
+        table[tech.Wind] = 2214
+        table[tech.WindOffshore] = 4126
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 329, 2: 218, 4: 157, 8: 124, 12: 115, 24: 106,
+            1: 472, 2: 318, 4: 232, 8: 186, 12: 173, 24: 161,
         }
 
 
@@ -192,18 +192,18 @@ class GenCost2026_2050_NZE2050(GenCost2026):
         table[tech.Black_Coal] = 6326
         table[tech.CCGT] = 2069
         table[tech.CCGT_CCS] = 4782
-        table[tech.CentralReceiver] = 6076
+        table[tech.CentralReceiver] = 5723
         table[tech.Coal_CCS] = 12282
         table[tech.Nuclear] = 10429
         table[tech.OCGT] = 1874
-        table[tech.Behind_Meter_PV] = 920
-        table[tech.PV1Axis] = 564
-        table[tech.Wind] = 2141
-        table[tech.WindOffshore] = 3197
+        table[tech.Behind_Meter_PV] = 731
+        table[tech.PV1Axis] = 616
+        table[tech.Wind] = 2180
+        table[tech.WindOffshore] = 4231
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 332, 2: 219, 4: 158, 8: 124, 12: 115, 24: 106,
+            1: 427, 2: 295, 4: 220, 8: 179, 12: 169, 24: 158,
         }
 
 
@@ -215,20 +215,20 @@ class GenCost2026_2030_NZEPost2050(GenCost2026):
         GenCost2026.__init__(self, discount, coal_price, gas_price, ccs_price)
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 6207
-        table[tech.CCGT] = 2188
-        table[tech.CCGT_CCS] = 5802
-        table[tech.CentralReceiver] = 7372
+        table[tech.CCGT] = 2431
+        table[tech.CCGT_CCS] = 6264
+        table[tech.CentralReceiver] = 6511
         table[tech.Coal_CCS] = 12015
         table[tech.Nuclear] = 9718
-        table[tech.OCGT] = 2303
-        table[tech.Behind_Meter_PV] = 1126
-        table[tech.PV1Axis] = 930
-        table[tech.Wind] = 2636
-        table[tech.WindOffshore] = 5306
+        table[tech.OCGT] = 2630
+        table[tech.Behind_Meter_PV] = 1137
+        table[tech.PV1Axis] = 1392
+        table[tech.Wind] = 2647
+        table[tech.WindOffshore] = 5292
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 589, 2: 400, 4: 295, 8: 237, 12: 222, 24: 206,
+            1: 620, 2: 421, 4: 310, 8: 249, 12: 233, 24: 216,
         }
 
 
@@ -241,19 +241,19 @@ class GenCost2026_2040_NZEPost2050(GenCost2026):
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 5740
         table[tech.CCGT] = 1957
-        table[tech.CCGT_CCS] = 4812
-        table[tech.CentralReceiver] = 6618
-        table[tech.Coal_CCS] = 11425
+        table[tech.CCGT_CCS] = 4925
+        table[tech.CentralReceiver] = 6007
+        table[tech.Coal_CCS] = 11552
         table[tech.Nuclear] = 9464
         table[tech.OCGT] = 1781
-        table[tech.Behind_Meter_PV] = 1059
-        table[tech.PV1Axis] = 725
-        table[tech.Wind] = 2201
-        table[tech.WindOffshore] = 4597
+        table[tech.Behind_Meter_PV] = 1069
+        table[tech.PV1Axis] = 1088
+        table[tech.Wind] = 2251
+        table[tech.WindOffshore] = 4929
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 492, 2: 326, 4: 234, 8: 184, 12: 171, 24: 157,
+            1: 521, 2: 340, 4: 241, 8: 188, 12: 173, 24: 159,
         }
 
 
@@ -266,17 +266,17 @@ class GenCost2026_2050_NZEPost2050(GenCost2026):
         table = self.capcost_per_kw
         table[tech.Black_Coal] = 5993
         table[tech.CCGT] = 2008
-        table[tech.CCGT_CCS] = 4714
-        table[tech.CentralReceiver] = 5949
-        table[tech.Coal_CCS] = 11692
+        table[tech.CCGT_CCS] = 5049
+        table[tech.CentralReceiver] = 5548
+        table[tech.Coal_CCS] = 12073
         table[tech.Nuclear] = 9880
         table[tech.OCGT] = 1823
-        table[tech.Behind_Meter_PV] = 1054
-        table[tech.PV1Axis] = 664
-        table[tech.Wind] = 2137
-        table[tech.WindOffshore] = 4472
+        table[tech.Behind_Meter_PV] = 1004
+        table[tech.PV1Axis] = 873
+        table[tech.Wind] = 2213
+        table[tech.WindOffshore] = 4721
 
         table = self.totcost_per_kwh
         table[tech.Battery] = {
-            1: 451, 2: 302, 4: 220, 8: 175, 12: 163, 24: 151,
+            1: 487, 2: 320, 4: 229, 8: 180, 12: 166, 24: 152,
         }
