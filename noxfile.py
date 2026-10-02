@@ -2,6 +2,8 @@
 
 import nox
 
+nox.options.default_venv_backend = "uv"
+
 srcdirs = ['nemo', 'tests']
 scripts = ['evolve', 'replay', 'summary']
 RUFFIGNORE_BASE = "ANN,D203,D213,Q000"
